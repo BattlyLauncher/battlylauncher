@@ -195,10 +195,17 @@ function bindSocketEvents() {
 
   socket.on("getLogs-v3", async (data) => {
     const window = MainWindow.getWindow();
-    const RegistroLog = fs.readFileSync(
-      `${dataDirectory}/.battly/Registro.log`,
-      "utf8"
-    );
+    if (!window) return;
+
+    let RegistroLog = "";
+    const logPath = path.join(dataDirectory, ".battly", "Registro.log");
+    try {
+      if (fs.existsSync(logPath)) {
+        RegistroLog = fs.readFileSync(logPath, "utf8");
+      }
+    } catch (err) {
+      console.error("Error reading Registro.log:", err?.message || err);
+    }
 
     if (data?.shown) {
       window.webContents.send("getLogsAnterior", { RegistroLog });

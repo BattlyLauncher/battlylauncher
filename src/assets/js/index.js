@@ -34,10 +34,19 @@ class Splash {
 			splashAuthor = document.querySelector(".splash-author");
 			message = document.querySelector(".message");
 			progress = document.querySelector("progress");
+			this.progress = progress;
 
 			this.start();
 		} else {
-			document.addEventListener('DOMContentLoaded', () => this.start());
+			document.addEventListener('DOMContentLoaded', () => {
+				splash_ = document.querySelector(".splash");
+				splashMessage = document.querySelector(".splash-message");
+				splashAuthor = document.querySelector(".splash-author");
+				message = document.querySelector(".message");
+				progress = document.querySelector("progress");
+				this.progress = progress;
+				this.start();
+			});
 		}
 	}
 
