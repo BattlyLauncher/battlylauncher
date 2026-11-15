@@ -1,0 +1,863 @@
+<div
+  class="release-news"
+  role="region"
+  aria-label="Novedades de Battly 3.1.0"
+  aria-roledescription="carrusel"
+>
+  <header class="release-news__header">
+    <div class="release-news__brand">
+      <img
+        data-news-logo
+        alt=""
+        width="30"
+        height="30"
+      /><span>Battly <strong>News</strong></span>
+    </div>
+    <span class="release-news__edition">Novedades de la versión <b>3.1.0</b></span>
+  </header>
+  <nav
+    class="release-news__steps"
+    aria-label="Apartados de novedades"
+  >
+    <button
+      type="button"
+      data-news-step="0"
+      aria-label="1 de 10: Bienvenido"
+      aria-current="step"
+    >
+      <span>01</span><small>Bienvenido</small></button
+    ><button
+      type="button"
+      data-news-step="1"
+      aria-label="2 de 10: Compatibilidad"
+    >
+      <span>02</span><small>Compatibilidad</small></button
+    ><button
+      type="button"
+      data-news-step="2"
+      aria-label="3 de 10: Mods y servidores"
+    >
+      <span>03</span><small>Mods y servidores</small></button
+    ><button
+      type="button"
+      data-news-step="3"
+      aria-label="4 de 10: Con amigos"
+    >
+      <span>04</span><small>Con amigos</small></button
+    ><button
+      type="button"
+      data-news-step="4"
+      aria-label="5 de 10: A tu manera"
+    >
+      <span>05</span><small>A tu manera</small></button
+    ><button
+      type="button"
+      data-news-step="5"
+      aria-label="6 de 10: Tu día a día"
+    >
+      <span>06</span><small>Tu día a día</small></button
+    ><button
+      type="button"
+      data-news-step="6"
+      aria-label="7 de 10: Rendimiento"
+    >
+      <span>07</span><small>Rendimiento</small></button
+    ><button
+      type="button"
+      data-news-step="7"
+      aria-label="8 de 10: Correcciones"
+    >
+      <span>08</span><small>Correcciones</small></button
+    ><button
+      type="button"
+      data-news-step="8"
+      aria-label="9 de 10: Battly+"
+    >
+      <span>09</span><small>Battly+</small>
+    </button>
+    <button
+      type="button"
+      data-news-step="9"
+      aria-label="10 de 10: Gracias"
+    >
+      <span>10</span><small>Gracias</small>
+    </button>
+  </nav>
+  <div
+    class="release-news__progress"
+    role="progressbar"
+    aria-label="Progreso del recorrido"
+    aria-valuemin="1"
+    aria-valuemax="10"
+    aria-valuenow="1"
+  >
+    <span data-news-progress></span>
+  </div>
+  <div class="release-news__stage">
+    <section
+      class="release-news__slide release-news__welcome"
+      data-news-slide
+      role="group"
+      aria-roledescription="diapositiva"
+      aria-label="1 de 10: Bienvenido"
+      tabindex="0"
+    >
+      <div class="release-news__welcome-hero">
+        <img
+          data-news-banner
+          alt=""
+        />
+        <div class="release-news__welcome-copy">
+          <h1>Battly<br /><em>3.1.0</em></h1>
+          <p>Battly Worlds</p>
+          <div
+            class="release-news__welcome-icons"
+            aria-hidden="true"
+          >
+            <i class="fa-solid fa-earth-americas"></i><i class="fa-solid fa-comments"></i
+            ><i class="fa-solid fa-music"></i>
+          </div>
+        </div>
+      </div>
+      <p class="release-news__contents">
+        18 novedades <span aria-hidden="true">/</span> 12 mejoras y arreglos
+        <span aria-hidden="true">/</span> Battly+
+      </p>
+    </section>
+    <section
+      class="release-news__slide"
+      data-news-slide
+      role="group"
+      aria-roledescription="diapositiva"
+      aria-label="2 de 10: Compatibilidad"
+      tabindex="0"
+      hidden
+    >
+      <div class="release-news__chapter">
+        <h2>Loaders y clientes externos</h2>
+      </div>
+      <ul
+        class="release-news__features"
+        aria-label="Resumen de novedades"
+      >
+        <li style="--feature-order: 0">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-cubes"></i
+          ></span>
+          <h3>Loaders externos</h3>
+          <p>Forge, Fabric, NeoForge y Quilt.</p>
+        </li>
+        <li style="--feature-order: 1">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-puzzle-piece"></i
+          ></span>
+          <h3>Más clientes</h3>
+          <p>LabyMod y GlideClient compatibles.</p>
+        </li>
+        <li style="--feature-order: 2">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-eye"></i
+          ></span>
+          <h3>ForgeOptiFine</h3>
+          <p>Vuelve a Battly.</p>
+        </li>
+      </ul>
+      <details class="release-news__details">
+        <summary>
+          <span class="release-news__details-closed">Ver detalles</span
+          ><span class="release-news__details-open">Ocultar detalles</span
+          ><span class="release-news__details-count">3 cambios</span
+          ><i
+            class="fa-solid fa-chevron-down"
+            aria-hidden="true"
+          ></i>
+        </summary>
+        <ul class="release-news__changes">
+          <li>
+            <p>
+              Forge, Fabric, NeoForge y Quilt instalados externamente funcionan correctamente con
+              Battly.
+            </p>
+          </li>
+          <li>
+            <p>
+              Clientes que antes daban problemas, como LabyMod o GlideClient, ahora son compatibles
+              con Battly.
+            </p>
+          </li>
+          <li>
+            <p>Vuelve ForgeOptiFine a Battly.</p>
+          </li>
+        </ul>
+      </details>
+    </section>
+    <section
+      class="release-news__slide"
+      data-news-slide
+      role="group"
+      aria-roledescription="diapositiva"
+      aria-label="3 de 10: Mods y servidores"
+      tabindex="0"
+      hidden
+    >
+      <div class="release-news__chapter">
+        <h2>Mods, instancias y servidores</h2>
+      </div>
+      <ul
+        class="release-news__features"
+        aria-label="Resumen de novedades"
+      >
+        <li style="--feature-order: 0">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-download"></i
+          ></span>
+          <h3>Mods por instancia</h3>
+          <p>Instálalos donde juegas.</p>
+        </li>
+        <li style="--feature-order: 1">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-shapes"></i
+          ></span>
+          <h3>Más categorías</h3>
+          <p>Encuentra tus próximos mods.</p>
+        </li>
+        <li style="--feature-order: 2">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-server"></i
+          ></span>
+          <h3>Battly Servers</h3>
+          <p>Más opciones de modloaders.</p>
+        </li>
+      </ul>
+      <details class="release-news__details">
+        <summary>
+          <span class="release-news__details-closed">Ver detalles</span
+          ><span class="release-news__details-open">Ocultar detalles</span
+          ><span class="release-news__details-count">3 cambios</span
+          ><i
+            class="fa-solid fa-chevron-down"
+            aria-hidden="true"
+          ></i>
+        </summary>
+        <ul class="release-news__changes">
+          <li>
+            <p>Ahora puedes descargar mods desde Battly Mods directamente para tus instancias.</p>
+          </li>
+          <li>
+            <p>Nuevos apartados y categorías dentro de Battly Mods.</p>
+          </li>
+          <li>
+            <p>Nuevas opciones de modloaders para Battly Servers.</p>
+          </li>
+        </ul>
+      </details>
+    </section>
+    <section
+      class="release-news__slide"
+      data-news-slide
+      role="group"
+      aria-roledescription="diapositiva"
+      aria-label="4 de 10: Con amigos"
+      tabindex="0"
+      hidden
+    >
+      <div class="release-news__chapter">
+        <h2>Battly Worlds</h2>
+      </div>
+      <ul
+        class="release-news__features"
+        aria-label="Resumen de novedades"
+      >
+        <li style="--feature-order: 0">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-user-group"></i
+          ></span>
+          <h3>Únete a tus amigos</h3>
+          <p>En servidores públicos y privados.</p>
+        </li>
+
+        <li style="--feature-order: 2">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-earth-americas"></i
+          ></span>
+          <h3>Battly Worlds</h3>
+          <p>Mundos compartidos entre PC y Mobile.</p>
+        </li>
+      </ul>
+      <details class="release-news__details">
+        <summary>
+          <span class="release-news__details-closed">Ver detalles</span
+          ><span class="release-news__details-open">Ocultar detalles</span
+          ><span class="release-news__details-count">3 cambios</span
+          ><i
+            class="fa-solid fa-chevron-down"
+            aria-hidden="true"
+          ></i>
+        </summary>
+        <ul class="release-news__changes">
+          <li>
+            <p>
+              Puedes unirte directamente al servidor en el que esté jugando un amigo, ya sea público
+              o privado. Esta función se puede activar o desactivar.
+            </p>
+          </li>
+          <li>
+            <p>
+              Battly Worlds está integrado directamente en Battly para PC y es compatible también
+              con mundos de Battly Mobile.
+            </p>
+          </li>
+        </ul>
+      </details>
+    </section>
+    <section
+      class="release-news__slide"
+      data-news-slide
+      role="group"
+      aria-roledescription="diapositiva"
+      aria-label="5 de 10: A tu manera"
+      tabindex="0"
+      hidden
+    >
+      <div class="release-news__chapter">
+        <h2>Personaliza tu Battly</h2>
+      </div>
+      <ul
+        class="release-news__features"
+        aria-label="Resumen de novedades"
+      >
+        <li style="--feature-order: 0">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-folder-open"></i
+          ></span>
+          <h3>Tu carpeta .battly</h3>
+          <p>Elige dónde guardarla.</p>
+        </li>
+        <li style="--feature-order: 1">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-paintbrush"></i
+          ></span>
+          <h3>Paneles renovados</h3>
+          <p>Música, Instancias y Mi Battly.</p>
+        </li>
+        <li style="--feature-order: 2">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-shirt"></i
+          ></span>
+          <h3>Personaliza tu skin</h3>
+          <p>Directamente desde Battly.</p>
+        </li>
+      </ul>
+      <details class="release-news__details">
+        <summary>
+          <span class="release-news__details-closed">Ver detalles</span
+          ><span class="release-news__details-open">Ocultar detalles</span
+          ><span class="release-news__details-count">3 cambios</span
+          ><i
+            class="fa-solid fa-chevron-down"
+            aria-hidden="true"
+          ></i>
+        </summary>
+        <ul class="release-news__changes">
+          <li>
+            <p>Nueva opción para cambiar la ubicación de la carpeta .battly.</p>
+          </li>
+          <li>
+            <p>Rediseñados los paneles de Música, Instancias y Mi Battly.</p>
+          </li>
+          <li>
+            <p>Nueva opción para personalizar tu skin directamente desde Battly.</p>
+          </li>
+        </ul>
+      </details>
+    </section>
+    <section
+      class="release-news__slide release-news__slide--dense"
+      data-news-slide
+      role="group"
+      aria-roledescription="diapositiva"
+      aria-label="6 de 10: Tu día a día"
+      tabindex="0"
+      hidden
+    >
+      <div class="release-news__chapter">
+        <h2>Herramientas para jugar</h2>
+      </div>
+      <ul
+        class="release-news__features"
+        aria-label="Resumen de novedades"
+      >
+        <li style="--feature-order: 0">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-desktop"></i
+          ></span>
+          <h3>Accesos directos</h3>
+          <p>Tu versión, a dos clics.</p>
+        </li>
+        <li style="--feature-order: 1">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-sliders"></i
+          ></span>
+          <h3>Descargas a tu ritmo</h3>
+          <p>Configura los archivos simultáneos.</p>
+        </li>
+        <li style="--feature-order: 2">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-play"></i
+          ></span>
+          <h3>Modo Simple</h3>
+          <p>Selecciona una versión y juega.</p>
+        </li>
+        <li style="--feature-order: 3">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-terminal"></i
+          ></span>
+          <h3>Logs a mano</h3>
+          <p>Consulta los registros de Minecraft.</p>
+        </li>
+        <li style="--feature-order: 4">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-moon"></i
+          ></span>
+          <h3>Modo reposo</h3>
+          <p>Sin cerrar Battly completamente.</p>
+        </li>
+        <li style="--feature-order: 5">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-store"></i
+          ></span>
+          <h3>Marketplace</h3>
+          <p>Accede desde el launcher.</p>
+        </li>
+      </ul>
+      <details class="release-news__details">
+        <summary>
+          <span class="release-news__details-closed">Ver detalles</span
+          ><span class="release-news__details-open">Ocultar detalles</span
+          ><span class="release-news__details-count">6 cambios</span
+          ><i
+            class="fa-solid fa-chevron-down"
+            aria-hidden="true"
+          ></i>
+        </summary>
+        <ul class="release-news__changes">
+          <li>
+            <p>
+              Nueva opción para crear accesos directos en el escritorio de cualquier versión. Dos
+              clics para entrar en el juego.
+            </p>
+          </li>
+          <li>
+            <p>
+              Nueva opción para configurar la cantidad de archivos que Battly descarga
+              simultáneamente.
+            </p>
+          </li>
+          <li>
+            <p>
+              Nuevo Modo Simple para quienes solo quieren seleccionar una versión, darle a Jugar y
+              listo.
+            </p>
+          </li>
+          <li>
+            <p>Nueva opción para consultar los logs de Minecraft directamente desde Battly.</p>
+          </li>
+          <li>
+            <p>Nueva opción para dejar Battly en reposo en lugar de cerrarlo completamente.</p>
+          </li>
+          <li>
+            <p>Nueva opción para acceder directamente al Marketplace de Battly.</p>
+          </li>
+        </ul>
+      </details>
+    </section>
+    <section
+      class="release-news__slide release-news__slide--dense"
+      data-news-slide
+      role="group"
+      aria-roledescription="diapositiva"
+      aria-label="7 de 10: Rendimiento"
+      tabindex="0"
+      hidden
+    >
+      <div class="release-news__chapter">
+        <h2>Rendimiento y compatibilidad</h2>
+      </div>
+      <ul
+        class="release-news__features"
+        aria-label="Resumen de novedades"
+      >
+        <li style="--feature-order: 0">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-bolt"></i
+          ></span>
+          <h3>De ~15 a ~3 segundos</h3>
+          <p>Battly carga mucho más rápido.</p>
+        </li>
+        <li style="--feature-order: 1">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-headphones"></i
+          ></span>
+          <h3>Music optimizado</h3>
+          <p>Mejor rendimiento y menos errores.</p>
+        </li>
+        <li style="--feature-order: 2">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-box-open"></i
+          ></span>
+          <h3>Datapacks</h3>
+          <p>Elige en qué mundo instalarlos.</p>
+        </li>
+        <li style="--feature-order: 3">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-cubes-stacked"></i
+          ></span>
+          <h3>Más modpacks</h3>
+          <p>Compatibilidad mejorada.</p>
+        </li>
+        <li style="--feature-order: 4">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-music"></i
+          ></span>
+          <h3>Música lista antes</h3>
+          <p>Mejorada la carga.</p>
+        </li>
+        <li style="--feature-order: 5">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-palette"></i
+          ></span>
+          <h3>Tu tema, más integrado</h3>
+          <p>Más apartados personalizados.</p>
+        </li>
+      </ul>
+      <details class="release-news__details">
+        <summary>
+          <span class="release-news__details-closed">Ver detalles</span
+          ><span class="release-news__details-open">Ocultar detalles</span
+          ><span class="release-news__details-count">6 cambios</span
+          ><i
+            class="fa-solid fa-chevron-down"
+            aria-hidden="true"
+          ></i>
+        </summary>
+        <ul class="release-news__changes">
+          <li>
+            <p>
+              Optimizada enormemente la carga de Battly. Lo que antes podía tardar alrededor de 15
+              segundos ahora tarda aproximadamente 3.
+            </p>
+          </li>
+          <li>
+            <p>Battly Music ha sido optimizado y se han solucionado varios problemas.</p>
+          </li>
+          <li>
+            <p>
+              Los datapacks ahora se instalan correctamente y puedes seleccionar directamente en qué
+              mundo quieres instalarlos.
+            </p>
+          </li>
+          <li>
+            <p>Mejorada la compatibilidad con diferentes modpacks.</p>
+          </li>
+          <li>
+            <p>Mejorada la carga de música.</p>
+          </li>
+          <li>
+            <p>
+              Battly ahora se adapta mucho mejor al tema seleccionado y personaliza más apartados de
+              la interfaz.
+            </p>
+          </li>
+        </ul>
+      </details>
+    </section>
+    <section
+      class="release-news__slide release-news__slide--dense"
+      data-news-slide
+      role="group"
+      aria-roledescription="diapositiva"
+      aria-label="8 de 10: Correcciones"
+      tabindex="0"
+      hidden
+    >
+      <div class="release-news__chapter">
+        <h2>Problemas que hemos corregido</h2>
+      </div>
+      <ul
+        class="release-news__features"
+        aria-label="Resumen de novedades"
+      >
+        <li style="--feature-order: 0">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-window-maximize"></i
+          ></span>
+          <h3>Interfaz corregida</h3>
+          <p>Login, descargas, ajustes y botones.</p>
+        </li>
+        <li style="--feature-order: 1">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-language"></i
+          ></span>
+          <h3>Textos y traducciones</h3>
+          <p>Correcciones en todo Battly.</p>
+        </li>
+        <li style="--feature-order: 2">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-server"></i
+          ></span>
+          <h3>Servers arreglado</h3>
+          <p>Vuelve a funcionar correctamente.</p>
+        </li>
+        <li style="--feature-order: 3">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-memory"></i
+          ></span>
+          <h3>RAM guardada</h3>
+          <p>Tu configuración se mantiene.</p>
+        </li>
+        <li style="--feature-order: 4">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-power-off"></i
+          ></span>
+          <h3>Al abrir Minecraft</h3>
+          <p>Battly responde como lo configuras.</p>
+        </li>
+        <li style="--feature-order: 5">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-clock-rotate-left"></i
+          ></span>
+          <h3>Versiones antiguas</h3>
+          <p>Correcciones para las betas.</p>
+        </li>
+      </ul>
+      <details class="release-news__details">
+        <summary>
+          <span class="release-news__details-closed">Ver detalles</span
+          ><span class="release-news__details-open">Ocultar detalles</span
+          ><span class="release-news__details-count">6 cambios</span
+          ><i
+            class="fa-solid fa-chevron-down"
+            aria-hidden="true"
+          ></i>
+        </summary>
+        <ul class="release-news__changes">
+          <li>
+            <p>
+              Solucionados bugs visuales en el inicio de sesión, descargas, Mi Battly, ajustes y
+              botones de la barra superior.
+            </p>
+          </li>
+          <li>
+            <p>
+              Corregidos numerosos problemas relacionados con textos y traducciones en todo Battly.
+            </p>
+          </li>
+          <li>
+            <p>Arreglado Battly Servers.</p>
+          </li>
+          <li>
+            <p>
+              Solucionado el problema que podía restablecer ocasionalmente la cantidad de RAM
+              configurada.
+            </p>
+          </li>
+          <li>
+            <p>
+              Solucionados problemas relacionados con abrir Minecraft y mantener Battly abierto,
+              dejarlo en reposo o cerrarlo.
+            </p>
+          </li>
+          <li>
+            <p>
+              Arreglado el problema que impedía jugar correctamente algunas versiones antiguas de
+              Minecraft, como las betas.
+            </p>
+          </li>
+        </ul>
+      </details>
+    </section>
+    <section
+      class="release-news__slide release-news__slide--plus"
+      data-news-slide
+      role="group"
+      aria-roledescription="diapositiva"
+      aria-label="9 de 10: Battly+"
+      tabindex="0"
+      hidden
+    >
+      <div class="release-news__chapter">
+        <h2>Novedades de Battly+</h2>
+      </div>
+      <ul
+        class="release-news__features"
+        aria-label="Resumen de novedades"
+      >
+        <li style="--feature-order: 0">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-rectangle-ad"></i
+          ></span>
+          <h3>Mods sin anuncios</h3>
+          <p>Para los usuarios de Battly+.</p>
+        </li>
+        <li style="--feature-order: 1">
+          <span
+            class="release-news__feature-icon"
+            aria-hidden="true"
+            ><i class="fa-solid fa-volume-high"></i
+          ></span>
+          <h3>Tu sonido de inicio</h3>
+          <p>Añade introducciones personalizadas.</p>
+        </li>
+      </ul>
+      <details class="release-news__details">
+        <summary>
+          <span class="release-news__details-closed">Ver detalles</span
+          ><span class="release-news__details-open">Ocultar detalles</span
+          ><span class="release-news__details-count">2 cambios</span
+          ><i
+            class="fa-solid fa-chevron-down"
+            aria-hidden="true"
+          ></i>
+        </summary>
+        <ul class="release-news__changes">
+          <li>
+            <p>Los usuarios de Battly+ ya no ven anuncios en el panel de mods.</p>
+          </li>
+          <li>
+            <p>Nueva opción para añadir sonidos de introducción personalizados.</p>
+          </li>
+        </ul>
+      </details>
+    </section>
+    <section
+      class="release-news__slide release-news__slide--testers"
+      data-news-slide
+      role="group"
+      aria-roledescription="diapositiva"
+      aria-label="10 de 10: Gracias"
+      tabindex="0"
+      hidden
+    >
+      <div class="release-news__chapter">
+        <h2>
+          <i
+            class="fa-solid fa-heart"
+            aria-hidden="true"
+          ></i>
+          Gracias por probar Battly 3.1
+        </h2>
+        <p>
+          Vuestros reportes y opiniones nos han ayudado a corregir errores y mejorar esta versión.
+        </p>
+      </div>
+      <ul
+        class="release-news__testers"
+        data-news-testers
+        aria-label="Equipo de pruebas de Battly 3.1"
+      ></ul>
+    </section>
+  </div>
+  <footer class="release-news__footer">
+    <button
+      class="release-news__back"
+      type="button"
+      data-news-back
+      disabled
+    >
+      <i
+        class="fa-solid fa-arrow-left"
+        aria-hidden="true"
+      ></i
+      ><span>Anterior</span>
+    </button>
+    <p
+      data-news-status
+      role="status"
+      aria-live="polite"
+    >
+      1 de 10 · Bienvenido
+    </p>
+    <button
+      class="release-news__next"
+      type="button"
+      data-news-next
+    >
+      <span>Descubrir novedades</span
+      ><i
+        class="fa-solid fa-arrow-right"
+        aria-hidden="true"
+      ></i></button
+    ><button
+      class="release-news__next"
+      type="button"
+      data-news-finish
+      hidden
+    >
+      <span>¡Vamos a jugar!</span
+      ><i
+        class="fa-solid fa-check"
+        aria-hidden="true"
+      ></i>
+    </button>
+  </footer>
+</div>

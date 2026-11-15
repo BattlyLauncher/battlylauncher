@@ -1,0 +1,882 @@
+<div
+  class="server-create-view"
+  data-server-create-view
+>
+  <form
+    class="server-create-card"
+    data-server-create-form
+  >
+    <span class="server-brand">Battly Servers</span>
+    <h1>Crea tu servidor de Minecraft</h1>
+    <label>
+      <span>Nombre del servidor</span>
+      <input
+        name="name"
+        required
+        maxlength="128"
+        placeholder="Mi servidor"
+      />
+    </label>
+    <label>
+      <span>Dominio del servidor</span>
+      <span class="server-domain-input"
+        ><input
+          name="domain"
+          required
+          maxlength="20"
+          placeholder="dominio"
+        />
+        <strong>.battly.pro</strong></span
+      >
+      <small>No puede contener api, server, oficial o battly.</small>
+    </label>
+    <div class="server-create-grid">
+      <label>
+        <span>Versión de Minecraft</span>
+        <input
+          name="version"
+          required
+          maxlength="128"
+          value="1.20.1"
+        />
+      </label>
+      <label>
+        <span>Región</span>
+        <select name="region">
+          <option value="latam">LATAM</option>
+          <option value="eu-central">Europa central</option>
+          <option value="us-east">Norteamérica este</option>
+          <option value="sa-east">Sudamérica este</option>
+        </select>
+      </label>
+      <label>
+        <span>Puerto</span>
+        <input
+          name="port"
+          type="number"
+          required
+          min="1"
+          max="65535"
+          value="25565"
+        />
+      </label>
+    </div>
+    <p
+      class="server-form-status"
+      role="status"
+      data-server-create-status
+    ></p>
+    <div class="server-create-actions">
+      <button
+        type="button"
+        data-panel="home"
+      >
+        Cancelar
+      </button>
+      <button type="submit">Crear servidor</button>
+    </div>
+  </form>
+</div>
+
+<div
+  class="server-dashboard"
+  data-server-dashboard
+  hidden
+>
+  <aside class="server-sidebar">
+    <strong>Battly Servers</strong>
+    <label class="server-picker-label">
+      <span>Servidor</span>
+      <select data-server-picker></select>
+    </label>
+    <nav aria-label="Secciones del servidor">
+      <button
+        type="button"
+        class="is-active"
+        data-server-tab="general"
+      >
+        <i class="fa-solid fa-house"></i> General
+      </button>
+      <button
+        type="button"
+        data-server-tab="resources"
+      >
+        <i class="fa-solid fa-chart-area"></i> Recursos
+      </button>
+      <button
+        type="button"
+        data-server-tab="players"
+      >
+        <i class="fa-solid fa-user-group"></i> Jugadores
+      </button>
+      <button
+        type="button"
+        data-server-tab="options"
+      >
+        <i class="fa-solid fa-gears"></i> Opciones
+      </button>
+      <button
+        type="button"
+        data-server-tab="modloaders"
+      >
+        <i class="fa-solid fa-cubes"></i> ModLoaders
+      </button>
+      <button
+        type="button"
+        data-server-tab="files"
+      >
+        <i class="fa-solid fa-folder"></i> Archivos
+      </button>
+      <button
+        type="button"
+        data-server-tab="logs"
+      >
+        <i class="fa-solid fa-file-lines"></i> Logs
+      </button>
+      <button
+        type="button"
+        data-server-new
+      >
+        <i class="fa-solid fa-plus"></i> Nuevo servidor
+      </button>
+      <button
+        type="button"
+        data-panel="home"
+      >
+        <i class="fa-solid fa-arrow-rotate-backward"></i> Volver al inicio
+      </button>
+    </nav>
+  </aside>
+
+  <div class="server-content">
+    <header class="server-content-header">
+      <div>
+        <h1 data-server-title>Servidor de Minecraft</h1>
+        <span
+          class="server-state"
+          data-server-state
+          >Detenido</span
+        >
+      </div>
+      <button
+        type="button"
+        data-server-share
+      >
+        Compartir servidor
+      </button>
+    </header>
+
+    <section
+      class="server-tab-view is-active"
+      data-server-view="general"
+    >
+      <h2>Información General</h2>
+      <p>Visualiza y controla la información principal de tu servidor.</p>
+      <div class="server-action-panel">
+        <button
+          type="button"
+          data-server-runtime="toggle"
+        >
+          <i class="fa-solid fa-play"></i> Iniciar servidor
+        </button>
+        <button
+          type="button"
+          data-server-runtime="restart"
+          disabled
+        >
+          <i class="fa-solid fa-rotate"></i> Reiniciar servidor
+        </button>
+        <button
+          type="button"
+          data-server-connect
+          disabled
+        >
+          <i class="fa-solid fa-gamepad"></i> Conectarse
+        </button>
+      </div>
+      <p class="server-runtime-notice">
+        Battly usa el runtime Java aislado de este servidor; no se mezcla con
+        minecraft-launcher-core ni minecraft-java-core.
+      </p>
+      <div
+        class="server-installation"
+        data-server-installation
+      >
+        <div>
+          <strong>Archivos del servidor</strong>
+          <span data-server-install-current>Instala server.jar y Java antes de iniciar.</span>
+        </div>
+        <progress
+          data-server-install-progress
+          max="100"
+          value="0"
+        ></progress>
+        <button
+          type="button"
+          data-server-install
+        >
+          <i
+            class="fa-solid fa-download"
+            aria-hidden="true"
+          ></i>
+          Instalar archivos
+        </button>
+      </div>
+      <div class="server-console">
+        <header>
+          <strong>Consola (Registros)</strong><span data-server-console-state>Sin conexión</span>
+        </header>
+        <output data-server-console>Servidor detenido. No hay registros de ejecución.</output>
+        <form data-server-command-form>
+          <label
+            class="sr-only"
+            for="server-command"
+            >Comando del servidor</label
+          >
+          <input
+            id="server-command"
+            name="command"
+            disabled
+            maxlength="512"
+            placeholder="Escribe un comando..."
+          />
+          <button
+            type="submit"
+            disabled
+          >
+            Enviar
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <section
+      class="server-tab-view"
+      data-server-view="resources"
+      hidden
+    >
+      <h2>Recursos del Servidor</h2>
+      <p>Monitorea el uso de CPU y RAM.</p>
+      <div class="server-metrics">
+        <article>
+          <strong>Uso de CPU</strong><span data-server-cpu>0%</span
+          ><progress
+            data-server-cpu-progress
+            value="0"
+            max="100"
+          ></progress>
+        </article>
+        <article>
+          <strong>Uso de RAM</strong><span data-server-memory>0 MB</span
+          ><progress
+            data-server-memory-progress
+            value="0"
+            max="100"
+          ></progress>
+        </article>
+        <article>
+          <strong>Jugadores</strong><span data-server-players>0 / 0</span
+          ><progress
+            data-server-players-progress
+            value="0"
+            max="100"
+          ></progress>
+        </article>
+      </div>
+    </section>
+
+    <section
+      class="server-tab-view"
+      data-server-view="players"
+      hidden
+    >
+      <h2>Jugadores e historial</h2>
+      <p>Administra jugadores conocidos y las listas reales del servidor.</p>
+      <div
+        class="server-player-history"
+        data-server-player-history
+      >
+        <p>Cargando historial de jugadores…</p>
+      </div>
+      <form
+        class="server-player-form"
+        data-server-player-form
+      >
+        <label
+          ><span>Jugador</span
+          ><input
+            name="name"
+            maxlength="16"
+            pattern="[A-Za-z0-9_]+"
+            required
+        /></label>
+        <label
+          ><span>UUID</span
+          ><input
+            name="uuid"
+            maxlength="36"
+            placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+            required
+        /></label>
+        <label
+          ><span>Lista</span
+          ><select name="kind">
+            <option value="banned">Baneados</option>
+            <option value="whitelist">Lista blanca</option>
+            <option value="blacklist">Lista negra</option>
+            <option value="operators">Operadores</option>
+          </select></label
+        >
+        <button type="submit">Añadir jugador</button>
+      </form>
+      <p
+        class="server-form-status"
+        role="status"
+        data-server-player-status
+      ></p>
+      <div
+        class="server-player-list-tabs"
+        role="tablist"
+        aria-label="Listas de jugadores"
+      >
+        <button
+          type="button"
+          class="is-active"
+          data-server-player-kind="banned"
+        >
+          Baneados
+        </button>
+        <button
+          type="button"
+          data-server-player-kind="whitelist"
+        >
+          Lista blanca
+        </button>
+        <button
+          type="button"
+          data-server-player-kind="blacklist"
+        >
+          Lista negra
+        </button>
+        <button
+          type="button"
+          data-server-player-kind="operators"
+        >
+          Operadores
+        </button>
+      </div>
+      <div
+        class="server-player-list"
+        data-server-player-list
+      ></div>
+    </section>
+
+    <section
+      class="server-tab-view"
+      data-server-view="options"
+      hidden
+    >
+      <h2>Ajustes del Servidor (server.properties)</h2>
+      <p>Los cambios se escriben en el archivo real del servidor.</p>
+      <form
+        class="server-properties"
+        data-server-properties-form
+      >
+        <label
+          ><span>Máximo de jugadores</span
+          ><input
+            name="maxPlayers"
+            type="number"
+            min="1"
+            max="1000"
+            required
+        /></label>
+        <label
+          ><span>Uso de RAM Máx (MB)</span
+          ><input
+            name="maxMemoryMb"
+            type="number"
+            min="512"
+            max="131072"
+            step="128"
+            required
+        /></label>
+        <label
+          ><span>Modo de juego</span
+          ><select name="gamemode">
+            <option value="survival">Supervivencia</option>
+            <option value="creative">Creativo</option>
+            <option value="adventure">Aventura</option>
+            <option value="spectator">Espectador</option>
+          </select></label
+        >
+        <label
+          ><span>Dificultad</span
+          ><select name="difficulty">
+            <option value="peaceful">Pacífico</option>
+            <option value="easy">Fácil</option>
+            <option value="normal">Normal</option>
+            <option value="hard">Difícil</option>
+          </select></label
+        >
+        <label
+          ><span>Protección del spawn</span
+          ><input
+            name="spawnProtection"
+            type="number"
+            min="0"
+            max="1000"
+            required
+        /></label>
+        <label
+          ><span>Pack de recursos</span
+          ><input
+            name="resourcePack"
+            type="url"
+            placeholder="https://example.com/pack.zip"
+        /></label>
+        <label class="server-wide"
+          ><span>Mensaje del pack de recursos</span
+          ><input
+            name="resourcePackPrompt"
+            maxlength="256"
+        /></label>
+        <fieldset class="server-wide">
+          <legend>Reglas</legend>
+          <label
+            ><input
+              name="pvp"
+              type="checkbox"
+            />
+            PVP</label
+          >
+          <label
+            ><input
+              name="spawnAnimals"
+              type="checkbox"
+            />
+            Animales</label
+          >
+          <label
+            ><input
+              name="allowNether"
+              type="checkbox"
+            />
+            Nether</label
+          >
+          <label
+            ><input
+              name="enableCommandBlock"
+              type="checkbox"
+            />
+            Bloques de comandos</label
+          >
+          <label
+            ><input
+              name="spawnMonsters"
+              type="checkbox"
+            />
+            Mobs</label
+          >
+          <label
+            ><input
+              name="forceGamemode"
+              type="checkbox"
+            />
+            Forzar modo de juego</label
+          >
+          <label
+            ><input
+              name="whitelist"
+              type="checkbox"
+            />
+            Whitelist</label
+          >
+        </fieldset>
+        <p
+          class="server-wide server-form-status"
+          role="status"
+          data-server-properties-status
+        ></p>
+        <div class="server-wide server-properties-actions">
+          <button
+            type="button"
+            class="danger"
+            data-server-archive
+          >
+            Eliminar servidor
+          </button>
+          <button type="submit">Guardar propiedades</button>
+        </div>
+      </form>
+    </section>
+
+    <section
+      class="server-tab-view"
+      data-server-view="modloaders"
+      hidden
+    >
+      <h2>Gestión de ModLoaders</h2>
+      <p>
+        Administra los mods y plugins reales de este servidor sin interferir con los cores del
+        launcher. Detén el servidor antes de cambiar archivos.
+      </p>
+      <div class="server-software-card">
+        <div>
+          <span>Software del servidor</span>
+          <strong data-server-software-current>Vanilla</strong>
+          <small data-server-software-detail>Todavía no se ha instalado este software.</small>
+        </div>
+        <span
+          class="server-software-state"
+          data-server-software-state
+          >Sin instalar</span
+        >
+      </div>
+      <div
+        class="server-software-options"
+        aria-label="Software compatible del servidor"
+      >
+        <button
+          type="button"
+          data-server-software="vanilla"
+        >
+          <i class="fa-solid fa-cube"></i
+          ><span><strong>Vanilla</strong><small>Servidor oficial</small></span>
+        </button>
+        <button
+          type="button"
+          data-server-software="fabric"
+        >
+          <i class="fa-solid fa-scroll"></i
+          ><span><strong>Fabric</strong><small>Último loader estable</small></span>
+        </button>
+        <button
+          type="button"
+          data-server-software="paper"
+        >
+          <i class="fa-solid fa-paper-plane"></i
+          ><span><strong>Paper</strong><small>Última build estable</small></span>
+        </button>
+        <button
+          type="button"
+          data-server-software="forge"
+        >
+          <i class="fa-solid fa-hammer"></i
+          ><span><strong>Forge</strong><small>Build recomendada</small></span>
+        </button>
+        <button
+          type="button"
+          data-server-software="neoforge"
+        >
+          <i class="fa-solid fa-fire-flame-curved"></i
+          ><span><strong>NeoForge</strong><small>Última build estable</small></span>
+        </button>
+      </div>
+      <p class="server-software-note">
+        Spigot no ofrece un binario oficial redistribuible; Paper cubre el ecosistema de plugins con
+        descargas verificables.
+      </p>
+      <p
+        class="server-form-status"
+        role="status"
+        data-server-content-status
+      ></p>
+      <div class="server-content-library">
+        <section data-server-content-kind="mods">
+          <header>
+            <div><i class="fa-solid fa-puzzle-piece"></i><strong>Mods</strong></div>
+            <span data-server-content-count="mods">0 archivos</span>
+          </header>
+          <div class="server-content-actions">
+            <button
+              type="button"
+              data-server-content-import="mods"
+            >
+              <i class="fa-solid fa-file-arrow-up"></i> Importar JAR
+            </button>
+            <button
+              type="button"
+              data-server-content-open="mods"
+            >
+              <i class="fa-solid fa-folder-open"></i> Abrir carpeta
+            </button>
+          </div>
+          <div
+            class="server-content-list"
+            data-server-content-list="mods"
+          >
+            <p>Cargando mods…</p>
+          </div>
+        </section>
+        <section data-server-content-kind="plugins">
+          <header>
+            <div><i class="fa-solid fa-plug"></i><strong>Plugins</strong></div>
+            <span data-server-content-count="plugins">0 archivos</span>
+          </header>
+          <div class="server-content-actions">
+            <button
+              type="button"
+              data-server-content-import="plugins"
+            >
+              <i class="fa-solid fa-file-arrow-up"></i> Importar JAR
+            </button>
+            <button
+              type="button"
+              data-server-content-open="plugins"
+            >
+              <i class="fa-solid fa-folder-open"></i> Abrir carpeta
+            </button>
+          </div>
+          <div
+            class="server-content-list"
+            data-server-content-list="plugins"
+          >
+            <p>Cargando plugins…</p>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section
+      class="server-tab-view"
+      data-server-view="files"
+      hidden
+    >
+      <h2>Archivos del servidor</h2>
+      <p>Explora y edita archivos de texto mediante operaciones protegidas.</p>
+      <div class="server-file-toolbar">
+        <button
+          type="button"
+          data-server-file-up
+          disabled
+        >
+          <i
+            class="fa-solid fa-arrow-up"
+            aria-hidden="true"
+          ></i>
+          Subir
+        </button>
+        <code data-server-file-path>/</code>
+        <button
+          type="button"
+          data-server-world-import
+        >
+          <i
+            class="fa-solid fa-file-zipper"
+            aria-hidden="true"
+          ></i>
+          Importar mundo ZIP
+        </button>
+      </div>
+      <p
+        class="server-form-status"
+        role="status"
+        data-server-file-status
+      ></p>
+      <div class="server-file-table-wrap">
+        <table class="server-file-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Tamaño</th>
+              <th>Modificado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody data-server-file-list>
+            <tr>
+              <td colspan="4">Cargando archivos…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <dialog
+        class="server-file-dialog"
+        data-server-file-dialog
+      >
+        <form data-server-file-form>
+          <header>
+            <div><strong>Editor de archivo</strong><code data-server-file-edit-path></code></div>
+            <button
+              type="button"
+              aria-label="Cerrar editor"
+              data-server-file-close
+            >
+              ×
+            </button>
+          </header>
+          <textarea
+            name="content"
+            spellcheck="true"
+            maxlength="2097152"
+          ></textarea>
+          <p
+            class="server-form-status"
+            role="status"
+            data-server-file-edit-status
+          ></p>
+          <footer>
+            <button
+              type="button"
+              data-server-file-close
+            >
+              Cancelar
+            </button>
+            <button type="submit">Guardar archivo</button>
+          </footer>
+        </form>
+      </dialog>
+    </section>
+
+    <section
+      class="server-tab-view"
+      data-server-view="logs"
+      hidden
+    >
+      <h2>Logs guardados</h2>
+      <p>Cada ejecución conserva su consola en el directorio local del servidor.</p>
+      <p
+        class="server-form-status"
+        role="status"
+        data-server-log-status
+      ></p>
+      <div
+        class="server-log-list"
+        data-server-log-list
+      >
+        <p>Cargando registros…</p>
+      </div>
+      <dialog
+        class="server-file-dialog server-log-dialog"
+        data-server-log-dialog
+      >
+        <header>
+          <div><strong>Registro del servidor</strong><code data-server-log-path></code></div>
+          <button
+            type="button"
+            aria-label="Cerrar registro"
+            data-server-log-close
+          >
+            ×
+          </button>
+        </header>
+        <pre data-server-log-content></pre>
+        <footer>
+          <button
+            type="button"
+            data-server-log-close
+          >
+            Cerrar
+          </button>
+        </footer>
+      </dialog>
+    </section>
+  </div>
+</div>
+
+<dialog
+  class="server-share-dialog"
+  data-server-share-dialog
+  aria-labelledby="server-share-title"
+>
+  <div class="server-share-card">
+    <header>
+      <div>
+        <span>Acceso seguro</span>
+        <h2 id="server-share-title"><i class="fa-solid fa-share-nodes"></i> Compartir servidor</h2>
+      </div>
+      <button
+        type="button"
+        aria-label="Cerrar"
+        data-server-share-close
+      >
+        ×
+      </button>
+    </header>
+    <section
+      class="server-tunnel-card"
+      aria-live="polite"
+    >
+      <div class="server-tunnel-state">
+        <span
+          class="server-tunnel-indicator"
+          data-server-tunnel-indicator
+        ></span>
+        <div>
+          <strong data-server-tunnel-title>Túnel inactivo</strong
+          ><small data-server-tunnel-detail>Inicia el servidor para abrir el acceso externo.</small>
+        </div>
+      </div>
+      <div
+        class="server-tunnel-address"
+        data-server-tunnel-address
+        hidden
+      >
+        <code data-server-public-address></code>
+        <button
+          type="button"
+          data-server-address-copy
+        >
+          Copiar
+        </button>
+      </div>
+      <button
+        type="button"
+        data-server-tunnel-toggle
+      >
+        Activar túnel
+      </button>
+    </section>
+    <div class="server-share-columns">
+      <section>
+        <header>
+          <div>
+            <strong>Amigos conectados</strong><small>Invita mediante tu cuenta de Battly</small>
+          </div>
+        </header>
+        <label class="server-share-search"
+          ><i class="fa-solid fa-search"></i
+          ><input
+            type="search"
+            maxlength="32"
+            placeholder="Buscar amigo…"
+            data-server-friend-search
+        /></label>
+        <div
+          class="server-share-list"
+          data-server-friends-list
+        >
+          <p>Cargando amigos…</p>
+        </div>
+      </section>
+      <section>
+        <header>
+          <div>
+            <strong>Permisos concedidos</strong
+            ><small>Puedes retirar el acceso en cualquier momento</small>
+          </div>
+        </header>
+        <div
+          class="server-share-list"
+          data-server-permissions-list
+        >
+          <p>Todavía no hay invitaciones.</p>
+        </div>
+      </section>
+    </div>
+    <p
+      class="server-form-status"
+      role="status"
+      data-server-share-status
+    ></p>
+    <footer>
+      <button
+        type="button"
+        data-server-share-close
+      >
+        Cerrar
+      </button>
+    </footer>
+  </div>
+</dialog>

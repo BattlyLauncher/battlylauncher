@@ -1,0 +1,140 @@
+.nivix-help {
+  width: min(560px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  overflow: auto;
+  border: 1px solid #34475d;
+  border-radius: 18px;
+  color: #f3f6fc;
+  background: #101927;
+  box-shadow: 0 24px 80px #0009;
+}
+.nivix-help::backdrop {
+  background: #030913b8;
+  backdrop-filter: blur(6px);
+}
+.nivix-help > header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  border-bottom: 1px solid #29394b;
+}
+.nivix-help > header img {
+  flex: 0 0 72px;
+  object-fit: contain;
+}
+.nivix-help > header > div {
+  min-width: 0;
+  flex: 1;
+}
+.nivix-help > header span {
+  color: #ad95ef;
+  font-size: 12px;
+  font-weight: 600;
+}
+.nivix-help h2 {
+  margin: 4px 0 8px;
+  color: #fff;
+  font-size: 23px;
+  line-height: 1.2;
+}
+.nivix-help p {
+  margin: 0;
+  color: #b1c1d4;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.nivix-help button {
+  font: inherit;
+  cursor: pointer;
+}
+.nivix-help [data-help-close] {
+  align-self: flex-start;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #35465c;
+  border-radius: 9px;
+  color: #cfdaea;
+  background: #1c2a3b;
+  font-size: 23px;
+}
+.nivix-help-questions {
+  display: grid;
+  gap: 8px;
+  padding: 18px 24px;
+}
+.nivix-help-questions button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: 100%;
+  min-height: 50px;
+  padding: 13px 15px;
+  border: 1px solid #30435a;
+  border-radius: 10px;
+  color: #ecf2fc;
+  background: #192638;
+  text-align: start;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.nivix-help-questions button > span:last-child {
+  color: #b69bf8;
+  font-size: 18px;
+}
+.nivix-help-questions button:hover {
+  border-color: #9170d6;
+  background: #252c46;
+}
+.nivix-help button:focus-visible {
+  outline: 2px solid #8acbff;
+  outline-offset: 3px;
+}
+.nivix-help > footer {
+  padding: 0 24px 22px;
+}
+.nivix-help [data-help-full] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #675098;
+  border-radius: 10px;
+  color: #f5eeff;
+  background: #33274d;
+  font-size: 13px;
+}
+.home-tutorial-card footer {
+  flex-wrap: wrap;
+}
+.home-tutorial-card [data-guided-tutorial-help] {
+  margin-inline-end: auto;
+}
+@media (max-height: 620px) {
+  .nivix-help > header {
+    padding: 16px 20px;
+  }
+  .nivix-help-questions {
+    padding: 14px 20px;
+  }
+  .nivix-help-questions button {
+    min-height: 42px;
+    padding: 10px 13px;
+  }
+}
+@media (max-width: 500px) {
+  .nivix-help > header {
+    gap: 10px;
+  }
+  .nivix-help > header img {
+    flex-basis: 48px;
+    width: 48px;
+    height: 56px;
+  }
+  .nivix-help h2 {
+    font-size: 20px;
+  }
+}

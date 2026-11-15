@@ -1,0 +1,881 @@
+.mybattly-panel {
+  --my-accent: var(--theme-color, #4a8dff);
+  --my-accent-hover: var(--theme-color-hover, #66a5ff);
+  --my-surface: rgb(11 16 27 / 88%);
+  --my-surface-solid: #0d1421;
+  --my-border: rgb(255 255 255 / 9%);
+  --my-muted: #9aa9bd;
+  overflow: auto;
+  color: #f6f9ff;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--my-accent) 55%, transparent) transparent;
+}
+
+.mybattly-panel *,
+.mybattly-panel *::before,
+.mybattly-panel *::after {
+  box-sizing: border-box;
+}
+
+.mybattly-panel button,
+.mybattly-panel select {
+  font: inherit;
+}
+
+.b-mybattly-main-panel {
+  display: block;
+  width: min(1400px, calc(100% - 56px));
+  max-height: none;
+  margin: 68px auto 48px;
+}
+
+.b-mybattly-main-panel-welcome {
+  position: relative;
+  display: grid;
+  min-height: 320px;
+  padding: 42px 48px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--my-accent) 28%, var(--my-border));
+  border-radius: 30px;
+  background: linear-gradient(
+    105deg,
+    rgb(12 19 33 / 98%) 0%,
+    rgb(13 23 40 / 94%) 52%,
+    color-mix(in srgb, var(--my-accent) 18%, #0c1424) 100%
+  );
+  box-shadow:
+    0 30px 80px rgb(0 0 0 / 28%),
+    inset 0 1px rgb(255 255 255 / 6%);
+  grid-template-columns: minmax(420px, 1fr) minmax(320px, 0.74fr);
+  isolation: isolate;
+}
+
+.b-mybattly-main-panel-welcome::before {
+  position: absolute;
+  z-index: -1;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--my-accent) 28%, transparent);
+  content: '';
+  filter: blur(90px);
+  inset: -165px auto auto -90px;
+}
+
+.b-mybattly-main-panel-welcome::after {
+  position: absolute;
+  z-index: -1;
+  width: 46%;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 3%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 3%) 1px, transparent 1px);
+  background-size: 28px 28px;
+  content: '';
+  inset: 0 0 0 auto;
+  mask-image: linear-gradient(90deg, transparent, #000);
+}
+
+.b-mybattly-welcome-panel-left {
+  position: relative;
+  z-index: 2;
+  align-self: center;
+}
+
+.b-mybattly-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 36px;
+  margin-bottom: 25px;
+  padding: 0 14px;
+  border: 1px solid rgb(255 255 255 / 11%);
+  border-radius: 11px;
+  color: #dbe6f7;
+  background: rgb(255 255 255 / 5%);
+  cursor: pointer;
+  transition: 180ms ease;
+}
+
+.b-mybattly-back:hover,
+.b-mybattly-back:focus-visible {
+  border-color: color-mix(in srgb, var(--my-accent) 70%, white 8%);
+  color: #fff;
+  background: color-mix(in srgb, var(--my-accent) 14%, transparent);
+  transform: translateX(-3px);
+}
+
+.b-mybattly-eyebrow,
+.b-mybattly-kicker {
+  color: color-mix(in srgb, var(--my-accent) 76%, white 24%);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.17em;
+}
+
+.b-mybattly-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.b-mybattly-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--my-accent);
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--my-accent) 14%, transparent),
+    0 0 18px var(--my-accent);
+}
+
+.b-mybattly-welcome-panel-left h1 {
+  margin: 12px 0 13px;
+  color: #fff;
+  font-size: clamp(38px, 4.2vw, 62px);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+.b-mybattly-welcome-panel-left h1 span {
+  color: color-mix(in srgb, var(--my-accent) 74%, white 26%);
+}
+
+.b-mybattly-hero-copy {
+  max-width: 570px;
+  margin: 0;
+  color: var(--my-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.b-mybattly-hero-copy strong {
+  color: #fff;
+}
+
+.b-mybattly-hero-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.b-mybattly-primary-action,
+.b-mybattly-secondary-action,
+.b-mybattly-load-panel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 43px;
+  padding: 0 18px;
+  border-radius: 13px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.b-mybattly-primary-action,
+.b-mybattly-load-panel {
+  border: 1px solid color-mix(in srgb, var(--my-accent) 75%, white 14%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--my-accent) 86%, white 14%),
+    var(--my-accent)
+  );
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--my-accent) 25%, transparent);
+}
+
+.b-mybattly-secondary-action {
+  border: 1px solid rgb(255 255 255 / 12%);
+  background: rgb(255 255 255 / 6%);
+}
+
+.b-mybattly-primary-action:hover,
+.b-mybattly-secondary-action:hover,
+.b-mybattly-load-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--my-accent) 30%, transparent);
+}
+
+.b-mybattly-profile-orbit {
+  position: relative;
+  display: grid;
+  min-height: 235px;
+  place-items: center;
+}
+
+.b-mybattly-profile-mark {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 126px;
+  height: 126px;
+  border: 1px solid color-mix(in srgb, var(--my-accent) 55%, white 12%);
+  border-radius: 37px;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--my-accent) 88%, white 12%),
+    color-mix(in srgb, var(--my-accent) 56%, #09111e)
+  );
+  box-shadow:
+    0 24px 55px color-mix(in srgb, var(--my-accent) 32%, transparent),
+    inset 0 1px rgb(255 255 255 / 35%);
+  place-content: center;
+  transform: rotate(-7deg);
+}
+
+.b-mybattly-profile-mark span {
+  margin-bottom: -5px;
+  color: rgb(255 255 255 / 72%);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-align: center;
+}
+
+.b-mybattly-profile-mark strong {
+  color: #fff;
+  font-size: 64px;
+  line-height: 1;
+}
+
+.b-mybattly-orbit-ring {
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--my-accent) 20%, transparent);
+  border-radius: 50%;
+}
+
+.b-mybattly-orbit-ring-one {
+  width: 220px;
+  height: 220px;
+}
+.b-mybattly-orbit-ring-two {
+  width: 305px;
+  height: 305px;
+  border-style: dashed;
+  animation: mybattly-spin 35s linear infinite;
+}
+
+.b-mybattly-orbit-chip {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 70px;
+  padding: 10px 13px;
+  border: 1px solid rgb(255 255 255 / 11%);
+  border-radius: 14px;
+  color: #fff;
+  background: rgb(10 16 28 / 88%);
+  box-shadow: 0 14px 30px rgb(0 0 0 / 25%);
+  font-size: 13px;
+  font-weight: 800;
+  backdrop-filter: blur(14px);
+}
+
+.b-mybattly-orbit-chip i {
+  color: color-mix(in srgb, var(--my-accent) 72%, white 28%);
+}
+.b-mybattly-orbit-chip-mods {
+  top: 14%;
+  right: 5%;
+}
+.b-mybattly-orbit-chip-worlds {
+  bottom: 11%;
+  left: 4%;
+}
+.b-mybattly-orbit-chip-packs {
+  right: 10%;
+  bottom: 4%;
+}
+
+.b-mybattly-overview {
+  display: grid;
+  gap: 13px;
+  margin: 15px 0 30px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.b-mybattly-overview-card {
+  position: relative;
+  display: grid;
+  min-height: 100px;
+  padding: 19px;
+  overflow: hidden;
+  border: 1px solid var(--my-border);
+  border-radius: 19px;
+  background: linear-gradient(145deg, rgb(255 255 255 / 6%), rgb(255 255 255 / 2%));
+  grid-template-columns: 45px 1fr;
+  grid-template-rows: 1fr auto;
+  column-gap: 13px;
+  transition: 180ms ease;
+}
+
+.b-mybattly-overview-card:hover {
+  border-color: color-mix(in srgb, var(--my-accent) 35%, var(--my-border));
+  transform: translateY(-2px);
+}
+.b-mybattly-overview-icon {
+  display: grid;
+  width: 45px;
+  height: 45px;
+  border-radius: 14px;
+  color: color-mix(in srgb, var(--my-accent) 72%, white 28%);
+  background: color-mix(in srgb, var(--my-accent) 14%, transparent);
+  place-items: center;
+}
+.b-mybattly-overview-card > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+.b-mybattly-overview-card strong {
+  color: #fff;
+  font-size: 25px;
+  line-height: 1;
+}
+.b-mybattly-overview-card div span {
+  margin-top: 5px;
+  color: #d7e0ec;
+  font-size: 12px;
+  font-weight: 700;
+}
+.b-mybattly-overview-card small {
+  align-self: end;
+  color: #77869a;
+  font-size: 10px;
+  grid-column: 2;
+}
+
+.b-mybattly-workspace {
+  display: grid;
+  align-items: start;
+  gap: 22px;
+  grid-template-columns: minmax(0, 1fr) 340px;
+}
+
+.b-mybattly-main-panel-left,
+.b-mybattly-messages {
+  width: auto;
+  height: auto;
+  min-width: 0;
+  overflow: visible;
+}
+.b-mybattly-main-panel-left {
+  display: grid;
+  gap: 16px;
+}
+.b-mybattly-messages {
+  display: grid;
+  gap: 16px;
+  position: sticky;
+  top: 22px;
+}
+
+.b-mybattly-library-heading,
+.b-mybattly-aside-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.b-mybattly-library-heading {
+  padding: 4px 4px 6px;
+}
+.b-mybattly-library-heading h2,
+.b-mybattly-aside-heading h2 {
+  margin: 4px 0 0;
+  color: #fff;
+  font-size: 23px;
+  line-height: 1.15;
+}
+.b-mybattly-library-heading p {
+  margin: 7px 0 0;
+  color: var(--my-muted);
+  font-size: 12px;
+}
+
+.b-mybattly-panel-container {
+  position: relative;
+  min-height: 218px;
+  overflow: hidden;
+  border: 1px solid var(--my-border);
+  border-radius: 22px;
+  background: var(--my-surface);
+  box-shadow: 0 18px 55px rgb(0 0 0 / 16%);
+}
+
+.b-mybattly-content-panel {
+  min-height: 218px;
+  padding: 22px;
+  transition: 400ms ease;
+}
+.b-mybattly-blur-panel {
+  filter: blur(8px) saturate(0.7);
+  pointer-events: none;
+  transform: scale(1.015);
+}
+.b-mybattly-panel-overlay {
+  position: absolute;
+  z-index: 5;
+  display: grid;
+  background: linear-gradient(125deg, rgb(7 12 21 / 82%), rgb(9 16 28 / 62%));
+  inset: 0;
+  place-items: center;
+  backdrop-filter: blur(3px);
+}
+.b-mybattly-panel-overlay > div {
+  display: grid;
+  justify-items: center;
+  max-width: 390px;
+  padding: 25px;
+  text-align: center;
+}
+.b-mybattly-panel-overlay > div > i {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 11px;
+  border: 1px solid color-mix(in srgb, var(--my-accent) 32%, transparent);
+  border-radius: 15px;
+  color: color-mix(in srgb, var(--my-accent) 75%, white 25%);
+  background: color-mix(in srgb, var(--my-accent) 13%, transparent);
+  place-items: center;
+}
+.b-mybattly-panel-overlay strong {
+  color: #fff;
+  font-size: 17px;
+}
+.b-mybattly-panel-overlay span {
+  margin: 6px 0 15px;
+  color: var(--my-muted);
+  font-size: 12px;
+}
+.b-mybattly-load-panel {
+  min-height: 37px;
+  padding: 0 16px;
+  font-size: 12px;
+}
+.b-mybattly-panel-overlay[hidden] {
+  display: none;
+}
+.b-mybattly-panel-overlay.b-mybattly-overlay-leaving {
+  animation: mybattly-reveal 500ms ease forwards;
+  pointer-events: none;
+}
+
+.b-mybattly-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 13px;
+}
+.b-mybattly-section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.b-mybattly-section-title > i {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  border-radius: 12px;
+  color: color-mix(in srgb, var(--my-accent) 72%, white 28%);
+  background: color-mix(in srgb, var(--my-accent) 13%, transparent);
+  place-items: center;
+}
+.b-mybattly-section-title h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 16px;
+}
+.b-mybattly-section-title p {
+  margin: 3px 0 0;
+  color: var(--my-muted);
+  font-size: 11px;
+}
+.b-mybattly-table-scroll {
+  overflow-x: auto;
+}
+.mybattly-panel table {
+  width: 100%;
+  border: 0;
+  border-collapse: collapse;
+  color: #eaf0f9;
+  background: transparent;
+}
+.mybattly-panel th {
+  padding: 10px 12px;
+  border: 0;
+  color: #69798e;
+  background: transparent;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.mybattly-panel td {
+  padding: 11px 12px;
+  border: 0;
+  border-top: 1px solid rgb(255 255 255 / 6%);
+  color: #dfe7f2;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+.mybattly-panel td:first-child {
+  width: 48px;
+  border-right: 0;
+}
+.mybattly-panel td img {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+.mybattly-panel tbody tr {
+  transition: background 150ms ease;
+}
+.mybattly-panel tbody tr:hover {
+  background: rgb(255 255 255 / 3%);
+}
+.mybattly-panel .tag {
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 99px;
+  font-size: 9px;
+  font-weight: 800;
+}
+.mybattly-panel .tag.is-success {
+  color: #7bf2b0;
+  background: rgb(51 211 125 / 12%);
+}
+.mybattly-panel .tag.is-warning {
+  color: #ffc978;
+  background: rgb(255 180 62 / 12%);
+}
+.b-mybattly-empty {
+  padding: 30px !important;
+  color: var(--my-muted) !important;
+  text-align: center !important;
+}
+.b-mybattly-table-actions {
+  width: 1%;
+  white-space: nowrap;
+}
+.b-mybattly-actions-td {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+}
+.b-mybattly-icon-action {
+  display: inline-grid;
+  width: 31px;
+  height: 31px;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 9px;
+  color: #aebacd;
+  background: rgb(255 255 255 / 4%);
+  cursor: pointer;
+  place-items: center;
+  transition: 150ms ease;
+}
+.b-mybattly-icon-action:hover {
+  border-color: color-mix(in srgb, var(--my-accent) 42%, transparent);
+  color: #fff;
+  background: color-mix(in srgb, var(--my-accent) 14%, transparent);
+}
+.mybattly-panel td .button {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 9px !important;
+  color: #dce6f3 !important;
+  background: rgb(255 255 255 / 4%) !important;
+  font-size: 10px !important;
+  cursor: pointer;
+}
+.mybattly-panel td .button.is-danger {
+  color: #ff9ca9 !important;
+}
+.mybattly-panel td .button:hover {
+  border-color: color-mix(in srgb, var(--my-accent) 40%, transparent);
+  background: color-mix(in srgb, var(--my-accent) 12%, transparent) !important;
+}
+
+.b-mybattly-main-panel-stats,
+.b-mybattly-main-panel-msg,
+.b-mybattly-main-panel-recent-worlds {
+  padding: 22px;
+  border: 1px solid var(--my-border);
+  border-radius: 22px;
+  background: var(--my-surface);
+  box-shadow: 0 18px 55px rgb(0 0 0 / 15%);
+}
+.b-mybattly-aside-heading {
+  display: block;
+  margin-bottom: 17px;
+}
+.b-mybattly-aside-heading h2 {
+  font-size: 18px;
+}
+.b-mybattly-stats-grid {
+  display: grid;
+  gap: 9px;
+}
+.b-mybattly-stat-item {
+  display: grid;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgb(255 255 255 / 6%);
+  border-radius: 15px;
+  background: rgb(255 255 255 / 3%);
+  grid-template-columns: 38px 1fr;
+}
+.b-mybattly-stat-item > span {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: color-mix(in srgb, var(--my-accent) 74%, white 26%);
+  background: color-mix(in srgb, var(--my-accent) 12%, transparent);
+  place-items: center;
+}
+.b-mybattly-stat-item p {
+  margin: 0 0 3px;
+  color: #e7edf7;
+  font-size: 11px;
+  font-weight: 700;
+}
+.b-mybattly-stat-item strong {
+  display: block;
+  overflow: hidden;
+  color: var(--my-muted) !important;
+  font-size: 10px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.b-mybattly-notifications-list {
+  display: grid;
+  gap: 9px;
+}
+.b-mybattly-notification-message {
+  display: grid;
+  gap: 11px;
+  padding: 13px;
+  border: 1px solid rgb(255 255 255 / 6%);
+  border-radius: 15px;
+  background: rgb(255 255 255 / 3%);
+  grid-template-columns: 38px 1fr;
+}
+.b-mybattly-notification-icon,
+.b-mybattly-notification-message > h1:first-child {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  margin: 0;
+  border-radius: 12px;
+  color: color-mix(in srgb, var(--my-accent) 75%, white 25%);
+  background: color-mix(in srgb, var(--my-accent) 12%, transparent);
+  font-size: 14px;
+  place-items: center;
+}
+.b-mybattly-notification-message h3,
+.b-mybattly-notification-message h1 {
+  margin: 1px 0 4px;
+  color: #f5f8fd;
+  font-size: 12px;
+  font-weight: 750;
+}
+.b-mybattly-notification-message p {
+  margin: 0;
+  color: var(--my-muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+.b-mybattly-notification-message[data-mybattly-social-notification] {
+  grid-template-columns: 1fr;
+}
+.b-mybattly-notification-message[data-mybattly-social-notification] > h1 {
+  display: block;
+  width: auto;
+  height: auto;
+  color: #f5f8fd;
+  background: none;
+}
+.b-mybattly-hr {
+  display: none;
+}
+.b-mybattly-user-profile-last-register-actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 9px;
+}
+.b-mybattly-user-profile-last-register-actions .button {
+  min-height: 29px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--my-accent) 35%, transparent);
+  border-radius: 8px !important;
+  color: #fff !important;
+  background: color-mix(in srgb, var(--my-accent) 13%, transparent) !important;
+  font-size: 9px !important;
+  font-weight: 700;
+}
+.b-mybattly-main-panel-recent-worlds ul {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.b-mybattly-main-panel-recent-worlds li {
+  position: relative;
+  min-width: 0;
+  padding: 11px 12px 11px 35px;
+  border-radius: 13px;
+  background: rgb(255 255 255 / 3%);
+}
+.b-mybattly-main-panel-recent-worlds li::before {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 2px solid color-mix(in srgb, var(--my-accent) 72%, white 28%);
+  border-radius: 2px;
+  content: '';
+  left: 14px;
+  top: 16px;
+  transform: rotate(45deg);
+}
+.b-mybattly-main-panel-recent-worlds p {
+  overflow: hidden;
+  margin: 0;
+  color: #eaf0f8 !important;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.b-mybattly-main-panel-recent-worlds p + p {
+  margin-top: 3px;
+  color: #718197 !important;
+  font-size: 9px;
+}
+
+.mybattly-panel[data-state='loading'] .b-mybattly-main-panel {
+  opacity: 0.72;
+}
+.mybattly-panel[data-state='loading'] .b-mybattly-live-dot {
+  animation: mybattly-pulse 1s ease infinite;
+}
+
+@keyframes mybattly-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes mybattly-pulse {
+  50% {
+    opacity: 0.35;
+    transform: scale(0.7);
+  }
+}
+@keyframes mybattly-reveal {
+  to {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+}
+
+@media (max-width: 1100px) {
+  .b-mybattly-main-panel {
+    width: min(100% - 34px, 1100px);
+  }
+  .b-mybattly-main-panel-welcome {
+    padding: 36px;
+    grid-template-columns: 1fr 300px;
+  }
+  .b-mybattly-workspace {
+    grid-template-columns: minmax(0, 1fr) 290px;
+  }
+  .b-mybattly-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 820px) {
+  .b-mybattly-main-panel-welcome {
+    grid-template-columns: 1fr;
+  }
+  .b-mybattly-profile-orbit {
+    display: none;
+  }
+  .b-mybattly-workspace {
+    grid-template-columns: 1fr;
+  }
+  .b-mybattly-messages {
+    position: static;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .b-mybattly-main-panel-stats {
+    grid-column: 1 / -1;
+  }
+  .b-mybattly-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .b-mybattly-orbit-ring-two,
+  .b-mybattly-live-dot {
+    animation: none;
+  }
+}
+
+/* Override inherited legacy flex sizing only inside MyBattly. */
+.mybattly-panel .b-mybattly-stats-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-content: stretch;
+  width: 100%;
+}
+.mybattly-panel .b-mybattly-stat-item {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  text-align: left;
+}
+.mybattly-panel .b-mybattly-stat-item > div {
+  min-width: 0;
+}
+.mybattly-panel .b-mybattly-profile-mark img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+.mybattly-panel .b-mybattly-panel-container {
+  border-radius: 22px !important;
+}
+.mybattly-panel .b-mybattly-main-panel-welcome {
+  min-height: 300px;
+  padding: 28px 40px;
+}
+.mybattly-panel .b-mybattly-welcome-panel-left h1 {
+  font-size: clamp(34px, 3.7vw, 50px);
+}
+.mybattly-panel .b-mybattly-back {
+  margin-bottom: 16px;
+}
+.mybattly-panel .b-mybattly-content-panel {
+  width: 100%;
+}

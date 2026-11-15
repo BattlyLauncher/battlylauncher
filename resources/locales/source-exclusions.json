@@ -1,0 +1,542 @@
+[
+  {
+    "file": "src/main/accounts/ban-window.ts",
+    "text": "Battly · {0}",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/main/index.ts",
+    "text": "Battly · {0}",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/main/index.ts",
+    "text": "[LabyMod] {0}",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/main/index.ts",
+    "text": "[BattlyWorlds/INFO] LAN adapter attached for the joined room",
+    "reason": "Raw launch log; original diagnostics are preserved"
+  },
+  {
+    "file": "src/main/index.ts",
+    "text": "Battly - {0}",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/main/index.ts",
+    "text": "[BattlyWorlds/INFO] LAN adapter attached for the joined room",
+    "reason": "Raw launch log; original diagnostics are preserved"
+  },
+  {
+    "file": "src/main/index.ts",
+    "text": "[servidor] {0}:{1}",
+    "reason": "Raw launch log; original diagnostics are preserved"
+  },
+  {
+    "file": "src/main/minecraft/isolated-core-adapter.ts",
+    "text": "[Battly] Minecraft preparation cancelled",
+    "reason": "Raw launch log; original diagnostics are preserved"
+  },
+  {
+    "file": "src/main/minecraft/legacy-game-options.ts",
+    "text": "[Battly/INFO] Minecraft 1.7 render distance limited to 16 chunks for compatibility",
+    "reason": "Raw launch log; original diagnostics are preserved"
+  },
+  {
+    "file": "src/main/minecraft/mesa-recovery-adapter.ts",
+    "text": "[Battly] {0}",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/main/minecraft/mesa-runtime-service.ts",
+    "text": "[Battly] Mesa3D: {0}",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/main/minecraft/minecraft-java-core-adapter.ts",
+    "text": "[NeoForge] Instalador {0} ya verificado",
+    "reason": "Raw launch log; original diagnostics are preserved"
+  },
+  {
+    "file": "src/main/minecraft/minecraft-java-core-adapter.ts",
+    "text": "[NeoForge] Descargando instalador oficial {0}",
+    "reason": "Raw launch log; original diagnostics are preserved"
+  },
+  {
+    "file": "src/main/minecraft/minecraft-java-core-adapter.ts",
+    "text": "[NeoForge] Instalador verificado ({0} MB)",
+    "reason": "Raw launch log; original diagnostics are preserved"
+  },
+  {
+    "file": "src/main/minecraft/minecraft-java-core-adapter.ts",
+    "text": "[error] {0}",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/main/minecraft/minecraft-java-core-adapter.ts",
+    "text": "[error] {0}",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/main/minecraft/minecraft-launcher-core-adapter.ts",
+    "text": "[LabyMod] {0}",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/main/minecraft/minecraft-launcher-core-adapter.ts",
+    "text": "[Forge] Cliente parcheado {0} verificado",
+    "reason": "Raw launch log; original diagnostics are preserved"
+  },
+  {
+    "file": "src/main/minecraft/minecraft-launcher-core-adapter.ts",
+    "text": "[Battly] Reparada la incompatibilidad de inicio de {0}. Copia original: {1}",
+    "reason": "Raw launch log; original diagnostics are preserved"
+  },
+  {
+    "file": "src/main/minecraft/optifine-installer.ts",
+    "text": "[OptiFine] {0} instalado",
+    "reason": "Raw launch log; original diagnostics are preserved"
+  },
+  {
+    "file": "src/main/minecraft/prepare-launch-java.ts",
+    "text": "[Battly] {0}",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/main/minecraft/prepare-launch-java.ts",
+    "text": "[Battly] {0}",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/main/mods/modrinth-client.ts",
+    "text": "gallery description",
+    "reason": "Internal validation field identifier"
+  },
+  {
+    "file": "src/main/mods/modrinth-client.ts",
+    "text": "gallery title",
+    "reason": "Internal validation field identifier"
+  },
+  {
+    "file": "src/main/music/music-service.ts",
+    "text": "song title",
+    "reason": "Internal validation field identifier"
+  },
+  {
+    "file": "src/main/music/music-service.ts",
+    "text": "playlist description",
+    "reason": "Internal validation field identifier"
+  },
+  {
+    "file": "src/main/social/social-realtime-service.ts",
+    "text": "Pong",
+    "reason": "Socket heartbeat protocol response"
+  },
+  {
+    "file": "src/renderer/index.ts",
+    "text": "sandbox=\"allow-same-origin allow-scripts allow-popups allow-forms\"",
+    "reason": "DOM syntax, class, selector or unit"
+  },
+  {
+    "file": "src/renderer/index.ts",
+    "text": " active",
+    "reason": "DOM syntax, class, selector or unit"
+  },
+  {
+    "file": "src/renderer/index.ts",
+    "text": " active",
+    "reason": "DOM syntax, class, selector or unit"
+  },
+  {
+    "file": "src/renderer/index.ts",
+    "text": "Battly × Google Drive",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/renderer/index.ts",
+    "text": "Microsoft",
+    "reason": "Product name or established region abbreviation"
+  },
+  {
+    "file": "src/renderer/index.ts",
+    "text": "M9 5l7 7-7 7",
+    "reason": "DOM syntax, class, selector or unit"
+  },
+  {
+    "file": "src/renderer/index.ts",
+    "text": "Battly AutoFix",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/renderer/index.ts",
+    "text": "0 dB",
+    "reason": "DOM syntax, class, selector or unit"
+  },
+  {
+    "file": "src/renderer/panels/instance-content.ts",
+    "text": "{0} Archivar",
+    "reason": "Generated icon followed by a separately translated text node"
+  },
+  {
+    "file": "src/renderer/panels/servers-panel.ts",
+    "text": "{0}  –  {1} ms",
+    "reason": "Server identifier and measured latency; no translatable words"
+  },
+  {
+    "file": "src/renderer/panels/servers-panel.ts",
+    "text": "LATAM",
+    "reason": "Product name or established region abbreviation"
+  },
+  {
+    "file": "src/renderer/panels/servers-panel.ts",
+    "text": "sandbox=\"allow-same-origin allow-scripts allow-popups allow-forms\"",
+    "reason": "DOM syntax, class, selector or unit"
+  },
+  {
+    "file": "src/renderer/social/worlds-connection-dialog.ts",
+    "text": "[data-launch] span",
+    "reason": "DOM syntax, class, selector or unit"
+  },
+  {
+    "file": "src/renderer/ui/crash-repair-progress.ts",
+    "text": "Battly AutoFix",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/renderer/ui/error-reporter.ts",
+    "text": "footer [data-close]",
+    "reason": "DOM syntax, class, selector or unit"
+  },
+  {
+    "file": "src/renderer/ui/laby-update-dialog.ts",
+    "text": "LabyMod",
+    "reason": "Product name or established region abbreviation"
+  },
+  {
+    "file": "src/renderer/ui/release-welcome.ts",
+    "text": "Battly 3.1",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/renderer/ui/release-welcome.ts",
+    "text": "nodownload noremoteplayback",
+    "reason": "DOM syntax, class, selector or unit"
+  },
+  {
+    "file": "src/renderer/ui/release-welcome.ts",
+    "text": "Battly 3.1",
+    "reason": "Product name or diagnostic envelope; its dynamic content is translated separately"
+  },
+  {
+    "file": "src/main/index.ts",
+    "text": "Invalid Battly Client build",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/index.ts",
+    "text": "Close Minecraft before updating Battly Client",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Invalid Battly Client file path",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Invalid Battly Client target",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Battly Client catalog HTTP {0}",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Battly Client catalog too large",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Invalid Battly Client installation root",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Battly Client installation is already running",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Battly Client build is no longer available",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Invalid Battly Client installation manifest",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Missing library checksum",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Invalid library URL",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Battly Client library download failed",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Library too large",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Missing library body",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Battly Client library checksum mismatch",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Battly Client built-in checksum mismatch",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Invalid Battly Client profile",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/custom-client-installer.ts",
+    "text": "Client download size mismatch",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/custom-client-installer.ts",
+    "text": "Client download integrity check failed",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/shared/minecraft/battly-client-contract.ts",
+    "text": "Invalid Battly Client build",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/shared/minecraft/battly-client-contract.ts",
+    "text": "Invalid Battly Client catalog",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/shared/minecraft/battly-client-contract.ts",
+    "text": "Duplicate Battly Client build",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/shared/minecraft/battly-client-contract.ts",
+    "text": "Invalid Battly Client metadata",
+    "reason": "Technical validation or integrity diagnostic. The download panel shows localized loading, retry and failure states; these details remain in diagnostics."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Invalid addon catalog",
+    "reason": "Technical addon-manifest validation diagnostic; the download panel presents a localized failure state."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Invalid addon path",
+    "reason": "Technical addon-manifest validation diagnostic; the download panel presents a localized failure state."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-service.ts",
+    "text": "Addon missing from pinned downloads",
+    "reason": "Technical addon-manifest validation diagnostic; the download panel presents a localized failure state."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-updates.ts",
+    "text": "Battly Client installation is already running",
+    "reason": "Concurrency diagnostic. The update dialog offers localized choices and disables immediate installation while a game is running."
+  },
+  {
+    "file": "src/main/minecraft/battly-client-updates.ts",
+    "text": "Close Minecraft before updating Battly Client",
+    "reason": "Concurrency diagnostic. The update dialog offers localized choices and disables immediate installation while a game is running."
+  },
+  {
+    "file": "src/renderer/ui/laby-update-dialog.ts",
+    "text": "Minecraft {0}\n{1} #{2} → {3} #{4}",
+    "reason": "Version metadata only: Minecraft proper name, numeric version/build tags and an arrow. No translatable prose."
+  },
+  {
+    "file": "src/main/minecraft/legacy-forge-libraries.ts",
+    "text": "MCLC_INVALID_LIBRARY: {0}",
+    "reason": "Machine-readable launch diagnostic with the failing library path; no user-facing prose."
+  },
+  {
+    "file": "src/main/minecraft/legacy-forge-libraries.ts",
+    "text": "MCLC_INVALID_FORGE_JAR: {0}",
+    "reason": "Machine-readable launch diagnostic with the failing library path; no user-facing prose."
+  },
+  {
+    "file": "src/shared/mods/mod-basket.ts",
+    "text": "Invalid mod basket",
+    "reason": "Technical IPC input validation for malformed requests. The basket shows localized compatibility issues or the existing localized operation failure message."
+  },
+  {
+    "file": "src/shared/mods/mod-basket.ts",
+    "text": "Invalid mod basket loader",
+    "reason": "Technical IPC input validation for malformed requests. The basket shows localized compatibility issues or the existing localized operation failure message."
+  },
+  {
+    "file": "src/main/mods/mod-basket-installer.ts",
+    "text": "limit",
+    "reason": "Internal bounded dependency graph diagnostic code, explicitly suppressed by the basket UI. The visible issue title and removal actions are localized."
+  },
+  {
+    "file": "src/main/mods/mod-basket-resolver.ts",
+    "text": "limit",
+    "reason": "Internal bounded dependency graph diagnostic code, explicitly suppressed by the basket UI. The visible issue title and removal actions are localized."
+  },
+  {
+    "file": "src/main/mods/mod-basket-resolver.ts",
+    "text": "cycle",
+    "reason": "Internal bounded dependency graph diagnostic code, explicitly suppressed by the basket UI. The visible issue title and removal actions are localized."
+  },
+  {
+    "file": "src/main/minecraft/launch-memory-preflight.ts",
+    "text": "[memory-preflight] {0}",
+    "reason": "Technical launch-log telemetry only; the memory preflight dialog and actionable instructions are translated separately in all ten locale packs."
+  },
+  {
+    "file": "src/main/minecraft/launch-memory-preflight.ts",
+    "text": "[memory-preflight] Could not open Windows advanced settings",
+    "reason": "Technical launch-log telemetry only; the memory preflight dialog and actionable instructions are translated separately in all ten locale packs."
+  },
+  {
+    "file": "bootstrap/runtime-config.cjs",
+    "text": "Invalid bootstrap configuration",
+    "reason": "Bootstrap integrity diagnostic before the locale service and renderer exist; malformed installer metadata is reported in startup diagnostics."
+  },
+  {
+    "file": "src/main/files/read-upload-file.ts",
+    "text": "Invalid upload file size limit",
+    "reason": "Internal programmer contract for a byte limit; never a user-facing validation message"
+  },
+  {
+    "file": "src/main/network/read-bounded-response.ts",
+    "text": "Invalid response size limit",
+    "reason": "Internal programmer contract for a byte limit; never a user-facing validation message"
+  },
+  {
+    "file": "src/main/servers/server-cpu-limit.ts",
+    "text": "Invalid server CPU limit",
+    "reason": "Internal CPU-limit validation or diagnostic. Runtime failures are caught and replaced with the translated CPU-limit error."
+  },
+  {
+    "file": "src/main/servers/server-cpu-limit.ts",
+    "text": "Server CPU limiting is not supported on this platform",
+    "reason": "Internal CPU-limit validation or diagnostic. Runtime failures are caught and replaced with the translated CPU-limit error."
+  },
+  {
+    "file": "src/main/servers/server-cpu-limit.ts",
+    "text": "Server CPU limiter timed out",
+    "reason": "Internal CPU-limit validation or diagnostic. Runtime failures are caught and replaced with the translated CPU-limit error."
+  },
+  {
+    "file": "src/main/servers/server-runtime-service.ts",
+    "text": "Server process has no PID",
+    "reason": "Internal CPU-limit validation or diagnostic. Runtime failures are caught and replaced with the translated CPU-limit error."
+  },
+  {
+    "file": "src/main/servers/server-runtime-service.ts",
+    "text": "Server exited before its CPU limit was applied",
+    "reason": "Internal CPU-limit validation or diagnostic. Runtime failures are caught and replaced with the translated CPU-limit error."
+  },
+  {
+    "file": "src/shared/servers/server-contract.ts",
+    "text": "Invalid maximum CPU",
+    "reason": "Internal CPU-limit validation or diagnostic. Runtime failures are caught and replaced with the translated CPU-limit error."
+  },
+  {
+    "file": "src/main/files/read-private-file-window.ts",
+    "text": "Invalid log window size",
+    "reason": "Internal bounded-reader validation; the settings panel replaces read failures with its translated error message."
+  },
+  {
+    "file": "src/main/files/read-private-file-window.ts",
+    "text": "Expected a regular log file",
+    "reason": "Internal bounded-reader validation; the settings panel replaces read failures with its translated error message."
+  },
+  {
+    "file": "src/main/files/read-private-file-window.ts",
+    "text": "Log file changed while opening",
+    "reason": "Internal bounded-reader validation; the settings panel replaces read failures with its translated error message."
+  },
+  {
+    "file": "src/shared/music/music-overlay.ts",
+    "text": "Invalid music overlay data",
+    "reason": "IPC shape validation; overlay actions show the translated generic error and never expose this technical message."
+  },
+  {
+    "file": "src/shared/music/music-overlay.ts",
+    "text": "Invalid music overlay number",
+    "reason": "IPC shape validation; overlay actions show the translated generic error and never expose this technical message."
+  },
+  {
+    "file": "src/shared/music/music-overlay.ts",
+    "text": "Invalid music overlay text",
+    "reason": "IPC shape validation; overlay actions show the translated generic error and never expose this technical message."
+  },
+  {
+    "file": "src/shared/music/music-overlay.ts",
+    "text": "Invalid music widget list",
+    "reason": "IPC shape validation; overlay actions show the translated generic error and never expose this technical message."
+  },
+  {
+    "file": "src/shared/music/music-overlay.ts",
+    "text": "Invalid music widget id",
+    "reason": "IPC shape validation; overlay actions show the translated generic error and never expose this technical message."
+  },
+  {
+    "file": "src/shared/music/music-overlay.ts",
+    "text": "Invalid music overlay queue",
+    "reason": "IPC shape validation; overlay actions show the translated generic error and never expose this technical message."
+  },
+  {
+    "file": "src/shared/music/music-overlay.ts",
+    "text": "Invalid music queue index",
+    "reason": "IPC shape validation; overlay actions show the translated generic error and never expose this technical message."
+  },
+  {
+    "file": "src/shared/music/music-overlay.ts",
+    "text": "Invalid music overlay command",
+    "reason": "IPC shape validation; overlay actions show the translated generic error and never expose this technical message."
+  },
+  {
+    "file": "src/main/music/music-overlay-focus.ts",
+    "text": "Music focus helper timed out",
+    "reason": "Internal focus helper error; caught locally and never shown to the user."
+  },
+  {
+    "file": "src/main/music/music-overlay-focus.ts",
+    "text": "Music focus helper closed",
+    "reason": "Internal focus helper error; caught locally and never shown to the user."
+  },
+  {
+    "file": "src/main/config/maintenance-window.ts",
+    "text": "Battly Launcher",
+    "reason": "Product name; kept unchanged in the maintenance window title."
+  }
+]

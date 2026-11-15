@@ -1,0 +1,77 @@
+.drive-original-modal {
+  box-sizing: border-box;
+  width: min(708px, calc(100vw - 40px));
+  max-height: calc(100vh - 65px);
+  overflow: auto;
+  padding: 28px;
+  border: 1px solid #354c64;
+  border-radius: 12px;
+  background: #101622;
+  color: #fff;
+  box-shadow: 0 20px 70px #0008;
+  text-align: left;
+}
+.drive-original-modal::backdrop {
+  background: #000c;
+}
+.drive-original-modal > img {
+  display: block;
+  width: 100%;
+  height: 170px;
+  object-fit: contain;
+  margin: 0 auto 24px;
+  background: #162638;
+  border-radius: 10px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.drive-original-modal h2 {
+  color: #fff !important;
+  font-size: 25px;
+  line-height: 1.3;
+  font-weight: 700;
+  margin: 18px 0;
+}
+.drive-original-modal p {
+  color: #c1d0e2 !important;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 14px 0 24px;
+}
+.drive-original-modal footer {
+  padding-top: 18px;
+  border-top: 1px solid #304358;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.drive-original-modal button {
+  border: 1px solid var(--theme-color, #3e8ed0);
+  background: transparent;
+  color: #fff;
+  border-radius: 11px;
+  padding: 11px 18px;
+  font: inherit;
+  cursor: pointer;
+}
+.drive-original-modal [data-drive-start] {
+  background: var(--theme-color, #3e8ed0);
+  min-width: 180px;
+}
+.drive-original-modal [data-drive-ignore] {
+  color: #dce8f5;
+  border-color: #40566d;
+  background: #213247;
+}
+.drive-original-modal button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+@media (max-height: 680px) {
+  .drive-original-modal > img {
+    height: 170px;
+  }
+  .drive-original-modal h2 {
+    font-size: 25px;
+  }
+}

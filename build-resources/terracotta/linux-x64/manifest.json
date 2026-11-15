@@ -1,0 +1,7 @@
+{
+  "version": "0.4.2-battly.1",
+  "upstreamCommit": "74364326038f9a33306777a56ed9bb6664799a1d",
+  "target": "x86_64-unknown-linux-musl",
+  "rust": "nightly-2026-08-18",
+  "sha256": "beb1ea6d0c11173718eba7894d2cd61259fe4e06f7e399999ca31e2e3b6d6cd6"
+}

@@ -1,0 +1,208 @@
+@font-face {
+  font-family: Poppins;
+  src: url('./legacy/assets/fonts/Poppins-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Poppins;
+  src: url('./legacy/assets/fonts/Poppins-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+  font-family: 'Battly Emoji', Poppins, 'Battly Emoji Sequences', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.startup-splash {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 15px;
+  background-color: #182b36;
+  background-image: url('./legacy/assets/images/background/background_updater.png');
+  background-position: center;
+  background-size: cover;
+  user-select: none;
+  -webkit-app-region: drag;
+}
+
+.startup-logo {
+  position: absolute;
+  top: 180px;
+  width: 140px;
+  height: 140px;
+  opacity: 0;
+  object-fit: contain;
+  transition:
+    top 1.5s,
+    opacity 220ms;
+  -webkit-user-drag: none;
+}
+
+.logo-visible .startup-logo {
+  opacity: 1;
+  animation: jackInTheBox 3s both;
+}
+
+.copy-visible .startup-logo {
+  top: 129px;
+}
+
+.startup-copy {
+  position: absolute;
+  top: 279px;
+  left: 0;
+  width: 100%;
+  color: #000;
+  text-align: center;
+  opacity: 0;
+}
+
+.copy-visible .startup-copy {
+  opacity: 1;
+}
+
+.copy-visible .startup-copy > * {
+  animation: flipInX 2s both;
+  backface-visibility: visible;
+}
+
+.startup-ending .startup-logo {
+  top: 180px;
+}
+.startup-ending .startup-copy h1,
+.startup-ending .startup-copy p {
+  animation: flipOutX 500ms both;
+}
+.startup-ending .startup-copy strong {
+  animation: none;
+}
+
+.startup-copy h1,
+.startup-copy p,
+.startup-copy strong {
+  position: absolute;
+  left: 0;
+  display: block;
+  width: 100%;
+  margin: 0;
+}
+
+.startup-copy h1 {
+  font-size: 25px;
+  line-height: 30px;
+  font-weight: 700;
+}
+
+.startup-copy p {
+  top: 47px;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 700;
+}
+
+.startup-copy strong {
+  top: 68px;
+  font-size: 18px;
+  line-height: 27px;
+}
+
+@keyframes jackInTheBox {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0.1) rotate(30deg);
+    transform: scale(0.1) rotate(30deg);
+    -webkit-transform-origin: center bottom;
+    transform-origin: center bottom;
+  }
+  50% {
+    -webkit-transform: rotate(-10deg);
+    transform: rotate(-10deg);
+  }
+  70% {
+    -webkit-transform: rotate(3deg);
+    transform: rotate(3deg);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}
+@keyframes flipInX {
+  0% {
+    -webkit-transform: perspective(400px) rotateX(90deg);
+    transform: perspective(400px) rotateX(90deg);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+    opacity: 0;
+  }
+  40% {
+    -webkit-transform: perspective(400px) rotateX(-20deg);
+    transform: perspective(400px) rotateX(-20deg);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+  }
+  60% {
+    -webkit-transform: perspective(400px) rotateX(10deg);
+    transform: perspective(400px) rotateX(10deg);
+    opacity: 1;
+  }
+  80% {
+    -webkit-transform: perspective(400px) rotateX(-5deg);
+    transform: perspective(400px) rotateX(-5deg);
+  }
+  to {
+    -webkit-transform: perspective(400px);
+    transform: perspective(400px);
+  }
+}
+@keyframes flipOutX {
+  0% {
+    -webkit-transform: perspective(400px);
+    transform: perspective(400px);
+  }
+  30% {
+    -webkit-transform: perspective(400px) rotateX(-20deg);
+    transform: perspective(400px) rotateX(-20deg);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: perspective(400px) rotateX(90deg);
+    transform: perspective(400px) rotateX(90deg);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .startup-logo,
+  .startup-copy,
+  .startup-copy > * {
+    animation: none !important;
+    transition: none;
+  }
+  .logo-visible .startup-logo,
+  .copy-visible .startup-copy {
+    opacity: 1;
+  }
+}

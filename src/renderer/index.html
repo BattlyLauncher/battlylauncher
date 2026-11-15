@@ -1,0 +1,5205 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <style id="startup-ui-guard">
+      body[data-startup-pending] > * {
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+    </style>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data: https: http://127.0.0.1:* http://localhost:*; media-src 'self' data: blob: battly-audio: https: http://127.0.0.1:* http://localhost:*; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self'; connect-src 'self' wss://root.battly.eu wss://root.battly.org; frame-src https://battlylauncher.com http://127.0.0.1:* http://localhost:*; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="stylesheet"
+      href="./assets/fontawesome/css/all.min.css"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap"
+    />
+    <title>Battly Launcher</title>
+  </head>
+  <body
+    data-startup-pending
+    data-account-access="required"
+    data-panel="login"
+    inert
+  >
+    <div
+      class="overlay"
+      aria-hidden="true"
+    ></div>
+    <video
+      id="video-background"
+      autoplay
+      muted
+      loop
+      aria-hidden="true"
+    ></video>
+    <div
+      class="dragbar"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="titlebar"
+      id="header-frame"
+      role="banner"
+    >
+      <div
+        class="title no-drag"
+        data-app-info
+        data-state="loading"
+      >
+        Battly Launcher 3.1.0
+        <span
+          class="header-edition"
+          data-header-edition
+        ></span>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center">
+        <p
+          id="disable-music"
+          data-background-music-toggle
+          role="button"
+          tabindex="0"
+          aria-label="Desactivar audio ambiental"
+          aria-pressed="false"
+        >
+          Desactivar música de fondo
+        </p>
+        <div
+          class="window-controls"
+          aria-label="Controles de ventana"
+        >
+          <button
+            id="minimize"
+            class="win-btn no-drag"
+            type="button"
+            data-window-action="minimize"
+            aria-label="Minimizar"
+          ></button>
+          <button
+            id="maximize"
+            class="win-btn no-drag"
+            type="button"
+            data-window-action="maximize"
+            aria-label="Maximizar"
+          ></button>
+          <button
+            id="close"
+            class="win-btn no-drag"
+            type="button"
+            data-window-action="close"
+            aria-label="Cerrar"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="preload-content"
+      id="loader-overlay"
+      data-panel-loader
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <div
+        class="diamond diamond-left"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="diamond diamond-right"
+        aria-hidden="true"
+      ></div>
+      <div class="logo">
+        <img
+          src="./assets/icon.png"
+          alt=""
+        />
+        <span
+          class="loader b-preload-spinner"
+          aria-hidden="true"
+        ></span>
+        <h1
+          id="loading-text"
+          data-panel-loader-text
+        >
+          Cargando Battly...
+        </h1>
+      </div>
+    </div>
+
+    <main class="panels">
+      <section
+        class="language-panel panel"
+        data-panel-view="language"
+        hidden
+      >
+        <video
+          class="language-background"
+          data-language-video
+          autoplay
+          muted
+          loop
+          playsinline
+          aria-hidden="true"
+        ></video>
+        <h1
+          id="language-title"
+          class="sr-only"
+        >
+          Elige tu idioma
+        </h1>
+        <div
+          class="language-options button-divs"
+          aria-labelledby="language-title"
+        >
+          <button
+            class="button is-info is-outlined is-medium"
+            type="button"
+            data-initial-language="es"
+          >
+            <img
+              data-language-flag="es"
+              alt=""
+            />
+            Español
+          </button>
+          <button
+            class="button is-info is-outlined is-medium"
+            type="button"
+            data-initial-language="en"
+          >
+            <img
+              data-language-flag="en"
+              alt=""
+            />
+            English
+          </button>
+        </div>
+        <p
+          class="onboarding-status language-status"
+          role="status"
+          data-language-status
+        ></p>
+      </section>
+
+      <section
+        class="welcome-panel panel login-content"
+        data-panel-view="welcome"
+        hidden
+      >
+        <div
+          class="welcome-card login-card"
+          data-welcome-step="intro"
+        >
+          <span class="welcome-step-label">Configuración inicial · 1 de 2</span>
+          <h1>¡Bienvenid@ a Battly!</h1>
+          <p>Vamos a realizar algunos pasos para que puedas configurar Battly al 100%.</p>
+          <img
+            data-welcome-logo
+            alt="Battly Launcher"
+          />
+          <button
+            class="welcome-next battly login-type-btn"
+            type="button"
+            data-welcome-next
+          >
+            Siguiente
+          </button>
+          <p
+            class="onboarding-status"
+            role="status"
+            data-welcome-status
+          ></p>
+        </div>
+        <div
+          class="welcome-card welcome-login-choice login-card"
+          data-welcome-step="account"
+          hidden
+        >
+          <span class="welcome-step-label">Configuración inicial · 2 de 2</span>
+          <h1>Iniciemos Sesión</h1>
+          <p>Elige un tipo de inicio de sesión para que puedas usar Battly.</p>
+          <div class="welcome-login-types login-type">
+            <button
+              class="battly login-type-btn"
+              type="button"
+              data-welcome-auth="battly"
+            >
+              <i
+                class="fa-solid fa-b"
+                aria-hidden="true"
+              ></i
+              ><strong>Battly</strong>
+              <small>Tu cuenta de Battly Launcher</small>
+            </button>
+            <button
+              class="microsoft login-type-btn"
+              type="button"
+              data-welcome-auth="microsoft"
+            >
+              <i
+                class="fa-brands fa-microsoft"
+                aria-hidden="true"
+              ></i
+              ><strong>Microsoft</strong>
+              <small>Usar una cuenta oficial de Minecraft</small>
+            </button>
+          </div>
+          <button
+            class="welcome-back"
+            type="button"
+            data-welcome-back
+          >
+            Volver
+          </button>
+          <p
+            class="onboarding-status"
+            role="status"
+            data-welcome-status
+          ></p>
+        </div>
+      </section>
+
+      <section
+        class="home-panel panel"
+        data-panel-view="home"
+        data-legacy-home
+        hidden
+      >
+        <div class="main-home-panel">
+          <div class="main-home-panel-left">
+            <div class="home-account-news-row">
+              <div
+                class="user-account-selector-container"
+                data-account-selector
+                hidden
+              >
+                <button
+                  class="user-account-trigger"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="account-dropdown"
+                  data-account-trigger
+                >
+                  <span
+                    class="user-avatar-container"
+                    aria-hidden="true"
+                  ></span>
+                  <span class="user-info-text"
+                    ><span
+                      class="user-name"
+                      data-current-username
+                    ></span
+                  ></span>
+                  <i
+                    class="fa-solid fa-chevron-right arrow-icon"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+                <div
+                  class="account-dropdown"
+                  id="account-dropdown"
+                  data-account-dropdown
+                  hidden
+                >
+                  <div class="account-list-header">Cuentas</div>
+                  <div
+                    class="account-list"
+                    data-account-list
+                  ></div>
+                  <div class="dropdown-divider"></div>
+                  <button
+                    class="b-dropdown-item"
+                    type="button"
+                    data-panel="settings"
+                  >
+                    <i
+                      class="fa-solid fa-user-gear"
+                      aria-hidden="true"
+                    ></i>
+                    <span>Gestionar cuentas</span>
+                  </button>
+                  <button
+                    class="b-dropdown-item"
+                    type="button"
+                    data-skin-open
+                  >
+                    <i
+                      class="fa-solid fa-palette"
+                      aria-hidden="true"
+                    ></i>
+                    <span>Personalizar Skin</span>
+                  </button>
+                </div>
+              </div>
+              <div class="main-home-panel-left-news-type">
+                <h1 class="main-home-panel-left-title">Últimas novedades de Battly</h1>
+                <label class="news-filter select is-small"
+                  ><span class="visually-hidden">Tipo de noticias</span
+                  ><select
+                    class="modified-select"
+                    aria-label="Tipo de noticias"
+                  >
+                    <option value="battly">Novedades de Battly</option>
+                    <option value="minecraft">Novedades de Minecraft</option>
+                  </select></label
+                >
+              </div>
+            </div>
+            <div
+              class="home-news home-news-list"
+              data-home-news-list
+              aria-live="polite"
+            ></div>
+            <div class="main-home-panel-left-online-friends">
+              <div class="main-home-panel-left-news-type">
+                <h2
+                  class="main-home-panel-left-title"
+                  id="friends-title"
+                >
+                  Amigos conectados
+                </h2>
+                <button
+                  class="button is-info is-small"
+                  type="button"
+                  data-panel="social"
+                >
+                  Ver amigos
+                  <i
+                    class="fa-solid fa-arrow-right"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+              </div>
+              <div
+                class="home-online-friends friends-list"
+                data-home-friends
+                aria-live="polite"
+              ></div>
+            </div>
+          </div>
+
+          <aside
+            class="main-home-panel-right home-column-status"
+            aria-labelledby="status-title"
+          >
+            <h2
+              class="main-home-panel-left-title"
+              id="status-title"
+            >
+              Estado
+            </h2>
+            <div
+              class="message is-warning status-warning"
+              data-home-warning
+            >
+              Battly Servers usa ahora .battlyservers.net. Crea tu servidor en el nuevo catálogo; su
+              dirección se conectará automáticamente cuando lo inicies.
+            </div>
+            <div class="status-servers server-grid">
+              <article class="server status-card">
+                <img
+                  class="server-img"
+                  src="./assets/icon.png"
+                  alt=""
+                /><span class="server-text"
+                  ><strong class="name">Battly API</strong
+                  ><small
+                    class="desc green online-text"
+                    data-home-api-status
+                    >Operativo</small
+                  ></span
+                >
+              </article>
+              <article class="server status-card">
+                <img
+                  class="server-img"
+                  src="./assets/icon.png"
+                  alt=""
+                /><span class="server-text"
+                  ><strong class="name">Battly WEB</strong
+                  ><small
+                    class="desc green online-text"
+                    data-home-web-status
+                    >Operativo</small
+                  ></span
+                >
+              </article>
+            </div>
+            <article class="status-servers-online-users status-card users-card">
+              <img
+                src="./assets/icon.png"
+                alt=""
+              /><strong data-home-online-users>16100 usuarios online</strong>
+            </article>
+            <article class="status-servers-playing-song status-card music-card">
+              <img
+                src="./assets/icons/music.gif"
+                alt=""
+              /><span
+                ><strong class="status-servers-playing-song-title">Reproduciendo ahora</strong
+                ><small class="status-servers-playing-song-name">Nada reproduciéndose</small></span
+              ><i
+                class="fa-solid fa-ellipsis"
+                aria-hidden="true"
+              ></i>
+            </article>
+          </aside>
+        </div>
+      </section>
+
+      <aside
+        class="home-tutorial-prompt"
+        data-home-tutorial-prompt
+      >
+        <img
+          class="tutorial-nivix"
+          src="./assets/nivix.png"
+          alt="Nivix"
+          width="56"
+          height="56"
+        />
+        <span
+          ><strong>Hay novedades en Battly</strong> Descubre las mejoras de instancias, música y
+          Worlds.</span
+        >
+        <button
+          type="button"
+          data-home-tutorial-start
+        >
+          Ver novedades
+        </button>
+        <button
+          type="button"
+          data-home-tutorial-dismiss
+          aria-label="No mostrar el tutorial"
+        >
+          ×
+        </button>
+      </aside>
+
+      <section
+        class="social-panel panel"
+        data-panel-view="social"
+        hidden
+      >
+        <div class="social-wrapper friends-container">
+          <header class="social-header friends-header">
+            <div class="friends-header-left">
+              <h1 class="friends-title">Battly <span class="friends-title-accent">Social</span></h1>
+              <p class="friends-subtitle">Conecta y juega con tus amigos</p>
+            </div>
+            <div class="social-header-actions friends-header-actions">
+              <button
+                class="btn-action btn-primary"
+                type="button"
+                data-worlds-open
+              >
+                <i
+                  class="fa-solid fa-earth-americas"
+                  aria-hidden="true"
+                ></i>
+                Jugar con amigos
+                <span
+                  data-worlds-count
+                  hidden
+                  >0</span
+                >
+              </button>
+              <button
+                class="btn-action btn-primary"
+                type="button"
+                data-social-add
+              >
+                <i class="fa-solid fa-user-plus"></i> Añadir amigo
+              </button>
+              <button
+                class="btn-action btn-secondary"
+                type="button"
+                data-social-requests
+              >
+                <i class="fa-solid fa-user-clock"></i> Solicitudes
+                <span data-social-request-count>0</span>
+              </button>
+
+              <button
+                class="btn-action btn-back"
+                type="button"
+                data-panel="home"
+              >
+                Volver
+              </button>
+            </div>
+          </header>
+          <div class="social-toolbar friends-toolbar">
+            <label class="friends-search-container"
+              ><i class="fa-solid fa-search"></i
+              ><input
+                class="friends-search-input"
+                data-social-filter
+                placeholder="Buscar entre tus amigos…"
+                maxlength="64"
+            /></label>
+            <span data-social-count>0 amigos</span>
+          </div>
+          <nav
+            class="social-filter-tabs filter-buttons"
+            aria-label="Filtrar amigos"
+          >
+            <button
+              type="button"
+              class="filter-btn active is-active"
+              data-social-scope="all"
+              aria-pressed="true"
+            >
+              Todos <span data-social-scope-count="all">0</span>
+            </button>
+            <button
+              class="filter-btn"
+              type="button"
+              data-social-scope="online"
+              aria-pressed="false"
+            >
+              En línea <span data-social-scope-count="online">0</span>
+            </button>
+            <button
+              class="filter-btn"
+              type="button"
+              data-social-scope="offline"
+              aria-pressed="false"
+            >
+              Desconectados <span data-social-scope-count="offline">0</span>
+            </button>
+            <button
+              class="filter-btn"
+              type="button"
+              data-social-scope="favorites"
+              aria-pressed="false"
+            >
+              Favoritos <span data-social-scope-count="favorites">0</span>
+            </button>
+          </nav>
+          <p
+            class="social-status"
+            role="status"
+            data-social-status
+          ></p>
+          <div class="friends-content">
+            <div
+              class="social-grid friends-grid"
+              data-social-grid
+            ></div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="mods-panel panel"
+        data-panel-view="mods"
+        hidden
+      >
+        <div class="b-mods-wrapper">
+          <header class="b-mods-title-container">
+            <div class="b-settings-footer-up">
+              <h1>Battly <span>Mods</span></h1>
+              <small>Con la tecnología de <strong>Modrinth</strong></small>
+            </div>
+            <div class="b-mods-header-actions">
+              <button
+                type="button"
+                data-mod-basket-open
+              >
+                <i
+                  class="fa-solid fa-basket-shopping"
+                  aria-hidden="true"
+                ></i>
+                <span>Cesta de mods</span> <span data-mod-basket-count>0</span>
+                <small class="mod-basket-beta">Beta</small>
+              </button>
+              <button
+                type="button"
+                data-local-mods-open
+              >
+                Mis mods
+              </button>
+              <button
+                type="button"
+                data-mrpack-import
+              >
+                Instalar ModPack
+              </button>
+              <button
+                type="button"
+                data-panel="home"
+              >
+                Volver
+              </button>
+            </div>
+          </header>
+          <form
+            id="mod-search-form"
+            class="b-mods-search-sort-container"
+            data-mod-search-form
+          >
+            <label class="b-mods-search-bar">
+              <span class="sr-only">Buscar contenido</span>
+              <input
+                name="query"
+                placeholder="Buscar mods, shaders, paquetes…"
+                maxlength="200"
+              />
+              <button
+                type="submit"
+                aria-label="Buscar"
+              >
+                <i class="fa fa-search"></i>
+              </button>
+            </label>
+            <label>
+              <span>Ordenar por</span>
+              <select name="sort">
+                <option value="relevance">Relevancia</option>
+                <option value="downloads">Descargas</option>
+                <option value="follows">Seguidores</option>
+                <option value="updated">Actualizados</option>
+              </select>
+            </label>
+            <label>
+              <span>Loader</span>
+              <select name="loader">
+                <option value="">Cualquiera</option>
+                <option value="fabric">Fabric</option>
+                <option value="forge">Forge</option>
+                <option value="quilt">Quilt</option>
+                <option value="neoforge">NeoForge</option>
+              </select>
+            </label>
+            <label>
+              <span>Categoría</span>
+              <select name="category">
+                <option value="">Cualquiera</option>
+                <option value="optimization">Optimización</option>
+                <option value="utility">Utilidad</option>
+                <option value="technology">Tecnología</option>
+                <option value="magic">Magia</option>
+                <option value="adventure">Aventura</option>
+                <option value="decoration">Decoración</option>
+                <option value="worldgen">Generación de mundo</option>
+              </select>
+            </label>
+            <label>
+              <span>Tipo</span>
+              <select name="projectType">
+                <option value="">Cualquiera</option>
+                <option value="mod">Mod</option>
+                <option value="resourcepack">ResourcePack</option>
+                <option value="shader">Shader</option>
+                <option value="modpack">ModPack</option>
+                <option value="datapack">DataPack</option>
+              </select>
+            </label>
+            <span
+              class="b-mods-results-count"
+              data-mod-results-count
+              >0 resultados</span
+            >
+          </form>
+          <div class="b-mods-versions-container">
+            <label>
+              <span>Versión del juego</span>
+              <input
+                name="gameVersion"
+                form="mod-search-form"
+                data-mod-game-version
+                placeholder="Ej. 1.20.1"
+              />
+            </label>
+            <button
+              type="button"
+              data-mod-reset
+            >
+              Restablecer
+            </button>
+          </div>
+          <div
+            class="mrpack-drop-hint"
+            data-mrpack-drop-hint
+          >
+            <i
+              class="fa-solid fa-box-open"
+              aria-hidden="true"
+            ></i>
+            <span
+              ><strong>Suelta aquí un ModPack</strong> .bypack, .mrpack o .zip de CurseForge</span
+            >
+          </div>
+          <p
+            class="b-mods-status"
+            role="status"
+            data-mod-status
+          ></p>
+          <div
+            class="b-mods-mod-grid"
+            data-mod-grid
+          ></div>
+          <nav
+            class="b-mods-pagination"
+            aria-label="Páginas de resultados"
+          >
+            <button
+              type="button"
+              data-mod-page="previous"
+            >
+              Anterior
+            </button>
+            <span data-mod-page-info>Página 1</span>
+            <button
+              type="button"
+              data-mod-page="next"
+            >
+              Siguiente
+            </button>
+          </nav>
+        </div>
+      </section>
+
+      <section
+        class="secondary-panel panel"
+        data-panel-view="music"
+        hidden
+      >
+        <div class="music-wrapper b-music-outer-container">
+          <aside class="b-music-sidebar">
+            <div>
+              <div class="b-music-brand"><h2>Battly Music</h2></div>
+              <nav class="b-music-nav">
+                <button
+                  type="button"
+                  class="active"
+                  data-music-featured
+                >
+                  <i
+                    class="fas fa-home"
+                    aria-hidden="true"
+                  ></i
+                  ><span>Inicio</span>
+                </button>
+                <button
+                  type="button"
+                  data-music-favorites
+                >
+                  <i
+                    class="fas fa-heart"
+                    aria-hidden="true"
+                  ></i
+                  ><span>Tu biblioteca</span>
+                </button>
+                <div
+                  class="b-music-generated-links"
+                  data-music-generated
+                ></div>
+                <div
+                  class="b-music-playlist-links"
+                  data-music-playlists
+                ></div>
+                <button
+                  type="button"
+                  data-music-create
+                  aria-label="+ Nueva playlist"
+                >
+                  <i
+                    class="fas fa-plus"
+                    aria-hidden="true"
+                  ></i
+                  ><span>Nueva playlist</span>
+                </button>
+                <button
+                  type="button"
+                  data-music-invites
+                >
+                  <i
+                    class="fas fa-user-plus"
+                    aria-hidden="true"
+                  ></i
+                  ><span>Invitaciones</span>
+                </button>
+                <button
+                  type="button"
+                  data-music-settings
+                >
+                  <i
+                    class="fas fa-sliders"
+                    aria-hidden="true"
+                  ></i
+                  ><span>Ajustes</span>
+                </button>
+                <button
+                  type="button"
+                  data-panel="home"
+                >
+                  <i
+                    class="fas fa-arrow-rotate-backward"
+                    aria-hidden="true"
+                  ></i
+                  ><span>Volver al inicio</span>
+                </button>
+              </nav>
+            </div>
+          </aside>
+          <div class="b-music-main-container">
+            <header class="b-music-top-bar">
+              <form
+                class="music-search b-music-search-bar-container"
+                data-music-search-form
+              >
+                <label
+                  class="sr-only"
+                  for="music-search-input"
+                  >Buscar música</label
+                >
+                <input
+                  id="music-search-input"
+                  name="query"
+                  maxlength="120"
+                  placeholder="Buscar en YouTube…"
+                />
+                <button
+                  type="submit"
+                  aria-label="Buscar música"
+                >
+                  <i
+                    class="fa-solid fa-search"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+              </form>
+            </header>
+            <main class="b-music-main-content">
+              <section class="music-library b-music-panel active">
+                <header>
+                  <h2 data-music-title>Tendencias Battly</h2>
+                  <span data-music-cache></span>
+                </header>
+                <p
+                  role="status"
+                  data-music-status
+                ></p>
+                <div
+                  class="music-track-list"
+                  data-music-tracks
+                ></div>
+              </section>
+              <aside class="music-queue b-music-queue-panel active">
+                <h2>Cola</h2>
+                <div data-music-queue></div>
+              </aside>
+            </main>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="secondary-panel panel"
+        data-panel-view="settings"
+        hidden
+      >
+        <div class="b-settings-shell">
+          <h1
+            id="b-settings-title"
+            data-settings-heading
+          >
+            Mis cuentas
+          </h1>
+          <div class="b-settings-pages">
+            <section
+              class="b-settings-page is-active"
+              data-settings-view="accounts"
+            >
+              <header>
+                <i
+                  class="fa-solid fa-user-gear"
+                  aria-hidden="true"
+                ></i>
+                <div>
+                  <h1>Mis cuentas</h1>
+                  <p>Gestiona las cuentas conectadas a Battly.</p>
+                </div>
+              </header>
+              <button
+                class="small-action"
+                type="button"
+                data-panel="login"
+              >
+                Añadir cuenta
+              </button>
+              <button
+                class="small-action"
+                type="button"
+                data-skin-open
+              >
+                Personalizar Skin
+              </button>
+              <button
+                class="small-action danger-action"
+                type="button"
+                data-accounts-remove-all
+              >
+                Cerrar sesión en todas
+              </button>
+              <div
+                class="settings-account-list b-settings-acc-list"
+                data-settings-account-list
+              ></div>
+            </section>
+            <section
+              class="b-settings-page"
+              data-settings-view="java"
+              hidden
+            >
+              <header>
+                <i
+                  class="fa-brands fa-java"
+                  aria-hidden="true"
+                ></i>
+                <div>
+                  <h1>Java</h1>
+                  <p>Configura el ejecutable que utilizarán las instancias cuando lo necesiten.</p>
+                </div>
+              </header>
+              <div class="settings-form-grid">
+                <label class="settings-wide"
+                  >Ruta de Java
+                  <input
+                    type="text"
+                    maxlength="2048"
+                    placeholder="Automático (recomendado)"
+                    data-setting="javaPath"
+                /></label>
+              </div>
+              <div class="settings-inline-actions">
+                <button
+                  class="small-action"
+                  type="button"
+                  data-java-select
+                >
+                  <i
+                    class="fa-solid fa-folder-open"
+                    aria-hidden="true"
+                  ></i>
+                  Buscar ejecutable
+                </button>
+                <button
+                  class="small-action"
+                  type="button"
+                  data-java-automatic
+                >
+                  Usar detección automática
+                </button>
+              </div>
+              <p
+                class="settings-note"
+                role="status"
+                data-java-status
+              ></p>
+              <p class="settings-note">
+                Vacío usa la detección automática de minecraft-java-core. Battly no comprueba aquí
+                versiones concretas de Minecraft.
+              </p>
+              <section
+                class="managed-java-section"
+                aria-labelledby="managed-java-title"
+              >
+                <div class="managed-java-heading">
+                  <div>
+                    <h2 id="managed-java-title">Runtimes administrados</h2>
+                    <p>Descargas oficiales de Mojang verificadas y aisladas por versión.</p>
+                  </div>
+                  <button
+                    class="small-action"
+                    type="button"
+                    data-managed-java-clear
+                  >
+                    Volver a automático
+                  </button>
+                </div>
+                <div
+                  class="managed-java-list"
+                  data-managed-java-list
+                ></div>
+                <progress
+                  data-managed-java-progress
+                  value="0"
+                  max="100"
+                  hidden
+                ></progress>
+                <p
+                  class="settings-note"
+                  role="status"
+                  data-managed-java-status
+                ></p>
+              </section>
+            </section>
+            <section
+              class="b-settings-page"
+              data-settings-view="ram"
+              hidden
+            >
+              <header>
+                <i
+                  class="fa-solid fa-memory"
+                  aria-hidden="true"
+                ></i>
+                <div>
+                  <h1>Memoria RAM y pantalla</h1>
+                  <p>Valores globales usados cuando una instancia no tiene un perfil propio.</p>
+                </div>
+              </header>
+              <div class="settings-form-grid">
+                <label
+                  >RAM mínima (GB)
+                  <input
+                    type="number"
+                    min="0.5"
+                    max="64"
+                    step="0.5"
+                    data-setting="ramMinGb"
+                /></label>
+                <label
+                  >RAM máxima (GB)
+                  <input
+                    type="number"
+                    min="0.5"
+                    max="64"
+                    step="0.5"
+                    data-setting="ramMaxGb"
+                /></label>
+                <label
+                  >Ancho de ventana
+                  <input
+                    type="number"
+                    min="320"
+                    max="7680"
+                    data-setting="windowWidth"
+                /></label>
+                <label
+                  >Alto de ventana
+                  <input
+                    type="number"
+                    min="240"
+                    max="4320"
+                    data-setting="windowHeight"
+                /></label>
+              </div>
+              <div class="settings-toggle-list">
+                <label
+                  ><span
+                    ><strong>Usar la RAM recomendada por Battly</strong
+                    ><small>Bloquea los valores manuales mientras esté activa.</small></span
+                  ><input
+                    type="checkbox"
+                    data-setting="autoRamEnabled"
+                /></label>
+              </div>
+              <p
+                class="settings-note auto-ram-status"
+                role="status"
+                data-auto-ram-status
+              ></p>
+            </section>
+            <section
+              class="b-settings-page"
+              data-settings-view="launcher"
+              hidden
+            >
+              <header>
+                <i
+                  class="fa-solid fa-rocket"
+                  aria-hidden="true"
+                ></i>
+                <div>
+                  <h1>Launcher</h1>
+                  <p>Configura el comportamiento general de Battly.</p>
+                </div>
+              </header>
+              <div class="settings-toggle-list">
+                <label
+                  ><span><strong>Ocultar Battly al iniciar Minecraft</strong></span
+                  ><input
+                    type="checkbox"
+                    data-setting="hideLauncherOnGameStart"
+                /></label>
+                <label
+                  ><span><strong>Mantener visible Battly Music</strong></span
+                  ><input
+                    type="checkbox"
+                    data-setting="showMusicOnGameStart"
+                /></label>
+                <label
+                  ><span><strong>Dejar Battly en segundo plano al cerrar</strong></span
+                  ><input
+                    type="checkbox"
+                    data-setting="closeToBackground"
+                /></label>
+                <label
+                  ><span><strong>Sonidos de botones</strong></span
+                  ><input
+                    type="checkbox"
+                    data-setting="clickSounds"
+                /></label>
+                <label
+                  ><span
+                    ><strong>Modo simple</strong
+                    ><small
+                      >Reduce el launcher a login, descargas y versiones instaladas.</small
+                    ></span
+                  ><input
+                    type="checkbox"
+                    data-setting="simpleMode"
+                /></label>
+                <label
+                  ><span
+                    ><strong>Descargas paralelas</strong
+                    ><small
+                      >Entre 1 y 500. Los valores altos pueden saturar la conexión.</small
+                    ></span
+                  ><input
+                    type="number"
+                    min="1"
+                    max="500"
+                    data-setting="downloadConcurrency"
+                /></label>
+              </div>
+              <button
+                class="small-action"
+                type="button"
+                data-open-battly-folder
+              >
+                Abrir carpeta de Battly
+              </button>
+              <div class="settings-path-card">
+                <label
+                  >Ruta de datos de Battly
+                  <input
+                    type="text"
+                    readonly
+                    data-battly-data-root
+                  />
+                </label>
+                <button
+                  class="small-action"
+                  type="button"
+                  data-battly-data-root-change
+                >
+                  Cambiar ubicación
+                </button>
+                <p
+                  class="settings-note"
+                  role="status"
+                  data-battly-data-root-status
+                >
+                  El origen se conservará como copia de respaldo tras migrar.
+                </p>
+              </div>
+            </section>
+            <section
+              class="b-settings-page"
+              data-settings-view="appearance"
+              hidden
+            >
+              <header>
+                <i
+                  class="fa-solid fa-palette"
+                  aria-hidden="true"
+                ></i>
+                <div>
+                  <h1>Personalización</h1>
+                  <p>Conserva el estilo de Battly y adapta sus colores.</p>
+                </div>
+              </header>
+              <div class="settings-form-grid">
+                <label
+                  >Color de botones
+                  <input
+                    type="color"
+                    value="#3e8ed0"
+                    data-setting="buttonColor"
+                /></label>
+                <label
+                  >Color al pasar el ratón
+                  <input
+                    type="color"
+                    value="#2b74b0"
+                    data-setting="buttonHoverColor"
+                /></label>
+                <label
+                  >Color de la barra inferior
+                  <input
+                    type="color"
+                    value="#0f1623"
+                    data-setting="footerColor"
+                /></label>
+                <label
+                  >Opacidad de la barra
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value="0.86"
+                    data-setting="footerOpacity"
+                /></label>
+                <label class="settings-wide"
+                  >Fondo personalizado
+                  <input
+                    type="url"
+                    maxlength="2048"
+                    placeholder="https://cdn.battlylauncher.com/fondo.webp"
+                    data-setting="backgroundUrl"
+                /></label>
+                <label
+                  >Idioma
+                  <select data-setting="language">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                    <option value="de">Deutsch</option>
+                    <option value="fr">Français</option>
+                    <option value="it">Italiano</option>
+                    <option value="pt">Português</option>
+                    <option value="ru">Русский</option>
+                    <option value="ja">日本語</option>
+                    <option value="ar">العربية</option>
+                  </select></label
+                >
+              </div>
+              <div
+                class="theme-manager"
+                data-theme-manager
+              >
+                <div class="theme-manager-toolbar">
+                  <div
+                    class="theme-mode-switch"
+                    role="group"
+                    aria-label="Origen de los temas"
+                  >
+                    <button
+                      class="small-action is-active"
+                      type="button"
+                      data-theme-mode="library"
+                    >
+                      Tus temas
+                    </button>
+                    <button
+                      class="small-action"
+                      type="button"
+                      data-theme-mode="marketplace"
+                    >
+                      Marketplace
+                    </button>
+                  </div>
+                  <div
+                    class="settings-button-row"
+                    data-theme-library-actions
+                  >
+                    <button
+                      class="small-action"
+                      type="button"
+                      data-theme-create
+                    >
+                      Crear tema
+                    </button>
+                    <button
+                      class="small-action"
+                      type="button"
+                      data-theme-import-open
+                    >
+                      Importar
+                    </button>
+                  </div>
+                </div>
+                <label
+                  class="theme-marketplace-search"
+                  data-theme-marketplace-search
+                  hidden
+                >
+                  Buscar por nombre o autor
+                  <input
+                    type="search"
+                    maxlength="80"
+                    placeholder="Buscar en Marketplace"
+                  />
+                </label>
+                <p
+                  class="settings-note"
+                  role="status"
+                  data-theme-status
+                >
+                  Abre esta sección para cargar tus temas.
+                </p>
+                <div
+                  class="theme-card-grid"
+                  data-theme-list
+                ></div>
+              </div>
+            </section>
+            <section
+              class="b-settings-page"
+              data-settings-view="privacy"
+              hidden
+            >
+              <header>
+                <i
+                  class="fa-solid fa-shield-halved"
+                  aria-hidden="true"
+                ></i>
+                <div>
+                  <h1>Privacidad y seguridad</h1>
+                  <p>Decide qué información comparte Battly.</p>
+                </div>
+              </header>
+              <div class="settings-toggle-list">
+                <label
+                  ><span
+                    ><strong>Compartir estado</strong
+                    ><small>Muestra a tus amigos si estás conectado.</small></span
+                  ><input
+                    type="checkbox"
+                    data-setting="presenceShareStatus"
+                /></label>
+                <label
+                  ><span
+                    ><strong>Compartir servidor</strong
+                    ><small>Muestra el servidor en el que estás jugando.</small></span
+                  ><input
+                    type="checkbox"
+                    data-setting="presenceShareServer"
+                /></label>
+              </div>
+            </section>
+            <section
+              class="b-settings-page"
+              data-settings-view="profile"
+              hidden
+            >
+              <header>
+                <i
+                  class="fa-solid fa-address-card"
+                  aria-hidden="true"
+                ></i>
+                <div>
+                  <h1>Perfil Battly</h1>
+                  <p>Personaliza cómo te ven otros Battlers.</p>
+                </div>
+              </header>
+              <div
+                class="profile-customization-layout"
+                data-profile-customization
+              >
+                <aside
+                  class="profile-preview-card"
+                  data-profile-preview
+                >
+                  <div
+                    class="profile-preview-background"
+                    data-profile-preview-background
+                  ></div>
+                  <div class="profile-preview-content">
+                    <img
+                      data-profile-preview-skin
+                      alt=""
+                    />
+                    <div>
+                      <strong data-profile-preview-name>Jugador</strong>
+                      <span data-profile-preview-tier>Battly</span>
+                    </div>
+                  </div>
+                </aside>
+                <div class="profile-customization-editor">
+                  <div
+                    class="profile-preset-list"
+                    aria-label="Estilos predefinidos"
+                  >
+                    <button
+                      type="button"
+                      data-profile-preset="default"
+                    >
+                      Predeterminado
+                    </button>
+                    <button
+                      type="button"
+                      data-profile-preset="classic"
+                    >
+                      Clásico
+                    </button>
+                    <button
+                      type="button"
+                      data-profile-preset="neon"
+                    >
+                      Neón
+                    </button>
+                    <button
+                      type="button"
+                      data-profile-preset="fire"
+                    >
+                      Fuego
+                    </button>
+                    <button
+                      type="button"
+                      data-profile-preset="ice"
+                    >
+                      Hielo
+                    </button>
+                  </div>
+                  <form
+                    class="settings-form-grid"
+                    data-profile-customization-form
+                  >
+                    <label
+                      >Color del borde
+                      <input
+                        type="color"
+                        name="borderColor"
+                        value="#7289da"
+                    /></label>
+                    <label
+                      >Estilo del borde
+                      <select name="borderStyle">
+                        <option value="solid">Sólido</option>
+                        <option value="dashed">Discontinuo</option>
+                        <option value="dotted">Punteado</option>
+                        <option value="double">Doble</option>
+                        <option value="groove">Relieve</option>
+                        <option value="ridge">Cresta</option>
+                      </select></label
+                    >
+                    <label
+                      >Grosor
+                      <input
+                        type="range"
+                        name="borderWidth"
+                        min="1"
+                        max="10"
+                        value="3"
+                    /></label>
+                    <label
+                      >Color del nombre
+                      <input
+                        type="color"
+                        name="nameColor"
+                        value="#ffffff"
+                    /></label>
+                    <label
+                      >Color del fondo
+                      <input
+                        type="color"
+                        name="backgroundColor"
+                        value="#2c2f33"
+                    /></label>
+                    <input
+                      type="hidden"
+                      name="backgroundImage"
+                    />
+                    <div class="profile-background-actions settings-wide">
+                      <span data-profile-background-name>Sin imagen de fondo</span>
+                      <button
+                        class="small-action"
+                        type="button"
+                        data-profile-background-select
+                      >
+                        Subir imagen
+                      </button>
+                      <button
+                        class="small-action settings-danger"
+                        type="button"
+                        data-profile-background-remove
+                      >
+                        Quitar imagen
+                      </button>
+                    </div>
+                    <p
+                      class="settings-note settings-wide"
+                      data-profile-premium-note
+                    >
+                      Las imágenes animadas o personalizadas requieren Battly+.
+                    </p>
+                    <button
+                      class="small-action"
+                      type="submit"
+                    >
+                      Actualizar perfil
+                    </button>
+                    <p
+                      role="status"
+                      data-profile-customization-status
+                    ></p>
+                  </form>
+                </div>
+              </div>
+            </section>
+            <section
+              class="b-settings-page"
+              data-settings-view="drive"
+              hidden
+            >
+              <header>
+                <i
+                  class="fa-brands fa-google-drive"
+                  aria-hidden="true"
+                ></i>
+                <div>
+                  <h1>Google Drive</h1>
+                  <p>Sincroniza el historial de copias de Battly.</p>
+                </div>
+              </header>
+              <div class="drive-settings-card">
+                <strong data-drive-connection>Comprobando conexión…</strong>
+                <label
+                  ><input
+                    type="checkbox"
+                    data-setting="autoSyncEnabled"
+                  />
+                  Sincronizar automáticamente</label
+                >
+                <button
+                  class="small-action"
+                  type="button"
+                  data-drive-sync
+                >
+                  Sincronizar ahora
+                </button>
+                <p
+                  role="status"
+                  data-drive-status
+                ></p>
+              </div>
+            </section>
+            <section
+              class="b-settings-page"
+              data-settings-view="diagnostics"
+              hidden
+            >
+              <header>
+                <i
+                  class="fa-solid fa-stethoscope"
+                  aria-hidden="true"
+                ></i>
+                <div>
+                  <h1>Diagnóstico</h1>
+                  <p>Crea un informe técnico anónimo para localizar problemas.</p>
+                </div>
+              </header>
+              <div class="drive-settings-card">
+                <strong>Informe de Battly</strong>
+                <p>
+                  Incluye versión, sistema, contadores y los últimos registros saneados. No incluye
+                  cuentas, tokens, correos, rutas personales ni el contenido de tus archivos.
+                </p>
+                <button
+                  class="small-action"
+                  type="button"
+                  data-diagnostic-save
+                >
+                  Guardar informe
+                </button>
+                <p
+                  role="status"
+                  data-diagnostic-status
+                ></p>
+              </div>
+            </section>
+            <section
+              class="b-settings-page"
+              data-settings-view="logs"
+              hidden
+            >
+              <header>
+                <i
+                  class="fa-solid fa-file-lines"
+                  aria-hidden="true"
+                ></i>
+                <div>
+                  <h1>Registros de Minecraft</h1>
+                  <p>Lee los logs de tus partidas sin salir de Battly.</p>
+                </div>
+              </header>
+              <div class="settings-log-reader">
+                <div class="settings-log-toolbar">
+                  <select
+                    data-settings-log-select
+                    aria-label="Registro de Minecraft"
+                  ></select>
+                  <button
+                    class="small-action"
+                    type="button"
+                    data-settings-log-refresh
+                  >
+                    Actualizar
+                  </button>
+                  <button
+                    class="small-action"
+                    type="button"
+                    data-settings-log-folder
+                  >
+                    Abrir carpeta
+                  </button>
+                </div>
+                <p
+                  class="settings-note"
+                  role="status"
+                  data-settings-log-status
+                >
+                  Selecciona un registro para leerlo.
+                </p>
+                <pre
+                  class="settings-log-content"
+                  tabindex="0"
+                  data-settings-log-content
+                ></pre>
+              </div>
+            </section>
+          </div>
+          <nav
+            class="b-settings-footer"
+            aria-label="Secciones de ajustes"
+          >
+            <div>
+              <button
+                class="b-settings-nav-btn is-active b-settings-active"
+                type="button"
+                data-settings-tab="accounts"
+              >
+                Cuentas
+              </button>
+              <button
+                class="b-settings-nav-btn"
+                type="button"
+                data-settings-tab="java"
+              >
+                Java
+              </button>
+              <button
+                class="b-settings-nav-btn"
+                type="button"
+                data-settings-tab="ram"
+              >
+                RAM
+              </button>
+              <button
+                class="b-settings-nav-btn"
+                type="button"
+                data-settings-tab="launcher"
+              >
+                Launcher
+              </button>
+              <button
+                class="b-settings-nav-btn"
+                type="button"
+                data-settings-tab="appearance"
+              >
+                Tema
+              </button>
+              <button
+                class="b-settings-nav-btn b-settings-more-toggle"
+                type="button"
+                aria-expanded="false"
+                data-settings-more-toggle
+              >
+                Más
+              </button>
+            </div>
+            <div
+              class="b-settings-more-menu"
+              data-settings-more-menu
+              hidden
+            >
+              <button
+                class="b-settings-nav-btn"
+                type="button"
+                data-settings-tab="privacy"
+              >
+                Privacidad
+              </button>
+              <button
+                class="b-settings-nav-btn"
+                type="button"
+                data-settings-tab="profile"
+              >
+                Perfil
+              </button>
+              <button
+                class="b-settings-nav-btn"
+                type="button"
+                data-settings-tab="drive"
+              >
+                Drive
+              </button>
+              <button
+                class="b-settings-nav-btn"
+                type="button"
+                data-settings-tab="diagnostics"
+              >
+                Diagnóstico
+              </button>
+              <button
+                class="b-settings-nav-btn"
+                type="button"
+                data-settings-tab="logs"
+              >
+                Registros
+              </button>
+            </div>
+            <button
+              class="b-settings-save"
+              type="button"
+              data-settings-save
+            >
+              Guardar y volver
+            </button>
+            <p
+              role="status"
+              data-settings-status
+            ></p>
+          </nav>
+        </div>
+      </section>
+
+      <section
+        class="news-panel panel"
+        data-panel-view="news"
+        data-news-mount
+        hidden
+      ></section>
+
+      <section
+        class="mybattly-panel panel"
+        data-panel-view="mybattly"
+        hidden
+      ></section>
+
+      <section
+        class="servers-panel panel"
+        data-panel-view="servers"
+        data-server-mount
+        hidden
+      ></section>
+
+      <section
+        class="login-panel panel active is-active"
+        data-panel-view="login"
+      >
+        <div class="lgn-container">
+          <div class="login-box">
+            <div class="login-left-panel left-panel">
+              <h1>¡Hola de nuevo, Battler!</h1>
+              <p>
+                Accede a Minecraft libremente y mantente al tanto de las últimas novedades. Con
+                Battly, todo lo que necesitas está a un clic de distancia.
+              </p>
+              <ul>
+                <li>Acceso a tus opciones favoritas en un solo lugar</li>
+                <li>Recibe notificaciones de actualizaciones y eventos</li>
+                <li>Interfaz amigable y fácil de usar</li>
+              </ul>
+              <button
+                class="login-provider-button microsoft-login button"
+                type="button"
+                data-login-back
+              >
+                <i
+                  class="fas fa-arrow-left"
+                  aria-hidden="true"
+                ></i>
+                Volver
+              </button>
+            </div>
+            <form
+              class="login-right-panel right-panel"
+              data-login-form
+            >
+              <h2>Iniciar Sesión</h2>
+              <label class="login-field input-group">
+                <input
+                  class="lgn-input"
+                  name="username"
+                  autocomplete="username"
+                  required
+                  maxlength="254"
+                />
+                <span class="user-label">Nombre de usuario</span>
+              </label>
+              <label class="login-field input-group">
+                <input
+                  class="lgn-input"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                  maxlength="1024"
+                />
+                <span class="user-label">Contraseña</span>
+              </label>
+              <button
+                class="styled-login-button styled-login-btn button"
+                type="submit"
+              >
+                Iniciar Sesión
+              </button>
+              <button
+                class="login-text-link"
+                type="button"
+                data-password-help
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
+              <p class="login-register-copy">
+                ¿No tienes una cuenta?
+                <button
+                  class="login-text-link"
+                  type="button"
+                  data-battly-register
+                >
+                  Regístrate aquí
+                </button>
+              </p>
+              <p
+                class="login-status"
+                role="status"
+                data-login-status
+              ></p>
+              <div class="login-divider">O continuar con</div>
+              <div class="login-provider-row">
+                <button
+                  class="login-provider-button microsoft-login button"
+                  type="button"
+                  data-auth-method="battly-google"
+                >
+                  <i
+                    class="fab fa-google"
+                    aria-hidden="true"
+                  ></i>
+                  Google
+                </button>
+                <button
+                  class="login-provider-button microsoft-login button"
+                  type="button"
+                  data-auth-method="microsoft"
+                >
+                  <i
+                    class="fab fa-microsoft"
+                    aria-hidden="true"
+                  ></i>
+                  Microsoft
+                </button>
+              </div>
+              <button
+                class="login-cancel"
+                type="button"
+                data-auth-cancel
+                hidden
+              >
+                Cancelar
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section
+      class="music-mini-player"
+      data-music-mini
+      hidden
+      aria-label="Reproductor de música"
+    >
+      <img
+        data-music-mini-cover
+        src="./assets/icon.png"
+        alt=""
+      /><span
+        ><strong data-music-mini-title>Nada reproduciéndose</strong
+        ><small data-music-mini-artist>Battly Music</small>
+        <span class="music-mini-progress">
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value="0"
+            step="0.1"
+            data-music-seek
+            aria-label="Posición de reproducción"
+          />
+          <small data-music-time>0:00</small>
+        </span></span
+      ><button
+        type="button"
+        data-music-previous
+        aria-label="Anterior"
+      >
+        <i class="fa-solid fa-backward-step"></i></button
+      ><button
+        type="button"
+        data-music-play-pause
+        aria-label="Reproducir"
+      >
+        <i class="fa-solid fa-play"></i></button
+      ><button
+        type="button"
+        data-music-next
+        aria-label="Siguiente"
+      >
+        <i class="fa-solid fa-forward-step"></i></button
+      ><input
+        type="range"
+        min="0"
+        max="100"
+        value="100"
+        data-music-volume
+        aria-label="Volumen"
+      /><audio
+        data-music-audio
+        preload="metadata"
+      ></audio>
+    </section>
+
+    <nav
+      class="bottom_bar bottom-bar"
+      aria-label="Navegación principal"
+      data-backend-bottom-bar
+      hidden
+    >
+      <button
+        class="button is-info"
+        type="button"
+        aria-label="Más opciones"
+        aria-expanded="false"
+        data-more-options
+        data-tooltip="Más opciones"
+        title="Más opciones"
+      >
+        <i
+          class="fa-solid fa-angle-up"
+          aria-hidden="true"
+        ></i>
+      </button>
+      <ul
+        class="more-options"
+        data-more-options-menu
+        hidden
+      >
+        <li>
+          <button
+            type="button"
+            data-panel="mybattly"
+          >
+            <i
+              class="fa-solid fa-user-tag"
+              aria-hidden="true"
+            ></i>
+            MyBattly
+          </button>
+        </li>
+        <li>
+          <button
+            type="button"
+            data-panel="settings"
+          >
+            <i
+              class="fa-solid fa-gear"
+              aria-hidden="true"
+            ></i>
+            Ajustes
+          </button>
+        </li>
+        <li>
+          <button
+            type="button"
+            data-panel="news"
+          >
+            <i
+              class="fa-solid fa-newspaper"
+              aria-hidden="true"
+            ></i>
+            Novedades
+          </button>
+        </li>
+        <li>
+          <button
+            type="button"
+            data-open-battly-folder
+          >
+            <i
+              class="fa-solid fa-folder-open"
+              aria-hidden="true"
+            ></i>
+            Ver carpeta
+          </button>
+        </li>
+        <li>
+          <button
+            type="button"
+            data-open-discord
+          >
+            <i
+              class="fa-brands fa-discord"
+              aria-hidden="true"
+            ></i>
+            Discord
+          </button>
+        </li>
+      </ul>
+      <button
+        class="button is-info"
+        type="button"
+        data-panel="mods"
+        data-tooltip="Mods"
+        title="Mods"
+      >
+        <i
+          class="fa-solid fa-cube"
+          aria-hidden="true"
+        ></i>
+        Mods
+      </button>
+      <button
+        class="button is-info"
+        type="button"
+        data-panel="music"
+        data-tooltip="Música"
+        title="Música"
+      >
+        <i
+          class="fa-solid fa-music"
+          aria-hidden="true"
+        ></i>
+        Música
+      </button>
+      <div class="servers-dropdown">
+        <button
+          class="button is-info"
+          type="button"
+          data-servers-options
+          aria-expanded="false"
+          aria-controls="backend-servers-menu"
+          data-tooltip="Servidores"
+          title="Servidores"
+        >
+          <i
+            class="fa-solid fa-server"
+            aria-hidden="true"
+          ></i>
+          Servidores
+        </button>
+        <ul
+          id="backend-servers-menu"
+          class="more-options servers-options"
+          data-servers-options-menu
+          hidden
+        >
+          <li>
+            <button
+              type="button"
+              data-worlds-open
+            >
+              <i
+                class="fa-solid fa-earth-americas"
+                aria-hidden="true"
+              ></i>
+              Battly Worlds
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              data-panel="servers"
+            >
+              <i
+                class="fa-solid fa-server"
+                aria-hidden="true"
+              ></i>
+              Battly Servers
+            </button>
+          </li>
+        </ul>
+      </div>
+      <button
+        class="button is-info"
+        type="button"
+        data-instances-open
+        data-tooltip="Instancias"
+        title="Instancias"
+      >
+        <i
+          class="fa-solid fa-folder"
+          aria-hidden="true"
+        ></i>
+        Instancias
+      </button>
+      <button
+        class="button is-info"
+        type="button"
+        data-downloads-open
+        data-tooltip="Descargar versiones"
+        title="Descargar versiones"
+      >
+        <i
+          class="fa-solid fa-cloud-arrow-down"
+          aria-hidden="true"
+        ></i>
+        Descargar
+      </button>
+      <button
+        class="button is-info"
+        type="button"
+        data-play-open
+        data-tooltip="Jugar"
+        title="Jugar"
+      >
+        <i
+          class="fa-solid fa-gamepad"
+          aria-hidden="true"
+        ></i>
+        Jugar
+      </button>
+      <button
+        type="button"
+        data-simple-mode-exit
+        hidden
+      >
+        <i
+          class="fa-solid fa-right-from-bracket"
+          aria-hidden="true"
+        ></i>
+        Salir modo simple
+      </button>
+    </nav>
+
+    <section
+      class="home-tutorial"
+      data-home-tutorial
+      hidden
+      aria-label="Tutorial de Battly"
+    >
+      <div
+        class="home-tutorial-backdrop"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="home-tutorial-focus"
+        data-home-tutorial-focus
+        hidden
+        aria-hidden="true"
+      ></div>
+      <article
+        class="home-tutorial-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="home-tutorial-title"
+      >
+        <div class="tutorial-guide">
+          <img
+            class="tutorial-nivix"
+            src="./assets/nivix.png"
+            alt="Nivix"
+            width="88"
+            height="88"
+          />
+          <span><strong>Nivix</strong> · Tu guía en Battly</span>
+        </div>
+        <span data-home-tutorial-counter>1 de 8</span>
+        <h2
+          id="home-tutorial-title"
+          data-home-tutorial-title
+        >
+          ¡Bienvenido a Battly!
+        </h2>
+        <p data-home-tutorial-text></p>
+        <footer>
+          <button
+            type="button"
+            data-home-tutorial-skip
+          >
+            Saltar tutorial
+          </button>
+          <button
+            type="button"
+            data-home-tutorial-previous
+          >
+            Anterior
+          </button>
+          <button
+            type="button"
+            data-home-tutorial-next
+          >
+            Siguiente
+          </button>
+        </footer>
+      </article>
+    </section>
+
+    <dialog
+      class="auth-modal"
+      data-two-factor-dialog
+      aria-labelledby="two-factor-title"
+    >
+      <form
+        method="dialog"
+        class="auth-modal-card"
+        data-two-factor-form
+      >
+        <header>
+          <h1 id="two-factor-title">Autenticación de varios factores</h1>
+          <p>Elige cómo quieres verificar tu cuenta de Battly.</p>
+        </header>
+        <div class="auth-method-choices">
+          <label>
+            <input
+              type="radio"
+              name="mode"
+              value="totp"
+              checked
+            />
+            <span>Usar tu aplicación de autenticación</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="mode"
+              value="recovery"
+            />
+            <span>Usar un código de respaldo</span>
+          </label>
+        </div>
+        <label class="login-field">
+          <span data-two-factor-code-label>Código de autenticación de 6 dígitos</span>
+          <input
+            name="code"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            required
+            maxlength="128"
+            data-two-factor-code
+          />
+        </label>
+        <p
+          class="login-status"
+          role="status"
+          data-two-factor-status
+        ></p>
+        <footer>
+          <button
+            type="button"
+            class="auth-secondary-button"
+            data-two-factor-cancel
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="styled-login-button"
+          >
+            Confirmar
+          </button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog
+      class="local-mods-modal"
+      data-local-mods-dialog
+      aria-labelledby="local-mods-title"
+    >
+      <div class="modal-card modal-animated local-mods-card">
+        <header class="modal-card-head">
+          <p
+            class="modal-card-title"
+            id="local-mods-title"
+          >
+            <i class="fa-solid fa-puzzle-piece"></i> Mis mods
+          </p>
+          <div class="local-mods-header-actions">
+            <button
+              type="button"
+              class="button is-info is-small"
+              data-local-mods-folder
+            >
+              <span class="icon"
+                ><i
+                  class="fa-solid fa-folder-open"
+                  aria-hidden="true"
+                ></i
+              ></span>
+              <span>Abrir carpeta</span>
+            </button>
+            <button
+              type="button"
+              class="button is-warning is-small"
+              data-local-mods-analyze
+            >
+              <span class="icon"
+                ><i
+                  class="fa-solid fa-shield-halved"
+                  aria-hidden="true"
+                ></i
+              ></span>
+              <span>Analizar Compatibilidad</span>
+            </button>
+            <button
+              type="button"
+              class="delete"
+              data-local-mods-close
+              aria-label="Cerrar"
+            ></button>
+          </div>
+        </header>
+        <section class="modal-card-body local-mods-body">
+          <p
+            role="status"
+            data-local-mods-status
+          ></p>
+          <section
+            class="mod-compatibility-report"
+            data-mod-compatibility-report
+            hidden
+          >
+            <div class="mod-compatibility-heading">
+              <div>
+                <strong>Reporte de compatibilidad</strong>
+                <span data-mod-compatibility-summary></span>
+              </div>
+              <button
+                type="button"
+                data-mod-compatibility-fix
+              >
+                Desactivar incompatibles
+              </button>
+            </div>
+            <div
+              class="mod-compatibility-context"
+              data-mod-compatibility-context
+            ></div>
+            <div
+              class="mod-compatibility-issues"
+              data-mod-compatibility-issues
+            ></div>
+          </section>
+          <div
+            class="local-mods-list"
+            data-local-mods-list
+          ></div>
+        </section>
+      </div>
+    </dialog>
+
+    <dialog
+      class="mod-detail-modal"
+      data-mod-detail-dialog
+      aria-labelledby="mod-detail-title"
+    >
+      <div class="main-mod-panel modal-animated mod-detail-card">
+        <div class="mod-card">
+          <div class="media">
+            <div class="media-left">
+              <figure
+                class="image mod-detail-image"
+                style="
+                  background-color: #111827;
+                  border-radius: 10px;
+                  border: 1px solid #1c1c1c;
+                  width: 120px;
+                  height: 120px;
+                "
+              >
+                <img
+                  src="./assets/icon.png"
+                  data-mod-detail-icon
+                  alt=""
+                />
+              </figure>
+            </div>
+            <div class="media-content mod-data-info-content">
+              <h1
+                class="title is-3"
+                id="mod-detail-title"
+                data-mod-detail-title
+              >
+                Detalle del proyecto
+              </h1>
+              <div class="subtitle">
+                <span
+                  id="mod-short-description"
+                  data-mod-detail-description
+                ></span>
+                <div class="stats">
+                  <span class="a-tag"
+                    ><i class="fa-solid fa-download"></i> <span data-mod-detail-downloads></span
+                  ></span>
+                  <span class="a-tag"
+                    ><i class="fa-solid fa-heart"></i> <span data-mod-detail-followers></span
+                  ></span>
+                  <span class="a-tag"
+                    ><i class="fa-solid fa-cube"></i> <span data-mod-detail-loaders></span
+                  ></span>
+                </div>
+              </div>
+            </div>
+            <div class="mod-detail-actions">
+              <button
+                type="button"
+                class="button is-danger"
+                data-mod-detail-close
+                aria-label="Cerrar"
+              >
+                <span class="icon"><i class="fa-solid fa-close"></i></span>
+              </button>
+              <button
+                type="button"
+                class="button is-warning"
+                data-mod-detail-info
+                aria-label="Abrir en Modrinth"
+              >
+                <span class="icon"><i class="fa-solid fa-info"></i></span>
+              </button>
+              <button
+                type="button"
+                class="button is-info"
+                data-mod-detail-install
+                aria-label="Instalar proyecto"
+              >
+                <span class="icon"><i class="fa-solid fa-download"></i></span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="mod-card mod-data-description mod-detail-content">
+          <p
+            class="mod-detail-status"
+            role="status"
+            data-mod-detail-status
+          ></p>
+          <nav
+            class="mod-detail-tabs"
+            aria-label="Contenido del proyecto"
+          >
+            <button
+              type="button"
+              class="is-active"
+              data-mod-detail-tab="description"
+            >
+              Descripción
+            </button>
+            <button
+              type="button"
+              data-mod-detail-tab="gallery"
+            >
+              Galería
+            </button>
+            <button
+              type="button"
+              data-mod-detail-tab="releases"
+            >
+              Novedades
+            </button>
+            <button
+              type="button"
+              data-mod-detail-tab="details"
+            >
+              Detalles
+            </button>
+          </nav>
+          <section
+            class="mod-detail-tab-panel is-active"
+            data-mod-detail-panel="description"
+          >
+            <div
+              class="mod-detail-markdown"
+              data-mod-detail-body
+            ></div>
+          </section>
+          <section
+            class="mod-detail-tab-panel"
+            data-mod-detail-panel="gallery"
+            hidden
+          >
+            <div
+              class="mod-detail-gallery"
+              data-mod-detail-gallery
+            ></div>
+          </section>
+          <section
+            class="mod-detail-tab-panel"
+            data-mod-detail-panel="releases"
+            hidden
+          >
+            <div
+              class="mod-detail-release-list"
+              data-mod-detail-versions
+            ></div>
+          </section>
+          <section
+            class="mod-detail-tab-panel"
+            data-mod-detail-panel="details"
+            hidden
+          >
+            <div class="mod-detail-details-grid">
+              <article class="mod-detail-side-card">
+                <h2>Enlaces</h2>
+                <div data-mod-detail-links></div>
+              </article>
+              <article class="mod-detail-side-card">
+                <h2>Etiquetas</h2>
+                <div
+                  class="mod-detail-tag-list"
+                  data-mod-detail-categories
+                ></div>
+              </article>
+              <article class="mod-detail-side-card">
+                <h2>Creadores</h2>
+                <div data-mod-detail-creators></div>
+              </article>
+              <article class="mod-detail-side-card">
+                <h2>Detalles</h2>
+                <div data-mod-detail-metadata></div>
+              </article>
+            </div>
+          </section>
+          <div hidden>
+            <span data-mod-detail-author></span><span data-mod-detail-type></span>
+            <span data-mod-detail-compatibility></span>
+            <div data-mod-detail-dependencies></div>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog
+      class="mod-download-modal"
+      data-mod-download-dialog
+      aria-labelledby="mod-download-title"
+    >
+      <div class="modal-card modal-animated">
+        <section class="modal-card-body download-mod-modal-card-body">
+          <h1
+            class="h1-download-mod-title"
+            id="mod-download-title"
+            data-mod-download-title
+          >
+            Descargar
+          </h1>
+          <hr />
+          <div data-mod-download-destination-section>
+            <p class="p-download-mod-text">Destino de instalación</p>
+            <div
+              class="select is-info is-outlined"
+              style="width: 100%; margin-bottom: 0.5rem"
+            >
+              <select
+                data-mod-download-destination
+                style="width: 100%"
+              >
+                <option value="">Predeterminado</option>
+              </select>
+            </div>
+            <div
+              class="notification is-warning is-light"
+              data-mod-download-destination-warning
+              style="display: none; font-size: 0.85rem; padding: 0.5rem; margin-bottom: 0.5rem"
+            >
+              <strong>Advertencia:</strong> Instalar mods en una instancia (especialmente si es un
+              modpack) puede generar crashes y Battly no se hace cargo de los problemas que puedan
+              haber.
+            </div>
+          </div>
+          <p class="p-download-mod-text">1) Elige el Loader</p>
+          <div
+            class="b-mods-radio-inputs"
+            data-mod-download-loaders
+          ></div>
+          <br />
+          <p class="p-download-mod-text">2) Elige la versión de Minecraft</p>
+          <div
+            class="select is-info is-outlined"
+            style="width: 100%; margin-bottom: 0.5rem"
+          >
+            <select
+              data-mod-download-game
+              style="width: 100%"
+            ></select>
+          </div>
+          <p class="p-download-mod-text">3) Elige la versión del mod</p>
+          <div
+            class="select is-info is-outlined"
+            style="width: 100%"
+          >
+            <select
+              data-mod-download-version
+              style="width: 100%"
+            ></select>
+          </div>
+          <p
+            role="status"
+            data-mod-download-status
+          ></p>
+          <br />
+          <div class="dowmload-mod-modal-buttons">
+            <button
+              type="button"
+              class="button is-danger is-outlined"
+              data-mod-download-cancel
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="button is-info is-outlined"
+              data-mod-download-confirm
+              disabled
+            >
+              Descargar
+            </button>
+          </div>
+          <div
+            class="mod-installing-surface"
+            data-mod-installing-surface
+            hidden
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            aria-busy="true"
+          >
+            <div class="mod-installing-heading">
+              <div class="mod-installing-artwork">
+                <img
+                  data-mod-installing-icon
+                  alt=""
+                />
+                <span
+                  class="mod-installing-spinner"
+                  aria-hidden="true"
+                ></span>
+              </div>
+              <div class="mod-installing-copy">
+                <strong data-mod-installing-title>Instalando contenido</strong>
+                <span data-mod-installing-status>Preparando archivos y dependencias…</span>
+              </div>
+            </div>
+            <div
+              class="mod-installing-activity"
+              aria-hidden="true"
+            >
+              <span></span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </dialog>
+
+    <dialog
+      class="world-backups-modal"
+      data-world-backups-dialog
+      aria-labelledby="world-backups-title"
+    >
+      <div class="world-backups-card">
+        <header>
+          <div>
+            <h2 id="world-backups-title">Copias de tus mundos</h2>
+            <p>Guarda tus mundos en Mi unidad / Battly de tu cuenta de Google.</p>
+          </div>
+          <button
+            type="button"
+            class="world-backups-close"
+            data-world-backups-close
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </header>
+        <div class="world-backups-account">
+          <strong data-backup-account>Comprobando cuenta de Google…</strong>
+          <div class="world-backups-account-actions">
+            <button
+              type="button"
+              data-backup-local
+            >
+              <i
+                class="fa-solid fa-folder-open"
+                aria-hidden="true"
+              ></i>
+              Ver antiguas copias locales
+            </button>
+            <button
+              type="button"
+              data-backup-connect
+            >
+              <i
+                class="fa-brands fa-google"
+                aria-hidden="true"
+              ></i>
+              Conectar Google
+            </button>
+            <button
+              type="button"
+              data-backup-disconnect
+              hidden
+            >
+              <i
+                class="fa-solid fa-right-from-bracket"
+                aria-hidden="true"
+              ></i>
+              Desconectar cuenta
+            </button>
+            <button
+              type="button"
+              data-backup-open
+              hidden
+            >
+              <i
+                class="fa-brands fa-google-drive"
+                aria-hidden="true"
+              ></i>
+              Abrir Google Drive
+            </button>
+          </div>
+        </div>
+        <progress
+          data-backup-progress
+          hidden
+          aria-label="Progreso de subida a Google Drive"
+        ></progress>
+        <form
+          class="world-backups-create"
+          data-world-backups-form
+        >
+          <label for="world-backups-world">Mundo</label>
+          <select
+            id="world-backups-world"
+            data-world-backups-world
+            required
+          ></select>
+          <button
+            type="submit"
+            data-world-backups-create
+          >
+            <i
+              class="fas fa-cloud-upload-alt"
+              aria-hidden="true"
+            ></i>
+            Crear copia
+          </button>
+        </form>
+        <p
+          class="world-backups-status"
+          data-world-backups-status
+          role="status"
+          aria-live="polite"
+        ></p>
+        <div
+          class="world-backups-list"
+          data-world-backups-list
+        ></div>
+      </div>
+    </dialog>
+
+    <div
+      class="modal"
+      id="skin-customizer-modal"
+      data-skin-dialog
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="skin-customizer-title"
+      hidden
+    >
+      <div
+        class="modal-background"
+        data-skin-close
+      ></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p
+            class="modal-card-title"
+            id="skin-customizer-title"
+          >
+            Personalizar Skin
+          </p>
+          <button
+            class="delete"
+            type="button"
+            aria-label="Cerrar"
+            data-skin-close
+          ></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="b-skin-customizer">
+            <div class="b-skin-main-content">
+              <div class="b-skin-current">
+                <h2 class="b-skin-title">Tu Skin Actual</h2>
+                <div
+                  class="b-skin-viewer-container"
+                  id="b-skin-viewer-main"
+                  data-skin-preview
+                >
+                  <img
+                    data-skin-current
+                    alt=""
+                    hidden
+                  />
+                </div>
+                <div class="b-skin-actions">
+                  <button
+                    class="b-skin-btn is-info"
+                    type="button"
+                    id="b-skin-set-btn"
+                    data-skin-apply
+                    disabled
+                    aria-label="Aplicar skin"
+                  >
+                    <i class="fa-solid fa-check"></i>
+                  </button>
+                  <button
+                    class="b-skin-btn is-slim"
+                    type="button"
+                    id="b-skin-slim-btn"
+                    data-skin-model
+                    aria-pressed="false"
+                    aria-label="Alternar modelo slim"
+                  >
+                    <i class="fa-solid fa-user"></i>
+                  </button>
+                  <button
+                    class="b-skin-btn is-danger"
+                    type="button"
+                    id="b-skin-delete-btn"
+                    data-skin-delete
+                    disabled
+                    aria-label="Eliminar skin"
+                  >
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+                <p class="help-text">
+                  Selecciona una skin de la librería y pulsa el botón azul para aplicarla.
+                </p>
+              </div>
+              <div class="b-skin-library">
+                <div
+                  class="b-appearance-tabs"
+                  aria-label="Personalización"
+                >
+                  <button
+                    type="button"
+                    data-appearance-tab="skin"
+                    aria-pressed="true"
+                  >
+                    Skins</button
+                  ><button
+                    type="button"
+                    data-appearance-tab="cape"
+                    aria-pressed="false"
+                  >
+                    Capas
+                  </button>
+                </div>
+                <div
+                  class="b-skin-grid"
+                  id="b-skin-grid"
+                  data-skin-grid
+                ></div>
+                <div
+                  data-cape-panel
+                  hidden
+                ></div>
+              </div>
+            </div>
+            <input
+              type="file"
+              id="b-skin-file-input"
+              accept="image/png"
+              data-skin-upload
+              hidden
+            />
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <dialog
+      class="social-modal legacy-friends-dialog legacy-friends-add-dialog"
+      data-social-add-dialog
+      aria-labelledby="social-add-title"
+    >
+      <div class="social-modal-card modal-animated">
+        <header class="modal-card-head">
+          <div>
+            <h1 id="social-add-title">
+              <i
+                class="fa-solid fa-user-plus"
+                aria-hidden="true"
+              ></i>
+              Añadir amigo
+            </h1>
+            <p>Añade a alguien por su nombre de usuario</p>
+          </div>
+          <button
+            class="delete"
+            type="button"
+            data-social-add-close
+            aria-label="Cerrar"
+          ></button>
+        </header>
+        <section class="modal-card-body">
+          <form
+            id="social-search-form"
+            data-social-search-form
+          >
+            <label class="control"
+              ><i
+                class="fa-solid fa-search"
+                aria-hidden="true"
+              ></i
+              ><input
+                class="input"
+                name="username"
+                required
+                maxlength="64"
+                pattern="[A-Za-z0-9_.+\-]+"
+                autocomplete="off"
+                placeholder="Nombre de usuario"
+            /></label>
+          </form>
+          <p
+            role="status"
+            data-social-search-status
+          ></p>
+          <div
+            class="social-request-list users-result"
+            data-social-search-results
+          ></div>
+          <div
+            class="empty-search-state"
+            data-social-search-empty
+          >
+            <i
+              class="fa-solid fa-magnifying-glass"
+              aria-hidden="true"
+            ></i>
+            <p>No hay resultados</p>
+          </div>
+        </section>
+        <footer class="modal-card-foot">
+          <button
+            class="button"
+            type="button"
+            data-social-add-close
+          >
+            Cancelar
+          </button>
+          <button
+            class="button is-info"
+            type="submit"
+            form="social-search-form"
+          >
+            <i
+              class="fa-solid fa-search"
+              aria-hidden="true"
+            ></i>
+            Buscar
+          </button>
+        </footer>
+      </div>
+    </dialog>
+    <dialog
+      class="social-modal legacy-friends-dialog legacy-friends-requests-dialog"
+      data-social-requests-dialog
+      aria-labelledby="social-requests-title"
+    >
+      <div class="social-modal-card modal-animated">
+        <header class="modal-card-head">
+          <div>
+            <h1 id="social-requests-title">
+              <i
+                class="fa-solid fa-bell"
+                aria-hidden="true"
+              ></i>
+              Solicitudes de amistad
+            </h1>
+            <p>Gestiona tus solicitudes pendientes</p>
+          </div>
+          <button
+            class="delete"
+            type="button"
+            data-social-requests-close
+            aria-label="Cerrar"
+          ></button>
+        </header>
+        <section class="modal-card-body requests-body">
+          <div
+            class="social-request-list"
+            data-social-requests-list
+          ></div>
+        </section>
+      </div>
+    </dialog>
+    <dialog
+      class="social-modal social-profile-modal"
+      data-social-profile-dialog
+      aria-labelledby="social-profile-title"
+    >
+      <div class="modal-card modal-animated social-modal-card">
+        <header class="modal-card-head">
+          <p
+            class="modal-card-title"
+            id="social-profile-title"
+          >
+            Perfil
+          </p>
+          <button
+            class="delete"
+            type="button"
+            data-social-profile-close
+            aria-label="Cerrar"
+          ></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="main-user-profile">
+            <div class="main-user-profile-left">
+              <canvas
+                id="skin_container"
+                data-social-profile-skin
+                width="250"
+                height="300"
+                role="img"
+                aria-label="Skin del usuario"
+              ></canvas>
+            </div>
+            <div class="main-user-profile-right">
+              <h1 data-social-profile-name>Cargando perfil…</h1>
+              <p
+                class="social-profile-presence"
+                data-social-profile-presence
+                role="status"
+              ></p>
+              <h2 data-social-profile-bio></h2>
+            </div>
+          </div>
+          <div class="main-user-secondary-profile">
+            <div class="main-user-secondary-profile-comments-panel-invisible">
+              <div>
+                <h1 class="user-secondary-info-title">UUID del usuario</h1>
+                <h2
+                  class="user-secondary-info-desc"
+                  data-social-profile-user-id
+                ></h2>
+                <br />
+                <h1 class="user-secondary-info-title">Fecha de creación de la cuenta</h1>
+                <h2
+                  class="user-secondary-info-desc"
+                  data-social-profile-created-at
+                ></h2>
+              </div>
+            </div>
+          </div>
+          <footer class="social-profile-actions"></footer>
+        </section>
+      </div>
+    </dialog>
+
+    <dialog
+      class="social-modal"
+      data-music-playlist-dialog
+      aria-labelledby="music-playlist-title"
+    >
+      <div class="social-modal-card">
+        <header>
+          <h1
+            id="music-playlist-title"
+            data-music-playlist-title
+          >
+            Nueva playlist
+          </h1>
+          <button
+            type="button"
+            data-music-playlist-close
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </header>
+        <form data-music-playlist-form>
+          <label
+            ><span>Nombre</span
+            ><input
+              name="name"
+              required
+              maxlength="100" /></label
+          ><label
+            ><span>Descripción</span
+            ><input
+              name="description"
+              maxlength="500" /></label
+          ><button
+            type="submit"
+            data-music-playlist-submit
+          >
+            Crear con la cola
+          </button>
+        </form>
+        <p
+          role="status"
+          data-music-playlist-status
+        ></p>
+      </div>
+    </dialog>
+    <dialog
+      class="social-modal"
+      data-music-collaboration-dialog
+      aria-labelledby="music-collaboration-title"
+    >
+      <div class="social-modal-card music-collaboration-card">
+        <header>
+          <div>
+            <h1
+              id="music-collaboration-title"
+              data-music-collaboration-title
+            >
+              Colaboración
+            </h1>
+            <p data-music-collaboration-owner></p>
+          </div>
+          <button
+            type="button"
+            data-music-collaboration-close
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </header>
+        <form data-music-collaboration-invite>
+          <label
+            ><span>Invitar por nombre</span
+            ><input
+              name="username"
+              maxlength="64"
+              autocomplete="off"
+              required /></label
+          ><button type="submit">Enviar invitación</button>
+        </form>
+        <p
+          role="status"
+          data-music-collaboration-status
+        ></p>
+        <nav
+          class="music-collaboration-tabs"
+          aria-label="Secciones de colaboración"
+        >
+          <button
+            type="button"
+            data-music-collaboration-tab="members"
+          >
+            Colaborar
+          </button>
+          <button
+            type="button"
+            data-music-collaboration-tab="activity"
+          >
+            Registro
+          </button>
+        </nav>
+        <div class="music-collaboration-grid">
+          <section data-music-collaboration-section="members">
+            <h2>Editores</h2>
+            <div data-music-collaborators></div>
+          </section>
+          <section data-music-collaboration-section="members">
+            <h2>Invitaciones pendientes</h2>
+            <div data-music-pending-invites></div>
+          </section>
+          <section
+            class="music-collaboration-audit"
+            data-music-collaboration-section="activity"
+          >
+            <h2>Registro de actividad</h2>
+            <div data-music-activity></div>
+          </section>
+        </div>
+      </div>
+    </dialog>
+    <dialog
+      class="social-modal"
+      data-music-track-dialog
+      aria-labelledby="music-track-title"
+    >
+      <div class="social-modal-card music-track-card">
+        <header>
+          <div>
+            <p>Detalles de la canción</p>
+            <h1
+              id="music-track-title"
+              data-music-track-title
+            >
+              Canción
+            </h1>
+          </div>
+          <button
+            type="button"
+            data-music-track-close
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </header>
+        <div class="music-track-detail">
+          <img
+            data-music-track-cover
+            alt=""
+          />
+          <div>
+            <strong data-music-track-artist></strong>
+            <span data-music-track-duration></span>
+            <small data-music-track-source></small>
+          </div>
+        </div>
+        <div class="music-track-detail-actions">
+          <button
+            type="button"
+            data-music-track-play
+          >
+            <i
+              class="fa-solid fa-play"
+              aria-hidden="true"
+            ></i>
+            Reproducir ahora
+          </button>
+          <button
+            type="button"
+            data-music-track-queue
+          >
+            <i
+              class="fa-solid fa-list-ul"
+              aria-hidden="true"
+            ></i>
+            Añadir a la cola
+          </button>
+          <button
+            type="button"
+            data-music-track-favorite
+          ></button>
+        </div>
+        <p
+          role="status"
+          data-music-track-status
+        ></p>
+      </div>
+    </dialog>
+    <dialog
+      class="social-modal"
+      data-music-settings-dialog
+      aria-labelledby="music-settings-title"
+    >
+      <div class="social-modal-card music-settings-card">
+        <header>
+          <div>
+            <h1 id="music-settings-title">Ajustes de audio</h1>
+            <p>Calidad de resolución y procesamiento local.</p>
+          </div>
+          <button
+            type="button"
+            data-music-settings-close
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </header>
+        <form data-music-settings-form>
+          <label
+            ><span>Calidad de streaming</span
+            ><select name="quality">
+              <option value="auto">Automática</option>
+              <option value="high">Alta · hasta 256 kbps</option>
+              <option value="medium">Media · hasta 128 kbps</option>
+              <option value="low">Ahorro · hasta 64 kbps</option>
+            </select></label
+          ><label
+            ><span>Ecualizador</span
+            ><select name="equalizer">
+              <option value="flat">Plano</option>
+              <option value="bass">Graves</option>
+              <option value="voice">Voz</option>
+              <option value="bright">Brillante</option>
+            </select></label
+          ><label class="music-settings-toggle"
+            ><input
+              type="checkbox"
+              name="normalization"
+            /><span>Normalización dinámica de volumen</span></label
+          ><label class="music-settings-toggle"
+            ><input
+              type="checkbox"
+              name="smartPlayback"
+            /><span>Reproducción inteligente al terminar la cola</span></label
+          ><button type="submit">Guardar ajustes</button>
+        </form>
+        <p
+          role="status"
+          data-music-settings-status
+        ></p>
+      </div>
+    </dialog>
+    <dialog
+      class="social-modal"
+      data-music-invites-dialog
+      aria-labelledby="music-invites-title"
+    >
+      <div class="social-modal-card">
+        <header>
+          <h1 id="music-invites-title">Playlists colaborativas</h1>
+          <button
+            type="button"
+            data-music-invites-close
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </header>
+        <div
+          class="social-request-list"
+          data-music-invites-list
+        ></div>
+      </div>
+    </dialog>
+
+    <div
+      class="modal"
+      id="start-version-modal"
+      data-play-dialog
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="play-title"
+      hidden
+    >
+      <div
+        class="modal-background"
+        data-play-close
+      ></div>
+      <div class="modal-card modal-animated w60">
+        <section class="modal-card-body start-version-mod-modal-card-body">
+          <div class="play-dialog-heading">
+            <h1
+              class="h1-start-version-title"
+              id="play-title"
+            >
+              <i
+                class="fa-solid fa-gamepad"
+                aria-hidden="true"
+              ></i>
+              <span data-string-id="game.startMinecraft">Iniciar Minecraft</span>
+            </h1>
+            <button
+              class="delete"
+              type="button"
+              id="close-modal-start-btn"
+              aria-label="Cerrar"
+              data-play-close
+            ></button>
+          </div>
+
+          <div class="flexed-start-verion-div">
+            <div class="recent-versions">
+              <h1
+                class="h1-start-version-title"
+                data-string-id="game.recentVersions"
+              >
+                Versiones recientes
+              </h1>
+              <div
+                class="recent-versions-list"
+                data-play-recents
+              ></div>
+            </div>
+            <div class="start-version">
+              <h1
+                class="h1-start-version-title"
+                data-string-id="game.selectVersion"
+              >
+                Seleccionar versión
+              </h1>
+              <div class="play-version-picker-row">
+                <div class="select is-info modded-play-select">
+                  <select
+                    id="version-select"
+                    data-play-version
+                    aria-label="Versión de Minecraft"
+                  >
+                    <option value="">Elige una versión</option>
+                  </select>
+                </div>
+                <div class="play-version-sort-menu">
+                  <button
+                    type="button"
+                    data-play-sort-toggle
+                    popovertarget="play-version-sort-panel"
+                    aria-label="Ordenar por"
+                    title="Ordenar por"
+                    aria-controls="play-version-sort-panel"
+                  >
+                    <i
+                      class="fa-solid fa-arrow-down-wide-short"
+                      aria-hidden="true"
+                    ></i>
+                  </button>
+                  <div
+                    id="play-version-sort-panel"
+                    class="play-version-order"
+                    data-play-sort-menu
+                    popover="auto"
+                  >
+                    <label
+                      for="play-version-sort"
+                      data-string-id="friends.sortBy"
+                      >Ordenar por</label
+                    >
+                    <select
+                      id="play-version-sort"
+                      data-play-sort
+                    >
+                      <option
+                        value="recent"
+                        data-string-id="friends.sortByRecent"
+                      >
+                        Más recientes
+                      </option>
+                      <option
+                        value="name"
+                        data-string-id="friends.sortByName"
+                      >
+                        Alfabético
+                      </option>
+                      <option
+                        value="version"
+                        data-string-id="mybattly.version"
+                      >
+                        Versión
+                      </option>
+                    </select>
+                    <select
+                      data-play-sort-direction
+                      aria-label="Ordenar por"
+                    >
+                      <option value="desc">Descendente</option>
+                      <option value="asc">Ascendente</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <br /><br />
+              <div
+                class="start-version-loaders"
+                data-play-loaders
+                aria-label="Loader"
+              ></div>
+              <div
+                class="play-loader-build"
+                data-play-loader-build-wrap
+                hidden
+              >
+                <label for="play-loader-build-select">Versión instalada del loader</label>
+                <div class="select is-info modded-play-select">
+                  <select
+                    id="play-loader-build-select"
+                    data-play-loader-build
+                    aria-label="Versión instalada del loader"
+                  >
+                    <option value="">Elige una versión instalada</option>
+                  </select>
+                </div>
+              </div>
+              <div id="footermodaliniciarversion">
+                <p
+                  style="color: #fff; display: none"
+                  id="versionYouAreStartingMain"
+                  data-play-status
+                  role="status"
+                >
+                  Iniciarás la versión: <span id="versionYouAreStarting"></span>
+                </p>
+                <div class="play-version-actions">
+                  <button
+                    class="styled-start-version-btn"
+                    type="button"
+                    id="start-game-btn"
+                    data-play-start
+                    disabled
+                    style="display: none"
+                  >
+                    <div class="svg-wrapper-1">
+                      <div class="svg-wrapper"><i class="fa-solid fa-gamepad"></i></div>
+                    </div>
+                    <span>Jugar</span>
+                  </button>
+                  <button
+                    class="styled-start-version-btn"
+                    type="button"
+                    id="start-game-safe-btn"
+                    data-play-safe
+                    disabled
+                    style="display: none; background: #253a58; border: 1px solid #4e7bb2"
+                  >
+                    <div class="svg-wrapper-1">
+                      <div class="svg-wrapper"><i class="fa-solid fa-shield-halved"></i></div>
+                    </div>
+                    <span>Modo seguro</span>
+                  </button>
+                  <button
+                    class="play-version-shortcut-btn"
+                    type="button"
+                    data-play-shortcut
+                    disabled
+                    hidden
+                    title="Crear acceso directo en el escritorio"
+                  >
+                    <i
+                      class="fa-solid fa-arrow-up-right-from-square"
+                      aria-hidden="true"
+                    ></i>
+                    <span>Acceso directo</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div
+      class="modal"
+      data-download-dialog
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="download-title"
+      hidden
+    >
+      <div
+        class="modal-background"
+        data-download-close
+      ></div>
+      <div
+        class="modal-content download-modal-panel"
+        style="scrollbar-width: none"
+      >
+        <div class="download-panel">
+          <div class="download-panel-left">
+            <div>
+              <h1 id="download-title">Vamos a descargar una versión de Minecraft</h1>
+              <p>Selecciona la versión que quieres descargar</p>
+            </div>
+            <p class="small">
+              Recuerda que todas las versiones son las oficiales sin modificaciones. Las versiones
+              modificadas ya sean de Fabric, Forge, Quilt u OptiFine son creadas por la comunidad y
+              no por Mojang. Todos los derechos reservados a Mojang Studios.
+            </p>
+          </div>
+          <div
+            class="download-panel-right"
+            id="download-panel-right-version"
+          >
+            <div
+              class="download-panel-right-typeof-version download-panel-panel active"
+              id="version-type-panel"
+            >
+              <div
+                class="radio-input"
+                id="typeof-version"
+                data-download-loaders
+              >
+                <label class="label"
+                  ><input
+                    type="radio"
+                    name="download-loader"
+                    value=""
+                  />
+                  <p class="texto">Vanilla</p></label
+                >
+                <label class="label"
+                  ><input
+                    type="radio"
+                    name="download-loader"
+                    value="forge"
+                  />
+                  <p class="texto">Forge</p></label
+                >
+                <label class="label"
+                  ><input
+                    type="radio"
+                    name="download-loader"
+                    value="fabric"
+                  />
+                  <p class="texto">Fabric</p></label
+                >
+                <label class="label"
+                  ><input
+                    type="radio"
+                    name="download-loader"
+                    value="quilt"
+                  />
+                  <p class="texto">Quilt</p></label
+                >
+                <label class="label"
+                  ><input
+                    type="radio"
+                    name="download-loader"
+                    value="optifine"
+                  />
+                  <p class="texto">OptiFine</p></label
+                >
+                <label class="label"
+                  ><input
+                    type="radio"
+                    name="download-loader"
+                    value="neoforge"
+                  />
+                  <p class="texto">NeoForge</p></label
+                >
+                <label class="label"
+                  ><input
+                    type="radio"
+                    name="download-loader"
+                    value="legacyfabric"
+                  />
+                  <p class="texto">LegacyFabric</p></label
+                >
+                <label class="label"
+                  ><input
+                    type="radio"
+                    name="download-loader"
+                    value="clients"
+                  />
+                  <p class="texto">Clients</p></label
+                >
+              </div>
+            </div>
+            <div
+              class="download-panel-right-version download-panel-panel not-active"
+              id="vanilla-type-panel"
+              data-download-vanilla-type-panel
+            >
+              <h1>Selecciona el tipo de versión Vanilla que quieres descargar</h1>
+              <div
+                class="radio-input"
+                id="vanilla-version-types"
+              >
+                <label class="label"
+                  ><input
+                    type="radio"
+                    name="download-vanilla-type"
+                    value="release"
+                  />
+                  <p class="texto">Normal</p></label
+                >
+                <label class="label"
+                  ><input
+                    type="radio"
+                    name="download-vanilla-type"
+                    value="snapshot"
+                  />
+                  <p class="texto">Snapshot</p></label
+                >
+                <label class="label"
+                  ><input
+                    type="radio"
+                    name="download-vanilla-type"
+                    value="old_beta"
+                  />
+                  <p class="texto">Beta</p></label
+                >
+                <label class="label"
+                  ><input
+                    type="radio"
+                    name="download-vanilla-type"
+                    value="old_alpha"
+                  />
+                  <p class="texto">Alpha</p></label
+                >
+              </div>
+            </div>
+            <div
+              class="download-panel-right-version download-panel-panel not-active"
+              id="version-list-panel"
+              data-download-version-panel
+            >
+              <h1 style="position: sticky; top: 0; z-index: 10">Selecciona una versión</h1>
+              <input
+                style="position: sticky; top: 0; z-index: 10"
+                type="text"
+                class="input is-small classed-home-download-input"
+                placeholder="Buscar versión"
+                data-download-search
+              />
+              <div
+                class="radio-input"
+                id="version-list"
+                data-download-versions
+              ></div>
+            </div>
+            <div
+              class="download-panel-right-version download-panel-panel not-active"
+              id="forge-subversion-panel"
+              data-download-loader-version-panel
+            >
+              <h1
+                style="position: sticky; top: 0; z-index: 10"
+                data-download-loader-version-title
+              >
+                Selecciona la subversión que quieres descargar
+              </h1>
+              <input
+                type="text"
+                class="input is-small classed-home-download-input"
+                placeholder="Buscar versión..."
+                data-download-loader-version-search
+              />
+              <div
+                data-download-optiforge-row
+                hidden
+              >
+                <label class="checkbox">
+                  <input
+                    type="checkbox"
+                    data-download-optiforge
+                    style="width: 16px; height: 16px"
+                  />
+                  <span style="font-weight: 500">Instalar OptiFine (OptiForge)</span>
+                </label>
+              </div>
+              <div
+                class="radio-input"
+                data-download-loader-versions
+              ></div>
+            </div>
+            <div
+              class="download-panel-right-version download-panel-panel not-active"
+              id="labymod-version-panel"
+              data-download-labymod-panel
+            >
+              <h1>Seleccionar versión de LabyMod</h1>
+              <input
+                type="text"
+                class="input is-small classed-home-download-input"
+                placeholder="Buscar versión..."
+                data-download-labymod-search
+              />
+              <div
+                class="radio-input"
+                data-download-labymod-versions
+              ></div>
+            </div>
+            <div
+              class="download-panel-right-version download-panel-panel not-active"
+              data-download-battly-client-panel
+            >
+              <header class="battly-client-heading">
+                <img
+                  src="./assets/icon.png"
+                  width="44"
+                  height="44"
+                  alt=""
+                />
+                <div>
+                  <h1 id="download-battly-client-title">Battly Client 4.0</h1>
+                  <p>Selecciona la versión que quieres descargar</p>
+                </div>
+                <button
+                  type="button"
+                  class="battly-client-close"
+                  data-download-close
+                  aria-label="Cerrar"
+                >
+                  <i
+                    class="fa-solid fa-xmark"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+              </header>
+              <div class="battly-client-filters">
+                <label
+                  >Canal
+                  <select
+                    class="input is-small"
+                    data-download-battly-client-channel
+                  >
+                    <option value="stable">Estable</option>
+                    <option value="beta">Beta</option>
+                  </select>
+                </label>
+                <label
+                  >Buscar versión
+                  <input
+                    type="search"
+                    class="input is-small classed-home-download-input"
+                    placeholder="Buscar versión..."
+                    aria-label="Buscar versión"
+                    data-download-battly-client-search
+                  />
+                </label>
+              </div>
+              <div
+                class="radio-input"
+                data-download-battly-client-versions
+              ></div>
+              <div
+                class="battly-client-state"
+                data-download-battly-client-status
+                role="status"
+                aria-live="polite"
+                hidden
+              ></div>
+            </div>
+            <div class="download-panel-control-options">
+              <button
+                class="button is-info"
+                type="button"
+                id="download-panel-back-button"
+                data-download-back
+                style="display: none"
+              >
+                Atrás</button
+              ><button
+                class="button is-info"
+                type="button"
+                id="download-panel-download-button"
+                data-download-create
+                style="visibility: hidden"
+              >
+                Descargar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button
+        class="modal-close is-large"
+        type="button"
+        aria-label="Cerrar"
+        data-download-close
+      ></button>
+    </div>
+
+    <div
+      class="modal"
+      data-instances-dialog
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="instances-title"
+      hidden
+      style="z-index: 2"
+    >
+      <div
+        class="modal-background"
+        data-instances-close
+      ></div>
+      <div
+        class="modal-card modal-animated ten-radius"
+        style="background-color: #0f1623; max-height: 85%; height: auto"
+      >
+        <header
+          class="modal-card-head"
+          style="background-color: #0f1623; display: flex; align-items: center"
+        >
+          <p
+            class="modal-card-title"
+            id="instances-title"
+            style="
+              color: #fff;
+              font-size: 25px;
+              font-family: 'Battly Emoji', Poppins, 'Battly Emoji Sequences';
+            "
+          >
+            <i class="fa-solid fa-folder"></i> Instancias
+          </p>
+          <div
+            class="view-toggle"
+            style="
+              margin-left: auto;
+              margin-right: 0;
+              display: flex;
+              gap: 0.5rem;
+              align-items: center;
+            "
+          >
+            <button
+              type="button"
+              aria-label="Vista lista"
+              class="instance-view-toggle"
+              data-instances-list-view
+              title="Vista lista"
+              style="
+                cursor: pointer;
+                color: #fff;
+                background: rgba(255, 255, 255, 0.1);
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 10px;
+              "
+            >
+              <i
+                class="fas fa-list"
+                aria-hidden="true"
+              ></i>
+            </button>
+            <button
+              type="button"
+              aria-label="Vista cuadrícula"
+              class="instance-view-toggle"
+              data-instances-grid-view
+              title="Vista cuadrícula"
+              style="
+                cursor: pointer;
+                color: #fff;
+                background: rgba(255, 255, 255, 0.1);
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 10px;
+              "
+            >
+              <i
+                class="fas fa-th"
+                aria-hidden="true"
+              ></i>
+            </button>
+          </div>
+          <button
+            class="delete"
+            type="button"
+            data-instances-close
+            aria-label="Cerrar"
+            style="margin-left: 1rem"
+          ></button>
+        </header>
+        <section
+          class="modal-card-body"
+          style="background-color: #0f1623; color: #fff"
+        >
+          <p
+            role="status"
+            data-instances-status
+          ></p>
+          <div class="instance-library-filters">
+            <input
+              type="search"
+              data-instances-search
+              placeholder="Buscar instancias"
+              aria-label="Buscar instancias"
+            />
+            <select
+              data-instances-loader-filter
+              aria-label="Loader"
+            >
+              <option value="">Todos</option>
+            </select>
+            <select
+              data-instances-version-filter
+              aria-label="Versión de Minecraft"
+            >
+              <option value="">Todas las versiones</option>
+            </select>
+            <div class="play-version-sort-menu">
+              <button
+                type="button"
+                data-instances-sort-toggle
+                popovertarget="instance-library-sort-panel"
+                aria-label="Ordenar por"
+                title="Ordenar por"
+                aria-controls="instance-library-sort-panel"
+              >
+                <i
+                  class="fa-solid fa-arrow-down-wide-short"
+                  aria-hidden="true"
+                ></i>
+              </button>
+              <div
+                id="instance-library-sort-panel"
+                class="play-version-order"
+                data-instances-sort-menu
+                popover="auto"
+              >
+                <label for="instance-library-sort">Ordenar por</label>
+                <select
+                  id="instance-library-sort"
+                  data-instances-sort
+                >
+                  <option value="recent">Jugadas recientemente</option>
+                  <option value="name">Alfabético</option>
+                  <option value="version">Versión</option>
+                </select>
+                <select
+                  data-instances-sort-direction
+                  aria-label="Ordenar por"
+                >
+                  <option value="desc">Descendente</option>
+                  <option value="asc">Ascendente</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div
+            class="instances-container grid-view"
+            data-instances-list
+          ></div>
+        </section>
+        <footer
+          class="modal-card-foot"
+          style="background-color: #0f1623"
+        >
+          <button
+            type="button"
+            data-bypack-import
+          >
+            Importar .bypack
+          </button>
+          <div
+            class="card ten-radius"
+            data-instance-create-open
+            style="cursor: pointer; width: 100%"
+          >
+            <header class="card-header">
+              <p class="card-header-title">Crear instancia</p>
+              <button
+                class="card-header-icon"
+                type="button"
+                aria-label="Crear instancia"
+              >
+                <span class="icon"><i class="fas fa-plus"></i></span>
+              </button>
+            </header>
+          </div>
+        </footer>
+      </div>
+      <div
+        class="modal"
+        data-instance-editor-dialog
+        hidden
+      >
+        <div
+          class="modal-background"
+          data-instance-editor-close
+        ></div>
+        <form
+          class="modal-card modal-animated ten-radius legacy-instance-editor"
+          data-instance-form
+        >
+          <header
+            class="modal-card-head"
+            style="background-color: #0f1623; display: flex; align-items: center"
+          >
+            <p
+              class="modal-card-title"
+              style="
+                color: #fff;
+                font-size: 25px;
+                font-family: 'Battly Emoji', Poppins, 'Battly Emoji Sequences';
+              "
+              data-instance-form-title
+            >
+              Crear instancia
+            </p>
+            <div
+              class="view-toggle"
+              style="
+                margin-left: auto;
+                margin-right: 0;
+                display: flex;
+                gap: 0.5rem;
+                align-items: center;
+              "
+            >
+              <i
+                class="fas fa-list"
+                title="Vista lista"
+                aria-hidden="true"
+                style="
+                  cursor: pointer;
+                  color: #fff;
+                  background: rgba(255, 255, 255, 0.1);
+                  width: 32px;
+                  height: 32px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  border-radius: 10px;
+                "
+              ></i>
+              <i
+                class="fas fa-memory"
+                title="Perfil de rendimiento"
+                aria-label="Perfil de rendimiento"
+                role="button"
+                tabindex="0"
+                data-instance-runtime-toggle
+                style="
+                  cursor: pointer;
+                  color: #fff;
+                  background: rgba(255, 255, 255, 0.1);
+                  width: 32px;
+                  height: 32px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  border-radius: 10px;
+                "
+              ></i>
+            </div>
+            <button
+              class="delete"
+              type="button"
+              data-instance-editor-close
+              aria-label="Cerrar"
+            ></button>
+          </header>
+          <section
+            class="modal-card-body"
+            style="background-color: #0f1623"
+          >
+            <div class="columns">
+              <div class="column">
+                <label
+                  class="label"
+                  style="color: #fff"
+                  >Nombre de la instancia</label
+                >
+                <input
+                  class="input is-info"
+                  type="text"
+                  name="name"
+                  aria-label="Nombre"
+                  required
+                  maxlength="128"
+                  placeholder="Nombre"
+                  style="
+                    font-family: 'Battly Emoji', Poppins, 'Battly Emoji Sequences';
+                    font-weight: 500;
+                    font-size: 12px;
+                  "
+                />
+              </div>
+              <div class="column">
+                <label
+                  class="label"
+                  style="color: #fff"
+                  >Descripción de la instancia</label
+                >
+                <input
+                  class="input is-info"
+                  type="text"
+                  name="description"
+                  aria-label="Descripción"
+                  required
+                  maxlength="1024"
+                  placeholder="Descripción"
+                  style="
+                    font-family: 'Battly Emoji', Poppins, 'Battly Emoji Sequences';
+                    font-weight: 500;
+                    font-size: 12px;
+                  "
+                />
+              </div>
+            </div>
+            <p style="color: #fff">Imagen de la instancia</p>
+            <div class="instance-image-picker">
+              <figure class="image is-64x64">
+                <img
+                  data-instance-image-preview
+                  alt=""
+                />
+              </figure>
+              <div class="file is-info is-boxed">
+                <label class="file-label"
+                  ><input
+                    class="file-input"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    data-instance-image
+                  />
+                  <span class="file-cta"
+                    ><span class="file-icon"><i class="fas fa-cloud-upload-alt"></i></span
+                    ><span style="font-size: 10px">Selecciona un archivo</span></span
+                  >
+                </label>
+              </div>
+            </div>
+            <p
+              class="instance-image-name"
+              data-instance-image-name
+              aria-live="polite"
+            ></p>
+            <p style="color: #fff; margin-top: 1rem">Versión de la instancia</p>
+            <div class="b-mods-radio-inputs instance-version-types">
+              <label class="b-mods-radio"
+                ><input
+                  type="radio"
+                  name="instanceVersionType"
+                  value="release"
+                  checked
+                /><span class="b-mods-name">Release</span></label
+              >
+              <label class="b-mods-radio"
+                ><input
+                  type="radio"
+                  name="instanceVersionType"
+                  value="snapshot"
+                /><span class="b-mods-name">Snapshot</span></label
+              >
+              <label class="b-mods-radio"
+                ><input
+                  type="radio"
+                  name="instanceVersionType"
+                  value="old_beta"
+                /><span class="b-mods-name">Beta</span></label
+              >
+              <label class="b-mods-radio"
+                ><input
+                  type="radio"
+                  name="instanceVersionType"
+                  value="old_alpha"
+                /><span class="b-mods-name">Alpha</span></label
+              >
+            </div>
+            <div class="field">
+              <label class="label instance-field-label">Versión de Minecraft</label>
+              <div class="select is-info is-fullwidth is-small">
+                <select
+                  name="version"
+                  required
+                  data-instance-version
+                  aria-label="Versión"
+                ></select>
+              </div>
+            </div>
+            <div class="field">
+              <label class="label instance-field-label">Modloader</label>
+              <div class="select is-info is-fullwidth is-small">
+                <select
+                  name="loader"
+                  data-instance-loader
+                >
+                  <option value="">Ninguno</option>
+                  <option value="forge">Forge</option>
+                  <option value="fabric">Fabric</option>
+                  <option value="quilt">Quilt</option>
+                  <option value="legacyfabric">LegacyFabric</option>
+                  <option value="neoforge">Neoforge</option>
+                </select>
+              </div>
+            </div>
+            <div
+              class="field"
+              data-instance-loader-version-field
+              hidden
+            >
+              <label class="label instance-field-label">Versión del Modloader</label>
+              <div class="select is-info is-fullwidth is-small">
+                <select
+                  name="loaderVersion"
+                  data-instance-loader-version
+                  aria-label="Versión del loader"
+                >
+                  <option value="latest">Última</option>
+                </select>
+              </div>
+            </div>
+            <details class="instance-runtime-details">
+              <summary>Perfil de rendimiento</summary>
+              <fieldset class="instance-runtime-editor">
+                <label
+                  >Memoria<select
+                    name="ramMode"
+                    data-instance-ram-mode
+                  >
+                    <option value="global">Usar RAM global</option>
+                    <option value="custom">Personalizar para esta instancia</option>
+                  </select></label
+                >
+                <label
+                  data-instance-custom-ram
+                  hidden
+                  >RAM mínima (GB)<input
+                    name="ramMinGb"
+                    type="number"
+                    min="0.5"
+                    max="64"
+                    step="0.5"
+                /></label>
+                <label
+                  data-instance-custom-ram
+                  hidden
+                  >RAM máxima (GB)<input
+                    name="ramMaxGb"
+                    type="number"
+                    min="0.5"
+                    max="64"
+                    step="0.5"
+                /></label>
+                <label
+                  >Java<select
+                    name="javaVersion"
+                    data-instance-java-mode
+                  >
+                    <option value="global">Usar Java global</option>
+                    <option value="automatic">Detección automática</option>
+                    <option value="custom-path">Ejecutable personalizado</option>
+                  </select></label
+                >
+                <label
+                  class="instance-java-path"
+                  data-instance-java-path
+                  hidden
+                  >Ruta Java<input
+                    name="javaPath"
+                    maxlength="2048"
+                    autocomplete="off"
+                /></label>
+                <button
+                  class="small-action instance-java-picker"
+                  type="button"
+                  data-instance-java-select
+                  hidden
+                >
+                  <i class="fa-solid fa-folder-open"></i> Buscar Java
+                </button>
+                <label class="instance-jvm-arguments"
+                  >Argumentos JVM propios<textarea
+                    name="jvmArgs"
+                    maxlength="4096"
+                  ></textarea>
+                </label>
+              </fieldset>
+            </details>
+          </section>
+          <footer
+            class="modal-card-foot"
+            style="background-color: #0f1623"
+          >
+            <button
+              type="submit"
+              class="button is-info is-responsive"
+              style="
+                font-size: 12px;
+                font-family: 'Battly Emoji', Poppins, 'Battly Emoji Sequences';
+                color: #fff;
+                margin-left: 0;
+              "
+            >
+              Crear instancia
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <dialog
+      class="instance-launch-modal"
+      data-instance-launch-dialog
+      aria-labelledby="instance-launch-title"
+    >
+      <div class="modal-card modal-animated instance-launch-card">
+        <header class="modal-card-head">
+          <p
+            class="modal-card-title"
+            id="instance-launch-title"
+          >
+            <i
+              class="fa-solid fa-spinner fa-spin-pulse"
+              data-instance-launch-spinner
+            ></i>
+            Preparando instancia
+          </p>
+        </header>
+        <section class="modal-card-body">
+          <div
+            class="install-artwork"
+            data-install-artwork
+          >
+            <img
+              data-install-banner
+              alt=""
+            />
+            <div>
+              <img
+                data-install-icon
+                alt=""
+              /><strong></strong>
+            </div>
+          </div>
+          <p
+            class="instance-launch-message"
+            data-instance-launch-message
+          >
+            Preparando instancia…
+          </p>
+          <p
+            class="instance-launch-details"
+            data-instance-launch-details
+          ></p>
+          <progress
+            class="progress is-info"
+            max="100"
+            value="0"
+            data-instance-launch-progress
+          ></progress>
+          <p
+            class="instance-launch-percent"
+            data-instance-launch-percent
+          >
+            0.00%
+          </p>
+          <div class="instance-launch-stats">
+            <p data-instance-launch-file>Archivo: --</p>
+            <p data-instance-launch-files>Archivos: --/--</p>
+            <p data-instance-launch-transferred>Transferido: --/--</p>
+            <p data-instance-launch-speed>Velocidad: --</p>
+            <p data-instance-launch-eta>ETA: --:--</p>
+            <p data-instance-launch-phase>Fase: inicializando</p>
+          </div>
+        </section>
+        <footer class="modal-card-foot">
+          <button
+            class="button is-danger is-outlined"
+            type="button"
+            data-instance-launch-cancel
+          >
+            Cancelar
+          </button>
+        </footer>
+      </div>
+    </dialog>
+
+    <dialog
+      class="launching-modal"
+      data-launch-dialog
+      aria-labelledby="launch-title"
+    >
+      <section class="modal-card launching-mc-modal launching-state-panel">
+        <h1 id="launch-title">Minecraft está iniciando...</h1>
+        <div class="launching-mc-modal-status-containers">
+          <div class="launching-mc-modal-status-container">
+            <p data-launch-files>Comprobando archivos...</p>
+            <i
+              class="fas fa-sync fa-spin"
+              data-launch-files-icon
+              aria-hidden="true"
+            ></i>
+          </div>
+          <div class="launching-mc-modal-status-container">
+            <p
+              class="launch-status"
+              role="status"
+              data-launch-status
+            >
+              Iniciando Minecraft...
+            </p>
+            <i
+              class="fas fa-sync fa-spin"
+              data-launch-game-icon
+              aria-hidden="true"
+            ></i>
+          </div>
+        </div>
+      </section>
+      <section class="modal-content download-modal-panel launching-download-panel">
+        <div class="download-panel">
+          <div class="download-panel-left">
+            <div class="launch-download-summary">
+              <h1 data-launch-download-title>Descargando versión...</h1>
+              <p
+                role="status"
+                data-launch-download-status
+              >
+                Preparando instalación…
+              </p>
+              <div class="launch-download-progress">
+                <p
+                  class="launch-download-progress-row"
+                  role="status"
+                >
+                  <span data-launch-phase>Preparando instalación...</span>
+                  <span data-launch-percent>0%</span>
+                </p>
+                <progress
+                  class="progress is-info"
+                  max="100"
+                  value="0"
+                  data-launch-progress
+                ></progress>
+              </div>
+              <aside class="launch-install-fact">
+                <strong
+                  data-launch-tip-title
+                  data-string-id="download.funFact"
+                ></strong>
+                <p
+                  data-launch-tip
+                  data-string-id="download.funFactText"
+                ></p>
+              </aside>
+            </div>
+          </div>
+          <div class="download-panel-right">
+            <strong>Logs</strong>
+            <pre
+              class="textarea has-fixed-size launch-log"
+              data-launch-log
+              tabindex="0"
+              aria-label="Logs de instalación"
+            >
+Esperando al core…</pre>
+            <div class="launch-log-actions">
+              <button
+                type="button"
+                class="button is-danger is-outlined is-small"
+                data-launch-cancel
+                hidden
+              >
+                <i
+                  class="fa-solid fa-xmark"
+                  aria-hidden="true"
+                ></i>
+                Cancelar
+              </button>
+              <button
+                type="button"
+                class="button is-info is-small launch-open-logs"
+                data-launch-open-logs
+              >
+                <i
+                  class="fa-solid fa-floppy-disk"
+                  aria-hidden="true"
+                ></i>
+                Guardar registros
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <button
+        type="button"
+        data-launch-details-toggle
+        hidden
+        aria-expanded="true"
+      ></button>
+
+      <button
+        type="button"
+        data-launch-close
+        hidden
+      >
+        Cerrar
+      </button>
+    </dialog>
+
+    <dialog
+      class="modpack-install-modal"
+      data-modpack-install-dialog
+      aria-labelledby="modpack-install-title"
+    >
+      <div class="modal-card modal-animated">
+        <header class="modal-card-head">
+          <p
+            class="modal-card-title"
+            id="modpack-install-title"
+          >
+            Instalando ModPack, esto puede tardar
+          </p>
+          <button
+            class="delete"
+            type="button"
+            data-modpack-install-close
+            aria-label="Cerrar"
+            hidden
+          ></button>
+        </header>
+        <section class="modal-card-body">
+          <div class="content">
+            <div
+              class="install-artwork"
+              data-install-artwork
+            >
+              <img
+                data-install-banner
+                alt=""
+              />
+              <div>
+                <img
+                  data-install-icon
+                  alt=""
+                /><strong></strong>
+              </div>
+            </div>
+            <h3 data-modpack-install-status>Extrayendo archivos...</h3>
+            <div class="modpack-install-progress-copy">
+              <span data-modpack-install-item>Preparando ModPack…</span>
+              <strong data-modpack-install-percent>0%</strong>
+            </div>
+            <progress
+              max="100"
+              value="0"
+              data-modpack-install-progress
+            ></progress>
+            <details class="modpack-install-details">
+              <summary>Detalles técnicos</summary>
+              <textarea
+                class="textarea"
+                data-modpack-install-log
+                readonly
+                aria-label="Logs de instalación"
+              ></textarea>
+            </details>
+          </div>
+        </section>
+      </div>
+    </dialog>
+    <dialog
+      class="crash-report-modal"
+      data-crash-report-dialog
+      aria-labelledby="crash-report-title"
+    >
+      <div class="modal-card modal-animated crash-report-card">
+        <header class="modal-card-head">
+          <p
+            class="modal-card-title"
+            id="crash-report-title"
+          >
+            <i
+              class="fa-solid fa-triangle-exclamation"
+              aria-hidden="true"
+            ></i>
+            <span data-crash-report-title>Error al abrir Minecraft</span>
+          </p>
+          <button
+            class="delete"
+            type="button"
+            data-crash-report-close
+            aria-label="Cerrar"
+          ></button>
+        </header>
+        <section class="modal-card-body crash-report-body">
+          <p
+            class="crash-report-summary"
+            data-crash-report-summary
+          ></p>
+          <div class="crash-report-layout">
+            <section
+              class="crash-report-solutions"
+              aria-labelledby="crash-solutions-title"
+            >
+              <h2 id="crash-solutions-title">
+                <i
+                  class="fa-solid fa-wand-magic-sparkles"
+                  aria-hidden="true"
+                ></i>
+                Soluciones locales
+              </h2>
+              <div data-crash-report-issues></div>
+            </section>
+            <section class="card crash-report-log-card">
+              <header class="card-header">
+                <p class="card-header-title">Error encontrado</p>
+                <button
+                  type="button"
+                  class="card-header-icon"
+                  data-crash-log-toggle
+                  aria-expanded="false"
+                >
+                  <span class="icon"
+                    ><i
+                      class="fas fa-angle-down"
+                      aria-hidden="true"
+                    ></i
+                  ></span>
+                  <span class="sr-only">Mostrar registros</span>
+                </button>
+              </header>
+              <div
+                class="card-content"
+                data-crash-log-content
+                hidden
+              >
+                <pre
+                  class="crash-report-log"
+                  data-crash-report-log
+                  tabindex="0"
+                ></pre>
+              </div>
+            </section>
+          </div>
+        </section>
+        <footer class="modal-card-foot">
+          <p
+            class="crash-report-status"
+            data-crash-report-status
+            role="status"
+          ></p>
+          <button
+            class="button is-info"
+            type="button"
+            data-crash-save-logs
+          >
+            <i
+              class="fa-solid fa-floppy-disk"
+              aria-hidden="true"
+            ></i
+            >&nbsp; Guardar logs
+          </button>
+          <button
+            class="button is-info"
+            type="button"
+            data-crash-discord
+          >
+            <i
+              class="fab fa-discord"
+              aria-hidden="true"
+            ></i
+            >&nbsp; Discord
+          </button>
+        </footer>
+      </div>
+    </dialog>
+    <dialog
+      class="theme-dialog"
+      data-theme-editor-dialog
+      aria-labelledby="theme-editor-title"
+    >
+      <form
+        class="modal-card glass modal-animated"
+        method="dialog"
+        data-theme-editor-form
+      >
+        <header class="modal-card-head">
+          <p class="modal-card-title">
+            <i
+              class="fa-solid fa-palette"
+              aria-hidden="true"
+            ></i>
+            <span
+              id="theme-editor-title"
+              data-theme-editor-title
+              >Nuevo tema</span
+            >
+          </p>
+          <button
+            class="delete"
+            type="button"
+            data-theme-dialog-close
+            aria-label="Cerrar"
+          ></button>
+        </header>
+        <input
+          type="hidden"
+          name="id"
+        />
+        <section class="modal-card-body">
+          <label
+            class="label"
+            for="theme-editor-name"
+            >Nombre del tema</label
+          >
+          <input
+            id="theme-editor-name"
+            class="input notchange"
+            name="name"
+            maxlength="40"
+            required
+          />
+          <div class="theme-editor-columns">
+            <div>
+              <label
+                class="label"
+                for="theme-editor-button-color"
+                >Color de los botones</label
+              >
+              <input
+                id="theme-editor-button-color"
+                class="input notchange"
+                name="buttonColor"
+                type="color"
+                value="#3e8ed0"
+              />
+              <input
+                name="buttonHoverColor"
+                type="hidden"
+                value="#2b74b0"
+              />
+              <label class="label">Color de la barra inferior</label>
+              <input
+                class="input notchange"
+                name="footerColor"
+                type="color"
+                value="#0f1623"
+              />
+              <label class="label">Color de carga</label>
+              <input
+                class="input notchange"
+                name="loadingColor"
+                type="color"
+                value="#000000"
+              />
+            </div>
+            <div>
+              <label class="label">Opacidad de la barra inferior</label>
+              <input
+                name="footerOpacity"
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value="0.86"
+              />
+              <label class="label">Sonido de inicio</label>
+              <input
+                name="startupSound"
+                type="hidden"
+                value="start"
+              />
+              <input
+                name="startupVolume"
+                type="hidden"
+                value="0.8"
+              />
+              <div class="theme-sound-actions">
+                <button
+                  class="button is-info is-fullwidth"
+                  type="button"
+                  data-theme-sound-open
+                >
+                  <i
+                    class="fa-solid fa-music"
+                    aria-hidden="true"
+                  ></i>
+                  <span data-theme-sound-label>Retro</span>
+                </button>
+                <button
+                  class="button is-info"
+                  type="button"
+                  data-theme-sound-play
+                  aria-label="Reproducir sonido"
+                >
+                  <i
+                    class="fa-solid fa-play"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+              </div>
+              <label class="label">Fondo</label>
+              <input
+                name="backgroundUrl"
+                type="hidden"
+              />
+              <button
+                class="button is-info is-fullwidth"
+                type="button"
+                data-theme-background-select
+              >
+                <i
+                  class="fa-solid fa-image"
+                  aria-hidden="true"
+                ></i
+                >&nbsp; Seleccionar imagen
+              </button>
+              <p
+                class="help"
+                data-theme-background-name
+              >
+                Sin imagen seleccionada
+              </p>
+            </div>
+          </div>
+          <p
+            role="status"
+            data-theme-editor-status
+          ></p>
+        </section>
+        <footer class="modal-card-foot">
+          <button
+            class="button cancel is-danger is-outlined"
+            type="button"
+            data-theme-dialog-close
+          >
+            Cancelar
+          </button>
+          <button
+            class="button is-info is-outlined"
+            type="submit"
+          >
+            <i
+              class="fa-solid fa-floppy-disk"
+              aria-hidden="true"
+            ></i>
+            Guardar tema
+          </button>
+        </footer>
+      </form>
+    </dialog>
+    <dialog
+      class="theme-dialog theme-sound-dialog"
+      data-theme-sound-dialog
+      aria-labelledby="theme-sound-title"
+    >
+      <div class="modal-card glass modal-animated">
+        <header class="modal-card-head">
+          <p
+            class="modal-card-title"
+            id="theme-sound-title"
+          >
+            <i class="fa-solid fa-wave-square"></i>&nbsp; Panel de sonidos
+          </p>
+          <button
+            class="delete"
+            type="button"
+            data-theme-sound-close
+            aria-label="Cerrar"
+          ></button>
+        </header>
+        <section class="modal-card-body">
+          <label class="label"
+            >Volumen de sonido de inicio (<span data-theme-sound-volume-label>80%</span>)</label
+          >
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value="0.8"
+            data-theme-sound-volume
+          />
+          <div
+            class="theme-sound-library"
+            data-theme-sound-library
+          ></div>
+          <button
+            class="button is-info"
+            type="button"
+            data-theme-sound-upload
+          >
+            <i
+              class="fa-solid fa-upload"
+              aria-hidden="true"
+            ></i
+            ><span>Subir sonido personalizado · Battly+</span>
+          </button>
+          <p
+            data-theme-sound-status
+            role="status"
+          ></p>
+          <p class="help">Selecciona un sonido o pulsa Reproducir para escucharlo.</p>
+        </section>
+        <footer class="modal-card-foot">
+          <button
+            class="button"
+            type="button"
+            data-theme-sound-close
+          >
+            Cerrar
+          </button>
+        </footer>
+      </div>
+    </dialog>
+    <dialog
+      class="theme-dialog"
+      data-theme-import-dialog
+      aria-labelledby="theme-import-title"
+    >
+      <form
+        class="modal-card glass modal-animated theme-sharing-card"
+        method="dialog"
+        data-theme-import-form
+      >
+        <header class="modal-card-head">
+          <span class="theme-sharing-mark"
+            ><i
+              class="fa-solid fa-share-nodes"
+              aria-hidden="true"
+            ></i
+          ></span>
+          <div class="theme-sharing-heading">
+            <h1
+              class="modal-card-title"
+              id="theme-import-title"
+            >
+              Comparte tu estilo
+            </h1>
+          </div>
+          <button
+            class="delete"
+            type="button"
+            data-theme-import-close
+            aria-label="Cerrar"
+          ></button>
+        </header>
+        <div
+          class="theme-sharing-tabs"
+          data-theme-share-tabs
+          role="tablist"
+          aria-label="Compartir temas"
+        >
+          <button
+            type="button"
+            role="tab"
+            id="theme-tab-share"
+            aria-controls="theme-panel-share"
+            aria-selected="true"
+            data-theme-share-tab="share"
+            class="is-active"
+          >
+            <i
+              class="fa-solid fa-share-nodes"
+              aria-hidden="true"
+            ></i
+            >Compartir
+          </button>
+          <button
+            type="button"
+            role="tab"
+            id="theme-tab-import"
+            aria-controls="theme-panel-import"
+            aria-selected="false"
+            tabindex="-1"
+            data-theme-share-tab="import"
+          >
+            <i
+              class="fa-solid fa-download"
+              aria-hidden="true"
+            ></i
+            >Importar
+          </button>
+          <button
+            type="button"
+            role="tab"
+            id="theme-tab-stats"
+            aria-controls="theme-panel-stats"
+            aria-selected="false"
+            tabindex="-1"
+            data-theme-share-tab="stats"
+          >
+            <i
+              class="fa-solid fa-chart-simple"
+              aria-hidden="true"
+            ></i
+            >Estadísticas
+          </button>
+        </div>
+        <section class="modal-card-body">
+          <div
+            id="theme-panel-share"
+            role="tabpanel"
+            aria-labelledby="theme-tab-share"
+            data-theme-share-panel="share"
+          >
+            <div class="theme-sharing-section-title">
+              <h2>Hecho por ti. Para compartir.</h2>
+              <p>Elige un tema y copia su enlace para enviárselo a quien quieras.</p>
+            </div>
+            <div
+              class="share-themes-list"
+              data-theme-share-list
+            ></div>
+          </div>
+          <div
+            id="theme-panel-import"
+            role="tabpanel"
+            aria-labelledby="theme-tab-import"
+            data-theme-share-panel="import"
+            hidden
+          >
+            <div class="theme-sharing-section-title">
+              <h2>Un nuevo estilo para tu Battly</h2>
+              <p>Guarda un tema compartido en tu colección y hazlo tuyo.</p>
+            </div>
+            <div class="theme-import-fields">
+              <label class="theme-sharing-label"
+                >Código o enlace del tema<input
+                  class="input notchange"
+                  name="code"
+                  maxlength="2048"
+                  autocomplete="off"
+                  spellcheck="false"
+                  aria-describedby="theme-code-help"
+                  placeholder="Pega el enlace o código que te han compartido"
+              /></label>
+              <p
+                class="theme-sharing-help"
+                id="theme-code-help"
+              >
+                Puedes usar el código de compartir o el enlace completo.
+              </p>
+              <label class="theme-sharing-label"
+                ><span>Nombre en tu colección <small>Opcional</small></span
+                ><input
+                  class="input notchange"
+                  name="customName"
+                  maxlength="40"
+                  placeholder="Conservar el nombre original"
+              /></label>
+              <button
+                class="theme-sharing-primary"
+                type="submit"
+              >
+                <i
+                  class="fa-solid fa-download"
+                  aria-hidden="true"
+                ></i
+                ><span>Importar a mi colección</span
+                ><i
+                  class="fa-solid fa-arrow-right"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+          </div>
+          <div
+            id="theme-panel-stats"
+            role="tabpanel"
+            aria-labelledby="theme-tab-stats"
+            data-theme-share-panel="stats"
+            hidden
+          >
+            <div class="theme-sharing-section-title">
+              <h2>Tu estilo en la comunidad</h2>
+              <p>Consulta las instalaciones y la actividad de tus temas.</p>
+            </div>
+            <div data-theme-share-stats></div>
+          </div>
+        </section>
+        <footer class="modal-card-foot">
+          <p
+            role="status"
+            aria-live="polite"
+            data-theme-import-status
+          ></p>
+        </footer>
+      </form>
+    </dialog>
+    <script
+      type="module"
+      src="./index.ts"
+    ></script>
+  </body>
+</html>

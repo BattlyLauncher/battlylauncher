@@ -1,0 +1,148 @@
+.automatic-world-backup {
+  position: fixed;
+  top: 58px;
+  right: 18px;
+  z-index: 9999;
+  box-sizing: border-box;
+  width: min(340px, calc(100vw - 32px));
+  padding: 16px;
+  background: #101722;
+  color: #f8fafc;
+  border: 1px solid #34465b;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px #0006;
+  font-family: inherit;
+  text-align: left;
+}
+.automatic-world-backup[hidden] {
+  display: none;
+}
+.automatic-world-backup .backup-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+.automatic-world-backup .backup-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #4099db22;
+  color: #71c4ff;
+  font-size: 18px;
+}
+.automatic-world-backup .backup-heading strong {
+  flex: 1;
+  min-width: 0;
+  color: #f8fafc;
+  opacity: 1;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.automatic-world-backup .backup-close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: #ffffff0b;
+  color: #a9bbcc;
+  font-family: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.automatic-world-backup .backup-close:hover {
+  background: #ffffff18;
+  color: white;
+}
+.automatic-world-backup .backup-close:focus-visible {
+  outline: 2px solid #4099db;
+  outline-offset: 2px;
+}
+.automatic-world-backup .backup-status {
+  margin: 12px 0 10px;
+  color: #b7c8da;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  opacity: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.automatic-world-backup .backup-meter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.automatic-world-backup output {
+  flex: none;
+  color: #b7c8da;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.automatic-world-backup output:empty {
+  display: none;
+}
+.automatic-world-backup progress {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  height: 5px;
+  appearance: none;
+  border: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #263647;
+}
+.automatic-world-backup progress::-webkit-progress-bar {
+  background: #263647;
+}
+.automatic-world-backup progress::-webkit-progress-value {
+  background: #4099db;
+  border-radius: 8px;
+  transition: width 0.2s ease;
+}
+.automatic-world-backup[data-state='progress'] progress:indeterminate {
+  background: linear-gradient(90deg, #263647 0%, #4099db 50%, #263647 100%);
+  background-size: 200% 100%;
+  animation: backup-pulse 1.5s linear infinite;
+}
+.automatic-world-backup[data-state='progress'] progress:indeterminate::-webkit-progress-bar {
+  background: transparent;
+}
+.automatic-world-backup[data-state='complete'] .backup-icon {
+  color: #70dfb1;
+  background: #32c88b20;
+}
+.automatic-world-backup[data-state='complete'] progress::-webkit-progress-value {
+  background: #32c88b;
+}
+.automatic-world-backup[data-state='error'] .backup-icon {
+  color: #ffd780;
+  background: #ffc85720;
+}
+.automatic-world-backup[data-state='error'] .backup-meter {
+  display: none;
+}
+@keyframes backup-pulse {
+  to {
+    background-position: -200% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .automatic-world-backup progress {
+    animation: none !important;
+    transition: none;
+  }
+}

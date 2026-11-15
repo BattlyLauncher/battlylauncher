@@ -1,0 +1,263 @@
+name: Battly package.json updates
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Build and verify without publishing
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+env:
+  BATTLY_RELEASE_NOT_BEFORE: ${{ vars.BATTLY_RELEASE_NOT_BEFORE }}
+  BATTLY_CI_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true && 'true' || 'false' }}
+  BATTLY_QA_DRAFT: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true && github.repository == '1ly4s0/BattlyRemake' && 'true' || 'false' }}
+  BATTLY_QA_TAG: qa-build-${{ github.run_id }}-${{ github.run_attempt }}
+  GH_REPO: ${{ github.repository }}
+
+concurrency:
+  group: battly-package-updates-${{ github.repository == 'BattlyLauncher/battlylauncher' && 'release' || github.event_name }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    if: github.repository == 'BattlyLauncher/battlylauncher' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    outputs:
+      skip: ${{ steps.plan.outputs.skip }}
+      type: ${{ steps.plan.outputs.type }}
+      tag: ${{ steps.plan.outputs.tag }}
+      baseTag: ${{ steps.plan.outputs.baseTag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.3'
+      - id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node "public scripts/prepare-ci-repository.cjs"
+          node "public scripts/patch-release-config.cjs"
+      - name: Prepare private draft storage for test packages
+        if: env.BATTLY_QA_DRAFT == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(gh repo view "$GH_REPO" --json isPrivate --jq .isPrivate)" = true
+          gh release create "$BATTLY_QA_TAG" --draft --target "$GITHUB_REF_NAME" --title "Private build test $GITHUB_RUN_ID" --notes "Temporary verification of commit $GITHUB_SHA. Do not publish or distribute these packages."
+
+  build:
+    needs: plan
+    if: needs.plan.outputs.skip != 'true'
+    permissions:
+      contents: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { runner: windows-2022, platform: win32, arch: x64 }
+          - { runner: windows-2022, platform: win32, arch: ia32 }
+          - { runner: ubuntu-24.04, platform: linux, arch: x64 }
+          - { runner: macos-15-intel, platform: darwin, arch: x64 }
+          - { runner: macos-15, platform: darwin, arch: arm64 }
+    runs-on: ${{ matrix.runner }}
+    environment: ${{ needs.plan.outputs.type == 'full' && matrix.platform == 'win32' && 'windows-signing' || 'battly-updates-build' }}
+    timeout-minutes: 60
+    env:
+      BATTLY_PATCH_PLATFORM: ${{ matrix.platform }}
+      BATTLY_PATCH_ARCH: ${{ matrix.arch }}
+      UPDATE_TYPE: ${{ needs.plan.outputs.type }}
+      BASE_TAG: ${{ needs.plan.outputs.baseTag }}
+      BATTLY_MAC_SIGNING_MODE: ${{ vars.BATTLY_MAC_SIGNING_MODE || (github.event_name == 'workflow_dispatch' && inputs.dry_run && 'adhoc' || 'self-signed') }}
+      BATTLY_MAC_CERT_SHA1: ${{ vars.BATTLY_MAC_CERT_SHA1 }}
+      GH_REPO: ${{ github.repository }}
+      BATTLY_OFFICIAL_INSTALLER_TAG: ${{ vars.BATTLY_OFFICIAL_INSTALLER_TAG }}
+      AZURE_CORE_OUTPUT: none
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.3'
+          cache: npm
+      - run: npm ci
+      - name: Select isolated dry-run repository
+        run: node "public scripts/prepare-ci-repository.cjs"
+      - name: Reproducible manifest timestamp
+        run: echo "SOURCE_DATE_EPOCH=$(git show -s --format=%ct HEAD)" >> "$GITHUB_ENV"
+      - name: Prepare public configuration and signing key
+        env:
+          PATCH_PUBLIC_KEY: ${{ secrets.BATTLY_PATCH_PUBLIC_KEY }}
+          PATCH_PRIVATE_KEY: ${{ needs.plan.outputs.type == 'patch' && secrets.BATTLY_PATCH_PRIVATE_KEY || '' }}
+        run: node "public scripts/prepare-patch-ci.cjs"
+      - name: Download exact installer baseline
+        if: needs.plan.outputs.type == 'patch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$BASE_TAG" --pattern "patch-base-$BATTLY_PATCH_PLATFORM-$BATTLY_PATCH_ARCH.json" --dir "$RUNNER_TEMP/battly-baseline"
+          echo "BATTLY_PATCH_BASE_CONFIG_FILE=$RUNNER_TEMP/battly-baseline/patch-base-$BATTLY_PATCH_PLATFORM-$BATTLY_PATCH_ARCH.json" >> "$GITHUB_ENV"
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm run build
+      - run: npm run patches:test
+      - name: Electron patch startup and recovery
+        run: |
+          if [ "$RUNNER_OS" = Linux ]; then
+            sudo chown root:root node_modules/electron/dist/chrome-sandbox
+            sudo chmod 4755 node_modules/electron/dist/chrome-sandbox
+            xvfb-run -a node "public scripts/patch-electron-smoke.cjs"
+          else
+            node "public scripts/patch-electron-smoke.cjs"
+          fi
+      - name: Generate signed patch assets
+        if: needs.plan.outputs.type == 'patch'
+        run: npm run patches:release -- --out artifacts/patch-ci
+      - name: Authenticate Windows signing identity
+        if: needs.plan.outputs.type == 'full' && matrix.platform == 'win32'
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Prepare Linux package tools
+        if: needs.plan.outputs.type == 'full' && matrix.platform == 'linux'
+        run: sudo apt-get -o Acquire::Retries=3 update && sudo apt-get -o Acquire::Retries=3 install -y rpm
+      - name: Build and verify full installer packages
+        if: needs.plan.outputs.type == 'full'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BATTLY_SIGNING_MODE: ${{ matrix.platform == 'win32' && 'azure' || '' }}
+          BATTLY_AZURE_SIGNING_ENDPOINT: ${{ matrix.platform == 'win32' && secrets.AZURE_SIGNING_ENDPOINT || '' }}
+          BATTLY_AZURE_SIGNING_ACCOUNT: ${{ matrix.platform == 'win32' && secrets.AZURE_SIGNING_ACCOUNT_NAME || '' }}
+          BATTLY_AZURE_SIGNING_PROFILE: ${{ matrix.platform == 'win32' && secrets.AZURE_SIGNING_CERTIFICATE_PROFILE || '' }}
+          CSC_LINK: ${{ matrix.platform == 'darwin' && secrets.MAC_CSC_LINK || '' }}
+          CSC_KEY_PASSWORD: ${{ matrix.platform == 'darwin' && secrets.MAC_CSC_KEY_PASSWORD || '' }}
+          BATTLY_MAC_SIGNING_P12: ${{ matrix.platform == 'darwin' && secrets.BATTLY_MAC_SIGNING_P12 || '' }}
+          BATTLY_MAC_SIGNING_PASSWORD: ${{ matrix.platform == 'darwin' && secrets.BATTLY_MAC_SIGNING_PASSWORD || '' }}
+          APPLE_ID: ${{ matrix.platform == 'darwin' && secrets.APPLE_ID || '' }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ matrix.platform == 'darwin' && secrets.APPLE_APP_SPECIFIC_PASSWORD || '' }}
+          APPLE_TEAM_ID: ${{ matrix.platform == 'darwin' && secrets.APPLE_TEAM_ID || '' }}
+        run: |
+          if [ "$BATTLY_PATCH_PLATFORM" = darwin ] && [ "$BATTLY_MAC_SIGNING_MODE" != developer-id ]; then
+            unset CSC_LINK CSC_KEY_PASSWORD
+          fi
+          node "public scripts/package-update-base.cjs"
+      - name: Install and open the Linux deb with an unlocked test keyring
+        if: needs.plan.outputs.type == 'full' && matrix.platform == 'linux'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y "$GITHUB_WORKSPACE/artifacts/releases/release-$(node -p 'require("./package.json").version')/"*.deb xvfb dbus-x11 gnome-keyring
+          export BATTLY_LINUX_EXECUTABLE="/opt/Battly Launcher/battlylauncher"
+          dbus-run-session -- bash "public scripts/run-linux-desktop-smoke.sh"
+      - uses: actions/upload-artifact@v4
+        if: always() && matrix.platform == 'linux'
+        with:
+          name: battly-deb-startup-evidence
+          retention-days: 1
+          if-no-files-found: ignore
+          path: |
+            /tmp/battly-linux-launcher.log
+            /tmp/battly-linux-launcher.png
+            /tmp/battly-linux-postintro.png
+      - name: Export installer baseline
+        run: |
+          node -e 'const fs=require("fs"),p=require("path"),d="artifacts/patch-ci/github-assets";fs.mkdirSync(d,{recursive:true});fs.copyFileSync("bootstrap/config.json",p.join(d,`patch-base-${process.env.BATTLY_PATCH_PLATFORM}-${process.env.BATTLY_PATCH_ARCH}.json`));'
+      - uses: actions/upload-artifact@v4
+        if: env.BATTLY_QA_DRAFT != 'true'
+        with:
+          name: update-${{ matrix.platform }}-${{ matrix.arch }}
+          retention-days: 1
+          path: artifacts/patch-ci/github-assets/*
+          if-no-files-found: error
+      - name: Store test packages in the private draft
+        if: env.BATTLY_QA_DRAFT == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(gh release view "$BATTLY_QA_TAG" --json isDraft --jq .isDraft)" = true
+          shopt -s nullglob
+          files=(artifacts/patch-ci/github-assets/*)
+          test "${#files[@]}" -gt 0
+          gh release upload "$BATTLY_QA_TAG" "${files[@]}"
+
+  flatpak:
+    needs: plan
+    permissions:
+      contents: write
+    if: needs.plan.outputs.skip != 'true' && needs.plan.outputs.type == 'full'
+    uses: ./.github/workflows/flatpak.yml
+    secrets: inherit
+
+  verify:
+    needs: [plan, build, flatpak]
+    if: always() && needs.plan.result == 'success' && needs.plan.outputs.skip != 'true' && needs.build.result == 'success' && (needs.flatpak.result == 'success' || needs.flatpak.result == 'skipped')
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.3'
+      - run: npm ci
+      - run: node "public scripts/prepare-ci-repository.cjs"
+      - uses: actions/download-artifact@v4
+        if: env.BATTLY_QA_DRAFT != 'true'
+        with:
+          pattern: update-*
+          path: artifacts/update-ready
+          merge-multiple: true
+      - name: Retrieve test packages from the private draft
+        if: env.BATTLY_QA_DRAFT == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(gh release view "$BATTLY_QA_TAG" --json isDraft --jq .isDraft)" = true
+          gh release download "$BATTLY_QA_TAG" --dir artifacts/update-ready
+      - name: Verify complete publication without network writes
+        run: node "public scripts/publish-battly-update.cjs" artifacts/update-ready
+
+  publish:
+    needs: [plan, build, verify]
+    # Opt-in repository switch: remains off until explicitly enabled after dry runs.
+    if: vars.BATTLY_RELEASE_PUBLISH_ENABLED == 'true' && (github.event_name == 'push' || inputs.dry_run == false)
+    runs-on: ubuntu-24.04
+    environment: battly-updates
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.3'
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: update-*
+          path: artifacts/update-ready
+          merge-multiple: true
+      - name: Publish complete draft atomically to readers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node "public scripts/publish-battly-update.cjs" artifacts/update-ready --publish

@@ -1,0 +1,317 @@
+.modpack-install-modal {
+  width: min(706px, calc(100vw - 40px));
+  max-width: min(706px, calc(100vw - 40px));
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.modpack-install-modal .modal-card {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.modpack-install-modal .modal-card-body,
+.modpack-install-modal .content,
+.modpack-install-modal .modpack-install-progress-copy {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.modpack-install-modal [data-modpack-install-status],
+.modpack-install-modal [data-modpack-install-item] {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modpack-install-modal [data-modpack-install-status] {
+  margin-bottom: 0.65rem;
+}
+
+.modpack-install-modal [data-modpack-install-log] {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.modpack-install-modal progress::-webkit-progress-value {
+  transition: width 220ms ease-out;
+}
+
+[data-modpack-install-dialog][data-failed] .modpack-install-progress-copy {
+  display: block;
+}
+[data-modpack-install-dialog][data-failed] [data-modpack-install-item] {
+  display: block;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+[data-modpack-install-dialog][data-failed] [data-modpack-install-percent] {
+  display: none;
+}
+.modpack-install-details {
+  margin-top: 20px;
+  color: #b9c7da;
+}
+.modpack-install-details summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+[data-modpack-install-log] {
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere;
+  overflow-x: hidden !important;
+  font:
+    12px/1.6 'Battly Emoji',
+    'Battly Emoji Sequences',
+    monospace;
+}
+
+.install-artwork {
+  position: relative;
+  height: 150px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(125deg, #19354a, #101c2b);
+}
+.install-artwork > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.install-artwork > div {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px;
+  background: linear-gradient(transparent, #080f1deb);
+}
+.install-artwork > div img {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+.install-artwork strong {
+  color: #fff;
+  font-size: 18px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.instance-launch-card .modal-card-title {
+  color: #f5f8ff !important;
+}
+
+.modpack-install-modal [data-modpack-install-progress] {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 12px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 8px;
+  background: #263648;
+}
+.modpack-install-modal [data-modpack-install-progress]::-webkit-progress-bar {
+  background: #263648;
+}
+.modpack-install-modal [data-modpack-install-progress]::-webkit-progress-value {
+  background: var(--theme-color, #247ac2);
+  transition: none;
+}
+.install-artwork img[hidden] {
+  display: none !important;
+}
+.launching-modal.is-installing > [data-launch-close]:not([hidden]),
+.launching-modal.is-installing > [data-launch-cancel]:not([hidden]) {
+  display: block !important;
+  margin: 12px 16px 16px auto;
+  padding: 8px 18px;
+  border: 1px solid #496278;
+  border-radius: 6px;
+  background: #213449;
+  color: #fff;
+  cursor: pointer;
+}
+.launching-modal [data-launch-download-status] {
+  color: #c6d9ed;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+/* Reserve the phase's two lines so library/file updates never move the bar. */
+.launching-modal .launching-download-panel .launch-download-progress-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  align-items: start;
+  gap: 12px;
+  min-width: 0;
+  margin: 16px 0 10px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.launching-modal .launch-download-progress-row [data-launch-phase] {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  min-width: 0;
+  height: 3em;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  color: #c6d9ed;
+  font-weight: 400;
+}
+
+.launch-install-fact {
+  margin: 16px 0 0;
+  padding: 0;
+  color: #aebed2;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.launching-modal .launch-install-fact strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  line-height: 1.3;
+}
+.launching-modal .launch-install-fact p {
+  margin: 0;
+  color: #aebed2;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+.launching-modal [data-launch-progress]:not([value]) {
+  background: linear-gradient(100deg, #263648 20%, var(--theme-color) 48%, #263648 76%);
+  background-size: 220% 100%;
+  animation: launch-progress-waiting 1.6s ease-in-out infinite;
+}
+.launching-modal [data-launch-progress]:not([value])::-webkit-progress-bar {
+  background: transparent;
+}
+@keyframes launch-progress-waiting {
+  from {
+    background-position: 180% 0;
+  }
+  to {
+    background-position: -80% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .launching-modal [data-launch-progress]:not([value]) {
+    animation: none;
+  }
+}
+.launching-modal .launch-download-progress-row [data-launch-percent] {
+  box-sizing: border-box;
+  min-width: 5ch;
+  max-width: 15ch;
+  padding: 2px 8px;
+  border: 1px solid #ffffff12;
+  border-radius: 6px;
+  background: #ffffff08;
+  color: #f2f6fc;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.launching-modal .launching-download-panel [data-launch-download-status] {
+  display: block;
+  height: 1.5em;
+  margin: 8px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+.launching-modal .launching-download-panel [data-launch-download-title] {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.2;
+}
+.launching-modal [data-launch-progress] {
+  appearance: none;
+  display: block;
+  height: 10px;
+  margin: 0;
+  border: 0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.launching-modal [data-launch-progress]::-webkit-progress-bar {
+  background: #263648;
+}
+.launching-modal.is-installing [data-launch-progress]::-webkit-progress-value {
+  background: var(--theme-color, #7549c2);
+  transition: width 150ms linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  .launching-modal.is-installing [data-launch-progress]::-webkit-progress-value {
+    transition: none;
+  }
+}
+
+.launching-modal .launching-download-panel [data-launch-download-status] {
+  display: none;
+}
+.launching-modal .launching-download-panel .download-panel-left {
+  justify-content: flex-start;
+}
+.launching-modal .launching-download-panel .launch-download-summary {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+.launching-modal .launching-download-panel .launch-download-progress {
+  margin-top: auto;
+  padding-top: 0;
+}
+.launching-modal .launching-download-panel [data-launch-download-title] {
+  margin-bottom: 22px;
+  font-size: clamp(24px, 2.5vw, 32px);
+}
+.launching-modal .launching-download-panel .launch-download-progress-row {
+  margin: 0 0 14px;
+}
+.launching-modal .launch-download-progress-row [data-launch-phase] {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+body[data-launch-state='failed']
+  .launching-modal
+  .launching-download-panel
+  [data-launch-download-status] {
+  display: block;
+  margin: 0 0 16px;
+  color: #ffc0c7;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}

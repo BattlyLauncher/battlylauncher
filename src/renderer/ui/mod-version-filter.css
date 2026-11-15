@@ -1,0 +1,79 @@
+.mod-version-picker {
+  position: relative;
+  width: fit-content;
+  min-width: 0;
+  max-width: min(480px, 100%);
+  z-index: 5;
+}
+.mod-version-picker summary {
+  cursor: pointer;
+  padding: 5px 9px;
+  font-size: 12px;
+  line-height: 1.4;
+  max-width: 220px;
+  border: 1px solid #486079;
+  border-radius: 6px;
+  background: #182638;
+  color: #f3f7ff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mod-version-popover {
+  box-sizing: border-box;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: min(470px, calc(100vw - 64px));
+  background: #111d2b;
+  padding: 12px;
+  border: 1px solid #486079;
+  border-radius: 8px;
+  box-shadow: 0 10px 32px #0008;
+}
+.mod-version-popover > input {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  padding: 8px;
+  background: #1d2f43;
+  border: 1px solid #486079;
+  border-radius: 4px;
+  color: #fff;
+}
+.mod-version-popover p {
+  font-size: 11px;
+  margin: 8px 0;
+  color: #bacbdd;
+}
+.mod-version-options {
+  padding: 4px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  max-height: min(240px, 40vh);
+  overflow: auto;
+  gap: 8px;
+  overscroll-behavior: contain;
+}
+.mod-version-options label {
+  color: #e6f2ff;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 12px !important;
+}
+.mod-version-options label[hidden],
+.mod-version-popover button[hidden] {
+  display: none;
+}
+.mod-version-options input {
+  flex-shrink: 0;
+}
+.mod-version-picker :focus-visible {
+  outline: 2px solid #8cd9ff;
+  outline-offset: 2px;
+}

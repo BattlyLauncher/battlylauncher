@@ -1,0 +1,122 @@
+name: Build Flatpak
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BATTLY_CI_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && 'true' || 'false' }}
+  BATTLY_QA_DRAFT: ${{ github.event_name == 'workflow_dispatch' && github.repository == '1ly4s0/BattlyRemake' && 'true' || 'false' }}
+  BATTLY_QA_TAG: qa-flatpak-${{ github.run_id }}-${{ github.run_attempt }}
+  GH_REPO: ${{ github.repository }}
+
+concurrency:
+  group: flatpak-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  flatpak:
+    environment: battly-updates-build
+    if: github.repository == 'BattlyLauncher/battlylauncher' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.3'
+          cache: npm
+      - name: Prepare private draft storage
+        if: env.BATTLY_QA_DRAFT == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(gh repo view "$GH_REPO" --json isPrivate --jq .isPrivate)" = true
+          gh release create "$BATTLY_QA_TAG" --draft --target "$GITHUB_REF_NAME" --title "Private Flatpak test $GITHUB_RUN_ID" --notes "Temporary Flatpak verification of commit $GITHUB_SHA. Do not publish or distribute this package."
+      - name: Install Flatpak tooling and runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder elfutils xvfb dbus-x11 gnome-keyring
+          sudo flatpak remote-add --system --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak install --user --noninteractive flathub org.freedesktop.Platform//25.08 org.freedesktop.Sdk//25.08 org.electronjs.Electron2.BaseApp//25.08
+      - run: npm ci
+      - name: Select isolated test repository
+        run: node "public scripts/prepare-ci-repository.cjs"
+      - name: Prepare release public key
+        env:
+          PATCH_PUBLIC_KEY: ${{ secrets.BATTLY_PATCH_PUBLIC_KEY }}
+        run: node "public scripts/prepare-patch-ci.cjs"
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm run build:flatpak
+      - run: node --test "public scripts/update-service.test.cjs" "public scripts/java-providers-compatibility.test.cjs"
+      - name: Verify package can be installed
+        id: install
+        run: |
+          shopt -s nullglob
+          files=(artifacts/releases/release-flatpak-*/*.flatpak)
+          test "${#files[@]}" -eq 1
+          flatpak install --user --noninteractive "${files[0]}"
+          flatpak info --user com.battlylauncher.launcher
+          flatpak run --user --command=sh com.battlylauncher.launcher -c 'test -s /app/lib/com.battlylauncher.launcher/resources/app.asar && test -x /app/bin/battlylauncher'
+          sha256sum "${files[0]}" > "${files[0]}.sha256"
+      - name: Launch the installed Flatpak and verify its window
+        run: |
+          printf '#!/bin/sh\nexec flatpak run --user com.battlylauncher.launcher "$@"\n' > "$RUNNER_TEMP/battly-flatpak-launch"
+          chmod +x "$RUNNER_TEMP/battly-flatpak-launch"
+          export BATTLY_LINUX_EXECUTABLE="$RUNNER_TEMP/battly-flatpak-launch"
+          export BATTLY_TEST_FLATPAK_ID=com.battlylauncher.launcher
+          export XDG_RUNTIME_DIR="$RUNNER_TEMP/battly-runtime"
+          mkdir -p "$XDG_RUNTIME_DIR"
+          chmod 700 "$XDG_RUNTIME_DIR"
+          trap 'flatpak kill com.battlylauncher.launcher || true' EXIT
+          dbus-run-session -- bash "public scripts/run-linux-desktop-smoke.sh"
+      - name: Prepare verified release asset
+        run: node "public scripts/prepare-flatpak-release.cjs"
+      - uses: actions/upload-artifact@v4
+        if: env.BATTLY_QA_DRAFT != 'true'
+        with:
+          name: update-flatpak-linux-x64
+          retention-days: 1
+          if-no-files-found: error
+          path: |
+            artifacts/patch-ci/flatpak-assets/*
+      - uses: actions/upload-artifact@v4
+        if: always() && env.BATTLY_QA_DRAFT != 'true'
+        with:
+          name: battly-flatpak-startup-evidence
+          retention-days: 1
+          if-no-files-found: ignore
+          path: |
+            /tmp/battly-linux-launcher.png
+            /tmp/battly-linux-launcher.log
+      - name: Store verified Flatpak in the private draft
+        if: always() && steps.install.outcome == 'success' && env.BATTLY_QA_DRAFT == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(gh release view "$BATTLY_QA_TAG" --json isDraft --jq .isDraft)" = true
+          shopt -s nullglob
+          files=(artifacts/releases/release-flatpak-*/*.flatpak artifacts/releases/release-flatpak-*/*.sha256)
+          test "${#files[@]}" -eq 2
+          gh release upload "$BATTLY_QA_TAG" "${files[@]}"
+      - name: Store Flatpak startup evidence in the private draft
+        if: always() && env.BATTLY_QA_DRAFT == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(gh release view "$BATTLY_QA_TAG" --json isDraft --jq .isDraft)" = true
+          files=()
+          for file in /tmp/battly-linux-launcher.png /tmp/battly-linux-launcher.log; do
+            if [ -f "$file" ]; then files+=("$file"); fi
+          done
+          if [ "${#files[@]}" -gt 0 ]; then gh release upload "$BATTLY_QA_TAG" "${files[@]}"; fi

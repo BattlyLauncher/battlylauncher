@@ -1,0 +1,337 @@
+/* Modal & Layout Structure */
+#skin-customizer-modal {
+  z-index: 9999;
+}
+
+#skin-customizer-modal .modal-card {
+  width: 900px;
+  max-width: 95vw;
+  height: 80vh;
+  max-height: 800px;
+  border-radius: 12px;
+  background: #1b1e26;
+  display: flex;
+  flex-direction: column;
+}
+
+#skin-customizer-modal .modal-card-head {
+  background: #232730;
+  border-bottom: 1px solid #2c313c;
+  flex-shrink: 0;
+}
+
+#skin-customizer-modal .modal-card-title {
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+#skin-customizer-modal .modal-card-body {
+  background: #1b1e26;
+  padding: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.b-skin-customizer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.b-skin-main-content {
+  display: flex;
+  flex: 1;
+  padding: 20px;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.b-skin-current {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.b-skin-library {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Titles */
+.b-skin-title {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  width: auto;
+}
+
+/* Viewer Container */
+.b-skin-viewer-container {
+  width: 100%;
+  height: 350px;
+  background: #111; /* Fallback */
+  background: radial-gradient(circle at center, #1a2332 0%, #0f1623 70%);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  position: relative;
+  border: 1px solid #2c313c;
+  overflow: hidden;
+
+  & canvas {
+    touch-action: none;
+    width: 600px;
+    height: 350px;
+    transform: translateX(-50%);
+    left: 50%;
+    position: absolute;
+  }
+}
+
+/* Actions */
+.b-skin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.b-skin-btn {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.b-skin-btn:hover {
+  filter: brightness(1.1);
+}
+
+.b-skin-btn.is-info {
+  flex: 1;
+  background: #3498db;
+  color: white;
+}
+
+.b-skin-btn.is-slim {
+  border: 1px solid #555;
+  background: transparent;
+  color: #ccc;
+  padding: 10px 15px;
+}
+
+.b-skin-btn.is-danger {
+  background: #e74c3c;
+  color: white;
+  padding: 10px 15px;
+}
+
+.help-text {
+  margin-top: 15px;
+  color: #777;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Grid */
+.b-skin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 5px;
+  flex: 1;
+  align-content: start;
+}
+
+.b-skin-grid::-webkit-scrollbar {
+  width: 8px;
+}
+.b-skin-grid::-webkit-scrollbar-track {
+  background: #1b1e26;
+}
+.b-skin-grid::-webkit-scrollbar-thumb {
+  background: #3e4451;
+  border-radius: 4px;
+}
+.b-skin-grid::-webkit-scrollbar-thumb:hover {
+  background: #505766;
+}
+
+/* Card Improvements */
+.b-skin-item-card {
+  background-color: #232730;
+  border-radius: 8px;
+  width: 100%;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent; /* Reserve space for border */
+  transition: all 0.2s;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.b-skin-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: #3498db55;
+}
+
+.b-skin-item-preview {
+  display: block;
+  width: 112px;
+  height: 132px;
+  object-fit: contain;
+}
+
+.b-skin-head-preview {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  image-rendering: pixelated;
+}
+
+.b-skin-head-face {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+  background-image: var(--skin-url);
+  background-repeat: no-repeat;
+  background-size: 384px 384px;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 10%);
+  backface-visibility: hidden;
+}
+
+.b-skin-head-face::after {
+  position: absolute;
+  inset: -1px;
+  background-image: var(--skin-url);
+  background-position: var(--skin-overlay-position);
+  background-repeat: no-repeat;
+  background-size: 384px 384px;
+  content: '';
+  image-rendering: pixelated;
+}
+
+.b-skin-head-front {
+  transform: none;
+}
+
+.b-skin-head-side {
+  transform: translateX(24px) rotateY(90deg);
+}
+
+.b-skin-head-top {
+  transform: translateY(-24px) rotateX(90deg);
+}
+
+.b-skin-item-name {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  left: 8px;
+  overflow: hidden;
+  color: #dfe8f5;
+  font-size: 11px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.b-skin-add-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  color: #888;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.b-skin-add-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.b-skin-add-card i {
+  font-size: 1.5rem;
+}
+
+.b-skin-add-card-disabled {
+  background: rgba(255, 215, 0, 0.1) !important;
+  border: 1px solid rgba(255, 215, 0, 0.3) !important;
+  color: #ffd700 !important;
+  cursor: pointer !important;
+}
+
+.b-skin-add-card-disabled:hover {
+  background: rgba(255, 215, 0, 0.15) !important;
+  border-color: rgba(255, 215, 0, 0.5) !important;
+  transform: scale(1.05);
+}
+
+.b-skin-add-card-disabled i {
+  color: #ffd700;
+}
+
+/* Controls styling */
+.b-skin-viewer-controls {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 8px 12px;
+  border-radius: 24px;
+  z-index: 20;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.b-skin-control-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.b-skin-control-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.b-skin-control-btn.active {
+  background: #3498db;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}

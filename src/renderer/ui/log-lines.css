@@ -1,0 +1,30 @@
+.b-log-view {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: Consolas, 'Courier New', monospace;
+  tab-size: 4;
+}
+.b-log-view .b-log-line {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: 400;
+}
+.b-log-view .b-log-info {
+  color: #73b7ff !important;
+}
+.b-log-view .b-log-warn {
+  color: #f2cb63 !important;
+}
+.b-log-view .b-log-error {
+  color: #ff7c89 !important;
+}
+.b-log-view .b-log-debug {
+  color: #b99aef !important;
+}
+.b-log-view .b-log-trace {
+  color: #93a4b8 !important;
+}
+.b-log-view .b-log-plain {
+  color: #dce5ef !important;
+}

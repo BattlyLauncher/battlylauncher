@@ -1,0 +1,117 @@
+.data-root-migration {
+  width: min(640px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  border: 1px solid #35445b;
+  border-radius: 14px;
+  padding: 26px;
+  background: #101722;
+  color: #eef4fc;
+  font-family: inherit;
+  box-shadow: 0 20px 70px #0009;
+}
+.data-root-migration::backdrop {
+  background: #000b;
+  backdrop-filter: blur(5px);
+}
+.data-root-migration header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.data-root-migration header i {
+  color: #439bd6;
+  font-size: 24px;
+}
+.data-root-migration h2 {
+  font-size: 23px;
+  margin: 0;
+}
+.data-root-migration [data-intro] {
+  font-size: 14px;
+  color: #b2bfd2;
+  margin: 12px 0 22px;
+}
+.data-root-migration dl {
+  background: #182334;
+  border: 1px solid #304056;
+  border-radius: 10px;
+  margin: 0 0 24px;
+  padding: 16px;
+  display: grid;
+  gap: 15px;
+}
+.data-root-migration dt {
+  font-size: 12px;
+  color: #a6bad0;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.data-root-migration dd {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  margin: 0;
+  user-select: text;
+}
+.data-root-migration [data-phase] {
+  font-size: 15px;
+  font-weight: 700;
+}
+.data-root-migration progress {
+  display: block;
+  width: 100%;
+  height: 9px;
+  accent-color: #419bd8;
+  border: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.data-root-migration progress::-webkit-progress-bar {
+  background: #27374b;
+}
+.data-root-migration progress::-webkit-progress-value {
+  background: #419bd8;
+}
+.data-root-migration [data-file] {
+  font-size: 12px;
+  color: #b2bfd2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 18px;
+  margin-bottom: 5px;
+}
+.data-root-migration [data-detail] {
+  font-size: 12px;
+  text-align: right;
+  color: #a6bad0;
+  margin-top: 0;
+}
+.data-root-migration footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid #ffffff12;
+  padding-top: 18px;
+  margin-top: 18px;
+  font-size: 12px;
+  color: #a6bad0;
+}
+.data-root-migration button {
+  border: 0;
+  border-radius: 8px;
+  background: #398fc9;
+  color: #fff;
+  padding: 10px 22px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.data-root-migration button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+.data-root-migration.has-error [data-phase] {
+  color: #ffbf67;
+}

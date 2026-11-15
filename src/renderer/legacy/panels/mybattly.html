@@ -1,0 +1,314 @@
+<div class="b-mybattly-main-panel">
+  <header class="b-mybattly-main-panel-welcome">
+    <div class="b-mybattly-welcome-panel-left">
+      <button
+        id="back-mybattly-btn"
+        class="b-mybattly-back"
+        type="button"
+      >
+        <i
+          class="fa-solid fa-arrow-left"
+          aria-hidden="true"
+        ></i>
+        <span>Inicio</span>
+      </button>
+      <h1>Mi Battly<br /><span>Mods, mundos y copias.</span></h1>
+      <p class="b-mybattly-hero-copy">
+        Hola, <strong id="b-mybattly-username">Jugador</strong>. Gestiona tu contenido, protege tus
+        mundos y consulta tu actividad desde aquí.
+      </p>
+      <div class="b-mybattly-hero-actions">
+        <button
+          class="b-mybattly-primary-action"
+          id="save-drive"
+          type="button"
+        >
+          <i
+            class="fa-solid fa-cloud-arrow-up"
+            aria-hidden="true"
+          ></i>
+          Proteger un mundo
+        </button>
+        <button
+          class="b-mybattly-secondary-action"
+          id="view-backup-history-btn"
+          type="button"
+        >
+          <i
+            class="fa-solid fa-clock-rotate-left"
+            aria-hidden="true"
+          ></i>
+          Ver copias
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="b-mybattly-profile-orbit"
+      aria-hidden="true"
+    >
+      <div class="b-mybattly-orbit-ring b-mybattly-orbit-ring-one"></div>
+      <div class="b-mybattly-orbit-ring b-mybattly-orbit-ring-two"></div>
+      <div class="b-mybattly-profile-mark">
+        <img
+          data-mybattly-logo
+          alt="Battly"
+        />
+      </div>
+      <div class="b-mybattly-orbit-chip b-mybattly-orbit-chip-mods">
+        <i class="fa-solid fa-cube"></i><span id="mybattly-mods-count">0</span>
+      </div>
+      <div class="b-mybattly-orbit-chip b-mybattly-orbit-chip-worlds">
+        <i class="fa-solid fa-earth-americas"></i><span id="mybattly-worlds-count">0</span>
+      </div>
+      <div class="b-mybattly-orbit-chip b-mybattly-orbit-chip-packs">
+        <i class="fa-solid fa-wand-magic-sparkles"></i
+        ><span id="mybattly-resourcepacks-count">0</span>
+      </div>
+    </div>
+  </header>
+
+  <section
+    class="b-mybattly-overview"
+    aria-label="Resumen de MyBattly"
+  >
+    <article class="b-mybattly-overview-card is-mods">
+      <span class="b-mybattly-overview-icon"><i class="fa-solid fa-cubes-stacked"></i></span>
+      <div><strong id="mybattly-activated-mods-count">0</strong><span>mods activos</span></div>
+      <small><span id="mybattly-deactivated-mods-count">0</span> en pausa</small>
+    </article>
+    <article class="b-mybattly-overview-card is-worlds">
+      <span class="b-mybattly-overview-icon"><i class="fa-solid fa-map"></i></span>
+      <div><strong id="mybattly-worlds-summary">0</strong><span>mundos locales</span></div>
+      <small>Listos para jugar</small>
+    </article>
+    <article class="b-mybattly-overview-card is-packs">
+      <span class="b-mybattly-overview-icon"><i class="fa-solid fa-palette"></i></span>
+      <div><strong id="mybattly-packs-summary">0</strong><span>packs instalados</span></div>
+      <small>Tu estilo visual</small>
+    </article>
+    <article class="b-mybattly-overview-card is-backups">
+      <span class="b-mybattly-overview-icon"><i class="fa-solid fa-shield-halved"></i></span>
+      <div><strong id="mybattly-backups-summary">0</strong><span>copias registradas</span></div>
+      <small>Historial de Battly</small>
+    </article>
+  </section>
+
+  <div class="b-mybattly-workspace">
+    <main class="b-mybattly-main-panel-left">
+      <div class="b-mybattly-library-heading">
+        <div>
+          <h2>Tu contenido</h2>
+          <p>Todo lo que hace único a tu Minecraft.</p>
+        </div>
+      </div>
+
+      <div class="b-mybattly-panel-container">
+        <div
+          class="b-mybattly-panel-overlay"
+          data-target="panel-mods"
+        >
+          <div>
+            <i
+              class="fa-solid fa-cubes-stacked"
+              aria-hidden="true"
+            ></i>
+            <strong>Explora tus mods</strong>
+            <span>Activa, pausa o elimina contenido local.</span>
+            <button
+              class="b-mybattly-load-panel"
+              type="button"
+              data-target="panel-mods"
+            >
+              Abrir biblioteca
+            </button>
+          </div>
+        </div>
+        <section
+          class="b-mybattly-content-panel b-mybattly-main-panel-mods b-mybattly-blur-panel"
+          id="panel-mods"
+        >
+          <div class="b-mybattly-section-heading">
+            <div class="b-mybattly-section-title">
+              <i class="fa-solid fa-cubes-stacked"></i>
+              <div>
+                <h3>Mods</h3>
+                <p>Controla el contenido que cargas al jugar.</p>
+              </div>
+            </div>
+          </div>
+          <div class="b-mybattly-table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Nombre</th>
+                  <th>Versión</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div class="b-mybattly-panel-container">
+        <div
+          class="b-mybattly-panel-overlay"
+          data-target="panel-worlds"
+        >
+          <div>
+            <i
+              class="fa-solid fa-earth-americas"
+              aria-hidden="true"
+            ></i>
+            <strong>Entra en tus mundos</strong>
+            <span>Organízalos y crea copias en segundos.</span>
+            <button
+              class="b-mybattly-load-panel"
+              type="button"
+              data-target="panel-worlds"
+            >
+              Ver mundos
+            </button>
+          </div>
+        </div>
+        <section
+          class="b-mybattly-content-panel b-mybattly-main-panel-worlds b-mybattly-blur-panel"
+          id="panel-worlds"
+        >
+          <div class="b-mybattly-section-heading">
+            <div class="b-mybattly-section-title">
+              <i class="fa-solid fa-earth-americas"></i>
+              <div>
+                <h3>Mundos</h3>
+                <p>Tus aventuras, siempre bajo control.</p>
+              </div>
+            </div>
+          </div>
+          <div class="b-mybattly-table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Nombre</th>
+                  <th>Tipo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div class="b-mybattly-panel-container">
+        <div
+          class="b-mybattly-panel-overlay"
+          data-target="panel-resourcepacks"
+        >
+          <div>
+            <i
+              class="fa-solid fa-wand-magic-sparkles"
+              aria-hidden="true"
+            ></i>
+            <strong>Personaliza cada bloque</strong>
+            <span>Administra el aspecto de tu experiencia.</span>
+            <button
+              class="b-mybattly-load-panel"
+              type="button"
+              data-target="panel-resourcepacks"
+            >
+              Ver packs
+            </button>
+          </div>
+        </div>
+        <section
+          class="b-mybattly-content-panel b-mybattly-main-panel-worlds b-mybattly-blur-panel"
+          id="panel-resourcepacks"
+        >
+          <div class="b-mybattly-section-heading">
+            <div class="b-mybattly-section-title">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <div>
+                <h3>Packs de recursos</h3>
+                <p>Dale a Minecraft tu propio estilo.</p>
+              </div>
+            </div>
+          </div>
+          <div class="b-mybattly-table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Nombre</th>
+                  <th>Origen</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="b-mybattly-messages">
+      <section class="b-mybattly-main-panel-stats">
+        <div class="b-mybattly-aside-heading"><h2>Tu partida en cifras</h2></div>
+        <div class="b-mybattly-stats-grid">
+          <article class="b-mybattly-stat-item">
+            <span><i class="fa-solid fa-clock"></i></span>
+            <div>
+              <p>Tiempo jugado</p>
+              <strong
+                class="b-mybattly-ccc"
+                id="mybattly-stats-hours"
+                >Calculando…</strong
+              >
+            </div>
+          </article>
+          <article class="b-mybattly-stat-item">
+            <span><i class="fa-solid fa-cloud-arrow-up"></i></span>
+            <div>
+              <p>Copias de seguridad</p>
+              <strong class="b-mybattly-ccc">0 realizadas</strong>
+            </div>
+          </article>
+          <article class="b-mybattly-stat-item">
+            <span><i class="fa-solid fa-bolt"></i></span>
+            <div>
+              <p>Mods preparados</p>
+              <strong class="b-mybattly-ccc">0 activos</strong>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="b-mybattly-main-panel-msg">
+        <div class="b-mybattly-aside-heading"><h2>Notificaciones</h2></div>
+        <div class="b-mybattly-notifications-list">
+          <article class="b-mybattly-notification-message is-backup">
+            <span class="b-mybattly-notification-icon"
+              ><i class="fa-solid fa-shield-halved"></i
+            ></span>
+            <div>
+              <h3>Estado de tus copias</h3>
+              <p id="backup-notification-text">Comprobando protección…</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="b-mybattly-main-panel-recent-worlds">
+        <div class="b-mybattly-aside-heading"><h2>Últimos mundos</h2></div>
+        <ul>
+          <li>Buscando mundos…</li>
+        </ul>
+      </section>
+    </aside>
+  </div>
+</div>

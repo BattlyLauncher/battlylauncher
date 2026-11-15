@@ -1,0 +1,210 @@
+<div
+  class="modal"
+  style="z-index: 100"
+  id="info-login-panel"
+>
+  <div class="modal-background"></div>
+  <div
+    class="modal-card modal-animated"
+    style="background-color: #0f1623; border-radius: 5px"
+  >
+    <section
+      class="modal-card-body"
+      style="background-color: #0f1623; text-align: center"
+    >
+      <img
+        src="./assets/images/icons/loading.gif"
+        style="width: 70px; height: 70px; margin: 0 auto"
+        alt=""
+      />
+      <p
+        style="color: #fff; font-size: 20px"
+        id="info-login"
+      ></p>
+    </section>
+  </div>
+</div>
+<div
+  class="modal"
+  style="z-index: 99"
+  id="code-login-panel"
+>
+  <div class="modal-background"></div>
+  <div
+    class="modal-card modal-animated"
+    style="background-color: #0f1623; border-radius: 5px"
+  >
+    <section
+      class="modal-card-body"
+      style="background-color: #0f1623; text-align: center"
+    >
+      <p
+        style="color: #fff; font-size: 20px"
+        id="code-login-text"
+      ></p>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px">
+        <input
+          class="input is-info"
+          style="width: 50%"
+          id="code-text"
+          type="text"
+          placeholder="Código"
+        />
+        <button
+          class="button is-info"
+          id="code-btn"
+        ></button>
+        <button
+          class="button is-danger"
+          id="cancel-code-btn"
+        ></button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="lgn-container">
+  <div class="login-box">
+    <div class="left-panel">
+      <h1 data-string-id="login.welcomeBack">¡Hola de nuevo, Battler!</h1>
+      <p data-string-id="login.welcomeDescription">
+        Accede a Minecraft libremente y mantente al tanto de las últimas novedades. Con Battly, todo
+        lo que necesitas está a un clic de distancia.
+      </p>
+      <ul>
+        <li data-string-id="login.benefitOne">Acceso a tus opciones favoritas en un solo lugar</li>
+        <li data-string-id="login.benefitTwo">
+          Recibe notificaciones de actualizaciones y eventos
+        </li>
+        <li data-string-id="login.benefitThree">Interfaz amigable y fácil de usar</li>
+      </ul>
+      <!-- Back btn -->
+      <button
+        class="microsoft-login button"
+        id="cancelar-btn-login"
+        style="margin-top: 30px"
+        data-string-id="login.back"
+      >
+        <i class="fas fa-arrow-left"></i> Volver
+      </button>
+    </div>
+    <form
+      class="right-panel"
+      id="login-form"
+    >
+      <h2
+        id="login-text"
+        data-string-id="login.signIn"
+      >
+        Iniciar Sesión
+      </h2>
+      <div class="input-group">
+        <input
+          required=""
+          type="text"
+          autocomplete="off"
+          class="lgn-input"
+          id="username_text"
+        />
+        <label
+          class="user-label"
+          data-string-id="login.usernameLabel"
+        >
+          Nombre de usuario
+        </label>
+      </div>
+      <separator style="height: 15px"></separator>
+      <div class="input-group">
+        <input
+          required=""
+          type="password"
+          autocomplete="off"
+          class="lgn-input"
+          id="password_text"
+        />
+        <label
+          class="user-label"
+          data-string-id="login.passwordLabel"
+        >
+          Contraseña
+        </label>
+      </div>
+      <br />
+      <button
+        class="button styled-login-btn"
+        style="height: 45px"
+        type="submit"
+        id="login-btn"
+        data-string-id="login.signIn"
+      >
+        <span data-string-target> Iniciar Sesión </span>
+      </button>
+
+      <a
+        href="https://discord.gg/tecno-bros-885235460178342009"
+        target="_blank"
+        class="forgot-password"
+        data-string-id="login.forgotPassword"
+      >
+        ¿Olvidaste tu contraseña?
+      </a>
+      <p data-string-id="login.registerText">
+        ¿No tienes una cuenta?
+        <a
+          href="https://battlylauncher.com/register"
+          target="_blank"
+          >Regístrate aquí</a
+        >
+      </p>
+      <separator style="height: 30px"></separator>
+      <div class="divider">O continuar con</div>
+      <div style="display: flex; gap: 5px">
+        <div
+          class="microsoft-login button"
+          id="google-button"
+          style="color: #0f1623"
+        >
+          <i class="fab fa-google"></i>
+          Google
+        </div>
+        <div
+          class="microsoft-login button"
+          id="microsoft-button"
+          style="color: #0f1623"
+        >
+          <i class="fab fa-microsoft"></i>
+          Microsoft
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const forms = document.querySelector('.forms'),
+    pwShowHide = document.querySelectorAll('.eye-icon'),
+    links = document.querySelectorAll('.link');
+
+  pwShowHide.forEach((eyeIcon) => {
+    eyeIcon.addEventListener('click', () => {
+      let pwFields = eyeIcon.parentElement.parentElement.querySelectorAll('.password');
+
+      pwFields.forEach((password) => {
+        if (password.type === 'password') {
+          password.type = 'text';
+          eyeIcon.classList.replace('bx-hide', 'bx-show');
+          return;
+        }
+        password.type = 'password';
+        eyeIcon.classList.replace('bx-show', 'bx-hide');
+      });
+    });
+  });
+
+  links.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      forms.classList.toggle('show-signup');
+    });
+  });
+</script>

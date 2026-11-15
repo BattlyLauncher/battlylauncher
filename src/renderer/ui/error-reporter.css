@@ -1,0 +1,170 @@
+dialog.battly-error-report {
+  width: min(760px, calc(100vw - 40px));
+  max-width: none;
+  max-height: calc(100dvh - 64px);
+  padding: 0;
+  margin: auto;
+  border: 1px solid #35465d;
+  border-radius: 16px;
+  background: #0f1724;
+  color: #f5f7fc;
+  box-shadow: 0 24px 90px #0009;
+  overflow: hidden;
+  font-family: inherit;
+}
+.battly-error-report::backdrop {
+  background: #000b;
+  backdrop-filter: blur(5px);
+}
+.battly-error-report[open] {
+  display: flex;
+  flex-direction: column;
+}
+.battly-error-report * {
+  box-sizing: border-box;
+  min-width: 0;
+}
+.battly-error-report header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #29374a;
+}
+.battly-error-report h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.35;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.battly-error-report p,
+.battly-error-report figcaption {
+  color: #afbed2;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 6px 0 0;
+}
+.battly-error-report form {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin: 0;
+}
+.battly-error-report .error-report-body {
+  overflow: auto;
+  padding: 20px 24px;
+  min-height: 0;
+}
+.battly-error-report figure {
+  margin: 0 0 18px;
+}
+.battly-error-report img {
+  width: 100%;
+  height: clamp(120px, 28vh, 270px);
+  object-fit: contain;
+  display: block;
+  background: #090f19;
+  border: 1px solid #29374a;
+  border-radius: 8px;
+}
+.battly-error-report label {
+  display: block;
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.battly-error-report textarea {
+  width: 100%;
+  height: 110px;
+  min-height: 80px;
+  max-height: 220px;
+  resize: vertical;
+  padding: 12px;
+  border: 1px solid #394c66;
+  border-radius: 8px;
+  background: #09121f;
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+}
+.battly-error-report textarea:focus-visible,
+.battly-error-report button:focus-visible {
+  outline: 2px solid var(--theme-color, #438fca);
+  outline-offset: 2px;
+}
+.battly-error-report .error-report-count {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #a8b8cd;
+  font-size: 12px;
+  margin: 6px 0 14px;
+}
+.battly-error-report summary {
+  cursor: pointer;
+  color: #c4d5e9;
+  font-size: 13px;
+}
+.battly-error-report [data-status]:not(:empty) {
+  padding: 12px;
+  background: #1b2b40;
+  border-radius: 8px;
+  color: #fff;
+  overflow-wrap: anywhere;
+}
+.battly-error-report footer {
+  display: flex;
+  flex: none;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid #29374a;
+}
+.battly-error-report button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #3a4d65;
+  border-radius: 9px;
+  padding: 10px 16px;
+  background: #203146;
+  color: #fff !important;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition:
+    filter 0.15s,
+    transform 0.15s;
+}
+.battly-error-report button[type='submit'] {
+  background: var(--theme-color, #438fca);
+  border-color: var(--theme-color, #438fca);
+}
+.battly-error-report header button {
+  padding: 0;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  font-size: 25px;
+}
+.battly-error-report button:hover:not(:disabled) {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+.battly-error-report button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.battly-error-report [hidden] {
+  display: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .battly-error-report button {
+    transition: none;
+  }
+}

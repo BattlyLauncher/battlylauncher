@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <title>BattlyWorlds · Minecraft</title>
+  </head>
+  <body data-expanded="false">
+    <section class="hud-shell">
+      <header class="hud-header">
+        <img
+          alt="Battly"
+          data-logo
+        /><button
+          data-toggle
+          aria-expanded="false"
+          aria-label="Abrir BattlyWorlds"
+          title="Ctrl + B · Menú. Ctrl + H · Ocultar o mostrar"
+        >
+          <span class="hud-wordmark"
+            >Battly <b>Worlds</b><small data-mini-status>Juega en compañía</small></span
+          ><img
+            class="hud-self-face"
+            data-self-face
+            alt="Tu cara"
+            hidden
+          /><span
+            class="hud-voice-indicator"
+            data-mini-indicator
+            hidden
+          ></span
+          ><span class="hud-shortcut">Ctrl B</span>
+        </button>
+      </header>
+      <section
+        class="hud-lan-prompt"
+        data-lan-prompt
+        aria-label="Compartir mundo LAN"
+        hidden
+      >
+        <strong>¿Iniciar este mundo en Battly Worlds?</strong>
+        <p>Juega con tus amigos compartiendo el mundo que acabas de abrir en LAN.</p>
+        <div>
+          <button
+            class="bw-primary"
+            data-lan-accept
+          >
+            <kbd>Y</kbd> Iniciar</button
+          ><button
+            class="bw-secondary"
+            data-lan-ignore
+          >
+            <kbd>N</kbd> Ignorar
+          </button>
+        </div>
+        <small>Si lo ignoras, no volveremos a avisarte durante esta partida.</small>
+      </section>
+      <section
+        class="hud-room-summary"
+        data-room-summary
+        role="status"
+        hidden
+      >
+        <span data-compact-state>Preparando la sala…</span>
+        <strong data-compact-code></strong>
+        <small>Ctrl + B para más información</small>
+      </section>
+      <small class="hud-visibility-hint">Ctrl + H · Ocultar / mostrar overlay</small>
+      <div class="hud-body">
+        <p
+          class="hud-toast"
+          role="status"
+          hidden
+        ></p>
+        <nav aria-label="BattlyWorlds">
+          <button
+            data-page="room"
+            aria-pressed="true"
+          >
+            Sala</button
+          ><button
+            data-page="voice"
+            aria-pressed="false"
+          >
+            Voz</button
+          ><button
+            data-page="public"
+            aria-pressed="false"
+          >
+            Pública</button
+          ><button
+            data-page="appearance"
+            aria-pressed="false"
+          >
+            Aspecto
+          </button>
+        </nav>
+        <section data-view="room">
+          <div class="hud-status">
+            <strong data-status>Tu mundo con amigos</strong><small data-version></small>
+            <small
+              data-address
+              hidden
+            ></small>
+          </div>
+          <p data-help>
+            Abre un mundo en Minecraft, pulsa Esc → Abrir en LAN y comparte la sala desde aquí.
+          </p>
+          <button
+            class="bw-primary"
+            data-host
+          >
+            Compartir mundo LAN
+          </button>
+          <form data-join>
+            <label
+              >Código de sala<input
+                name="code"
+                maxlength="6"
+                pattern="[a-zA-Z0-9]{6}"
+                required
+                placeholder="ABC123" /></label
+            ><button class="bw-primary">Unirme</button>
+          </form>
+          <div class="hud-invites"></div>
+          <div class="hud-members"></div>
+        </section>
+        <section
+          data-view="voice"
+          hidden
+        ></section>
+        <section
+          data-view="public"
+          hidden
+        >
+          <h2>Comparte tu aventura</h2>
+          <p>Publica tu sala para que otros jugadores puedan encontrarla en Battly Worlds.</p>
+          <p data-public-help>Crea una sala y abre tu mundo en LAN para publicarlo.</p>
+          <section
+            data-visibility
+            hidden
+          ></section>
+        </section>
+        <section
+          data-view="appearance"
+          hidden
+        >
+          <div class="hud-section-heading">
+            <h2>A tu manera</h2>
+            <span>HUD</span>
+          </div>
+          <p>Elige qué ves mientras juegas.</p>
+          <form data-appearance>
+            <section
+              class="hud-editor"
+              data-hud-editor
+            ></section>
+            <label
+              >Opacidad <output data-opacity-label>90%</output
+              ><input
+                type="range"
+                name="opacity"
+                min="25"
+                max="100"
+                value="90"
+            /></label>
+            <fieldset class="hud-position-options">
+              <legend>Posición</legend>
+              <input
+                type="hidden"
+                name="position"
+                value="top-right"
+              />
+              <button
+                type="button"
+                data-overlay-position="top-left"
+              >
+                Arriba a la izquierda
+              </button>
+              <button
+                type="button"
+                data-overlay-position="top-right"
+              >
+                Arriba a la derecha
+              </button>
+              <button
+                type="button"
+                data-overlay-position="bottom-left"
+              >
+                Abajo a la izquierda
+              </button>
+              <button
+                type="button"
+                data-overlay-position="bottom-right"
+              >
+                Abajo a la derecha
+              </button>
+            </fieldset>
+            <label class="hud-switch"
+              ><span>Personas hablando<small>Actividad de audio en tiempo real</small></span
+              ><input
+                type="checkbox"
+                name="showVoice"
+                checked
+            /></label>
+            <label class="hud-switch"
+              ><span>Entradas y salidas<small>Avisos de participantes en la sala</small></span
+              ><input
+                type="checkbox"
+                name="showPresence"
+                checked
+            /></label>
+            <label class="hud-switch"
+              ><span>Animaciones<small>Transiciones y avisos suaves</small></span
+              ><input
+                type="checkbox"
+                name="animations"
+                checked
+            /></label>
+            <button
+              type="button"
+              class="bw-secondary"
+              data-reset-appearance
+            >
+              Restablecer aspecto
+            </button>
+          </form>
+        </section>
+        <footer>
+          <span class="hud-online-dot"></span> Battly Worlds
+          <span>Ctrl + B · Contraer<br />Ctrl + H · Ocultar / mostrar</span>
+        </footer>
+      </div>
+      <div
+        class="hud-actions"
+        aria-label="Acciones de la sala"
+      >
+        <button
+          class="bw-secondary"
+          data-open-invite
+        >
+          Invitar amigo</button
+        ><button
+          class="bw-secondary"
+          data-copy
+        >
+          Copiar código</button
+        ><button
+          class="bw-secondary hud-danger"
+          data-leave
+        >
+          Salir de la sala
+        </button>
+      </div>
+    </section>
+    <section
+      class="hud-live"
+      aria-label="Actividad de la sala"
+    >
+      <div
+        class="hud-mini-controls"
+        hidden
+      >
+        <span data-mini-voice>Chat de voz</span
+        ><button
+          data-mini-mute
+          aria-label="Silenciar micrófono"
+        >
+          Micro</button
+        ><button
+          data-mini-deafen
+          aria-label="Silenciar audio"
+        >
+          Audio
+        </button>
+      </div>
+      <div
+        class="hud-speakers"
+        aria-label="Personas hablando"
+      ></div>
+      <div
+        class="hud-presence"
+        role="status"
+        aria-live="polite"
+      ></div>
+    </section>
+    <script
+      type="module"
+      src="./social/worlds-overlay.ts"
+    ></script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+name: Documentation references
+
+on:
+  pull_request:
+    paths:
+      - '**/*.md'
+      - 'public scripts/check-documentation*.cjs'
+      - .github/workflows/documentation.yml
+  push:
+    branches: [main, 'codex/**']
+    paths:
+      - '**/*.md'
+      - 'public scripts/check-documentation*.cjs'
+      - .github/workflows/documentation.yml
+
+permissions:
+  contents: read
+
+jobs:
+  references:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.3'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: node --test "public scripts/check-documentation.test.cjs"
+      - run: node "public scripts/check-documentation.cjs" --tracked

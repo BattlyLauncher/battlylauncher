@@ -1,0 +1,69 @@
+diff --git a/src/controller/rooms/scaffolding/room.rs b/src/controller/rooms/scaffolding/room.rs
+index 99c8690..50d5a0f 100644
+--- a/src/controller/rooms/scaffolding/room.rs
++++ b/src/controller/rooms/scaffolding/room.rs
+@@ -593,7 +593,7 @@ pub fn start_guest(room: Room, player: Option<String>, capture: AppStateCapture,
+ }
+ 
+ fn compute_arguments(room: &Room, public_servers: PublicServers) -> Vec<Argument> {
+-    static DEFAULT_ARGUMENTS: [Argument; 8] = [
++    static DEFAULT_ARGUMENTS: [Argument; 7] = [
+         Argument::NoTun,
+         Argument::Compression(Cow::Borrowed("zstd")),
+         Argument::MultiThread,
+@@ -607,7 +607,6 @@ fn compute_arguments(room: &Room, public_servers: PublicServers) -> Vec<Argument
+             address: SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, 0).into(),
+             proto: Proto::TCP,
+         },
+-        Argument::P2POnly
+     ];
+ 
+     let mut args: Vec<Argument> = Vec::with_capacity(32);
+diff --git a/src/main.rs b/src/main.rs
+index 17cb01e..3d68a3e 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -49,7 +49,7 @@ pub mod logging_windows;
+ #[cfg(target_os = "macos")]
+ pub mod ui_macos;
+ 
+-pub const MOTD: &'static str = "§6§l双击进入陶瓦联机大厅（请保持陶瓦运行）";
++pub const MOTD: &'static str = "BattlyWorlds - pulsa para entrar";
+ 
+ #[cfg(target_family = "windows")]
+ pub mod lock_windows;
+@@ -97,7 +97,9 @@ lazy_static::lazy_static! {
+ 
+ lazy_static! {
+     pub static ref FILE_ROOT: std::path::PathBuf = {
+-        let path = if cfg!(target_os = "macos")
++        let path = if let Ok(root) = env::var("BATTLY_TERRACOTTA_ROOT") {
++            std::path::PathBuf::from(root)
++        } else if cfg!(target_os = "macos")
+             && let Ok(home) = env::var("HOME")
+         {
+             std::path::Path::new(&home).join("terracotta")
+diff --git a/src/server/mod.rs b/src/server/mod.rs
+index f6ea50d..ecd2436 100644
+--- a/src/server/mod.rs
++++ b/src/server/mod.rs
+@@ -73,11 +73,19 @@ fn devtools() -> Status {
+ pub async fn server_main(port_callback: mpsc::Sender<u16>) {
+     let rocket = rocket::custom(rocket::Config {
+         log_level: rocket::log::LogLevel::Critical,
++        address: "127.0.0.1".parse().unwrap(),
+         port: 0,
+         workers: 2,
+         ..rocket::Config::default()
+     });
+ 
++    let rocket = rocket.attach(rocket::fairing::AdHoc::on_request("Battly local authentication", |request, _| Box::pin(async move {
++        if let Ok(secret) = std::env::var("BATTLY_TERRACOTTA_SECRET") {
++            if request.headers().get_one("X-Battly-Terracotta") != Some(secret.as_str()) {
++                request.set_uri(rocket::http::uri::Origin::parse("/battly-denied").unwrap());
++            }
++        }
++    })));
+     let rocket = states::configure(rocket);
+     let rocket = statics::configure(rocket);
+ 

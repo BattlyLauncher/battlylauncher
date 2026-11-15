@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; connect-src 'none'"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Battly Launcher</title>
+  </head>
+  <body>
+    <main class="startup-update">
+      <header>
+        <img
+          src="./legacy/assets/images/icon_transparent.png"
+          alt="Battly"
+        /><span>Battly Launcher</span
+        ><span
+          class="channel"
+          data-channel
+          >Estable</span
+        >
+      </header>
+      <section
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <p
+          class="version"
+          data-target
+        ></p>
+        <h1 data-title>Preparando Battly</h1>
+        <p
+          class="description"
+          data-description
+        >
+          Comprobando si hay actualizaciones…
+        </p>
+      </section>
+      <div class="progress-label">
+        <strong data-phase>Comprobando</strong><span data-percent></span>
+      </div>
+      <progress
+        max="100"
+        aria-label="Progreso de actualización"
+      ></progress>
+      <p
+        class="transfer"
+        data-transfer
+      ></p>
+      <ol
+        class="steps"
+        aria-label="Fases de actualización"
+      >
+        <li data-step="downloading">Descarga</li>
+        <li data-step="verifying">Verificación</li>
+        <li data-step="installing">Instalación</li>
+      </ol>
+      <div
+        class="error-actions"
+        hidden
+      >
+        <button
+          type="button"
+          data-retry
+        >
+          Volver a intentar</button
+        ><button
+          type="button"
+          data-continue
+        >
+          Abrir Battly
+        </button>
+      </div>
+      <footer data-footer>Battly se abrirá al terminar.</footer>
+    </main>
+    <script
+      type="module"
+      src="./startup-update.ts"
+    ></script>
+  </body>
+</html>

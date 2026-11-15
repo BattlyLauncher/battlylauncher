@@ -1,0 +1,37 @@
+name: Tunnel launcher contract
+on:
+  push:
+    paths:
+      [
+        'src/main/servers/**',
+        'build-resources/battly-tunnel/**',
+        'public scripts/*tunnel*.test.cjs',
+        'package.json',
+        '.github/workflows/battly-tunnel.yml',
+      ]
+  pull_request:
+    paths:
+      [
+        'src/main/servers/**',
+        'build-resources/battly-tunnel/**',
+        'public scripts/*tunnel*.test.cjs',
+        'package.json',
+        '.github/workflows/battly-tunnel.yml',
+      ]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  launcher-contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx tsc -p tsconfig.electron.json --pretty false
+      - run: node --test "public scripts/server-domain-tunnel.test.cjs" "public scripts/battly-tunnel-integration.test.cjs" "public scripts/tunnel-release-download.test.cjs"

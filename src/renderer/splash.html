@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self'; media-src 'self' https://cdn.battlylauncher.com; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="stylesheet"
+      href="./splash.css"
+    />
+    <title>Iniciando Battly</title>
+  </head>
+  <body>
+    <main
+      class="startup-splash"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <img
+        class="startup-logo"
+        src="./legacy/assets/images/icon_transparent.png"
+        alt="Battly Launcher"
+      />
+      <section class="startup-copy">
+        <h1>Battly Launcher</h1>
+        <p>TECNO BROS</p>
+        <strong data-splash-greeting>¡Hola!</strong>
+      </section>
+    </main>
+    <audio data-startup-audio></audio>
+    <script
+      type="module"
+      src="./splash.ts"
+    ></script>
+  </body>
+</html>

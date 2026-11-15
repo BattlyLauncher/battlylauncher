@@ -1,0 +1,803 @@
+@import '../styles/panels/mybattly.css';
+
+.b-mybattly-usage {
+  margin-top: 20px;
+  border-top: 1px solid #304158;
+  padding-top: 16px;
+  color: #c8d5e6;
+}
+.b-mybattly-usage h3,
+.b-usage-dialog h3 {
+  font-size: 15px;
+  margin: 0 0 10px;
+  color: #f3f6fc;
+}
+.b-mybattly-usage p {
+  font-size: 12px;
+}
+.b-usage-graph {
+  width: 100%;
+  overflow: hidden;
+}
+.b-usage-graph svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.b-usage-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.b-usage-legend span:first-child {
+  color: var(--theme-color);
+}
+.b-usage-legend span:last-child {
+  color: var(--usage-secondary);
+}
+.b-usage-dialog {
+  width: min(900px, calc(100vw - 40px));
+  max-height: calc(100dvh - 48px);
+  padding: 0;
+  background: #101a29;
+  color: #dce4ee;
+  border: 1px solid #304158;
+  border-radius: 16px;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #40536b transparent;
+}
+.b-usage-dialog::backdrop {
+  background: #000b;
+  backdrop-filter: blur(4px);
+}
+.b-usage-dialog header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #304158;
+}
+.b-usage-dialog h2 {
+  font-size: 22px;
+  margin: 0;
+}
+.b-usage-dialog section {
+  padding: 24px;
+}
+.b-usage-dialog p {
+  font-size: 13px;
+}
+.b-usage-filters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.b-usage-filters select {
+  background: #1b2637;
+  color: #edf3fb;
+  border: 1px solid #3a4b63;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.b-mybattly-hero-actions {
+  align-items: center;
+  flex-wrap: wrap;
+}
+.b-mybattly-hero-actions .tutorial-replay {
+  margin: 0;
+  flex: none;
+  width: 38px;
+  height: 42px;
+  align-self: center;
+}
+.b-mybattly-selection {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 0;
+  color: #c8d5e6;
+  font-size: 12px;
+}
+.b-mybattly-selection .button {
+  height: 32px;
+  font-size: 12px;
+  background: #1b2637;
+  color: #edf3fb;
+  border: 1px solid #3a4b63;
+  border-radius: 8px;
+}
+.b-mybattly-selection .button:not(:disabled):hover {
+  border-color: var(--theme-color, #7048c4);
+  background: color-mix(in srgb, var(--theme-color, #7048c4) 22%, #1b2637);
+}
+.b-mybattly-selection .button:disabled {
+  opacity: 0.45;
+  background: #1b2637;
+  color: #edf3fb;
+}
+.b-mybattly-select-all {
+  cursor: pointer;
+}
+.b-mybattly-table-scroll input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--theme-color, #7048c4);
+  cursor: pointer;
+}
+.b-mybattly-table-scroll tr.is-selected {
+  background: color-mix(in srgb, var(--theme-color, #7048c4) 16%, transparent);
+}
+.b-mybattly-selection-error {
+  color: #ff879c;
+  font-size: 12px;
+}
+
+[data-panel-view='mybattly'][data-state='loading'] .b-mybattly-main-panel {
+  display: none;
+}
+
+[data-panel-view='mybattly'] .b-mybattly-loading {
+  min-height: 320px;
+  height: calc(100dvh - 120px);
+  flex-direction: column;
+  gap: 16px;
+  color: var(--text-primary, #f3f6fc);
+}
+
+.b-mybattly-loading canvas {
+  width: 100px;
+  height: 100px;
+}
+
+.world-backups-modal {
+  width: min(860px, calc(100vw - 40px));
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+  color: #fff;
+  background: transparent;
+  box-shadow: 0 28px 80px rgb(0 0 0 / 55%);
+}
+
+.world-backups-modal::backdrop {
+  background: rgb(5 7 12 / 78%);
+  backdrop-filter: blur(8px);
+}
+
+.world-backups-card {
+  padding: 28px;
+  background: var(--surface-primary, #101722);
+  color: #f3f6fc;
+}
+
+.world-backups-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.world-backups-card h2 {
+  margin: 5px 0 6px;
+  font-size: 25px;
+}
+
+.world-backups-card header p,
+.world-backups-status {
+  margin: 0;
+  color: #aeb5c2;
+  font-size: 13px;
+}
+
+.world-backups-kicker {
+  color: #59adff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.world-backups-close,
+.world-backups-remove {
+  border: 0;
+  color: #aeb5c2;
+  background: transparent;
+  cursor: pointer;
+}
+
+.world-backups-close {
+  font-size: 28px;
+}
+
+.world-backups-create {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 10px;
+  padding: 14px;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 4%);
+}
+
+.world-backups-create label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.world-backups-create select,
+.world-backups-create button {
+  min-height: 38px;
+  border: 1px solid rgb(255 255 255 / 11%);
+  border-radius: 8px;
+  color: #fff;
+  background: #11141a;
+}
+
+.world-backups-create button {
+  padding: 0 16px;
+  border-color: #198be5;
+  background: #198be5;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.world-backups-create button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.world-backups-status {
+  min-height: 20px;
+}
+
+.world-backups-list {
+  display: grid;
+  gap: 8px;
+  max-height: 310px;
+  margin-top: 12px;
+  overflow: auto;
+}
+
+.world-backups-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  border-radius: 10px;
+  background: rgb(255 255 255 / 5%);
+}
+
+.world-backups-modal .world-backups-row strong {
+  color: #f3f6fc;
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.world-backups-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+.world-backups-filters input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #41536c;
+  border-radius: 8px;
+  background: #0c1522;
+  color: #f3f6fc;
+  color-scheme: dark;
+}
+.world-backups-filters input::placeholder {
+  color: #b9c6d8;
+}
+.world-backups-auto {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #eaf2ff;
+  font-size: 14px;
+}
+.world-backups-auto input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--theme-color, #4099db);
+}
+.world-backups-modal .world-backups-row span {
+  color: #b9c6d8;
+  overflow-wrap: anywhere;
+}
+.world-backups-row > div {
+  min-width: 0;
+}
+.world-backups-modal .world-backups-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.world-backups-actions button {
+  padding: 8px 12px;
+  min-height: 36px;
+  border: 1px solid #41536c;
+  border-radius: 8px;
+  background: #223147;
+  color: #f3f6fc;
+  cursor: pointer;
+}
+.world-backups-actions .world-backups-remove {
+  color: #ff8297;
+}
+.world-backups-modal button:focus-visible,
+.world-backups-modal select:focus-visible {
+  outline: 2px solid var(--theme-color, #4099db);
+  outline-offset: 3px;
+}
+.world-backups-modal .world-backups-create button {
+  background: var(--theme-color, #4099db);
+  border-color: transparent;
+  color: #fff;
+}
+.world-backups-create select {
+  min-width: 0;
+  width: 100%;
+  padding: 8px;
+}
+@media (max-width: 650px) {
+  .world-backups-card {
+    padding: 18px;
+  }
+  .world-backups-create {
+    grid-template-columns: 1fr;
+  }
+  .world-backups-row {
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+  .world-backups-actions {
+    grid-column: 2;
+  }
+}
+
+.world-backups-row > i {
+  color: #59adff;
+  font-size: 20px;
+}
+
+.world-backups-row div {
+  display: grid;
+  gap: 3px;
+}
+
+.world-backups-row span,
+.world-backups-empty span {
+  color: #929aaa;
+  font-size: 12px;
+}
+
+.world-backups-remove:hover {
+  color: #f14668;
+}
+
+.world-backups-empty {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 32px;
+  color: #dfe5ee;
+}
+
+.world-backups-empty i {
+  color: #596272;
+  font-size: 32px;
+}
+
+.world-backups-account {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid #334458;
+  border-radius: 12px;
+  background: #101925;
+}
+.world-backups-account strong {
+  color: #eaf2ff;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.world-backups-account-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.world-backups-account-actions button {
+  padding: 8px 12px;
+  border: 1px solid #46627c;
+  border-radius: 8px;
+  background: #1b3044;
+  color: white;
+  cursor: pointer;
+}
+.world-backups-account-actions [hidden],
+[data-backup-progress][hidden] {
+  display: none !important;
+}
+[data-backup-progress] {
+  width: 100%;
+  margin-top: 15px;
+  accent-color: var(--theme-color);
+}
+
+.world-backups-empty strong {
+  color: #dfe5ee !important;
+}
+
+/* A separate top-layer dialog keeps transfer progress visible above the backup library. */
+dialog.world-transfer-modal {
+  width: min(560px, calc(100vw - 40px));
+  padding: 28px;
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 18px;
+  background: var(--background-secondary, #101722);
+  color: var(--text-color, #f8fafc);
+}
+dialog.world-transfer-modal::backdrop {
+  background: #000a;
+}
+.world-transfer-modal section {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.world-transfer-modal h2 {
+  margin: 0;
+  color: inherit;
+  font-size: 26px;
+}
+.world-transfer-modal p {
+  margin: 0;
+  overflow-wrap: anywhere;
+  max-height: 150px;
+  overflow: auto;
+}
+.world-transfer-modal progress {
+  width: 100%;
+  height: 12px;
+  accent-color: var(--theme-color, #4099db);
+}
+.world-transfer-modal button {
+  justify-self: end;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 24px;
+  background: var(--theme-color, #4099db);
+  color: white;
+  cursor: pointer;
+}
+.world-transfer-modal [hidden] {
+  display: none;
+}
+
+.world-transfer-modal progress {
+  appearance: none;
+  border: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #263647;
+}
+.world-transfer-modal progress::-webkit-progress-bar {
+  background: #263647;
+  border-radius: 8px;
+}
+.world-transfer-modal progress::-webkit-progress-value {
+  background: var(--theme-color, #4099db);
+  border-radius: 8px;
+}
+.world-transfer-modal progress:indeterminate {
+  background: linear-gradient(90deg, #263647 20%, var(--theme-color, #4099db) 50%, #263647 80%);
+  background-size: 200% 100%;
+  animation: world-transfer-progress 1.5s linear infinite;
+}
+@keyframes world-transfer-progress {
+  to {
+    background-position: -200% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-transfer-modal progress:indeterminate {
+    animation: none;
+  }
+}
+
+/* Backup library: fixed controls, one scroll region and compact readable rows. */
+dialog.world-backups-modal {
+  width: min(980px, calc(100vw - 40px));
+  height: min(740px, calc(100dvh - 80px));
+  max-height: calc(100dvh - 80px);
+  overflow: hidden;
+  border: 1px solid #30465e;
+  background: #101722;
+}
+.world-backups-modal .world-backups-card {
+  height: 100%;
+  box-sizing: border-box;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 14px;
+  background: #101722;
+}
+.world-backups-card > header {
+  flex: none;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #2b3c50;
+}
+.world-backups-card header h2 {
+  font-size: 25px;
+  line-height: 1.3;
+}
+.world-backups-modal .world-backups-kicker {
+  color: #76bbf0;
+}
+.world-backups-modal .world-backups-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #213145;
+  color: #e4eef9;
+  line-height: 1;
+  font-size: 24px;
+  flex: none;
+}
+.world-backups-modal .world-backups-account {
+  flex: none;
+  margin: 0;
+  padding: 12px 14px;
+  gap: 10px;
+  background: #152235;
+  border-color: #2b4057;
+  border-radius: 10px;
+}
+.world-backups-modal .world-backups-account-actions {
+  gap: 8px;
+}
+.world-backups-modal .world-backups-account-actions button {
+  padding: 6px 9px;
+  background: transparent;
+  font-size: 11px;
+  border-color: #395674;
+}
+.world-backups-modal .world-backups-create {
+  flex: none;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  gap: 10px;
+}
+.world-backups-modal .world-backups-create select {
+  height: 40px;
+  background: #0b1625;
+  border-color: #39516a;
+  padding: 0 12px;
+  font-size: 13px;
+}
+.world-backups-modal .world-backups-create button {
+  background: #3e8ed0;
+  font-size: 13px;
+  min-height: 40px;
+}
+.world-backups-modal .world-backups-auto {
+  flex: none;
+  font-size: 12px;
+  margin: 0;
+}
+.world-backups-modal .world-backups-auto input {
+  accent-color: #3e8ed0;
+}
+.world-backups-modal .world-backups-filters {
+  flex: none;
+  grid-template-columns: minmax(0, 1fr) 180px;
+}
+.world-backups-modal .world-backups-filters input {
+  height: 38px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  font-size: 12px;
+}
+.world-backups-modal .world-backups-status {
+  flex: none;
+  min-height: 0;
+  margin: 0;
+}
+.world-backups-modal .world-backups-status:empty {
+  display: none;
+}
+.world-backups-modal .world-backups-list {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  margin: 0;
+  padding-right: 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  align-content: start;
+  scrollbar-gutter: stable;
+}
+.world-backups-modal .world-backups-row {
+  padding: 12px;
+  border: 1px solid #293d52;
+  border-radius: 9px;
+  background: #132033;
+  gap: 12px;
+}
+.world-backups-modal .world-backups-row strong {
+  font-size: 13px;
+  line-height: 1.4;
+}
+.world-backups-modal .world-backups-row span {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #a9bed4;
+}
+.world-backups-modal .world-backups-row > i {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #3e8ed020;
+  font-size: 16px;
+}
+.world-backups-modal .world-backups-actions button {
+  font-size: 12px;
+  padding: 6px 10px;
+  min-height: 32px;
+  background: #1b3044;
+  border-color: #395674;
+}
+.world-backups-modal button:focus-visible {
+  outline: 2px solid #8bd0ff;
+  outline-offset: 2px;
+}
+.world-transfer-count {
+  color: #bdd8f0;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 650px) {
+  dialog.world-backups-modal {
+    width: calc(100vw - 20px);
+    height: calc(100dvh - 40px);
+    max-height: calc(100dvh - 40px);
+  }
+  .world-backups-modal .world-backups-card {
+    padding: 16px;
+    gap: 10px;
+  }
+  .world-backups-modal .world-backups-create {
+    grid-template-columns: 1fr auto;
+  }
+  .world-backups-create label {
+    display: none;
+  }
+  .world-backups-modal .world-backups-filters {
+    grid-template-columns: 1fr 145px;
+  }
+}
+/* Activity follows the selected theme, with compact charts and a fixed dialog header. */
+.b-mybattly-usage,
+.b-usage-dialog {
+  --usage-secondary: color-mix(in srgb, var(--theme-color, #7048c4) 30%, #f6c36f);
+  --usage-grid: color-mix(in srgb, var(--theme-color, #7048c4) 15%, #304158);
+  --usage-muted: #a8b8ca;
+}
+.b-mybattly-usage {
+  padding: 18px;
+  border: 1px solid var(--usage-grid);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--theme-color, #7048c4) 5%, #111b28);
+}
+.b-mybattly-usage .b-usage-graph {
+  margin: 12px 0;
+  max-height: 140px;
+}
+.b-mybattly-usage button {
+  background: var(--theme-color) !important;
+  color: white !important;
+  border-color: var(--theme-color) !important;
+  border-radius: 9px;
+  padding: 9px 14px;
+  height: auto;
+}
+.b-usage-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: min(740px, calc(100dvh - 40px));
+  max-height: calc(100dvh - 40px);
+}
+.b-usage-dialog header {
+  flex: none;
+  background: color-mix(in srgb, var(--theme-color, #7048c4) 8%, #101a29);
+  padding: 20px 24px;
+}
+.b-usage-dialog header .delete {
+  width: 34px;
+  height: 34px;
+  flex: none;
+}
+.b-usage-dialog section {
+  min-height: 0;
+  overflow: auto;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--usage-grid) transparent;
+}
+.b-usage-dialog h3 {
+  font-size: 16px;
+  margin: 8px 0 0;
+}
+.b-usage-dialog p {
+  margin: 0;
+  color: #b8c8da;
+  line-height: 1.5;
+}
+.b-usage-dialog .b-usage-total {
+  padding: 16px;
+  border: 1px solid var(--usage-grid);
+  background: color-mix(in srgb, var(--theme-color, #7048c4) 10%, #111b28);
+  border-radius: 12px;
+  font-size: 16px;
+  color: #f4f7fc;
+}
+.b-usage-dialog .b-usage-graph {
+  border: 1px solid var(--usage-grid);
+  border-radius: 12px;
+  background: #0c1522;
+  padding: 14px;
+  box-sizing: border-box;
+}
+.b-usage-dialog .b-usage-filters select:focus-visible {
+  outline: 2px solid var(--theme-color);
+  outline-offset: 2px;
+}
+@media (max-width: 600px) {
+  .b-usage-dialog {
+    width: calc(100vw - 20px);
+  }
+  .b-usage-dialog header,
+  .b-usage-dialog section {
+    padding: 16px;
+  }
+  .b-usage-dialog h2 {
+    font-size: 19px;
+  }
+  .b-usage-filters select {
+    flex: 1;
+  }
+}
+.b-usage-dialog .b-usage-legend span:first-child,
+.b-mybattly-usage .b-usage-legend span:first-child {
+  color: var(--theme-color) !important;
+}
+.b-usage-dialog .b-usage-legend span:last-child,
+.b-mybattly-usage .b-usage-legend span:last-child {
+  color: var(--usage-secondary) !important;
+}
+.b-usage-dialog h2 {
+  color: #f4f7fc !important;
+  font-weight: 700;
+}

@@ -1,0 +1,358 @@
+[data-instances-dialog] > .modal-card {
+  width: min(1040px, calc(100vw - 64px));
+  max-width: none;
+}
+[data-instances-dialog] .modal-card-head {
+  gap: 12px;
+}
+[data-instances-dialog] .modal-card-head .instance-tutorial-help,
+[data-instances-dialog] .modal-card-head > .delete {
+  margin: 0 !important;
+  flex-shrink: 0;
+}
+[data-instances-dialog] .modal-card-head .modal-card-title {
+  min-width: 0;
+}
+.instances-container .instance-cover,
+.instances-container .instance-grid-description,
+.instances-container .instance-grid-metadata {
+  display: none;
+}
+.instances-container.grid-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+  gap: 12px;
+  align-items: start;
+}
+.instances-container.grid-view > .card {
+  width: 100% !important;
+  overflow: hidden;
+  border: 1px solid #283341;
+  border-radius: 16px !important;
+  background: #10151d !important;
+  box-shadow: 0 8px 25px #0003;
+}
+.instances-container.grid-view .instance-cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 2;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 65% 10%, #527ba4, transparent 70%),
+    linear-gradient(135deg, #162537, #253d36);
+}
+.instances-container.grid-view .instance-cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0 !important;
+  transition: transform 250ms ease;
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+}
+.instances-container.grid-view .instance-cover-image-icon {
+  box-sizing: border-box;
+  object-fit: contain;
+  padding: 26px 18%;
+}
+.instances-container.grid-view > .card:hover .instance-cover-image {
+  transform: scale(1.04);
+}
+.instances-container.grid-view .instance-cover-icon {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px !important;
+  object-fit: cover;
+  box-shadow: 0 3px 16px #0006;
+  background: #132030;
+}
+.instances-container.grid-view .instance-version-badge {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  max-width: calc(100% - 92px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 5px 8px;
+  border-radius: 7px;
+  color: white;
+  background: #080f1dcc;
+  font-size: 10px;
+}
+.instances-container.grid-view > .card .card-header {
+  background: transparent;
+  box-shadow: none;
+  padding: 10px 10px 0;
+}
+.instances-container.grid-view > .card .card-header-title {
+  padding: 0;
+  gap: 6px;
+  font-size: 12px;
+  color: #f6f7fb !important;
+}
+.instances-container.grid-view > .card .instance-title-edit {
+  margin-left: auto;
+}
+.instances-container.grid-view > .card .card-content {
+  display: none !important;
+}
+.instances-container.grid-view .instance-grid-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 34px;
+  margin: 6px 10px 8px;
+  color: #a4aebb;
+  font-size: 11px;
+  line-height: 17px;
+}
+.instances-container.grid-view .instance-grid-metadata {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 10px 10px;
+  color: #768496;
+  font-size: 10px;
+}
+.instances-container.grid-view .instance-grid-metadata span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.instances-container.grid-view > .card .card-footer {
+  display: flex !important;
+  gap: 6px;
+  padding: 8px;
+  border-top: 1px solid #ffffff0d;
+}
+.instances-container.grid-view > .card .card-footer .button {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 0;
+  border-radius: 9px !important;
+}
+.instances-container.grid-view > .card .card-footer .button:first-child {
+  flex: 1;
+  width: auto;
+  background: var(--theme-color);
+  border-color: var(--theme-color);
+  color: white;
+}
+.instances-container.grid-view > .card .card-footer .button:first-child .btn-text {
+  display: inline;
+  font-size: 10px;
+}
+.instances-container.grid-view > .card .card-header {
+  padding: 10px 10px 0 !important;
+}
+[data-instances-dialog] [data-instance-create-open] {
+  color: #fff !important;
+  background: #1d3045 !important;
+  border: 1px solid #35516e;
+}
+
+.instances-container.grid-view > .card .card-footer .button i {
+  margin: 0;
+  font-size: 14px;
+}
+.instances-container.grid-view > .card .card-footer .button:first-child i {
+  margin-right: 5px;
+  font-size: 12px;
+}
+
+/* Keep the editor controls independent of Bulma's light form defaults. */
+[data-instance-editor-dialog] .modal-card-head {
+  gap: 12px;
+}
+[data-instance-editor-dialog] .modal-card-head > .delete {
+  position: relative !important;
+  inset: auto !important;
+  margin: 0 !important;
+  flex-shrink: 0;
+}
+.legacy-instance-editor .select {
+  height: auto;
+  background: transparent;
+}
+.legacy-instance-editor .select select,
+.legacy-instance-editor .instance-runtime-editor select {
+  color-scheme: dark;
+  width: 100%;
+  background-color: #182536 !important;
+  color: #f5f7fb !important;
+  border: 1px solid #40546d !important;
+  box-shadow: none;
+  min-height: 36px;
+  border-radius: 8px;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+.legacy-instance-editor .select select:hover,
+.legacy-instance-editor .instance-runtime-editor select:hover {
+  border-color: var(--theme-color, #7954c9) !important;
+}
+.legacy-instance-editor .select select:focus-visible,
+.legacy-instance-editor .instance-runtime-editor select:focus-visible {
+  border-color: var(--theme-color, #7954c9) !important;
+  outline: 2px solid var(--theme-color, #7954c9);
+  outline-offset: 2px;
+}
+.legacy-instance-editor .select:not(.is-multiple):not(.is-loading)::after {
+  border-color: #c1cede !important;
+}
+.legacy-instance-editor select option {
+  background: #182536;
+  color: #f5f7fb;
+}
+.legacy-instance-editor select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+/* One action component for both instance layouts; only the arrangement changes. */
+.instances-container > .card .card-footer {
+  gap: 7px;
+  padding: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.instances-container > .card .card-footer .button.instance-action {
+  --action-background: #1b293b;
+  --action-border: #405975;
+  --action-color: #f5f7fb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  box-sizing: border-box;
+  height: 38px;
+  min-height: 38px;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 0 12px;
+  border: 1px solid var(--action-border) !important;
+  border-radius: 9px !important;
+  background: var(--action-background) !important;
+  color: var(--action-color) !important;
+  font-size: 12px;
+  line-height: 1;
+  box-shadow: none;
+  transition: filter 150ms ease;
+}
+.instances-container > .card .card-footer .button.instance-action-primary {
+  --action-background: var(--theme-color, #3e8ed0);
+  --action-border: var(--theme-color, #3e8ed0);
+  --action-color: #fff;
+}
+.instances-container > .card .card-footer .button.instance-action-danger {
+  --action-border: #dd4265;
+  --action-color: #ff6688;
+}
+.instances-container > .card .card-footer .button.instance-action i {
+  margin: 0;
+  color: inherit;
+  font-size: 14px;
+}
+.instances-container > .card .card-footer .button.instance-action .btn-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.instances-container > .card .card-footer .button.instance-action:hover:not(:disabled) {
+  filter: brightness(1.18);
+}
+.instances-container > .card .card-footer .button.instance-action:focus-visible {
+  outline: 2px solid var(--theme-color, #3e8ed0);
+  outline-offset: 2px;
+}
+.instances-container > .card .card-footer .button.instance-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Loading placeholders occupy the same columns as the instance cards. */
+.instances-container > .instance-loading {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+}
+.instances-container.grid-view > .instance-loading {
+  grid-template-columns: inherit;
+}
+.instances-container .instance-loading > span {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #283b50;
+}
+.instances-container.grid-view .instance-loading > span {
+  height: 190px;
+}
+.instances-container.grid-view .instance-loading > span::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 100px;
+  background: #101c2b55;
+  border-bottom: 1px solid #ffffff08;
+}
+.instances-container .instance-loading > span::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 30%;
+  bottom: 22px;
+  height: 9px;
+  border-radius: 6px;
+  background: #71849b26;
+  box-shadow: 0 -20px #71849b33;
+}
+.instance-library-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.instance-library-filters > input,
+.instance-library-filters > select {
+  height: 42px;
+  min-width: 0;
+  padding: 0 12px;
+  border: 1px solid #35465e;
+  border-radius: 10px;
+  color: #e5edf8;
+  background: #101b2c;
+  font: inherit;
+  font-size: 13px;
+}
+.instance-library-filters > input {
+  flex: 1 1 240px;
+}
+.instance-library-filters > select {
+  flex: 0 1 170px;
+}
+.instance-library-filters > input::placeholder {
+  color: #91a6bf;
+}
+.instance-library-filters > :is(input, select):focus-visible {
+  outline: 2px solid var(--theme-color, #7049c2);
+  outline-offset: 2px;
+}
+@media (max-width: 600px) {
+  .instance-library-filters > input {
+    flex-basis: 100%;
+  }
+  .instance-library-filters > select {
+    flex: 1 1 100px;
+    width: 100px;
+  }
+}

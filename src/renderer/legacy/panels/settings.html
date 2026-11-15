@@ -1,0 +1,2977 @@
+<style>
+  /* ---------- TITLES ---------- */
+  #b-settings-title {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-top: 60px;
+  }
+
+  h2 {
+    font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  p,
+  li,
+  label,
+  button,
+  select {
+    font-size: clamp(0.9rem, 1.4vw, 1rem);
+  }
+
+  /* ---------- PANEL ---------- */
+  .b-settings-panel {
+    width: 100%;
+    max-width: 760px;
+    background: #101318;
+    color: #e3e6ee;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+    display: none;
+    overflow: auto;
+    scrollbar-width: none;
+  }
+
+  /* ---------- CUENTAS ---------- */
+  .b-settings-acc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .b-settings-acc-card,
+  .b-settings-acc-add {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--theme-color, #3e8ed0);
+    color: #ffffff;
+    font-weight: 700;
+    padding: 0.9rem 1.2rem;
+    border-radius: 1.25rem;
+    cursor: pointer;
+    transition: filter 0.2s;
+    border: 4px solid var(--theme-color, #3e8ed0);
+  }
+
+  .b-settings-acc-card:hover {
+    filter: brightness(1.08);
+  }
+
+  .b-settings-acc-card img {
+    width: 42px;
+    height: 42px;
+    border-radius: 0.3rem;
+    margin-right: 0.8rem;
+  }
+
+  .b-settings-menu-trigger {
+    flex: none;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  /* ---------- FORM ELEMENTOS ---------- */
+  fieldset {
+    border: none;
+    margin: 0 0 1rem;
+    padding: 0;
+  }
+
+  .b-settings-flex {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .b-settings-radio {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: #9da2b0;
+  }
+
+  .b-settings-radio input {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #9da2b0;
+    border-radius: 50%;
+    display: grid;
+    place-content: center;
+  }
+
+  .b-settings-radio input::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--theme-color, #3e8ed0);
+    transform: scale(0);
+    transition: 0.15s;
+  }
+
+  .b-settings-radio input:checked::after {
+    transform: scale(1);
+  }
+
+  .b-settings-radio input:checked + span {
+    color: #e3e6ee;
+    font-weight: 600;
+  }
+
+  select.b-settings-select {
+    background: #171b22;
+    color: #e3e6ee;
+    border: none;
+    border-radius: 0.55rem;
+    padding: 0.55rem 2.2rem 0.55rem 0.9rem;
+    appearance: none;
+    font-weight: 600;
+    min-width: 140px;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjOENGM0ZGIiB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTExLjM4IDEuMDZMNi41OSAzLjk3IDIuNTkuOTQgMS4yMSAyLjMzIDYuNTkgNi4yNCAxMC45IDEuODkgMTEuMzggMS4wNnoiLz48L3N2Zz4=');
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 12px 8px;
+  }
+
+  /* ---------- BOTONES ---------- */
+  .b-settings-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    padding: 0.55rem 0.9rem;
+    border: none;
+    border-radius: 0.65rem;
+    cursor: pointer;
+    background: var(--theme-color, #3e8ed0);
+    color: #ffffff;
+    transition: filter 0.15s;
+    text-decoration: none;
+  }
+
+  .b-settings-btn:hover {
+    filter: brightness(1.1);
+  }
+
+  .b-settings-btn.outline {
+    background: transparent;
+    border: 2px solid var(--theme-color, #3e8ed0);
+    color: var(--theme-color, #3e8ed0);
+  }
+
+  .b-settings-btn.outline:hover {
+    background: var(--theme-color, #3e8ed0);
+    color: #ffffff;
+  }
+
+  /* ---------- THEMES ---------- */
+  .b-settings-theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+
+  .b-settings-theme-card {
+    background: #171b22;
+    border: 2px solid transparent;
+    border-radius: 0.85rem;
+    height: 100px;
+    display: grid;
+    place-content: center;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .b-settings-theme-card.selected {
+    border-color: var(--theme-color, #3e8ed0);
+  }
+
+  .b-settings-theme-card:hover {
+    filter: brightness(1.1);
+  }
+
+  /* ---------- FOOTER NAV ---------- */
+  nav.b-settings-footer {
+    margin-top: auto;
+    width: 100%;
+    max-width: 760px;
+    background: #171b22;
+    border-radius: 0.85rem;
+    padding: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .b-settings-footer-up {
+    display: flex;
+    gap: 10px;
+    justify-content: space-around;
+
+    & button {
+      width: 100%;
+    }
+  }
+
+  .b-settings-nav-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    color: #e3e6ee;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.65rem;
+    background: transparent;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: 0.15s;
+    font-family: 'Battly Emoji', 'Poppins', 'Battly Emoji Sequences' !important;
+  }
+
+  .b-settings-nav-btn:hover,
+  .b-settings-nav-btn.b-settings-active {
+    /* background: var(--theme-color, #3e8ed0); */
+    color: #ffffff;
+  }
+
+  /* ---------- PROFILE MENU ---------- */
+  .b-settings-profile-menu {
+    position: absolute;
+    z-index: 1000;
+    display: none;
+    background: #171b22;
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.45);
+    padding: 10px;
+    width: auto;
+    word-break: break-all;
+  }
+
+  .b-settings-profile-menu::before {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: calc(50% - 9px);
+    border: 9px solid transparent;
+    border-bottom-color: #171b22;
+  }
+
+  .b-settings-profile-menu.open-up::before {
+    top: auto;
+    bottom: -18px;
+    border-bottom-color: transparent;
+    border-top-color: #171b22;
+  }
+
+  .b-settings-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.5rem;
+    border-radius: 10px !important;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #e3e6ee;
+    font-weight: 600;
+    transition:
+      border 0.15s,
+      color 0.15s;
+    width: 100%;
+    text-align: left;
+    border: 2px solid transparent;
+  }
+
+  .b-settings-item:hover {
+    border: 2px solid var(--theme-color, #3e8ed0);
+    color: #ffffff;
+  }
+
+  .b-settings-item + .b-settings-item {
+    margin-top: 0.15rem;
+  }
+
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 1.6rem;
+    }
+
+    nav.b-settings-footer {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  #accounts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    display: contents;
+    justify-content: center;
+  }
+</style>
+
+<div style="width: 100%; height: 95%; display: flex; flex-direction: column; align-items: center">
+  <h1
+    id="b-settings-title"
+    data-string-id="settings.myAccounts"
+  >
+    My Accounts
+  </h1>
+
+  <section
+    id="b-settings-panel-cuentas"
+    class="b-settings-panel"
+  >
+    <div class="b-settings-acc-list">
+      <a
+        class="b-settings-acc-add"
+        id="add-account-btn"
+      >
+        <span data-string-id="settings.addAccount">Add account</span>
+        <svg
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+        >
+          <path
+            d="M12 5v14M5 12h14"
+            stroke="#FFFFFF"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+      </a>
+
+      <div id="accounts"></div>
+    </div>
+  </section>
+
+  <section
+    id="b-settings-panel-java"
+    class="b-settings-panel"
+  >
+    <p data-string-id="settings.javaConfigDescription">
+      In this section you can configure the Java version that will be used to start your game.
+    </p>
+
+    <h2 data-string-id="settings.javaPath">Java Path</h2>
+    <p
+      style="color: #9da2b0; margin-bottom: 1.25rem"
+      data-string-id="settings.javaPathDescription"
+    >
+      Battly uses an integrated version of Java (official). You can specify a different one if you
+      need it.
+    </p>
+
+    <div
+      class="b-settings-flex"
+      style="align-items: center"
+    >
+      <input
+        readonly
+        id="ruta-java-input"
+        style="
+          flex: 1;
+          background: #171b22;
+          color: #e3e6ee;
+          border: none;
+          border-radius: 0.6rem;
+          padding: 0.65rem;
+          font-weight: 600;
+        "
+      />
+      <input
+        type="file"
+        style="width: 0px; height: 0px; display: none"
+        id="java-path-input-file"
+        accept="application/octet-stream"
+      />
+      <button
+        class="b-settings-btn"
+        data-string-id-title="settings.chooseFile"
+        title="Choose file"
+        id="open-explorer-java-path"
+      >
+        <i class="fa-solid fa-folder-open"></i>
+      </button>
+      <button
+        class="b-settings-btn"
+        data-string-id-title="settings.reset"
+        title="Reset"
+        id="java-path-reset"
+      >
+        <i class="fa-solid fa-arrows-rotate"></i>
+      </button>
+    </div>
+
+    <div
+      class="b-settings-flex"
+      id="jvm-subpanel-tabs"
+      style="margin-top: 1.1rem; gap: 0.55rem; flex-wrap: wrap"
+    >
+      <button
+        class="b-settings-btn outline"
+        id="jvm-tab-instance"
+      >
+        Gestionar JVM de instancias
+      </button>
+      <button
+        class="b-settings-btn outline"
+        id="jvm-tab-version"
+      >
+        Gestionar JVM de versiones normales
+      </button>
+    </div>
+
+    <div
+      id="jvm-subpanel-instance"
+      style="margin-top: 0.95rem; display: none"
+    >
+      <div
+        id="jvm-instances-manager"
+        style="margin-top: 0.1rem"
+      >
+        <div
+          id="jvm-instance-list"
+          style="display: flex; flex-direction: column; gap: 0.55rem"
+        ></div>
+      </div>
+    </div>
+
+    <div
+      id="jvm-subpanel-version"
+      style="margin-top: 0.95rem; display: none"
+    >
+      <h2 style="margin-top: 0">JVM Args por versión</h2>
+      <p style="color: #9da2b0; margin-bottom: 0.5rem">
+        Override adicional para una versión concreta (ej: 1.20.1 o 1.20.1-forge).
+      </p>
+      <div
+        class="b-settings-flex"
+        style="align-items: center; gap: 0.5rem; margin-bottom: 0.5rem"
+      >
+        <input
+          id="jvm-version-id-input"
+          style="
+            flex: 1;
+            background: #171b22;
+            color: #e3e6ee;
+            border: 1px solid #273145;
+            border-radius: 0.6rem;
+            padding: 0.65rem;
+            font-weight: 600;
+          "
+          placeholder="Versión (ej: 1.20.1-forge)"
+        />
+        <button
+          class="b-settings-btn outline"
+          id="jvm-version-load-btn"
+          title="Cargar"
+        >
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <button
+          class="b-settings-btn outline"
+          id="jvm-version-refresh-btn"
+          title="Detectar versiones locales"
+        >
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
+      </div>
+      <div
+        id="jvm-version-helper-list"
+        style="
+          max-height: 210px;
+          overflow: auto;
+          margin-bottom: 0.55rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.45rem;
+        "
+      ></div>
+      <textarea
+        id="jvm-version-args-input"
+        style="
+          width: 100%;
+          min-height: 72px;
+          background: #171b22;
+          color: #e3e6ee;
+          border: 1px solid #273145;
+          border-radius: 0.6rem;
+          padding: 0.65rem;
+          font-weight: 500;
+          resize: vertical;
+        "
+        placeholder="-XX:MaxGCPauseMillis=80"
+      ></textarea>
+      <div
+        class="b-settings-flex"
+        style="align-items: center; gap: 0.5rem; margin-top: 0.5rem"
+      >
+        <button
+          class="b-settings-btn"
+          id="jvm-version-save-btn"
+        >
+          Guardar versión
+        </button>
+        <button
+          class="b-settings-btn outline"
+          id="jvm-version-remove-btn"
+        >
+          Eliminar versión
+        </button>
+      </div>
+      <div
+        id="jvm-version-args-list"
+        style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem"
+      ></div>
+
+      <div
+        id="jvm-visual-help"
+        style="
+          margin-top: 1rem;
+          border: 1px solid #273145;
+          border-radius: 0.65rem;
+          padding: 0.75rem;
+          background: #111a2a;
+        "
+      >
+        <h3 style="color: #e3e6ee; margin-bottom: 0.35rem">Ayuda visual JVM</h3>
+        <p style="color: #9da2b0; margin-bottom: 0.5rem">
+          Haz clic en un preset para copiarlo al portapapeles y pegarlo en el campo que quieras.
+        </p>
+        <div
+          id="jvm-preset-list"
+          style="display: flex; flex-direction: column; gap: 0.45rem"
+        >
+          <button
+            class="b-settings-btn outline jvm-preset-btn"
+            data-preset="-XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:MaxGCPauseMillis=80"
+          >
+            Preset G1GC (estable)
+          </button>
+          <button
+            class="b-settings-btn outline jvm-preset-btn"
+            data-preset="-XX:+UseZGC -XX:+ZGenerational"
+          >
+            Preset ZGC (Java 21+)
+          </button>
+          <button
+            class="b-settings-btn outline jvm-preset-btn"
+            data-preset="-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8"
+          >
+            Preset codificación UTF-8
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <hr style="border: none; border-top: 1px solid #1f2430; margin: 1.25rem 0" />
+
+    <h2 data-string-id="settings.javaVersions">Java Versions</h2>
+    <p
+      style="color: #9da2b0; margin-bottom: 0.75rem"
+      data-string-id="settings.javaVersionsDescription"
+    >
+      Click on a version to use it. If it appears in red, you can download it instantly.
+    </p>
+
+    <div
+      class="b-java-list"
+      id="b-java-list"
+    ></div>
+
+    <div
+      class="b-java-selected glass"
+      id="b-java-selected"
+      style="margin-top: 1rem; display: none"
+    >
+      <i class="fa-solid fa-circle-info"></i>
+      <span
+        ><span data-string-id="settings.using">Using:</span> <b id="b-java-selected-version"></b
+      ></span>
+      <button
+        class="b-settings-btn outline"
+        id="b-java-clear"
+        style="margin-left: auto"
+      >
+        <i class="fa-solid fa-xmark"></i> <span data-string-id="settings.remove">Remove</span>
+      </button>
+    </div>
+  </section>
+
+  <div
+    class="modal"
+    id="b-java-download-modal"
+    aria-hidden="true"
+  >
+    <div class="modal-background"></div>
+    <div
+      class="modal-card glass"
+      style="max-width: 560px"
+    >
+      <header
+        class="modal-card-head"
+        style="background: transparent"
+      >
+        <p class="modal-card-title">
+          <i
+            class="fa-solid fa-download"
+            style="margin-right: 0.5rem"
+          ></i
+          ><span data-string-id="settings.downloadJava">Download Java</span>
+        </p>
+        <button
+          class="delete"
+          aria-label="Cerrar"
+          id="b-java-modal-close"
+        ></button>
+      </header>
+      <section
+        class="modal-card-body"
+        style="background: #0f1623"
+      >
+        <p
+          id="b-java-modal-text"
+          style="margin-bottom: 1rem"
+          data-string-id="settings.versionNotDownloaded"
+        >
+          The version <b id="b-java-modal-version">Java 17</b> is not downloaded. Do you want to
+          download it now?
+        </p>
+        <label for="b-java-provider">Proveedor de Java</label>
+        <select
+          id="b-java-provider"
+          class="input"
+          style="margin-bottom: 1rem; background: #101c2b; color: #fff"
+        >
+          <option value="mojang">Mojang (predeterminado)</option>
+          <option value="adoptium">Eclipse Temurin (Adoptium)</option>
+          <option value="zulu">Azul Zulu</option>
+        </select>
+        <p>
+          Se instalará la versión compatible con tu sistema. La disponibilidad depende del
+          proveedor.
+        </p>
+        <div
+          id="b-java-progress-wrap"
+          style="display: none"
+        >
+          <progress
+            class="progress is-info"
+            id="b-java-progress"
+            max="100"
+            value="0"
+          ></progress>
+          <p
+            id="b-java-progress-text"
+            style="color: #9da2b0; margin-top: 0.25rem"
+            data-string-id="settings.preparingDownload"
+          >
+            Preparing download…
+          </p>
+        </div>
+        <article
+          class="message is-warning"
+          id="b-java-warning"
+          style="display: none; margin-top: 0.75rem"
+        >
+          <div
+            class="message-body"
+            style="background: #171b22; color: #fff; border: none"
+            data-string-id="settings.keepWindowOpen"
+          >
+            Keep the window open while Java is being downloaded and extracted.
+          </div>
+        </article>
+      </section>
+      <footer
+        class="modal-card-foot"
+        style="background: transparent"
+      >
+        <button
+          class="button is-info is-outlined"
+          id="b-java-modal-download"
+        >
+          <i
+            class="fa-solid fa-cloud-arrow-down"
+            style="margin-right: 0.35rem"
+          ></i>
+          <span data-string-id="settings.download">Download</span>
+        </button>
+        <button
+          class="button"
+          id="b-java-modal-cancel"
+          data-string-id="settings.cancel"
+        >
+          Cancel
+        </button>
+      </footer>
+    </div>
+  </div>
+
+  <div
+    class="modal"
+    id="b-profile-customization-modal"
+    aria-hidden="true"
+  >
+    <div class="modal-background"></div>
+    <div class="modal-card glass pc2-modal-shell">
+      <header class="modal-card-head pc2-head">
+        <p class="modal-card-title">
+          <i class="fa-solid fa-sliders"></i>
+          <span data-string-id="settings.profileCustomization">Profile Customization</span>
+        </p>
+        <button
+          class="delete"
+          aria-label="Cerrar"
+          id="b-profile-modal-close"
+        ></button>
+      </header>
+
+      <style>
+        .pc2-modal-shell {
+          max-width: 1380px;
+          width: 96%;
+          max-height: 94vh;
+          overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 18px;
+        }
+
+        .pc2-head {
+          background: linear-gradient(100deg, #10192d 0%, #172845 45%, #1a3152 100%);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pc2-head .modal-card-title {
+          color: #f4f8ff;
+          display: flex;
+          align-items: center;
+          gap: 0.55rem;
+          font-weight: 800;
+        }
+
+        .pc2-head .modal-card-title i {
+          color: #8ec7ff;
+        }
+
+        .pc2-body {
+          height: calc(94vh - 84px);
+          padding: 1rem;
+          display: grid;
+          grid-template-columns: minmax(330px, 430px) 1fr;
+          gap: 1rem;
+          background:
+            radial-gradient(1000px 300px at 30% -20%, rgba(0, 187, 255, 0.18), transparent 60%),
+            radial-gradient(700px 260px at 80% -20%, rgba(255, 122, 160, 0.16), transparent 55%),
+            linear-gradient(180deg, #0a1324 0%, #0f1a31 100%);
+          overflow: hidden;
+        }
+
+        .pc2-preview-wrap,
+        .pc2-editor-wrap {
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 14px;
+          background: rgba(12, 20, 36, 0.88);
+          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+          min-height: 0;
+        }
+
+        .pc2-preview-wrap {
+          padding: 1rem;
+          display: grid;
+          grid-template-rows: auto 1fr auto;
+          gap: 0.85rem;
+        }
+
+        .pc2-preview-title {
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+          color: #f0f6ff;
+          font-weight: 800;
+          font-size: 1rem;
+        }
+
+        .pc2-preview-title i {
+          color: #7cc8ff;
+        }
+
+        #preview-card {
+          margin: 0;
+          height: 100%;
+          min-height: 250px;
+        }
+
+        .pc2-preview-note {
+          color: #9db3d2;
+          font-size: 0.82rem;
+          line-height: 1.35;
+          border-top: 1px dashed rgba(255, 255, 255, 0.15);
+          padding-top: 0.6rem;
+        }
+
+        .pc2-editor-wrap {
+          overflow: auto;
+          padding: 1rem;
+          display: grid;
+          grid-template-rows: auto auto 1fr auto;
+          gap: 0.9rem;
+        }
+
+        .custom-tabs {
+          display: flex;
+          gap: 0.55rem;
+          flex-wrap: wrap;
+        }
+
+        .custom-tab {
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.04);
+          color: #d8e7fb;
+          padding: 0.5rem 0.95rem;
+          font-weight: 700;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          cursor: pointer;
+        }
+
+        .custom-tab.active {
+          background: linear-gradient(135deg, #3bb4ff, #ff7ba6);
+          border-color: transparent;
+          color: #fff;
+        }
+
+        .pc2-presets {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(120px, 1fr));
+          gap: 0.55rem;
+        }
+
+        .preset-card {
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          border-radius: 10px;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+          padding: 0.65rem;
+          cursor: pointer;
+        }
+
+        .preset-card:hover {
+          border-color: #67beff;
+          transform: translateY(-1px);
+        }
+
+        .preset-name {
+          color: #eef5ff;
+          font-weight: 800;
+          text-align: center;
+          font-size: 0.82rem;
+          letter-spacing: 0.2px;
+        }
+
+        .controls-section {
+          display: none;
+          grid-template-columns: 1fr 1fr;
+          gap: 0.65rem;
+          align-content: start;
+        }
+
+        .controls-section.active {
+          display: grid;
+        }
+
+        .control-group {
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 12px;
+          padding: 0.8rem;
+          background: rgba(0, 0, 0, 0.18);
+        }
+
+        .control-group--full {
+          grid-column: 1 / -1;
+        }
+
+        .control-label {
+          color: #d7e9ff;
+          font-size: 0.87rem;
+          margin-bottom: 0.5rem;
+          font-weight: 700;
+          display: flex;
+          gap: 0.45rem;
+          align-items: center;
+        }
+
+        .control-label i {
+          color: #7cc8ff;
+        }
+
+        .color-control {
+          display: grid;
+          grid-template-columns: 56px 1fr;
+          gap: 0.55rem;
+        }
+
+        .color-picker-large,
+        .color-hex-input,
+        .select-control {
+          background: rgba(2, 10, 20, 0.7);
+          border: 1px solid rgba(255, 255, 255, 0.17);
+          color: #f2f7ff;
+          border-radius: 9px;
+        }
+
+        .color-picker-large {
+          width: 56px;
+          height: 42px;
+          padding: 4px;
+          cursor: pointer;
+        }
+
+        .color-hex-input,
+        .select-control {
+          width: 100%;
+          padding: 0.62rem 0.72rem;
+          font-weight: 700;
+        }
+
+        .select-control option {
+          background: #0e1728;
+          color: #f2f7ff;
+        }
+
+        .slider-control {
+          display: grid;
+          grid-template-columns: 34px 1fr 34px auto;
+          gap: 0.45rem;
+          align-items: center;
+        }
+
+        .slider-minus,
+        .slider-plus {
+          height: 34px;
+          border-radius: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.19);
+          background: rgba(255, 255, 255, 0.06);
+          color: #eaf4ff;
+          cursor: pointer;
+        }
+
+        #border-width-slider {
+          width: 100%;
+          accent-color: var(--theme-color, #3e8ed0);
+        }
+
+        .slider-value {
+          color: #8fd0ff;
+          min-width: 36px;
+          text-align: center;
+          font-weight: 900;
+        }
+
+        .premium-badge {
+          margin-left: auto;
+          border-radius: 999px;
+          padding: 2px 8px;
+          font-size: 0.63rem;
+          background: linear-gradient(135deg, #ffe16c, #ffbe48);
+          color: #291d08;
+          font-weight: 900;
+        }
+
+        .file-upload-area {
+          border: 1px dashed rgba(108, 195, 255, 0.5);
+          border-radius: 10px;
+          padding: 0.8rem;
+          text-align: center;
+          cursor: pointer;
+          background: rgba(77, 178, 255, 0.09);
+        }
+
+        .file-upload-area.disabled {
+          cursor: not-allowed;
+          opacity: 0.55;
+        }
+
+        .upload-icon {
+          color: #7ecaff;
+          margin-bottom: 0.28rem;
+        }
+
+        .upload-text {
+          color: #f2f7ff;
+          font-weight: 700;
+          margin-bottom: 0.16rem;
+        }
+
+        .upload-subtext {
+          color: #99b8da;
+          font-size: 0.8rem;
+        }
+
+        .premium-notice {
+          margin-top: 0.55rem;
+          border: 1px solid rgba(255, 211, 94, 0.36);
+          border-radius: 10px;
+          background: rgba(255, 211, 94, 0.12);
+          color: #ffd35e;
+          padding: 0.5rem 0.62rem;
+          display: flex;
+          gap: 0.38rem;
+          align-items: center;
+          font-size: 0.82rem;
+        }
+
+        .current-image-display {
+          margin-top: 0.55rem;
+          border-radius: 10px;
+          border: 1px solid rgba(255, 255, 255, 0.13);
+          background: rgba(0, 0, 0, 0.24);
+          padding: 0.46rem;
+        }
+
+        .current-image-display img {
+          width: 100%;
+          max-height: 130px;
+          object-fit: cover;
+          border-radius: 8px;
+        }
+
+        .remove-image-btn {
+          width: 100%;
+          margin-top: 0.42rem;
+          border: 1px solid rgba(255, 121, 121, 0.45);
+          background: rgba(255, 121, 121, 0.12);
+          color: #ffa1a1;
+          border-radius: 8px;
+          padding: 0.5rem 0.6rem;
+          font-weight: 800;
+          cursor: pointer;
+        }
+
+        .custom-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 0.55rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          padding-top: 0.85rem;
+        }
+
+        .custom-action-btn {
+          border-radius: 10px;
+          border: 1px solid transparent;
+          padding: 0.62rem 0.9rem;
+          font-weight: 800;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.42rem;
+        }
+
+        .action-btn-secondary {
+          background: rgba(255, 255, 255, 0.08);
+          border-color: rgba(255, 255, 255, 0.22);
+          color: #daeaff;
+        }
+
+        .action-btn-primary {
+          background: linear-gradient(135deg, #4db7ff, #ff7ba8);
+          color: #fff;
+          border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 1120px) {
+          .pc2-body {
+            grid-template-columns: 1fr;
+            overflow: auto;
+          }
+
+          .pc2-preview-wrap {
+            min-height: 300px;
+          }
+        }
+
+        @media (max-width: 760px) {
+          .pc2-presets {
+            grid-template-columns: repeat(2, minmax(110px, 1fr));
+          }
+
+          .controls-section {
+            grid-template-columns: 1fr;
+          }
+
+          .custom-actions {
+            flex-direction: column;
+          }
+
+          .custom-action-btn {
+            width: 100%;
+            justify-content: center;
+          }
+        }
+      </style>
+
+      <section class="modal-card-body pc2-body">
+        <aside class="pc2-preview-wrap">
+          <div class="pc2-preview-title">
+            <i class="fa-solid fa-eye"></i>
+            <span data-string-id="settings.preview">Preview</span>
+          </div>
+
+          <div
+            class="friend-card"
+            id="preview-card"
+            style="animation-delay: 0s"
+          >
+            <div class="friend-card-header">
+              <div class="friend-avatar-container">
+                <div
+                  class="friend-avatar mc-face-viewer-8x"
+                  id="preview-avatar"
+                ></div>
+                <div
+                  class="friend-status-indicator offline"
+                  id="preview-status-dot"
+                ></div>
+              </div>
+              <div class="friend-info">
+                <h3 class="friend-name">
+                  <span
+                    class="friend-name-text"
+                    id="preview-username"
+                    style="color: #ffffff"
+                  ></span>
+                </h3>
+                <p
+                  class="friend-status-text"
+                  id="preview-status"
+                ></p>
+              </div>
+            </div>
+            <div class="friend-card-actions">
+              <button
+                class="friend-action-btn"
+                data-action="profile"
+                data-string-id-title="settings.seeProfile"
+                title="See profile"
+              >
+                <i class="fa-solid fa-user"></i>
+                <span data-string-id="settings.profile">Profile</span>
+              </button>
+              <button
+                class="friend-action-btn"
+                data-action="chat"
+                title="Chat"
+              >
+                <i class="fa-solid fa-message"></i>
+                <span>Chat</span>
+              </button>
+            </div>
+          </div>
+
+          <p class="pc2-preview-note">
+            Esta vista replica como se mostrara tu tarjeta en Battly Social.
+          </p>
+        </aside>
+
+        <div class="pc2-editor-wrap">
+          <div class="custom-tabs">
+            <button
+              class="custom-tab active"
+              id="custom-tab-border"
+              data-section="border"
+            >
+              <i class="fa-solid fa-border-all"></i>
+              <span data-string-id="settings.border">Border</span>
+            </button>
+            <button
+              class="custom-tab"
+              id="custom-tab-name"
+              data-section="name"
+            >
+              <i class="fa-solid fa-font"></i>
+              <span data-string-id="settings.name">Name</span>
+            </button>
+            <button
+              class="custom-tab"
+              id="custom-tab-background"
+              data-section="background"
+            >
+              <i class="fa-solid fa-image"></i>
+              <span data-string-id="settings.backgroundTab">Background</span>
+            </button>
+          </div>
+
+          <div class="pc2-presets">
+            <div
+              class="preset-card"
+              data-preset="default"
+            >
+              <div class="preset-name">Predeterminado</div>
+            </div>
+            <div
+              class="preset-card"
+              data-preset="classic"
+            >
+              <div class="preset-name">Clasico</div>
+            </div>
+            <div
+              class="preset-card"
+              data-preset="premium"
+            >
+              <div class="preset-name">Premium</div>
+            </div>
+            <div
+              class="preset-card"
+              data-preset="neon"
+            >
+              <div class="preset-name">Neon</div>
+            </div>
+            <div
+              class="preset-card"
+              data-preset="fire"
+            >
+              <div class="preset-name">Fire</div>
+            </div>
+            <div
+              class="preset-card"
+              data-preset="ice"
+            >
+              <div class="preset-name">Ice</div>
+            </div>
+          </div>
+
+          <div
+            class="controls-section active"
+            id="border-controls-section"
+          >
+            <div class="control-group">
+              <div class="control-label">
+                <i class="fa-solid fa-palette"></i
+                ><span data-string-id="settings.borderColor">Border Color</span>
+              </div>
+              <div class="color-control">
+                <input
+                  type="color"
+                  class="color-picker-large"
+                  id="border-color-picker"
+                  value="#7289da"
+                />
+                <input
+                  type="text"
+                  class="color-hex-input"
+                  id="border-color-text"
+                  value="#7289da"
+                  placeholder="#7289da"
+                />
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <i class="fa-solid fa-shapes"></i
+                ><span data-string-id="settings.borderStyle">Border Style</span>
+              </div>
+              <select
+                class="select-control"
+                id="border-style-select"
+              >
+                <option
+                  value="solid"
+                  data-string-id="settings.solid"
+                >
+                  Solid
+                </option>
+                <option
+                  value="dashed"
+                  data-string-id="settings.dashed"
+                >
+                  Dashed
+                </option>
+                <option
+                  value="dotted"
+                  data-string-id="settings.dotted"
+                >
+                  Dotted
+                </option>
+                <option
+                  value="double"
+                  data-string-id="settings.double"
+                >
+                  Double
+                </option>
+                <option
+                  value="groove"
+                  data-string-id="settings.groove"
+                >
+                  Groove
+                </option>
+                <option
+                  value="ridge"
+                  data-string-id="settings.ridge"
+                >
+                  Ridge
+                </option>
+              </select>
+            </div>
+
+            <div class="control-group control-group--full">
+              <div class="control-label">
+                <i class="fa-solid fa-ruler"></i
+                ><span data-string-id="settings.borderWidth">Border Width</span>
+              </div>
+              <div class="slider-control">
+                <button
+                  type="button"
+                  class="slider-minus"
+                  aria-label="Decrease border"
+                >
+                  -
+                </button>
+                <input
+                  type="range"
+                  id="border-width-slider"
+                  min="1"
+                  max="10"
+                  value="3"
+                />
+                <button
+                  type="button"
+                  class="slider-plus"
+                  aria-label="Increase border"
+                >
+                  +
+                </button>
+                <div
+                  class="slider-value"
+                  id="border-width-value"
+                >
+                  3
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="controls-section"
+            id="name-controls-section"
+          >
+            <div class="control-group control-group--full">
+              <div class="control-label">
+                <i class="fa-solid fa-palette"></i
+                ><span data-string-id="settings.textColor">Text Color</span>
+              </div>
+              <div class="color-control">
+                <input
+                  type="color"
+                  class="color-picker-large"
+                  id="name-color-picker"
+                  value="#ffffff"
+                />
+                <input
+                  type="text"
+                  class="color-hex-input"
+                  id="name-color-text"
+                  value="#ffffff"
+                  placeholder="#ffffff"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="controls-section"
+            id="background-controls-section"
+          >
+            <div class="control-group">
+              <div class="control-label">
+                <i class="fa-solid fa-palette"></i
+                ><span data-string-id="settings.backgroundColor">Background Color</span>
+              </div>
+              <div class="color-control">
+                <input
+                  type="color"
+                  class="color-picker-large"
+                  id="bg-color-picker"
+                  value="#2c2f33"
+                />
+                <input
+                  type="text"
+                  class="color-hex-input"
+                  id="bg-color-text"
+                  value="#2c2f33"
+                  placeholder="#2c2f33"
+                />
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <i class="fa-solid fa-upload"></i>
+                <span data-string-id="settings.backgroundImage">Background Image</span>
+                <span
+                  class="premium-badge"
+                  id="premium-badge-bg"
+                  >BATTLY+</span
+                >
+              </div>
+
+              <div
+                class="file-upload-area"
+                id="bg-image-label"
+              >
+                <i class="fa-solid fa-image upload-icon"></i>
+                <div
+                  class="upload-text"
+                  data-string-id="settings.uploadImage"
+                >
+                  Upload image
+                </div>
+                <div
+                  class="upload-subtext"
+                  data-string-id="settings.maxSize"
+                >
+                  Max. 5MB - PNG, JPG, GIF
+                </div>
+                <input
+                  type="file"
+                  id="bg-image-input"
+                  accept="image/*"
+                  style="display: none"
+                />
+              </div>
+
+              <div
+                class="premium-notice"
+                id="premium-notice-bg"
+                style="display: none"
+              >
+                <i class="fa-solid fa-crown"></i>
+                <span data-string-id="settings.backgroundImagesOnlyBattlyPlus"
+                  >Background images are only available for Battly+ users</span
+                >
+              </div>
+
+              <div
+                class="current-image-display"
+                id="current-bg-preview"
+                style="display: none"
+              >
+                <img
+                  id="current-bg-img"
+                  src=""
+                  data-string-id-alt="settings.currentBackground"
+                  alt="Current background"
+                />
+                <button
+                  class="remove-image-btn"
+                  id="remove-bg-btn"
+                >
+                  <i class="fa-solid fa-trash"></i>
+                  <span data-string-id="settings.delete">Delete</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="custom-actions">
+            <button
+              class="custom-action-btn action-btn-secondary"
+              id="reset-customization-btn"
+            >
+              <i class="fa-solid fa-rotate-left"></i>
+              <span data-string-id="settings.restore">Restore</span>
+            </button>
+            <button
+              class="custom-action-btn action-btn-primary"
+              id="save-customization-btn"
+              data-string-id="settings.saveChanges"
+            >
+              <i class="fa-solid fa-save"></i>
+              <span data-string-id="settings.saveChanges">Save Changes</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <section
+    id="b-settings-panel-ram"
+    class="b-settings-panel"
+  >
+    <li>
+      <strong
+        style="color: #fff"
+        data-string-id="settings.ramMax"
+        >Maximum RAM:</strong
+      >
+      <span data-string-id="settings.ramMaxTip">do not exceed 50% of total RAM</span>.
+    </li>
+    <li>
+      <strong
+        style="color: #fff"
+        data-string-id="settings.ramMin"
+        >Minimum RAM:</strong
+      >
+      <span data-string-id="settings.ramMinTip">recommended value 1 GB, maximum 3 GB</span>.
+    </li>
+
+    <br />
+    <div class="ram-info">
+      <div
+        class="memory-slider"
+        min="0.5"
+        max="8"
+        step="0.5"
+      >
+        <div class="slider-touch-left">
+          <span value="0 GB"></span>
+        </div>
+        <div class="slider-touch-right">
+          <span value="0 GB"></span>
+        </div>
+        <div class="slider-line">
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+    <br />
+    <p style="color: #9da2b0">
+      <span data-string-id="settings.youHaveTotalRam">You have a total of</span>
+      <span id="total-ram">0 GB</span> <span data-string-id="settings.ofRam">of RAM</span> –
+      <span id="free-ram">0 GB</span>
+      <span data-string-id="settings.ofRamAvailable">available</span>
+    </p>
+
+    <div class="b-auto-ram">
+      <label
+        class="container-optifine"
+        style="width: 100%; align-items: center; gap: 10px"
+      >
+        <input
+          type="checkbox"
+          id="b-auto-ram-toggle"
+        />
+        <div class="checkmark"></div>
+        <span
+          style="font-weight: 700"
+          data-string-id="settings.useRecommendedRam"
+          >Use Battly recommended RAM</span
+        >
+      </label>
+
+      <div
+        class="b-auto-ram-status"
+        id="b-auto-ram-status"
+        aria-live="polite"
+      >
+        <span data-string-id="settings.status">Status:</span>
+        <b data-string-id="settings.deactivated">Deactivated</b>
+      </div>
+      <p
+        id="b-auto-ram-reco"
+        style="display: none"
+      ></p>
+      <small
+        class="b-auto-ram-note"
+        data-string-id="settings.adjustsEvery5Min"
+      >
+        Adjusts every 5 minutes based on free RAM (max 70% of total). When this option is enabled,
+        manual customization is blocked.
+      </small>
+    </div>
+  </section>
+
+  <section
+    id="b-settings-panel-launcher"
+    class="b-settings-panel"
+  >
+    <p data-string-id="settings.configureBattlySettings">Configure Battly general settings.</p>
+
+    <fieldset class="b-settings-flex">
+      <legend>
+        <h2 data-string-id="settings.whatToDoWhenOpeningMinecraft">
+          What to do when opening Minecraft
+        </h2>
+      </legend>
+      <label class="b-settings-radio"
+        ><input
+          type="radio"
+          name="hide"
+          id="launcher-close"
+          checked
+        /><span data-string-id="settings.hideBattlyAfterStarting"
+          >Hide Battly after starting</span
+        ></label
+      >
+      <label class="b-settings-radio"
+        ><input
+          type="radio"
+          name="hide"
+          id="launcher-open"
+        /><span data-string-id="settings.keepBattlyOpen">Keep Battly open</span></label
+      >
+    </fieldset>
+
+    <fieldset class="b-settings-flex">
+      <legend>
+        <h2 data-string-id="settings.music">Music</h2>
+      </legend>
+      <label class="b-settings-radio"
+        ><input
+          type="radio"
+          name="music"
+          id="music-close"
+          checked
+        /><span data-string-id="settings.hideMusicPanel">Hide music panel</span></label
+      >
+      <label class="b-settings-radio"
+        ><input
+          type="radio"
+          name="music"
+          id="music-open"
+        /><span data-string-id="settings.showMusicPanel">Show music panel</span></label
+      >
+    </fieldset>
+
+    <fieldset class="b-settings-flex">
+      <legend>
+        <h2>Al cerrar Battly</h2>
+      </legend>
+      <label class="b-settings-radio"
+        ><input
+          type="radio"
+          name="app-close-mode"
+          id="app-close-background"
+          checked
+        /><span>Dejar en segundo plano (reposo)</span></label
+      >
+      <label class="b-settings-radio"
+        ><input
+          type="radio"
+          name="app-close-mode"
+          id="app-close-full"
+        /><span>Cerrar completamente</span></label
+      >
+    </fieldset>
+
+    <fieldset
+      class="b-settings-flex"
+      style="flex-direction: column; align-items: flex-start"
+    >
+      <legend>
+        <h2>Velocidad de descarga (downloadFileMultiple)</h2>
+      </legend>
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; width: 100%">
+        <select
+          class="b-settings-select"
+          id="download-multiple-preset"
+          style="min-width: 220px"
+        >
+          <option value="25">Baja (25)</option>
+          <option value="50">Media (50)</option>
+          <option value="100">Alta (100)</option>
+          <option value="250">250</option>
+          <option value="500">500</option>
+          <option value="custom">Personalizada</option>
+        </select>
+        <input
+          type="number"
+          id="download-multiple-custom"
+          min="1"
+          max="500"
+          step="1"
+          value="50"
+          style="
+            display: none;
+            width: 170px;
+            padding: 0.55rem 0.7rem;
+            border-radius: 0.55rem;
+            border: 1px solid #2b3547;
+            background: #171b22;
+            color: #e3e6ee;
+          "
+        />
+      </div>
+      <p style="color: #ffd166; margin-top: 0.45rem; font-size: 12px">
+        Valores altos pueden saturar tu conexion y provocar inestabilidad durante la descarga.
+      </p>
+    </fieldset>
+
+    <fieldset
+      class="b-settings-flex"
+      style="flex-direction: column; align-items: flex-start; width: 100%"
+    >
+      <legend>
+        <h2>Modo simple</h2>
+      </legend>
+      <label class="b-settings-radio">
+        <input
+          type="checkbox"
+          id="launcher-simple-mode"
+        />
+        <span
+          >Mostrar solo inicio de sesion, descarga de versiones y apertura de versiones
+          descargadas</span
+        >
+      </label>
+      <p style="color: #9da2b0; margin-top: 0.45rem; font-size: 12px">
+        Al activarlo, se ocultan los paneles avanzados y la navegacion secundaria.
+      </p>
+    </fieldset>
+
+    <fieldset class="b-settings-flex">
+      <legend>
+        <h2 data-string-id="settings.autoSync">Automatic Synchronization</h2>
+      </legend>
+      <label class="b-settings-radio">
+        <input
+          type="checkbox"
+          id="auto-sync-enabled"
+        />
+        <span data-string-id="settings.syncWorldsAutomatically"
+          >Sync worlds automatically when closing the game</span
+        >
+      </label>
+      <p
+        style="color: #aaa; font-size: 12px; margin-top: -1rem; margin-left: 1.7rem"
+        data-string-id="settings.autoSyncDescription"
+      >
+        When enabled, your worlds will automatically back up to Google Drive each time you close
+        Minecraft. Battly will stay in the background until the copy is complete and will notify you
+        when finished.
+      </p>
+    </fieldset>
+
+    <fieldset
+      class="b-settings-flex"
+      style="flex-direction: column; align-items: flex-start; width: 100%"
+    >
+      <legend>
+        <h2>Centro de Privacidad y Seguridad</h2>
+      </legend>
+
+      <div
+        style="
+          width: 100%;
+          border: 1px solid #273145;
+          border-radius: 10px;
+          padding: 12px;
+          background: #121a27;
+          margin-bottom: 10px;
+        "
+      >
+        <h3 style="margin: 0 0 10px 0; color: #fff; font-weight: 700">Battly</h3>
+        <p
+          class="privacy-section-description"
+          data-string-id="settings.privacyBattlyDescription"
+        ></p>
+
+        <label
+          class="b-settings-radio"
+          style="margin-bottom: 8px"
+        >
+          <input
+            type="checkbox"
+            id="privacy-presence-status-enabled"
+          />
+          <span>Compartir estado social (online/jugando)</span>
+        </label>
+
+        <label class="b-settings-radio">
+          <input
+            type="checkbox"
+            id="privacy-presence-server-enabled"
+          />
+          <span>Compartir servidor al que te conectas</span>
+        </label>
+      </div>
+
+      <div
+        class="privacy-discord-section"
+        style="
+          width: 100%;
+          border: 1px solid #273145;
+          border-radius: 10px;
+          padding: 12px;
+          background: #121a27;
+          margin-bottom: 10px;
+        "
+      >
+        <h3 style="margin: 0 0 10px 0; color: #fff; font-weight: 700">Discord</h3>
+        <p
+          class="privacy-section-description"
+          data-string-id="settings.privacyDiscordDescription"
+        ></p>
+        <label
+          class="b-settings-radio"
+          style="margin-bottom: 8px"
+        >
+          <input
+            type="checkbox"
+            id="privacy-discord-status-enabled"
+          />
+          <span data-string-id="settings.discordShareStatus"></span>
+        </label>
+        <label class="b-settings-radio">
+          <input
+            type="checkbox"
+            id="privacy-discord-server-enabled"
+          />
+          <span data-string-id="settings.discordShareServer"></span>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset class="b-settings-flex">
+      <legend>
+        <h2 data-string-id="settings.battlyPath">Battly Path</h2>
+        <small
+          data-string-id="settings.battlyPathDesc"
+          style="color: #999; display: block; margin-bottom: 5px"
+          >Change where Battly stores data</small
+        >
+      </legend>
+
+      <div style="display: flex; gap: 10px; align-items: center; width: 100%; margin-top: 10px">
+        <input
+          type="text"
+          id="battly-path-display"
+          readonly
+          style="
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #273145;
+            background: #171b22;
+            color: #fff;
+          "
+        />
+        <button
+          class="b-brand-button"
+          id="change-battly-path-btn"
+          data-string-id="settings.changePath"
+        >
+          Change
+        </button>
+      </div>
+      <div
+        id="migration-progress-container"
+        style="display: none; margin-top: 10px"
+      >
+        <p
+          id="migration-status-text"
+          data-string-id="settings.migrating"
+          style="margin-bottom: 5px"
+        >
+          Migrating...
+        </p>
+        <progress
+          class="progress is-info"
+          id="migration-progress-bar"
+          value="0"
+          max="100"
+          style="width: 100%"
+        ></progress>
+        <p
+          id="migration-details-text"
+          style="font-size: 0.8rem; color: #aaa; text-align: right"
+        >
+          0%
+        </p>
+      </div>
+    </fieldset>
+
+    <h2 data-string-id="settings.language"></h2>
+    <div
+      class="b-settings-flex"
+      style="align-items: center"
+    >
+      <select
+        class="b-settings-select"
+        id="language-selector"
+      >
+        <option
+          value="es"
+          data-string-id="settings.spanish"
+        ></option>
+        <option
+          value="en"
+          data-string-id="settings.english"
+        ></option>
+        <option
+          value="pt"
+          data-string-id="settings.portuguese"
+        ></option>
+        <option value="fr">Français</option>
+        <option value="ar">العربية</option>
+        <option value="ru">Русский</option>
+        <option value="de">Deutsch</option>
+        <option value="it">Italiano</option>
+        <option value="ja">日本語</option>
+      </select>
+      <button
+        class="b-settings-btn outline"
+        id="language-selector-btn"
+        data-string-id="settings.changeLanguage"
+      >
+        Change
+      </button>
+    </div>
+
+    <fieldset
+      class="b-settings-flex"
+      style="margin-top: 1.25rem"
+    >
+      <legend>
+        <h2 data-string-id="settings.clickSound">Click sound</h2>
+      </legend>
+      <label class="b-settings-radio"
+        ><input
+          type="radio"
+          name="sound"
+          checked
+        /><span data-string-id="settings.activate">Activate</span></label
+      >
+      <label class="b-settings-radio"
+        ><input
+          type="radio"
+          name="sound"
+        /><span data-string-id="settings.deactivate">Deactivate</span></label
+      >
+    </fieldset>
+
+    <div
+      id="launchboost-panel"
+      data-locked="true"
+      style="width: 100%"
+    >
+      <span
+        id="launchboost_settings_information"
+        style="font-size: 20px; font-weight: 700"
+        >Battly Launch Boost™</span
+      ><span class="launchboost-plus-badge"
+        ><i
+          class="fa-solid fa-lock"
+          aria-hidden="true"
+        ></i>
+        Battly+</span
+      >
+      <br />
+      <div style="display: flex; gap: 10px">
+        <span
+          id="launchboost_settings_information_text"
+          data-string-id="settings.launchboostSettingsInformationText"
+          style="font-size: 15px; font-weight: 700; width: 100%"
+        ></span
+        ><br />
+        <label
+          class="container-optifine"
+          style="width: 40%"
+          id="launchboost-label"
+        >
+          <input
+            disabled
+            type="checkbox"
+            id="launchboost"
+            aria-describedby="launchboost_settings_information_text"
+          />
+          <div class="checkmark"></div>
+          <span data-string-id="settings.activate">Activar</span>
+        </label>
+      </div>
+    </div>
+
+    <fieldset
+      class="b-settings-flex battly-log-reader"
+      style="flex-direction: column; align-items: stretch; width: 100%; margin-top: 1.25rem"
+    >
+      <legend><h2>Registros de Minecraft</h2></legend>
+      <p style="color: #9da2b0; margin: 0 0 10px">
+        Lee los logs de tus partidas directamente desde Battly.
+      </p>
+      <div class="battly-log-reader-toolbar">
+        <select
+          class="b-settings-select"
+          data-settings-log-select
+          aria-label="Registro de Minecraft"
+        ></select>
+        <button
+          class="b-settings-btn outline"
+          type="button"
+          data-settings-log-refresh
+        >
+          Actualizar
+        </button>
+        <button
+          class="b-settings-btn outline"
+          type="button"
+          data-settings-log-folder
+        >
+          Abrir carpeta
+        </button>
+      </div>
+      <small
+        data-settings-log-status
+        style="color: #9da2b0"
+        >Selecciona un registro para leerlo.</small
+      >
+      <pre
+        class="battly-log-reader-content"
+        tabindex="0"
+        data-settings-log-content
+      ></pre>
+    </fieldset>
+  </section>
+
+  <section
+    id="b-settings-panel-tema"
+    class="b-settings-panel"
+  >
+    <p data-string-id="settings.themeDescription">
+      Personaliza Battly a tu gusto eligiendo un tema o creando uno nuevo.
+    </p>
+    <div
+      id="themeModeSwitch"
+      class="b-settings-flex theme-mode-switch"
+      style="justify-content: center; gap: 8px; margin-bottom: 14px"
+    >
+      <button
+        id="themeModeMy"
+        class="button is-small is-info theme-mode-btn btn-dont-change notchange"
+      >
+        Tus temas
+      </button>
+      <button
+        id="themeModeMarketplace"
+        class="button is-small is-info is-outlined theme-mode-btn btn-dont-change notchange"
+      >
+        Marketplace
+      </button>
+    </div>
+    <div
+      id="themeList"
+      class="theme-list mb-5"
+    ></div>
+    <div
+      id="themeMarketplacePanel"
+      class="theme-marketplace-panel"
+      style="display: none; margin-bottom: 18px"
+    >
+      <div
+        class="field"
+        style="max-width: 640px; margin: 0 auto 12px"
+      >
+        <div class="control has-icons-left">
+          <input
+            id="themeMarketplaceSearch"
+            class="input notchange theme-marketplace-search"
+            type="text"
+            placeholder="Buscar en marketplace por nombre o autor"
+            style="height: 40px; border: 1px solid #2f3f57; background: #111c2e; color: #fff"
+          />
+          <span class="icon is-small is-left"><i class="fa-solid fa-magnifying-glass"></i></span>
+        </div>
+      </div>
+      <div
+        id="themeMarketplaceList"
+        class="theme-list theme-marketplace-list"
+      ></div>
+    </div>
+    <div
+      class="b-settings-flex"
+      style="justify-content: center"
+    >
+      <button
+        id="createBtn"
+        class="button is-medium is-info is-outlined btn-dont-change"
+      >
+        <span class="icon"><i class="fa-solid fa-plus"></i></span>
+        <span data-string-id="settings.createTheme">Create theme</span>
+      </button>
+      <button
+        id="shareBtn"
+        class="button is-medium is-info is-outlined btn-dont-change"
+      >
+        <span class="icon"><i class="fa-solid fa-share-nodes"></i></span>
+        <span data-string-id="settings.share">Share</span>
+      </button>
+    </div>
+  </section>
+
+  <nav
+    class="b-settings-footer"
+    id="bottom_bar_settings"
+  >
+    <div class="b-settings-footer-up">
+      <button
+        class="b-settings-nav-btn b-settings-active"
+        id="accounts-btn"
+        data-target="cuentas"
+        data-string-id="settings.accounts"
+      >
+        Accounts
+      </button>
+      <button
+        class="b-settings-nav-btn"
+        id="java-btn"
+        data-target="java"
+        data-string-id="settings.java"
+      >
+        Java
+      </button>
+      <button
+        class="b-settings-nav-btn"
+        id="ram-btn"
+        data-target="ram"
+        data-string-id="settings.ram"
+      >
+        RAM
+      </button>
+      <button
+        class="b-settings-nav-btn"
+        id="launcher-btn"
+        data-target="launcher"
+        data-string-id="settings.launcher"
+      >
+        Launcher
+      </button>
+      <button
+        class="b-settings-nav-btn"
+        id="theme-btn"
+        data-target="tema"
+        data-string-id="settings.theme"
+      >
+        Theme
+      </button>
+    </div>
+    <button
+      class="b-settings-nav-btn button is-info"
+      id="save-btn"
+      style="grid-column: 1/-1; background: var(--theme-color, #3e8ed0); color: #ffffff"
+      data-string-id="settings.save"
+    >
+      Save
+    </button>
+  </nav>
+
+  <div
+    class="b-settings-profile-menu"
+    id="b-settings-profile-menu"
+  >
+    <button
+      type="button"
+      class="b-settings-item"
+      id="b-settings-copy-uuid"
+    >
+      <i class="fa-solid fa-copy"></i><span data-string-id="settings.copyUUID">Copy UUID</span>
+    </button>
+    <button
+      type="button"
+      class="b-settings-item"
+      id="b-settings-view-profile"
+    >
+      <i class="fa-solid fa-user"></i><span data-string-id="settings.seeProfile">See profile</span>
+    </button>
+    <button
+      type="button"
+      class="b-settings-item"
+      id="b-settings-customize-profile"
+    >
+      <i class="fa-solid fa-palette"></i
+      ><span data-string-id="settings.customizeProfile">Customize profile</span>
+    </button>
+    <button
+      type="button"
+      class="b-settings-item"
+      id="b-settings-skin"
+    >
+      <i class="fa-regular fa-face-smile-beam"></i
+      ><span data-string-id="settings.customizeSkin">Customize skin</span>
+    </button>
+    <button
+      type="button"
+      class="b-settings-item"
+      id="b-settings-logout"
+    >
+      <i class="fa-regular fa-trash-can"></i><span data-string-id="settings.logout">Logout</span>
+    </button>
+  </div>
+</div>
+<style>
+  :root {
+    --btn-color: #3e8ed0;
+
+    --footer-color: #0a0a0a;
+
+    --loading-color: #000000;
+
+    --footer-opacity: 0.85;
+
+    --bg-dark: #0f1623;
+
+    --bg-darker: #0b121c;
+    --bg-hover: #1a2538;
+    --border-dark: #283347;
+    --text-soft: #b6bfd5;
+  }
+
+  .glass {
+    border-radius: 1.25rem;
+    background: #0f1623;
+    backdrop-filter: blur(14px) saturate(160%);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .b-theme-opacity-range {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 30px;
+    border-radius: 10px;
+    background: #162033;
+    overflow: hidden;
+    border: 0;
+    padding: 0;
+  }
+
+  .b-theme-opacity-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 100%;
+    background: #3e8ed0;
+    cursor: pointer;
+  }
+
+  .b-auto-ram {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #121722;
+    border: 1px solid #1f2430;
+  }
+
+  .b-auto-ram-status b {
+    color: #66d1ff;
+  }
+
+  .b-auto-ram-note {
+    display: block;
+    margin-top: 6px;
+    color: #9da2b0;
+  }
+
+  .memory-slider.is-ram-auto {
+    opacity: 0.6;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .b-auto-ram-reco {
+    margin-top: 6px;
+    color: #bfc3cf;
+    font-weight: 600;
+  }
+
+  .label {
+    color: #fff !important;
+  }
+
+  .theme-list {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-height: 275px;
+    overflow-y: auto;
+  }
+
+  .theme-list::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .theme-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .theme-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 3px;
+  }
+
+  .theme-list:hover::-webkit-scrollbar-thumb {
+    background: var(--btn-color);
+  }
+
+  .theme-card {
+    min-height: 120px;
+    contain: layout paint style;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 120px;
+    flex: 0 0 200px;
+    aspect-ratio: 16/9;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 1rem;
+    background: #0d131d;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+    transition:
+      transform 0.18s,
+      box-shadow 0.18s;
+    scroll-snap-align: start;
+  }
+
+  .theme-card::before,
+  .theme-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .theme-card::before {
+    background: linear-gradient(
+      to bottom,
+      var(--btn-color) 0 34%,
+      var(--loading-color) 34% 66%,
+      var(--footer-color) 66% 100%
+    );
+    opacity: 0.85;
+  }
+
+  .theme-card::after {
+    background: rgba(0, 0, 0, 0.35);
+  }
+
+  .theme-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  }
+
+  .theme-card.active {
+    box-shadow:
+      0 0 0 3px var(--btn-color),
+      0 8px 22px rgba(0, 0, 0, 0.5);
+  }
+
+  .theme-card[data-has-bg='true'] {
+    position: relative;
+    background: none;
+
+    overflow: hidden;
+  }
+
+  .theme-card[data-has-bg='true']::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--thumb) center/cover no-repeat;
+    filter: none;
+    transform: none;
+
+    z-index: 0;
+  }
+
+  .theme-card[data-has-bg='true']::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 1;
+  }
+
+  .theme-card[data-has-bg='true'] > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  .theme-card-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .theme-card .card-actions {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    display: flex;
+    gap: 8px;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 2;
+  }
+
+  .theme-card:hover .card-actions {
+    opacity: 1;
+  }
+
+  .theme-mode-switch {
+    margin-top: 0.25rem;
+    margin-bottom: 0.9rem !important;
+  }
+
+  .theme-mode-btn.btn-dont-change {
+    min-width: 128px;
+    border-radius: 12px !important;
+    background: #132943 !important;
+    color: #f4f8ff !important;
+    border: 1px solid #2a486f !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+    font-weight: 700;
+  }
+
+  .theme-mode-btn.btn-dont-change.is-outlined {
+    background: transparent !important;
+    color: #b9cbe5 !important;
+    border: 1px solid #355274 !important;
+  }
+
+  .theme-marketplace-panel {
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  #themeMarketplaceSearch {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0 12px 0 40px;
+    font-family: 'Battly Emoji', 'Poppins', 'Battly Emoji Sequences', sans-serif !important;
+    font-size: 14px;
+    line-height: normal;
+  }
+
+  #themeMarketplaceSearch + .icon.is-left {
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .theme-marketplace-search.notchange {
+    border-radius: 12px !important;
+    background: #101f33 !important;
+    color: #e8f0ff !important;
+    border: 1px solid #2f4b72 !important;
+    font-weight: 600;
+  }
+
+  .theme-marketplace-search.notchange::placeholder {
+    color: #7f99bb;
+  }
+
+  .theme-marketplace-list {
+    max-height: 360px;
+    padding-right: 0.35rem;
+    align-items: stretch;
+  }
+
+  .market-theme-card {
+    flex: 0 0 290px;
+    min-height: 162px;
+    border-radius: 12px;
+    border: 1px solid #355274;
+    background: #0d131d;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    padding: 0.8rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    isolation: isolate;
+    transition:
+      transform 0.18s,
+      box-shadow 0.18s;
+    overflow: hidden;
+  }
+
+  .market-theme-card::before,
+  .market-theme-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .market-theme-card::before {
+    background: linear-gradient(
+      to bottom,
+      var(--market-btn, #3e8ed0) 0 34%,
+      var(--market-loading, #15314f) 34% 66%,
+      var(--market-footer, #0a0f17) 66% 100%
+    );
+    opacity: 0.85;
+    z-index: -2;
+  }
+
+  .market-theme-card::after {
+    background: rgba(0, 0, 0, 0.35);
+    z-index: -1;
+  }
+
+  .market-theme-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  }
+
+  .market-theme-card.has-bg::before {
+    background: var(--market-thumb) center/cover no-repeat;
+    filter: none;
+    transform: none;
+    opacity: 0.8;
+    z-index: -2;
+  }
+
+  .market-theme-card.has-bg::after {
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: -1;
+  }
+
+  .market-theme-title {
+    color: #f4f8ff;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    font-weight: 700;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.45em;
+  }
+
+  .market-theme-meta {
+    color: #9eb7d8;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .market-theme-stats {
+    color: #8ec5ff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+
+  .market-theme-actions {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .market-theme-palette {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+  }
+
+  .market-theme-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .market-install-btn.btn-dont-change {
+    border-radius: 9px !important;
+    background: #2d7ec7 !important;
+    color: #fff !important;
+    border: 1px solid #4d9be0 !important;
+    font-weight: 700;
+    opacity: 0;
+    transform: translateY(4px);
+    pointer-events: none;
+    transition:
+      opacity 0.16s ease,
+      transform 0.16s ease;
+  }
+
+  .market-theme-card:hover .market-install-btn.btn-dont-change {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .market-install-btn.btn-dont-change:hover {
+    background: #3f92db !important;
+  }
+
+  .card-actions i {
+    pointer-events: auto;
+
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(3px);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .card-actions i:hover {
+    background: rgba(0, 0, 0, 0.75);
+  }
+
+  .modal-card.glass {
+    background: var(--bg-dark);
+    border-radius: 1rem;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .modal-card-head,
+  .modal-card-foot {
+    background: transparent;
+    border: none;
+  }
+
+  .modal-card-title {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .modal-card-foot {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .user-option {
+    padding: 0.55rem 1rem;
+    border-radius: 0.5rem;
+    color: #fff;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+
+  .user-option:hover {
+    background: var(--bg-hover);
+  }
+
+  .user-option.active {
+    background: var(--btn-color);
+  }
+
+  .footer-bar {
+    background-color: var(--footer-color);
+    opacity: var(--footer-opacity);
+    color: #fff;
+  }
+
+  .theme-modal input[type='color'] {
+    width: 100%;
+    height: 45px;
+    background-color: #0f1623;
+    border: 0px;
+    padding: 0px !important;
+    overflow: hidden;
+
+    &:focus {
+      box-shadow: none;
+    }
+
+    &:active {
+      box-shadow: none;
+    }
+  }
+
+  .theme-modal input[type='range'] {
+    appearance: none;
+    -webkit-appearance: none;
+    background: #2c3c5c;
+    overflow: hidden;
+    height: 35px;
+    margin-top: 5px;
+    width: 100%;
+    border-radius: 0px !important;
+  }
+
+  .theme-modal input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 100%;
+    background: #3e8ed0;
+    cursor: pointer;
+  }
+
+  .theme-modal label {
+    margin-bottom: 0px !important;
+    margin-top: 10px !important;
+    font-weight: 600 !important;
+  }
+
+  .timeline {
+    --line: #d7134a;
+    --hole: #0f1623;
+    --size: 26px;
+    --stroke: 6px;
+    --gap: 110px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+    margin: 0px auto 50px;
+    justify-content: space-between;
+    width: 90%;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--size) / 2);
+    right: calc(var(--size) / 2);
+    top: 50%;
+    height: var(--stroke);
+    background: var(--line);
+    transform: translateY(-50%);
+    z-index: 0;
+  }
+
+  .timeline .step {
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    border: var(--stroke) solid var(--line);
+    border-radius: 50%;
+    background: var(--hole);
+    z-index: 1;
+    transition:
+      background 0.3s,
+      border-color 0.3s,
+      opacity 0.3s;
+    opacity: 0.25;
+  }
+
+  .timeline .step.active {
+    background: var(--line);
+    border-color: var(--hole);
+    opacity: 1;
+  }
+
+  .timeline small {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: calc(100% + 6px);
+    white-space: nowrap;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .b-themes-status-theme-text {
+    text-align: center;
+  }
+
+  .b-java-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+    margin-top: 0.4rem;
+  }
+
+  @media (min-width: 640px) {
+    .b-java-list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .b-java-card {
+    width: 100%;
+    background: #171b22;
+    color: #e3e6ee;
+    border-radius: 0.9rem;
+    padding: 0.45rem 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition:
+      transform 0.12s ease,
+      filter 0.12s ease,
+      border-color 0.12s ease;
+    text-align: left;
+  }
+
+  .b-java-card:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+  }
+
+  .b-java-card[data-installed='true'] {
+    border-color: #1f7a3a;
+  }
+
+  .b-java-card[data-installed='false'] {
+    border-color: #7a2a2a;
+  }
+
+  .b-java-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+    margin-left: 5px;
+  }
+
+  .b-java-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    display: inline-block;
+    flex: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06) inset;
+  }
+
+  .b-ok {
+    background: #27ae60;
+  }
+
+  .b-missing {
+    background: #e74c3c;
+  }
+
+  .b-java-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .b-java-title {
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .b-java-title small {
+    font-weight: 600;
+    color: #9da2b0;
+  }
+
+  .b-java-tag {
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.4rem;
+    margin-left: 0.35rem;
+    font-size: 0.75rem;
+  }
+
+  .b-java-status {
+    font-size: 0.85rem;
+    margin-top: 0.15rem;
+  }
+
+  .b-java-status.b-ok {
+    color: #7ddc9a;
+    background: transparent;
+  }
+
+  .b-java-status.b-missing {
+    color: #ff9d92;
+    background: transparent;
+  }
+
+  .b-java-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: end;
+  }
+
+  .b-java-action[hidden] {
+    display: none !important;
+  }
+
+  .b-java-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.55rem;
+    font-weight: 700;
+    user-select: none;
+    font-size: 12px;
+  }
+
+  .b-java-action i {
+    width: 10px;
+    text-align: center;
+  }
+
+  .b-java-action.b-download {
+    background: rgba(231, 76, 60, 0.18);
+    color: #ffb3ab;
+    border: 1px solid rgba(231, 76, 60, 0.35);
+  }
+
+  .b-java-action.b-use {
+    background: rgba(39, 174, 96, 0.18);
+    color: #9be6b8;
+    border: 1px solid rgba(39, 174, 96, 0.35);
+  }
+
+  .b-java-selected {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.9rem;
+    background: #171b22;
+    color: #e3e6ee;
+    border: 1px solid #273145;
+  }
+
+  .b-java-selected i {
+    opacity: 0.9;
+  }
+
+  #b-java-download-modal .modal-card {
+    border-radius: 1rem;
+  }
+
+  #b-java-download-modal .modal-card-title {
+    color: #fff;
+    font-weight: 700;
+  }
+</style>

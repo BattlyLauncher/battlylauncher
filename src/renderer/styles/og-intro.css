@@ -1,0 +1,122 @@
+#og-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: #000;
+}
+#og-background video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: none;
+}
+body.og-intro-pending > :not(#og-background) {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.og-setting {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid #2e3c50;
+  border-radius: 10px;
+  background: var(--surface, #0f1623);
+}
+.og-setting-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+.og-setting-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.og-setting-identity {
+  display: inline-flex;
+  align-items: center;
+}
+.og-setting-identity strong {
+  font-size: 1.3rem;
+  color: var(--text, #fff);
+}
+.og-setting-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  margin-inline-start: 0.4rem;
+  border-radius: 5px;
+  background: #f7c94a;
+  color: #241b06;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.og-setting input {
+  appearance: none;
+  position: relative;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #52647b;
+  border-radius: 20px;
+  background: #263549;
+  cursor: pointer;
+}
+.og-setting input::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+}
+.og-setting input:checked {
+  background: var(--theme-color, #3e8ed0);
+  border-color: var(--theme-color, #3e8ed0);
+}
+.og-setting input:checked::before {
+  transform: translateX(16px);
+}
+.og-setting-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.og-setting .og-setting-note {
+  color: #aebed1;
+  font-size: 0.75rem;
+}
+.og-setting .og-history-button {
+  margin: 0;
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1px solid var(--theme-color, #3e8ed0);
+  border-radius: 9px;
+  background: var(--theme-color, #3e8ed0) !important;
+  color: white !important;
+  font-size: 0.8rem;
+  font-family: inherit;
+}
+.og-setting .og-history-button:hover {
+  filter: brightness(1.1);
+}
+.og-setting .og-history-button:focus-visible {
+  outline: 2px solid var(--theme-color, #3e8ed0);
+  outline-offset: 3px;
+}
+.og-setting p {
+  font-size: 0.85rem;
+  margin: 0.5rem 0 0;
+  line-height: 1.5;
+}

@@ -1,0 +1,1806 @@
+/* Main launcher panel only. Shared controls also run inside the in-game overlay. */
+.bw-dialog {
+  width: min(1100px, calc(100vw - 48px));
+  height: fit-content;
+  max-height: calc(100dvh - 48px);
+  background: #0c1420;
+}
+.bw-dialog .worlds-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+.bw-dialog .bw-header {
+  padding: 18px 26px;
+  gap: 16px;
+  background: #101a28;
+}
+.bw-dialog .bw-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+.bw-dialog .bw-account {
+  color: #a2b5cc;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+.bw-dialog .bw-body {
+  display: block;
+  padding: 18px;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #354c63 transparent;
+}
+.bw-dialog .bw-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+  padding-top: 22px;
+}
+.bw-dialog .bw-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0;
+  margin: 0 0 14px;
+  border: 0;
+  background: none;
+}
+.bw-dialog .bw-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 12px;
+  text-align: left;
+  min-width: 0;
+  background: #111e2d;
+  border: 1px solid #273649;
+  border-radius: 12px;
+  color: #adc0d5;
+  line-height: 1.4;
+}
+.bw-dialog .bw-tabs button > span {
+  min-width: 0;
+  font-size: 12px;
+}
+.bw-dialog .bw-tabs small {
+  display: block;
+  margin-top: 4px;
+  font-size: 9px;
+  font-weight: 500;
+  color: #8ea3bb;
+}
+.bw-dialog .bw-tabs button[aria-selected='true'] {
+  color: #f4f8ff;
+  border-color: color-mix(in srgb, var(--bw-accent) 65%, #253445);
+  background: color-mix(in srgb, var(--bw-accent) 15%, #101e2d);
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--bw-accent) 70%, transparent);
+}
+.bw-dialog .bw-tabs [aria-selected='true'] .worlds-icon {
+  color: var(--bw-accent);
+}
+.bw-dialog .bw-stage {
+  padding: 18px;
+  border: 1px solid #29374a;
+  border-radius: 16px;
+  background: #111d2c;
+}
+.bw-dialog .bw-stage-heading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 14px;
+}
+.bw-dialog .bw-stage-heading h2 {
+  font-weight: 750;
+  color: #f5f8ff;
+  font-size: clamp(17px, 1.65vw, 22px);
+  letter-spacing: -0.025em;
+  margin: 0 0 5px;
+  line-height: 1.3;
+}
+.bw-dialog .bw-stage-heading p {
+  color: #93a9c1;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+}
+.bw-dialog .bw-stage-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  color: var(--bw-accent);
+  background: color-mix(in srgb, var(--bw-accent) 11%, #142131);
+  border: 1px solid color-mix(in srgb, var(--bw-accent) 25%, transparent);
+  border-radius: 12px;
+}
+.bw-dialog .bw-stage-icon svg {
+  width: 23px;
+  height: 23px;
+}
+.bw-dialog label {
+  gap: 8px;
+  font-size: 11px;
+}
+.bw-dialog input,
+.bw-dialog select {
+  min-height: 40px;
+  background: #0a1320;
+  border-color: #314358;
+  padding: 11px 13px;
+  font-size: 12px;
+}
+.bw-dialog .bw-primary,
+.bw-dialog .bw-secondary {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  line-height: 1.4;
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease,
+    transform 0.16s ease;
+}
+.bw-dialog .bw-primary {
+  background: color-mix(in srgb, var(--bw-accent) 28%, #1a3043);
+  border-color: color-mix(in srgb, var(--bw-accent) 55%, transparent);
+  color: #f1f8ff;
+}
+.bw-dialog .bw-stage form > .bw-primary {
+  min-height: 40px;
+  font-size: 12px;
+}
+.bw-dialog .bw-stage form > .bw-primary > span {
+  margin-left: auto;
+}
+.bw-dialog .bw-stage form > .bw-primary .worlds-icon {
+  margin-right: auto;
+}
+.bw-dialog .bw-step-note {
+  margin: 13px 0 0;
+  text-align: center;
+  color: #8fa5bd;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.bw-dialog .bw-hint {
+  font-size: 11px;
+  margin: 10px 0 16px;
+  color: #9aafc6;
+}
+.bw-dialog .bw-eyebrow {
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 0.18em;
+  color: #86a9c7;
+}
+.bw-dialog [data-invite-count] {
+  display: inline-grid;
+  place-items: center;
+  min-width: 17px;
+  padding: 2px 4px;
+  border-radius: 5px;
+  font-size: 9px;
+  background: #283f55;
+  color: #d5eafb;
+}
+.bw-dialog button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.bw-dialog .bw-invite-empty {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 28px 12px;
+  text-align: center;
+}
+.bw-dialog .bw-invite-empty > svg {
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  box-sizing: content-box;
+  border: 1px dashed #46647e;
+  color: #80a8c9;
+  border-radius: 18px;
+  margin-bottom: 18px;
+}
+.bw-dialog .bw-invite-empty strong {
+  font-size: 13px;
+}
+.bw-dialog .bw-invite-empty p {
+  color: #94aac1;
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 8px 0 0;
+}
+.bw-dialog .bw-session {
+  padding: 2px;
+}
+.bw-dialog .bw-status {
+  font-size: 20px;
+  line-height: 1.3;
+}
+.bw-dialog .bw-room-code {
+  background: #0c1927;
+  border-style: dashed;
+  padding: 20px;
+}
+.bw-dialog .bw-room-code strong {
+  color: #f0f7ff;
+}
+.bw-dialog .bw-quick-join {
+  margin: 20px 0 0;
+}
+.bw-dialog #bw-public h2 {
+  font-size: 21px;
+  line-height: 1.4;
+  color: #f0f6ff;
+}
+.bw-dialog .bw-notice {
+  padding: 10px 14px;
+  border-left: 3px solid var(--bw-accent);
+}
+.bw-dialog .bw-footer {
+  padding: 12px 24px;
+  background: #101a28;
+  gap: 8px 16px;
+  font-size: 8px;
+}
+.bw-dialog .bw-footer > span {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.bw-dialog .bw-footer .worlds-icon {
+  width: 12px;
+  height: 12px;
+  color: #8daaba;
+}
+.bw-dialog .bw-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+@keyframes bw-panel-reveal {
+  from {
+    opacity: 0.3;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 1100px) {
+  .bw-dialog .bw-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .bw-dialog .bw-tabs button {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+  }
+  .bw-dialog .bw-tabs small {
+    display: none;
+  }
+  .bw-dialog .bw-stage {
+    padding: 20px;
+  }
+  .bw-dialog .bw-stage-heading {
+    align-items: flex-start;
+  }
+}
+@media (max-width: 820px) {
+  .bw-dialog {
+    width: calc(100vw - 24px);
+    height: fit-content;
+    max-height: calc(100dvh - 24px);
+  }
+  .bw-dialog .bw-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bw-dialog .bw-tabs button {
+    flex-direction: row;
+    align-items: center;
+  }
+  .bw-dialog .bw-brand small {
+    display: none;
+  }
+  .bw-dialog .bw-account {
+    max-width: 110px;
+  }
+}
+@media (max-width: 480px) {
+  .bw-dialog .bw-body {
+    padding: 12px;
+  }
+  .bw-dialog .bw-header {
+    padding: 12px 14px;
+  }
+  .bw-dialog .bw-brand {
+    gap: 8px;
+  }
+  .bw-dialog .bw-brand > span {
+    font-size: 17px;
+  }
+  .bw-dialog .bw-account {
+    display: none;
+  }
+  .bw-dialog .bw-tabs {
+    gap: 5px;
+  }
+  .bw-dialog .bw-tabs button {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 12px 5px;
+  }
+  .bw-dialog .bw-tabs button > span {
+    font-size: 10px;
+  }
+  .bw-dialog .bw-stage-heading {
+    gap: 10px;
+  }
+  .bw-dialog .bw-stage-icon {
+    width: 34px;
+    height: 34px;
+  }
+  .bw-dialog .bw-footer {
+    padding: 10px 14px;
+  }
+  .bw-dialog .bw-room-code {
+    padding: 13px;
+    gap: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bw-dialog .bw-primary,
+  .bw-dialog .bw-secondary {
+    transition: none;
+  }
+}
+
+.bw-dialog .bw-main {
+  min-width: 0;
+  overflow: visible;
+  padding: 0;
+}
+.bw-dialog .bw-host-steps {
+  list-style: none;
+  counter-reset: steps;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0;
+  margin: 18px 0 0;
+}
+.bw-dialog .bw-host-steps li {
+  counter-increment: steps;
+  position: relative;
+  padding: 12px 12px 12px 42px;
+  background: #0b1623;
+  border: 1px solid #293c50;
+  border-radius: 10px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.bw-dialog .bw-host-steps li::before {
+  content: counter(steps);
+  position: absolute;
+  top: 13px;
+  left: 12px;
+  color: var(--bw-accent);
+  font-weight: 800;
+}
+.bw-dialog .bw-host-steps strong {
+  display: block;
+  color: #e5f1ff;
+}
+.bw-dialog .bw-host-steps span {
+  color: #9fb3c9;
+}
+.bw-dialog #bw-join {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 16px;
+  align-items: end;
+}
+.bw-dialog #bw-join .bw-stage-heading {
+  grid-column: 1 / -1;
+  margin-bottom: 4px;
+}
+.bw-dialog #bw-join label {
+  grid-column: 1;
+}
+.bw-dialog #bw-join > .bw-primary {
+  grid-column: 2;
+  grid-row: 2;
+  width: auto;
+  min-height: 42px;
+  padding: 10px 18px;
+}
+.bw-dialog #bw-join > .bw-primary > span {
+  margin-left: 12px;
+}
+.bw-dialog #bw-join .bw-hint {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  margin: 0;
+  font-size: 10px;
+}
+.bw-dialog #bw-join .bw-code-input {
+  font-size: 18px;
+  padding-block: 8px;
+}
+.bw-dialog .bw-public-list,
+.bw-dialog [data-invites] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+  gap: 12px;
+}
+.bw-dialog .bw-public-room {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #35516b;
+  border-top: 3px solid color-mix(in srgb, var(--bw-accent) 65%, #243e52);
+  border-radius: 12px;
+  background: #0d1b2b;
+}
+.bw-dialog .bw-public-room strong {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.bw-dialog .bw-public-room strong svg {
+  margin-top: 2px;
+  color: var(--bw-accent);
+}
+.bw-dialog .bw-public-room small {
+  font-size: 11px;
+  line-height: 1.7;
+}
+.bw-dialog .bw-public-room button {
+  margin-top: auto;
+  width: 100%;
+  align-self: stretch;
+}
+.bw-dialog .bw-invite {
+  margin: 0;
+  background: #0d1b2b;
+}
+.bw-dialog .bw-invite-empty {
+  grid-column: 1 / -1;
+  padding: 16px;
+}
+.bw-dialog .bw-invite-empty > svg {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 12px;
+}
+.bw-dialog .bw-session:not([hidden]) {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #293c50;
+}
+.bw-dialog .bw-quick-join:not([hidden]) {
+  margin: 0 0 16px;
+}
+@media (max-width: 600px) {
+  .bw-dialog .bw-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .bw-dialog .bw-tabs button {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 10px;
+  }
+  .bw-dialog .bw-host-steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .bw-dialog #bw-join {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bw-dialog #bw-join > .bw-primary {
+    grid-column: 1;
+    grid-row: 3;
+    width: 100%;
+  }
+  .bw-dialog #bw-join .bw-hint {
+    grid-row: 4;
+  }
+}
+
+.bw-connection-dialog {
+  width: min(600px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 1px solid #37516a;
+  border-radius: 20px;
+  background: #0d1825;
+  color: #edf5ff;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  font-family: inherit;
+}
+.bw-connection-dialog::backdrop {
+  background: #020810ba;
+  backdrop-filter: blur(6px);
+}
+.bw-connection-dialog[open] {
+  animation: bw-connect-in 0.24s ease-out;
+}
+.bw-connection-dialog * {
+  box-sizing: border-box;
+  min-width: 0;
+}
+.bw-connection-dialog .worlds-icon {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+}
+.bw-connection-dialog header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px;
+  border-bottom: 1px solid #a2c6e218;
+}
+.bw-connection-dialog header span {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-weight: 700;
+}
+.bw-connection-dialog header img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  margin-right: 7px;
+}
+.bw-connection-dialog b {
+  color: #69c7fc;
+}
+.bw-connection-dialog button {
+  font: inherit;
+  cursor: pointer;
+  border-radius: 9px;
+}
+.bw-connection-dialog button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.bw-connection-dialog [data-close] {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: #ffffff08;
+  color: #c5d6e7;
+  border: 1px solid #ffffff12;
+}
+.bw-connection-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+/* The route follows room connectivity, independently of Minecraft installation. */
+.bw-connection-route {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr) 24px minmax(0, 1fr) 24px minmax(0, 1fr);
+  align-items: start;
+  list-style: none;
+  margin: 8px 0;
+  padding: 22px 8px;
+  border-block: 1px solid #a2c6e218;
+}
+.bw-connection-route [data-route] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  text-align: center;
+  color: #71869b;
+  transition: color 240ms ease;
+}
+.bw-connection-route .worlds-icon {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+}
+.bw-connection-route strong {
+  color: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.bw-connection-route [data-route-status] {
+  font-size: 10px;
+  line-height: 1.4;
+  color: inherit;
+}
+.bw-connection-route [data-state='done'] {
+  color: #7bddb2;
+}
+.bw-connection-route [data-state='active'] {
+  color: #8bd3fc;
+}
+.bw-connection-route [data-state='error'] {
+  color: #f2a6b5;
+}
+.bw-route-link {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding-top: 15px;
+  color: #3c5266;
+  transition: color 240ms ease;
+}
+.bw-route-link i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.bw-route-link[data-state='active'] {
+  color: #8bd3fc;
+}
+.bw-route-link[data-state='active'] i {
+  animation: bw-route-travel 1.4s ease-in-out infinite;
+}
+.bw-route-link i:nth-child(2) {
+  animation-delay: 160ms !important;
+}
+.bw-route-link i:nth-child(3) {
+  animation-delay: 320ms !important;
+}
+.bw-route-link[data-state='done'] {
+  color: #7bddb2;
+}
+@keyframes bw-route-travel {
+  0%,
+  70%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+@media (max-width: 430px) {
+  .bw-connection-route {
+    grid-template-columns: minmax(0, 1fr) 12px minmax(0, 1fr) 12px minmax(0, 1fr) 12px minmax(
+        0,
+        1fr
+      );
+    padding-inline: 0;
+  }
+  .bw-route-link {
+    gap: 3px;
+  }
+  .bw-route-link i {
+    width: 3px;
+    height: 3px;
+  }
+  .bw-connection-route strong {
+    font-size: 11px;
+  }
+}
+.bw-connection-dialog [data-caption] {
+  color: #9db3c9;
+  font-size: 11px;
+}
+.bw-connection-dialog h2 {
+  font-size: 25px;
+  line-height: 1.2;
+  margin: 0;
+  color: #f3f8ff;
+  overflow-wrap: anywhere;
+}
+.bw-connection-dialog p {
+  margin: 0;
+  color: #a6bbd1;
+  font-size: 12px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.bw-connection-version {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #162839;
+  border-radius: 10px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.bw-game-progress {
+  display: grid;
+  gap: 12px;
+  padding-block: 10px;
+}
+.bw-game-progress > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  color: #d5e6f5;
+  font-size: 12px;
+}
+.bw-game-progress progress {
+  width: 100%;
+  height: 7px;
+  border: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #24394b;
+  accent-color: #7bddb2;
+}
+.bw-game-progress progress::-webkit-progress-bar {
+  background: #24394b;
+}
+.bw-game-progress progress::-webkit-progress-value {
+  background: #7bddb2;
+  border-radius: 8px;
+  transition: width 200ms ease;
+}
+.bw-game-progress progress:not([value]) {
+  background: linear-gradient(90deg, #24394b 15%, #79c6ed 50%, #24394b 85%);
+  background-size: 200% 100%;
+  animation: bw-game-preparing 1.6s linear infinite;
+}
+.bw-game-progress progress:not([value])::-webkit-progress-bar {
+  background: transparent;
+}
+@keyframes bw-game-preparing {
+  to {
+    background-position: -200% 0;
+  }
+}
+.bw-connection-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 9px;
+  color: #a6bbd1;
+  font-size: 11px;
+}
+.bw-connection-steps li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bw-connection-steps li::before {
+  content: '';
+  border-radius: 50%;
+  width: 7px;
+  height: 7px;
+  background: #516b80;
+  flex-shrink: 0;
+}
+.bw-connection-steps [data-done='true']::before {
+  background: #7bddb2;
+}
+.bw-connection-auto {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #bfcedd;
+}
+.bw-connection-auto input {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  accent-color: #55b6e9;
+}
+.bw-connection-dialog .bw-primary,
+.bw-connection-dialog .bw-secondary {
+  width: 100%;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #477c9e;
+  background: #254e6c;
+  color: #edf5ff;
+  font-size: 12px;
+  white-space: normal;
+}
+.bw-connection-dialog .bw-secondary {
+  background: #172635;
+  border-color: #33495b;
+}
+.bw-connection-dialog [data-error] {
+  color: #f2b5b5;
+  background: #7b2b2b26;
+  padding: 10px;
+  border-radius: 8px;
+}
+.bw-connection-dialog footer {
+  padding: 14px 22px;
+  border-top: 1px solid #a2c6e218;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.bw-connection-dialog footer small {
+  color: #8ca6be;
+  font-size: 10px;
+}
+.bw-connection-dialog [data-leave] {
+  flex-shrink: 0;
+  border: 0;
+  background: none;
+  color: #e5b7be;
+  font-size: 11px;
+  padding: 6px;
+}
+.bw-connection-dialog :focus-visible {
+  outline: 2px solid #79d8ff;
+  outline-offset: 3px;
+}
+.bw-dialog .bw-body {
+  overflow-x: hidden;
+}
+.bw-dialog .bw-public-list {
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+}
+.bw-dialog [data-connection-open] {
+  margin-top: 16px;
+}
+@keyframes bw-connect-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-height: 650px) {
+  .bw-connection-content {
+    padding: 18px;
+    gap: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bw-connection-dialog,
+  .bw-connection-dialog * {
+    animation: none !important;
+  }
+}
+
+.bw-connection-dialog [hidden] {
+  display: none !important;
+}
+
+.bw-connection-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.bw-connection-dialog header,
+.bw-connection-dialog footer {
+  flex-shrink: 0;
+}
+.bw-connection-content {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #486680 transparent;
+}
+
+/* Keep the frame visible in short windows; only its content scrolls. */
+.bw-dialog {
+  height: min(780px, calc(100dvh - 24px));
+  max-height: calc(100dvh - 24px);
+}
+.bw-dialog .bw-body {
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  overflow-x: hidden;
+}
+.bw-dialog .bw-layout {
+  padding-top: 0;
+  min-width: 0;
+}
+.bw-dialog .bw-main,
+.bw-dialog .bw-aside {
+  overflow: visible;
+  min-width: 0;
+}
+.bw-dialog .bw-stage {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.bw-dialog .bw-brand > span {
+  white-space: normal;
+}
+.bw-dialog .bw-header-actions {
+  flex-shrink: 0;
+}
+@media (max-height: 500px) {
+  .bw-dialog .bw-header {
+    padding: 10px 14px;
+  }
+  .bw-dialog .bw-body {
+    padding: 12px;
+  }
+  .bw-dialog .bw-footer {
+    padding: 8px 14px;
+  }
+  .bw-dialog .bw-tabs button {
+    padding: 8px;
+  }
+  .bw-dialog .bw-tabs small {
+    display: none;
+  }
+}
+
+/* Chromium uses these rounded theme scrollbars instead of OS scrollbars. */
+.bw-dialog,
+.bw-dialog *,
+.bw-connection-dialog,
+.bw-connection-dialog * {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+}
+.bw-dialog ::-webkit-scrollbar,
+.bw-connection-dialog ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.bw-dialog ::-webkit-scrollbar-track,
+.bw-connection-dialog ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.bw-dialog ::-webkit-scrollbar-thumb,
+.bw-connection-dialog ::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--bw-accent, var(--theme-color, #55b6e9)) 45%, #233143);
+  border-radius: 20px;
+}
+.bw-dialog ::-webkit-scrollbar-button,
+.bw-connection-dialog ::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.bw-dialog ::-webkit-scrollbar-corner,
+.bw-connection-dialog ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+.bw-dialog .bw-tabs {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.bw-dialog #bw-join {
+  margin-top: 22px;
+  padding: 22px;
+  border: 1px solid color-mix(in srgb, var(--bw-accent) 25%, #273649);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--bw-accent) 6%, #111e2d);
+}
+.bw-dialog #bw-join .bw-stage-heading {
+  margin-bottom: 16px;
+}
+.bw-dialog #bw-join h2 {
+  font-size: 21px;
+}
+.bw-dialog #bw-join label {
+  max-width: 420px;
+}
+.bw-dialog .bw-tabs button[aria-selected='true'] {
+  border-color: var(--bw-accent);
+  background: color-mix(in srgb, var(--bw-accent) 15%, #111e2d);
+}
+.bw-dialog .bw-brand strong {
+  color: var(--bw-accent);
+}
+@media (max-width: 600px) {
+  .bw-dialog .bw-tabs {
+    grid-template-columns: 1fr;
+  }
+  .bw-dialog #bw-join {
+    padding: 16px;
+  }
+  .bw-dialog .bw-tabs button {
+    padding: 10px;
+  }
+}
+/* Browse worlds as readable rows, rather than tall nested cards. */
+.bw-dialog .bw-hero {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 8px 4px 20px;
+  min-height: 0;
+}
+.bw-dialog .bw-hero h1 {
+  font-size: 26px;
+  line-height: 1.25;
+  max-width: none;
+  margin: 0 0 8px;
+}
+.bw-dialog .bw-hero p {
+  font-size: 13px;
+  color: #a7b8cb;
+}
+.bw-dialog .bw-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid #283849;
+  margin-bottom: 22px;
+  padding-bottom: 12px;
+}
+.bw-dialog .bw-tabs button {
+  flex: 0 1 auto;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 16px;
+  background: transparent;
+  gap: 8px;
+}
+.bw-dialog .bw-tabs button small {
+  display: none;
+}
+.bw-dialog .bw-tabs button[aria-selected='true'] {
+  background: color-mix(in srgb, var(--bw-accent) 16%, transparent);
+  color: var(--bw-accent);
+  border: 0;
+}
+.bw-dialog .bw-stage {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  min-height: 0;
+}
+.bw-dialog .bw-section-title h2 {
+  font-size: 20px;
+}
+.bw-dialog .bw-public-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #2a3b4e;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 18px;
+}
+.bw-dialog .bw-public-list:empty {
+  display: none;
+}
+.bw-dialog .bw-public-room {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(130px, 0.7fr) 100px 90px;
+  align-items: center;
+  gap: 18px;
+  border: 0;
+  border-bottom: 1px solid #263749;
+  border-radius: 0;
+  background: #101c2a;
+  padding: 16px 18px;
+  min-height: 0;
+}
+.bw-dialog .bw-public-room:last-child {
+  border-bottom: 0;
+}
+.bw-dialog .bw-public-room:hover {
+  background: color-mix(in srgb, var(--bw-accent) 7%, #101c2a);
+}
+.bw-dialog .bw-room-identity {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.bw-dialog .bw-public-room strong {
+  display: flex;
+  gap: 10px;
+  font-size: 15px;
+  margin: 0;
+  line-height: 1.4;
+}
+.bw-dialog .bw-public-room strong span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bw-dialog .bw-public-room small {
+  margin: 0 0 0 28px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #97abc2;
+}
+.bw-dialog .bw-room-version {
+  font-size: 12px;
+  color: #b9c9dc;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.bw-dialog .bw-room-players {
+  font-size: 12px;
+  color: #97abc2;
+  white-space: nowrap;
+}
+.bw-dialog .bw-public-room button {
+  margin: 0;
+  min-height: 34px;
+  padding: 8px 14px;
+  width: auto;
+  border-radius: 7px;
+  font-size: 12px;
+}
+.bw-dialog .bw-pagination {
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 12px;
+}
+.bw-dialog #bw-join {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px auto;
+  gap: 10px 20px;
+  align-items: center;
+  margin-top: 24px;
+  padding: 20px 0 4px;
+  border: 0;
+  border-top: 1px solid #283849;
+  border-radius: 0;
+  background: none;
+}
+.bw-dialog #bw-join[hidden] {
+  display: none;
+}
+.bw-dialog #bw-join .bw-stage-heading {
+  margin: 0;
+  gap: 0;
+}
+.bw-dialog #bw-join .bw-stage-icon {
+  display: none;
+}
+.bw-dialog #bw-join h2 {
+  font-size: 17px;
+  margin: 0 0 5px;
+}
+.bw-dialog #bw-join .bw-stage-heading p {
+  font-size: 12px;
+  font-weight: 400;
+}
+.bw-dialog #bw-join label {
+  margin: 0;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bw-dialog #bw-join input {
+  height: 40px;
+  font-size: 16px;
+  letter-spacing: 3px;
+  padding: 8px 12px;
+}
+.bw-dialog #bw-join > button {
+  grid-column: 3;
+  grid-row: 1;
+  margin: 0;
+  align-self: end;
+  min-height: 40px;
+  padding: 10px 16px;
+}
+.bw-dialog #bw-join > .bw-hint {
+  grid-column: 1/-1;
+  grid-row: 2;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 400;
+}
+@media (max-width: 700px) {
+  .bw-dialog .bw-public-room {
+    grid-template-columns: minmax(0, 1fr) 80px;
+    gap: 8px 12px;
+    padding: 14px;
+  }
+  .bw-dialog .bw-room-identity {
+    grid-column: 1;
+  }
+  .bw-dialog .bw-room-version {
+    grid-column: 1;
+    padding-left: 28px;
+  }
+  .bw-dialog .bw-room-players {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+  }
+  .bw-dialog .bw-public-room button {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .bw-dialog #bw-join {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .bw-dialog #bw-join .bw-stage-heading {
+    grid-column: 1/-1;
+  }
+  .bw-dialog #bw-join > button {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .bw-dialog #bw-join > .bw-hint {
+    grid-row: 3;
+  }
+  .bw-dialog .bw-hero h1 {
+    font-size: 22px;
+  }
+  .bw-dialog .bw-tabs {
+    flex-wrap: wrap;
+  }
+  .bw-dialog .bw-tabs button {
+    padding: 9px;
+    font-size: 11px;
+  }
+}
+@media (min-width: 701px) {
+  .bw-dialog .bw-public-room .bw-room-identity {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .bw-dialog .bw-public-room .bw-room-version {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .bw-dialog .bw-public-room .bw-room-players {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  .bw-dialog .bw-public-room button {
+    grid-column: 4;
+    grid-row: 1;
+    align-self: center;
+    justify-self: end;
+    min-height: 34px;
+    height: 34px;
+    max-width: 90px;
+  }
+}
+.bw-dialog .bw-public-room .bw-host-face,
+.bw-dialog .bw-public-room .bw-host-face-fallback {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 6px;
+  image-rendering: pixelated;
+  object-fit: cover;
+  align-self: center;
+}
+.bw-dialog .bw-public-room .bw-host-face-fallback {
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--bw-accent) 18%, #172638);
+  color: #dfe9f7;
+  font-size: 11px;
+}
+.bw-dialog .bw-public-room strong {
+  align-items: center;
+}
+.bw-dialog .bw-public-room small {
+  margin-left: 44px;
+}
+.bw-dialog #bw-join {
+  max-width: 620px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 24px;
+  border: 1px solid #283849;
+  border-radius: 12px;
+  background: #101c2a;
+  margin: 0;
+}
+.bw-dialog #bw-join .bw-stage-heading {
+  grid-column: 1/-1;
+  margin-bottom: 12px;
+}
+.bw-dialog #bw-join > button {
+  grid-column: 2;
+  grid-row: 2;
+}
+.bw-dialog #bw-join > .bw-hint {
+  grid-row: 3;
+}
+@media (max-width: 700px) {
+  .bw-dialog .bw-room-version {
+    padding-left: 44px;
+  }
+}
+
+/* Short tasks should not sit inside a full-height, mostly empty window. */
+.bw-dialog[data-view]:not([data-view='public']) {
+  width: min(900px, calc(100vw - 32px));
+  height: fit-content;
+  min-height: 0;
+  max-height: calc(100dvh - 24px);
+  inset: 0;
+  margin: auto;
+}
+.bw-dialog[data-view]:not([data-view='public']) .bw-body {
+  flex: 0 1 auto;
+  padding: 24px;
+}
+.bw-dialog[data-view] .bw-tabs button[aria-selected='true'] {
+  color: #f0eaff;
+}
+.bw-dialog[data-view] .bw-tabs {
+  margin-bottom: 26px;
+}
+.bw-dialog[data-view] #bw-join {
+  width: 100%;
+  max-width: 540px;
+  margin: 8px auto 12px;
+  padding: 28px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--bw-accent) 8%, #101c2a), #101c2a);
+}
+.bw-dialog[data-view] #bw-join .bw-stage-heading {
+  margin-bottom: 4px;
+}
+.bw-dialog[data-view] #bw-join h2 {
+  font-size: 24px;
+}
+.bw-dialog[data-view] #bw-join label {
+  max-width: none;
+  width: 100%;
+  font-size: 12px;
+}
+.bw-dialog[data-view] #bw-join input {
+  height: 52px;
+  font-size: 22px;
+  letter-spacing: 5px;
+  text-align: center;
+}
+.bw-dialog[data-view] #bw-join > button {
+  grid-column: 1;
+  grid-row: 3;
+  width: 100%;
+  min-height: 46px;
+  justify-content: center;
+  gap: 12px;
+}
+.bw-dialog[data-view] #bw-join > .bw-hint {
+  grid-column: 1;
+  grid-row: 4;
+  line-height: 1.6;
+  text-align: center;
+}
+.bw-dialog[data-view] #bw-join > button > span {
+  margin-left: 0;
+}
+.bw-dialog[data-view] #bw-host {
+  max-width: 720px;
+  margin: 0 auto 8px;
+}
+.bw-dialog[data-view] #bw-host .bw-stage-heading {
+  margin-bottom: 22px;
+}
+.bw-dialog[data-view] .bw-host-steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 0;
+}
+.bw-dialog[data-view] .bw-host-steps li {
+  min-height: 78px;
+  padding: 18px 20px 18px 58px;
+  background: #101c2a;
+  border-color: #2a3b4e;
+}
+.bw-dialog[data-view] .bw-host-steps li::before {
+  left: 18px;
+  top: 19px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bw-accent) 18%, #142131);
+  color: #e2d6ff;
+}
+.bw-dialog[data-view] .bw-host-steps strong {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+.bw-dialog[data-view] .bw-host-steps span {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.bw-dialog[data-view] .bw-invite-empty {
+  margin: 8px auto 12px;
+  padding: 36px 24px;
+  max-width: 620px;
+  border: 1px solid #2a3b4e;
+  border-radius: 14px;
+  background: #101c2a;
+}
+.bw-dialog[data-view] .bw-invite-empty strong {
+  font-size: 19px;
+}
+.bw-dialog[data-view] .bw-invite-empty p {
+  font-weight: 400;
+  line-height: 1.6;
+}
+@media (max-width: 600px) {
+  .bw-dialog[data-view]:not([data-view='public']) .bw-body {
+    padding: 14px;
+  }
+  .bw-dialog[data-view] #bw-join {
+    padding: 20px;
+  }
+  .bw-dialog[data-view] .bw-tabs {
+    gap: 4px;
+    margin-bottom: 18px;
+  }
+}
+
+/* Public catalog: size to its contents and keep all row columns aligned. */
+.bw-dialog[data-view='public'] {
+  width: min(1100px, calc(100vw - 32px));
+  height: fit-content;
+  min-height: 0;
+  max-height: calc(100dvh - 24px);
+}
+.bw-dialog[data-view='public'] .bw-body {
+  flex: 0 1 auto;
+  padding: 24px;
+}
+.bw-dialog[data-view='public'] .bw-hero {
+  padding: 0 0 22px;
+}
+.bw-dialog[data-view='public'] .bw-hero p {
+  line-height: 1.6;
+}
+.bw-dialog[data-view] .bw-notice {
+  margin: 0 0 16px;
+}
+.bw-dialog[data-view] .bw-main {
+  padding: 0;
+  scrollbar-gutter: auto;
+}
+.bw-dialog[data-view] .bw-tabs {
+  border-radius: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0 0 24px;
+  padding: 0 0 12px;
+}
+.bw-dialog[data-view='public'] .bw-section-title {
+  align-items: center;
+  gap: 16px;
+}
+.bw-dialog[data-view='public'] .bw-section-title h2 {
+  margin: 0;
+}
+.bw-dialog[data-view='public'] .bw-room-identity {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 3px 12px;
+  align-items: center;
+}
+.bw-dialog[data-view='public'] .bw-room-identity > strong {
+  display: contents;
+}
+.bw-dialog[data-view='public'] .bw-room-identity .bw-host-face,
+.bw-dialog[data-view='public'] .bw-room-identity .bw-host-face-fallback {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: 38px;
+  height: 38px;
+}
+.bw-dialog[data-view='public'] .bw-room-identity > strong > span:not(.bw-host-face-fallback) {
+  grid-column: 2;
+  grid-row: 1;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}
+.bw-dialog[data-view='public'] .bw-room-identity > small {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.bw-dialog[data-view='public'] .bw-public-room {
+  min-width: 0;
+}
+.bw-dialog[data-view='public'] .bw-pagination {
+  margin-top: 16px;
+}
+.bw-dialog[data-view='public'] [data-public-message]:empty {
+  margin: 0;
+}
+@media (max-width: 700px) {
+  .bw-dialog[data-view='public'] .bw-body {
+    padding: 16px;
+  }
+  .bw-dialog[data-view='public'] .bw-room-version {
+    padding-left: 50px;
+  }
+  .bw-dialog[data-view='public'] .bw-public-room > button {
+    grid-row: 2;
+  }
+}
+
+/* Short actions use the world artwork rather than repeating the landing headline. */
+.bw-dialog[data-view]:not([data-view='public']) .bw-hero {
+  display: none;
+}
+.bw-dialog[data-view='join'] {
+  width: min(940px, calc(100vw - 32px));
+}
+.bw-dialog[data-view] #bw-join {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(0, 1.2fr);
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #34415c;
+  border-radius: 16px;
+  background: #131f30;
+}
+.bw-dialog .bw-join-art {
+  position: relative;
+  min-height: 330px;
+  overflow: hidden;
+}
+.bw-dialog .bw-join-art > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 38% center;
+}
+.bw-dialog .bw-join-art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, #0c1420b3, transparent 60%);
+}
+.bw-dialog .bw-join-art > span {
+  position: absolute;
+  z-index: 1;
+  bottom: 24px;
+  left: 24px;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border: 1px solid #ffffff55;
+  border-radius: 16px;
+  background: #0d152180;
+  color: #fff;
+  backdrop-filter: blur(8px);
+}
+.bw-dialog .bw-join-art > span > svg {
+  width: 28px;
+  height: 28px;
+}
+.bw-dialog .bw-join-fields {
+  min-width: 0;
+  display: grid;
+  gap: 20px;
+  padding: 28px;
+}
+.bw-dialog[data-view] #bw-join .bw-join-fields input {
+  margin-top: 10px;
+  height: 50px;
+  background: #0a1422;
+  border-color: #43536e;
+  color: #f5f1ff;
+}
+.bw-dialog .bw-join-fields > button {
+  width: 100%;
+  justify-content: center;
+  gap: 12px;
+  min-height: 42px;
+}
+.bw-dialog .bw-join-fields > .bw-hint {
+  margin: 0;
+  line-height: 1.6;
+  font-size: 11px;
+  font-weight: 400;
+}
+.bw-dialog[data-view] #bw-host {
+  max-width: none;
+}
+.bw-dialog[data-view] .bw-host-steps {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.bw-dialog[data-view] .bw-host-steps li {
+  overflow: hidden;
+  padding: 0 18px 20px;
+  border-radius: 14px;
+  background: #131f30;
+}
+.bw-dialog[data-view] .bw-host-steps li::before {
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+  background: #101827d9;
+  color: #fff;
+  border: 1px solid #ffffff45;
+}
+.bw-dialog .bw-step-scene {
+  height: 108px;
+  margin: 0 -18px 18px;
+  position: relative;
+  overflow: hidden;
+  background: #1c3141;
+}
+.bw-dialog .bw-step-scene img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7);
+}
+.bw-dialog .bw-host-steps li:nth-child(2) .bw-step-scene img {
+  object-position: 80% center;
+  transform: scale(1.2);
+}
+.bw-dialog .bw-host-steps li:nth-child(3) .bw-step-scene img {
+  object-position: 15% center;
+  transform: scale(1.4);
+}
+.bw-dialog .bw-step-scene > svg {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  filter: drop-shadow(0 2px 4px #0009);
+}
+.bw-dialog[data-view] .bw-host-steps strong {
+  display: block;
+  font-size: 14px;
+}
+.bw-dialog[data-view] .bw-host-steps span {
+  display: block;
+  color: #b8c9dd;
+}
+.bw-dialog [data-invites] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+.bw-dialog .bw-invite {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #35415c;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #22223b, #131f30 75%);
+}
+.bw-dialog .bw-invite-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.bw-dialog .bw-invite-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 9px;
+  image-rendering: pixelated;
+  flex: none;
+  background: #26394b;
+}
+.bw-dialog .bw-invite-identity strong {
+  overflow-wrap: anywhere;
+  color: #f3f4ff;
+  font-size: 14px;
+}
+.bw-dialog .bw-invite > small {
+  color: #b9cbe4;
+  font-size: 11px;
+  font-weight: 400;
+  padding: 7px 10px;
+  border-radius: 7px;
+  background: #0b152670;
+  line-height: 1.5;
+}
+.bw-dialog .bw-invite-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin-top: auto;
+}
+.bw-dialog .bw-invite-actions button {
+  min-height: 34px;
+  justify-content: center;
+}
+.bw-dialog [data-invites] > .bw-invite-empty {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+@media (max-width: 650px) {
+  .bw-dialog[data-view] #bw-join {
+    grid-template-columns: 1fr;
+  }
+  .bw-dialog .bw-join-art {
+    min-height: 100px;
+    max-height: 100px;
+  }
+  .bw-dialog .bw-join-art > span {
+    width: 42px;
+    height: 42px;
+    bottom: 14px;
+    left: 20px;
+  }
+  .bw-dialog .bw-join-fields {
+    padding: 20px;
+    gap: 16px;
+  }
+  .bw-dialog[data-view] .bw-host-steps {
+    grid-template-columns: 1fr;
+  }
+  .bw-dialog .bw-step-scene {
+    height: 72px;
+  }
+}
+
+.bw-dialog .bw-join-fields > .bw-stage-heading {
+  grid-row: 1;
+}
+.bw-dialog .bw-join-fields > label {
+  grid-row: 2;
+}
+.bw-dialog .bw-join-fields > button {
+  grid-row: 3;
+}
+.bw-dialog #bw-join .bw-join-fields > .bw-hint {
+  grid-row: 4;
+}

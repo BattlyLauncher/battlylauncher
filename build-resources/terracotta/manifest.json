@@ -1,0 +1,10 @@
+{
+  "version": "0.4.2-battly.2",
+  "upstreamCommit": "74364326038f9a33306777a56ed9bb6664799a1d",
+  "target": "x86_64-pc-windows-msvc",
+  "rust": "rustc 1.100.0-nightly (e71c0f1e3 2026-08-18)",
+  "sha256": "41845dea422a82544912d04a4eee2d7c7c3a6e9e8eb4b1da6becae0a83b51028",
+  "executable": "terracotta-battly.exe",
+  "repository": "https://github.com/BattlyLauncher/Terracotta",
+  "downloadUrl": "https://github.com/BattlyLauncher/Terracotta/releases/download/v0.4.2-battly.2/terracotta-battly.exe"
+}

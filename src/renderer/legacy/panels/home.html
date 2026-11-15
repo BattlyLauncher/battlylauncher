@@ -1,0 +1,429 @@
+<audio
+  id="audioPlayer"
+  controls
+  autoplay
+  style="display: none"
+></audio>
+<div class="bottom_bar">
+  <button
+    id="more-settings-btn"
+    class="button is-info"
+    oncontextmenu="return false;"
+  >
+    <span style="font-size: 20px">
+      <i class="fa-solid fa-angle-up"></i>
+    </span>
+  </button>
+  <ul class="more-options">
+    <li class="option-item">
+      <a
+        href="#"
+        id="mybattly-btn"
+      >
+        <i class="fa-solid fa-user-tag"></i>
+        <span data-string-id="navigation.myBattly"></span>
+      </a>
+    </li>
+    <li class="option-item">
+      <a
+        href="#"
+        id="settings-btn"
+      >
+        <i class="fa-solid fa-gear"></i>
+        <span data-string-id="navigation.settings"></span>
+      </a>
+    </li>
+    <li class="option-item">
+      <a
+        href="#"
+        id="btnShowNews"
+      >
+        <i class="fa-solid fa-newspaper"></i>
+        <span data-string-id="navigation.news"></span>
+      </a>
+    </li>
+    <li class="option-item">
+      <a
+        href="#"
+        id="openBattlyFolderButton"
+      >
+        <i class="fa-solid fa-folder-open"></i>
+        <span data-string-id="navigation.seeFolder"></span>
+      </a>
+    </li>
+    <li class="option-item">
+      <a
+        href="#"
+        id="BotonUnirseServidorDiscord"
+      >
+        <i class="fa-brands fa-discord"></i>
+        <span data-string-id="navigation.discord"></span>
+      </a>
+    </li>
+  </ul>
+
+  <button
+    id="boton_abrir_mods"
+    class="button is-info"
+  >
+    <span> <i class="fa-solid fa-cube"></i> <span data-string-id="navigation.mods"></span> </span>
+    <span class="button-span"></span>
+  </button>
+  <button
+    id="music-btn"
+    class="button is-info"
+  >
+    <span> <i class="fa-solid fa-music"></i> <span data-string-id="navigation.music"></span> </span>
+    <span class="button-span"></span>
+  </button>
+  <div class="servers-dropdown">
+    <button
+      id="servers-btn"
+      class="button is-info"
+      type="button"
+      data-servers-options
+      aria-expanded="false"
+      aria-controls="home-servers-menu"
+    >
+      <span>
+        <i class="fa-solid fa-server"></i> <span data-string-id="buttons.serversBtn"></span>
+      </span>
+    </button>
+
+    <ul
+      id="home-servers-menu"
+      class="more-options servers-options"
+      data-servers-options-menu
+      hidden
+    >
+      <li class="option-item">
+        <button
+          type="button"
+          data-worlds-open
+        >
+          <i
+            class="fa-solid fa-earth-americas"
+            aria-hidden="true"
+          ></i>
+          Battly Worlds
+        </button>
+      </li>
+      <li class="option-item">
+        <button
+          type="button"
+          data-panel="servers"
+        >
+          <i
+            class="fa-solid fa-server"
+            aria-hidden="true"
+          ></i>
+          Battly Servers
+        </button>
+      </li>
+    </ul>
+  </div>
+  <button
+    id="instancias-btn"
+    class="button is-info"
+  >
+    <span>
+      <i class="fa-solid fa-folder"></i> <span data-string-id="navigation.instances"></span>
+    </span>
+    <span class="button-span"></span>
+  </button>
+  <button
+    id="download-btn"
+    class="button is-info"
+  >
+    <span>
+      <i class="fa-solid fa-cloud-arrow-down"></i> <span data-string-id="common.download"></span>
+    </span>
+    <span class="button-span"></span>
+  </button>
+  <button
+    id="play-btn"
+    class="button is-info"
+  >
+    <span> <i class="fa-solid fa-gamepad"></i> <span data-string-id="common.play"></span> </span>
+    <span class="play-button-span"></span>
+  </button>
+</div>
+<div class="main-home-panel">
+  <div class="main-home-panel-left">
+    <!-- User Account Selector Section -->
+    <div class="home-account-news-row">
+      <div class="user-account-selector-container">
+        <div
+          class="user-account-trigger"
+          id="user-account-trigger"
+        >
+          <div class="user-avatar-container">
+            <div
+              id="user-skin-head"
+              class="mc-face-viewer-4x"
+            ></div>
+          </div>
+          <div class="user-info-text">
+            <span
+              class="user-name"
+              id="current-username"
+              >Cargando...</span
+            >
+          </div>
+          <i
+            class="fa-solid fa-chevron-right arrow-icon"
+            id="user-selector-arrow"
+          ></i>
+        </div>
+
+        <div
+          class="account-dropdown"
+          id="account-dropdown"
+          style="display: none"
+        >
+          <div class="account-list-header">Cuentas</div>
+          <div
+            class="account-list"
+            id="account-list"
+          >
+            <!-- Accounts populated by JS -->
+          </div>
+          <div class="dropdown-divider"></div>
+          <button
+            id="customize-skin-dropdown-btn"
+            class="b-dropdown-item"
+          >
+            <i class="fa-solid fa-palette"></i>
+            <span>Personalizar Skin</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="main-home-panel-left-news-type">
+        <h1
+          class="main-home-panel-left-title"
+          data-string-id="home.latestNews"
+        >
+          Últimas novedades de Battly
+        </h1>
+        <div
+          class="select is-small"
+          style="border-radius: 10px !important"
+          id="typeofnewsMain"
+        >
+          <select
+            class="modified-select"
+            id="typeOfNews"
+          >
+            <option
+              value="battly"
+              data-string-id="home.battlyNews"
+            ></option>
+            <option
+              value="minecraft"
+              data-string-id="home.minecraftNews"
+            ></option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div
+      class="home-news"
+      id="battly-news-div"
+    ></div>
+    <div
+      class="main-home-panel-left-see-more"
+      style="display: none"
+    >
+      <p data-string-id="home.seeMore"></p>
+      <i class="fa-solid fa-arrow-right"></i>
+    </div>
+    <div class="main-home-panel-left-online-friends">
+      <div class="main-home-panel-left-news-type">
+        <h1
+          class="main-home-panel-left-title"
+          data-string-id="home.connectedFriends"
+        >
+          conectados
+        </h1>
+        <button
+          class="button is-info is-small"
+          id="friends-btn"
+          style="border-radius: 10px"
+        >
+          <span data-string-id="friends.seeFriendsBtn"
+            >Ver amigos <i class="fa-solid fa-arrow-right"></i
+          ></span>
+        </button>
+      </div>
+      <div class="home-online-friends">
+        <div class="online-friend">
+          <div class="online-friend-data">
+            <p
+              class="online-friend-name"
+              data-string-id="home.loadingFriends"
+            ></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="main-home-panel-right">
+    <h1
+      class="main-home-panel-left-title"
+      style="margin-bottom: 0px"
+      data-string-id="home.status"
+    ></h1>
+    <article
+      class="message is-warning"
+      id="warning-status"
+      style="display: block; border-radius: 10px; margin-bottom: 10px"
+    >
+      <div
+        class="message-body"
+        style="font-weight: 600; padding: 0.5rem 0.8rem; font-size: 13px; border-radius: 10px"
+        id="warning-status-message"
+      ></div>
+    </article>
+    <div class="status-servers">
+      <div class="server">
+        <img
+          class="server-img"
+          src="assets/images/icon.png"
+        />
+        <div class="server-text">
+          <div
+            class="name"
+            data-string-id="home.battlyApi"
+          ></div>
+          <div
+            class="desc"
+            id="Battly_API_Desc"
+          >
+            <span
+              class="green"
+              data-string-id="home.operative"
+            ></span>
+          </div>
+        </div>
+      </div>
+      <div class="server">
+        <img
+          class="server-img"
+          src="assets/images/icon.png"
+        />
+        <div class="server-text">
+          <div
+            class="name"
+            data-string-id="home.battlyWeb"
+          ></div>
+          <div
+            class="desc"
+            id="Battly_WEB_Desc"
+          >
+            <span
+              class="green"
+              data-string-id="home.operative"
+            ></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="status-servers-online-users">
+      <img
+        src="assets/images/icon.png"
+        alt=""
+      />
+      <p
+        id="Miembros_Online"
+        class="status-servers-online-users-text"
+      >
+        1500 <span data-string-id="home.usersOnline"></span>
+      </p>
+    </div>
+    <div class="status-servers-playing-song">
+      <img
+        id="music-img"
+        src="./assets/images/icons/music.gif"
+        alt=""
+      />
+      <div class="status-servers-playing-song-info">
+        <p
+          class="status-servers-playing-song-title"
+          data-string-id="home.playingNow"
+        ></p>
+        <p
+          class="status-servers-playing-song-name"
+          data-string-id="home.playingNowBody"
+        >
+          Nada reproduciéndose
+        </p>
+      </div>
+    </div>
+    <!-- <img src="https://i.giphy.com/sbKB14BJY34ik20XsO.gif" alt="" id="ads" class="ad"> -->
+    <iframe
+      src="about:blank"
+      frameborder="0"
+      scrolling="no"
+      class="ad b-ad-slot"
+      id="ads"
+      allowtransparency="true"
+      width="360"
+      height="150"
+      sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+    ></iframe>
+  </div>
+</div>
+<div class="wrapper-contextmenu">
+  <div class="content-contextmenu">
+    <ul class="menu-contextmenu">
+      <li class="item-contextmenu">
+        <i class="fa fa-eye"></i>
+        <span>Preview</span>
+      </li>
+      <li class="item-contextmenu share-menu">
+        <div>
+          <i class="fa fa-share"></i>
+          <span>Share</span>
+        </div>
+        <i class="uil uil-angle-right"></i>
+        <ul class="share-menu-contextmenu">
+          <li class="item-contextmenu">
+            <i class="fa-brands fa-twitter"></i>
+            <span>Twitter</span>
+          </li>
+          <li class="item-contextmenu">
+            <i class="fa-brands fa-instagram"></i>
+            <span>Instagram</span>
+          </li>
+          <li class="item-contextmenu">
+            <i class="fa-brands fa-dribbble"></i>
+            <span>Dribble</span>
+          </li>
+          <li class="item-contextmenu">
+            <i class="fa-brands fa-telegram"></i>
+            <span>Telegram</span>
+          </li>
+        </ul>
+      </li>
+      <li class="item-contextmenu">
+        <i class="fa fa-link"></i>
+        <span>Get Link</span>
+      </li>
+      <li class="item-contextmenu">
+        <i class="fa fa-pencil"></i>
+        <span>Rename</span>
+      </li>
+      <li class="item-contextmenu">
+        <i class="fa fa-trash"></i>
+        <span>Delete</span>
+      </li>
+    </ul>
+    <div class="setting-contextmenu">
+      <li class="item-contextmenu">
+        <i class="uil uil-setting"></i>
+        <span>Settings</span>
+      </li>
+    </div>
+  </div>
+</div>

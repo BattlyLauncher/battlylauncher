@@ -1,0 +1,561 @@
+.tabs-settings-btn {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 85px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background: #00000080;
+  display: flex;
+  justify-content: center;
+}
+
+.swal-overlay {
+  font-family: 'Battly Emoji', 'Poppins', 'Battly Emoji Sequences';
+}
+
+.media-content,
+section {
+  overflow: hidden;
+}
+
+.bottom_bar_settings {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-height: 80px;
+  padding: 10px;
+  background-color: rgba(33, 33, 33, 0.7);
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  gap: 6px;
+  z-index: 9999;
+  border-radius: 15px !important;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+}
+
+.bottom_bar_settings::-webkit-scrollbar {
+  width: 0;
+}
+
+.active-tab-btn {
+  background: #3ea8ff;
+  box-shadow: 0 0 0 0.125em rgba(72, 95, 199, 0.25);
+}
+
+.active-tab-btn:hover {
+  background: #3e8ed0;
+}
+
+.tabs-settings-content {
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95%;
+  height: 80%;
+  padding-bottom: 1.5rem;
+  border-radius: 5px;
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.not-pointer-events {
+  pointer-events: none;
+}
+
+.active-tab-content {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.information {
+  text-align: center;
+  font:
+    normal normal normal 16px/25px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  color: #f1f1f1;
+}
+
+.title-settings {
+  text-align: center;
+  font:
+    normal normal bold 20px/25px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  color: #f1f1f1;
+  margin: 2% 0;
+}
+
+.center-align {
+  text-align: center;
+}
+
+.settings-content-scroll {
+  overflow: auto;
+  width: 100%;
+  height: 100%;
+}
+
+.settings-content-scroll::-webkit-scrollbar {
+  width: 0;
+}
+
+.center-page {
+  top: 47%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  width: 100%;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * account sttings                                                             *
+ *                                                                             *
+ ******************************************************************************/
+
+.add-account {
+  width: 70%;
+  height: 10%;
+  border: none;
+  border-radius: 5px;
+  font:
+    normal normal bold 30px/40px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  color: #d1d1d1;
+  background-color: #303030;
+  box-shadow: 1px 2px 5px #585858;
+  margin: 20px 0;
+  margin-bottom: 10px;
+}
+
+.add-account:hover {
+  background-color: #005daa;
+  box-shadow: 1px 2px 5px #275276;
+}
+
+.accounts {
+  display: contents;
+  justify-content: center;
+}
+
+.account {
+  display: inline-block;
+  background: #3e8ed0;
+  border: 4px solid #005daa;
+  font:
+    normal normal bold 30px/40px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  width: 500px;
+  height: 100px;
+  margin: 1% 2%;
+  border-radius: 10px;
+  text-align: start;
+  color: #fff;
+  cursor: pointer;
+}
+
+.account:hover {
+  background: #005daa;
+  border: 4px solid #275276;
+}
+
+.active-account {
+  background: #3e8ed0;
+  border: 4px solid #00ff91 !important;
+  color: #fff;
+}
+
+.active-account:hover {
+  background: #005daa;
+  border: 4px solid #08c272 !important;
+}
+
+.account-image {
+  position: relative;
+  pointer-events: none;
+}
+
+.account-name {
+  font:
+    normal normal bold 40px/45px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 29ch;
+}
+
+.add-account-name {
+  margin: 0 100px;
+  margin-top: 25px;
+  font:
+    normal normal bold 40px/45px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 29ch;
+}
+
+.account-uuid {
+  margin: 0 100px;
+  font:
+    normal normal normal 18px/27px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 29ch;
+  pointer-events: none;
+}
+
+.account-delete {
+  margin: -50px 415px;
+  font-size: 50px;
+  width: 65px;
+  height: 65px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.icon-account-delete-btn {
+  margin: 7px 9px;
+  position: absolute;
+  pointer-events: none;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * java settings                                                               *
+ *                                                                             *
+ ******************************************************************************/
+
+.java-settings {
+  background: #0f1623;
+  border-radius: 5px;
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.memory-slider {
+  position: relative;
+  /* margin: 24px; */
+  height: 18px;
+  width: 540px;
+  user-select: none;
+}
+
+.slider-touch-left,
+.slider-touch-right {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  z-index: 2;
+  top: 4;
+}
+
+.slider-touch-left span,
+.slider-touch-right span {
+  display: block;
+  width: 20px;
+  height: 10px;
+  background: #f1f1f1;
+  border: 2px solid #3e8ed0;
+  transition:
+    background-color 0.2s,
+    border 0.2s;
+  border-radius: 18px;
+  cursor: pointer;
+}
+
+.slider-touch-left span:after,
+.slider-touch-right span:after {
+  content: attr(value);
+  font:
+    normal normal bold 12px/18px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  white-space: nowrap;
+  pointer-events: none;
+  position: absolute;
+  top: -20px;
+  left: 83%;
+  transform: translate(-50%);
+}
+
+.slider-line {
+  box-sizing: border-box;
+  position: absolute;
+  width: calc(100% - 18px);
+  left: 9px;
+  top: 7px;
+  height: 4px;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  transition: background-color 0.2s;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.slider-line span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: #161d2b;
+  transition: background-color 0.2s;
+}
+
+.ram-info {
+  display: flex;
+  align-items: center;
+  font:
+    normal normal bold 15px/25px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+}
+
+.path {
+  min-width: 50%;
+  font:
+    normal normal normal 13px/20px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  border-radius: 18px;
+  padding: 8px 16px;
+  margin: 0 40px;
+  margin-top: 2%;
+  background-color: #0f1623;
+  user-select: text;
+  transition:
+    color 0.2s,
+    background-color 0.2s;
+  border: none;
+  outline: none;
+}
+
+.path-button {
+  font:
+    normal normal bold 13px/20px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  border-radius: 18px;
+  padding: 8px 30px;
+  background-color: #00bd7a;
+  cursor: pointer;
+  margin-left: 20px;
+  transition:
+    color 0.2s,
+    background-color 0.2s;
+  border: none;
+  outline: none;
+}
+
+.path-button:hover {
+  background-color: #0f1623;
+}
+
+.path-button-reset {
+  font:
+    normal normal bold 13px/20px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  border-radius: 18px;
+  padding: 8px 30px;
+  background-color: #00bd7a;
+  cursor: pointer;
+  margin-left: 20px;
+  transition:
+    color 0.2s,
+    background-color 0.2s;
+  border: none;
+  outline: none;
+}
+
+.path-button-reset:hover {
+  background-color: #0f1623;
+}
+
+.path-file {
+  display: none;
+  pointer-events: none;
+}
+
+.args-settings {
+  min-width: 50%;
+  font:
+    normal normal normal 13px/20px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  border-radius: 18px;
+  padding: 8px 16px;
+  margin: 0 40px;
+  margin-top: 2%;
+  background-color: #0f1623;
+  user-select: text;
+  transition:
+    color 0.2s,
+    background-color 0.2s;
+  border: none;
+  outline: none;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * resolution settings                                                         *
+ *                                                                             *
+ ******************************************************************************/
+
+.input-size-content {
+  height: 5rem;
+}
+
+.input-size {
+  position: absolute;
+  display: flex;
+  left: 50%;
+  top: 70%;
+  transform: translate(-50%, 0);
+}
+
+.input-settings {
+  text-align: center;
+  background: #0f1623;
+  border: none;
+  outline: none;
+  border-radius: 40px;
+  font-size: 20px;
+  width: 100px;
+  color: #f0f16231;
+}
+
+.size-cross {
+  margin: 10px;
+}
+
+.size-cross:before {
+  font: normal normal bold 20px Icons;
+  content: '\e90e';
+}
+
+.select-wrap {
+  display: inline-flex;
+  margin-left: 10px;
+}
+
+.select-wrap:before {
+  position: absolute;
+  top: 53%;
+  transform: translate(20px, -50%);
+  font-size: 24px;
+  pointer-events: none;
+}
+
+.select-wrap:after {
+  position: relative;
+  top: -6px;
+  content: '\e903';
+  font-family: 'Icons';
+  margin-left: -1.2em;
+  font-size: 24px;
+  pointer-events: none;
+  transform: rotate(180deg);
+  color: black;
+  transition: color 0.2s;
+  pointer-events: none;
+}
+
+.select {
+  border-radius: 40px;
+  /* Bulma also uses this class for wrappers, including loading selectors. */
+  background-color: transparent;
+  font:
+    normal normal normal 12px/18px 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences';
+  transition:
+    color 0.2s,
+    box-shadow 0.2s;
+  border: none;
+  outline: none;
+  appearance: none;
+}
+
+select.select {
+  background-color: var(--friends-bg-secondary, #0f1623);
+  color: var(--friends-text-primary, #f4f6fa);
+  color-scheme: dark;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * launcher settings                                                           *
+ *                                                                             *
+ ******************************************************************************/
+.checkbox-settings {
+  display: none;
+}
+
+.checkbox-settings + label {
+  display: inline;
+  position: relative;
+  top: 2px;
+  margin-right: 24px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  padding: 0px;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+.checkround {
+  position: absolute;
+  z-index: 2;
+  border-radius: 7px;
+  transition: all 0.2s;
+  background-color: #ffffff;
+}
+
+.checkbox-settings:checked + label {
+  background-color: #285880;
+}
+
+.checkround {
+  border-radius: 3px;
+}
+
+.checkbox-settings + label {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.publish-message-warning {
+  display: block;
+  border-radius: 10px !important;
+  width: 95%;
+  margin: 0 auto;
+  padding: 0px;
+}
+
+.publish-message-warning .message-body {
+  font-weight: 600;
+  padding: 0.5rem 0.8rem;
+  font-size: 13px;
+}

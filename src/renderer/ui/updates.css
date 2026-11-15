@@ -1,0 +1,120 @@
+.battly-updates {
+  padding: 18px;
+  border: 1px solid #34465b;
+  border-radius: 12px;
+  background: #152030;
+  color: #f4f7fc;
+}
+.battly-updates h3 {
+  color: #fff;
+  font-size: 19px;
+  margin: 0 0 10px;
+}
+.battly-updates p {
+  margin: 10px 0;
+  color: #bbc9dc;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.battly-updates p:empty {
+  display: none;
+}
+.battly-update-preferences {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 20px 0;
+}
+.battly-update-preferences label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.battly-updates input[type='checkbox'] {
+  appearance: auto;
+  width: 17px;
+  height: 17px;
+  accent-color: var(--theme-color);
+}
+.battly-updates select {
+  color: white;
+  background: #0e1826;
+  padding: 8px 12px;
+  border: 1px solid #34465b;
+  border-radius: 8px;
+}
+.battly-update-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 18px;
+}
+.battly-update-actions button,
+.battly-update-notice button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border: 1px solid #425572;
+  border-radius: 8px;
+  background: #23334b;
+  color: #fff !important;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.battly-update-actions button:hover,
+.battly-update-notice button:hover {
+  background: var(--theme-color);
+}
+.battly-update-actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.battly-updates progress {
+  width: 100%;
+  accent-color: var(--theme-color);
+}
+.battly-updates [hidden],
+.battly-update-notice[hidden] {
+  display: none !important;
+}
+.battly-required-update[hidden] {
+  display: none !important;
+}
+.battly-update-notice {
+  position: fixed;
+  right: 20px;
+  bottom: 100px;
+  z-index: 900;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  max-width: min(530px, calc(100vw - 40px));
+  padding: 16px;
+  background: #152030;
+  color: white;
+  border: 1px solid var(--theme-color);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px #0006;
+  font-size: 13px;
+}
+.battly-update-notice span {
+  flex-basis: 100%;
+}
+.battly-update-notice > strong {
+  flex-basis: 100%;
+  color: #f4f7fc;
+  font-size: 14px;
+}
+.battly-update-notice > span {
+  color: #bbc9dc;
+  overflow-wrap: anywhere;
+}
+.battly-update-notice > span:empty {
+  display: none;
+}

@@ -1,0 +1,322 @@
+{
+  "name": "BattlyLauncher",
+  "productName": "Battly Launcher",
+  "version": "3.1.0",
+  "description": "El mejor Launcher Personalizado para Minecraft Premium y No premium",
+  "author": "TECNO BROS Studios <contacto@tecnobros.es>",
+  "license": "SEE LICENSE IN LICENSE.MD",
+  "private": true,
+  "main": "bootstrap/entry.cjs",
+  "battlyBuild": 1,
+  "battlyUpdate": {
+    "type": "full",
+    "channel": "stable",
+    "repository": "BattlyLauncher/battlylauncher"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "build": {
+    "appId": "com.battlylauncher.launcher",
+    "productName": "Battly Launcher",
+    "artifactName": "Battly-Launcher-${version}-${arch}.${ext}",
+    "asar": true,
+    "directories": {
+      "output": "artifacts/releases/release",
+      "buildResources": "build-resources"
+    },
+    "files": [
+      {
+        "from": "dist",
+        "to": "dist",
+        "filter": [
+          "**/*"
+        ]
+      },
+      "bootstrap/**/*",
+      "package.json"
+    ],
+    "fileAssociations": [
+      {
+        "ext": "bypack",
+        "name": "Battly Pack",
+        "description": "Instancia portable de Battly",
+        "role": "Editor",
+        "mimeType": "application/x-battly-bypack"
+      },
+      {
+        "ext": "mrpack",
+        "name": "Modrinth ModPack",
+        "description": "ModPack de Modrinth para Battly",
+        "role": "Editor",
+        "mimeType": "application/x-modrinth-modpack"
+      }
+    ],
+    "protocols": [
+      {
+        "name": "Battly Launcher",
+        "schemes": [
+          "battlylauncher",
+          "discord-917866962523152404"
+        ]
+      }
+    ],
+    "extraResources": [
+      {
+        "from": "build-resources/worlds-lan/worlds-lan-agent.jar",
+        "to": "worlds-lan/worlds-lan-agent.jar"
+      },
+      {
+        "from": "build-resources/icon.ico",
+        "to": "icon.ico"
+      },
+      {
+        "from": "authlib-injector.jar",
+        "to": "authlib-injector.jar"
+      },
+      {
+        "from": "src/renderer/assets/icon.png",
+        "to": "icon.png"
+      },
+      {
+        "from": "build-resources/battly-tunnel/latam-ca.pem",
+        "to": "battly-tunnel/latam-ca.pem"
+      },
+      {
+        "from": "build-resources/battly-tunnel/GO-LICENSE.txt",
+        "to": "battly-tunnel/GO-LICENSE.txt"
+      },
+      {
+        "from": "build-resources/battly-tunnel/THIRD-PARTY-NOTICES.md",
+        "to": "battly-tunnel/THIRD-PARTY-NOTICES.md"
+      }
+    ],
+    "win": {
+      "icon": "build-resources/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ],
+      "signtoolOptions": {
+        "publisherName": "CN=\"TECNO BROS STUDIOS, S.L.\", O=\"TECNO BROS STUDIOS, S.L.\", L=Barcelona, S=Barcelona, C=ES"
+      },
+      "verifyUpdateCodeSignature": true,
+      "signExts": [
+        "!battly-tunnel-client.exe"
+      ]
+    },
+    "nsis": {
+      "artifactName": "Battly-Launcher-${version}-Setup.exe",
+      "allowElevation": true,
+      "packElevateHelper": true,
+      "include": "build-resources/installer.nsh",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "runAfterFinish": true,
+      "installerLanguages": [
+        "es"
+      ],
+      "multiLanguageInstaller": true,
+      "differentialPackage": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "BattlyLauncher",
+        "repo": "battlylauncher",
+        "releaseType": "release",
+        "channel": "latest"
+      }
+    ],
+    "generateUpdatesFilesForAllChannels": true,
+    "asarUnpack": [
+      "node_modules/7zip-bin/{win,linux,mac}/**/*"
+    ],
+    "linux": {
+      "icon": "src/renderer/assets/icon.png",
+      "category": "Game",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "rpm",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "extraResources": [
+        {
+          "from": "build-resources/worlds-lan/worlds-lan-agent.jar",
+          "to": "worlds-lan/worlds-lan-agent.jar"
+        },
+        {
+          "from": "build-resources/frpc/linux-x64",
+          "to": "frpc/linux-x64"
+        }
+      ],
+      "syncDesktopName": true,
+      "desktop": {
+        "entry": {
+          "Name": "Battly Launcher"
+        }
+      },
+      "artifactName": "Battly-Launcher-linux-${arch}.${ext}",
+      "executableName": "battlylauncher"
+    },
+    "deb": {
+      "depends": [
+        "libgtk-3-0",
+        "libnotify4",
+        "libnss3",
+        "libxss1",
+        "libxtst6",
+        "xdg-utils",
+        "libatspi2.0-0",
+        "libuuid1",
+        "libsecret-1-0",
+        "libasound2t64 | libasound2",
+        "libgbm1"
+      ],
+      "artifactName": "Battly-Launcher-linux-amd64.${ext}",
+      "packageName": "battlylauncher"
+    },
+    "beforePack": "public scripts/prepare-linux-resources.cjs",
+    "afterPack": "public scripts/verify-client-package.cjs",
+    "mac": {
+      "signIgnore": [
+        "battly-tunnel-client$"
+      ],
+      "extendInfo": {
+        "NSUserNotificationAlertStyle": "alert"
+      },
+      "icon": "build-resources/icon.icns",
+      "extraResources": [
+        {
+          "from": "build-resources/mac-app-update.yml",
+          "to": "app-update.yml"
+        }
+      ]
+    },
+    "appImage": {
+      "artifactName": "Battly-Launcher-linux-x86_64.${ext}"
+    },
+    "rpm": {
+      "artifactName": "Battly-Launcher-linux-x86_64.${ext}",
+      "packageName": "battlylauncher"
+    }
+  },
+  "scripts": {
+    "i18n:build": "node \"public scripts/build-language-packs.cjs\"",
+    "i18n:audit": "node \"public scripts/audit-language-packs.cjs\"",
+    "i18n:audit-dialogs": "node \"public scripts/audit-dialog-translations.cjs\"",
+    "i18n:export": "node \"public scripts/export-language-packs.cjs\"",
+    "postinstall": "install-electron",
+    "clean": "rimraf dist",
+    "dev": "npm run build && node \"public scripts/dev-runtime.cjs\"",
+    "start": "electron .",
+    "build": "npm run check:public && npm run i18n:verify && npm run clean && npm run build:electron && npm run build:renderer",
+    "prepare:terracotta": "node \"public scripts/fetch-terracotta-release.cjs\"",
+    "build:electron": "tsc -p tsconfig.electron.json && node \"public scripts/copy-native-locales.cjs\" && npm run build:preload && npm run build:bootstrap",
+    "build:bootstrap": "node \"public scripts/build-patches.cjs\" config",
+    "patches:keygen": "node \"public scripts/build-patches.cjs\" keygen",
+    "patches:release": "node \"public scripts/build-patches.cjs\" release",
+    "patches:plan": "node \"public scripts/patch-release-config.cjs\"",
+    "patches:test": "node --test \"public scripts/build-patches.test.cjs\" \"public scripts/github-patches.test.cjs\" \"public scripts/patch-release-config.test.cjs\" \"public scripts/patch-builder.test.cjs\" \"public scripts/patch-workflow.test.cjs\" \"public scripts/update-service.test.cjs\" \"public scripts/update-config.test.cjs\" \"public scripts/windows-updater-package.test.cjs\" \"public scripts/update-notice.test.cjs\" \"public scripts/official-installer-names.test.cjs\" \"public scripts/package-update-base.test.cjs\" \"public scripts/full-release-publication.test.cjs\" \"public scripts/mac-updater-package.test.cjs\"",
+    "build:preload": "esbuild src/preload/index.ts --bundle --platform=node --format=cjs --external:electron --sourcemap --outfile=dist/preload/index.js && esbuild src/preload/worlds-overlay.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist/preload/worlds-overlay.js && esbuild src/preload/splash.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist/preload/splash.js && esbuild src/preload/startup-update.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist/preload/startup-update.js",
+    "build:renderer": "vite build",
+    "check:build-runtime": "node \"public scripts/require-build-node.cjs\"",
+    "prebuild:win": "npm run check:build-runtime",
+    "build:win": "npm run build && electron-builder --win --dir --publish never",
+    "prebuild:win:local": "npm run check:build-runtime",
+    "build:win:local": "npm run build && electron-builder --win --dir --publish never --config.directories.output=artifacts/releases/release-local --config.electronDist=node_modules/electron/dist --config.win.signExecutable=false",
+    "build:win:installer": "npm run build:win:release",
+    "typecheck": "tsc -b --pretty false",
+    "lint": "eslint .",
+    "format:check": "prettier --check .",
+    "check": "npm run format:check && npm run lint && npm run typecheck",
+    "build:linux": "npm run build && electron-builder --linux --x64 --config.productName=BattlyLauncher --publish never",
+    "build:linux:release": "npm run build && electron-builder --config electron-builder.release.cjs --linux --x64 --config.productName=BattlyLauncher --publish never",
+    "build:mac:release": "node \"public scripts/check-mac-signing.cjs\" && npm run build && node \"public scripts/package-update-base.cjs\" darwin x64 && node \"public scripts/package-update-base.cjs\" darwin arm64",
+    "build:flatpak": "npm run build && electron-builder --config electron-builder.flatpak.cjs --linux flatpak --x64 --publish never",
+    "build:win:release": "npm run build && node \"public scripts/package-update-base.cjs\" win32 x64",
+    "verify:win:release": "node \"public scripts/verify-release.cjs\"",
+    "i18n:verify": "node \"public scripts/audit-language-packs.cjs\" --require-complete && node \"public scripts/audit-localization-sources.cjs\" --require-known && node \"public scripts/audit-localization-inventory.cjs\" --require-quality",
+    "i18n:review-ui": "node \"public scripts/audit-localization-inventory.cjs\" --require-quality --markup-out artifacts/ui-markup.json && electron \"public scripts/ui-file-review.cjs\"",
+    "format": "prettier --write .",
+    "check:public": "node \"public scripts/check-public-source.cjs\""
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/adm-zip": "0.5.7",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "22.20.1",
+    "@types/yauzl": "^3.4.0",
+    "@types/yazl": "^3.3.1",
+    "cross-env": "10.1.0",
+    "electron": "43.4.1",
+    "electron-builder": "26.15.3",
+    "esbuild": "0.28.2",
+    "eslint": "10.0.1",
+    "prettier": "3.9.6",
+    "resedit": "1.7.2",
+    "rimraf": "6.1.3",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.68.0",
+    "vite": "8.2.2"
+  },
+  "dependencies": {
+    "7zip-bin": "5.2.0",
+    "adm-zip": "0.6.1",
+    "dompurify": "^3.4.17",
+    "electron-updater": "6.8.9",
+    "marked": "^18.0.11",
+    "minecraft-launcher-core": "3.18.2",
+    "simple-notify": "^1.0.6",
+    "skinview3d": "3.0.1",
+    "socket.io-client": "4.8.3",
+    "tar": "^7.5.22",
+    "yauzl": "^3.4.0",
+    "yazl": "^3.3.1"
+  },
+  "overrides": {
+    "minecraft-launcher-core": {
+      "adm-zip": "0.6.1",
+      "request": "npm:@cypress/request@4.0.1",
+      "uuid": "11.1.1"
+    },
+    "qs": "6.17.1"
+  },
+  "homepage": "https://battlylauncher.com",
+  "desktopName": "com.battlylauncher.launcher.desktop"
+}

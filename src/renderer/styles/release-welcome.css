@@ -1,0 +1,231 @@
+body.release-welcome-pending > :not(.release-welcome) {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+dialog.release-welcome {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #000;
+  overflow: hidden;
+}
+.release-welcome::backdrop {
+  background: #000;
+}
+.release-welcome video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.release-welcome > button {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.release-welcome > button[hidden] {
+  display: none;
+}
+.release-welcome > button.release-video-continue {
+  top: calc(50% + 60px);
+}
+/* Keep global dialog effects from changing the trailer's original image. */
+dialog.release-welcome[open] {
+  opacity: 1 !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  animation: none !important;
+  box-shadow: none;
+}
+dialog.release-welcome video {
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal;
+}
+dialog.release-welcome::before,
+dialog.release-welcome::after {
+  content: none !important;
+}
+.release-welcome.is-idle {
+  cursor: none;
+}
+dialog.release-welcome .release-video-controls {
+  position: absolute;
+  inset: auto 0 0;
+  box-sizing: border-box;
+  padding: 64px 24px 18px;
+  background: linear-gradient(transparent, rgb(5 9 15 / 92%));
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+  color: #f5f8fc;
+  font-family: 'Battly Emoji', 'Poppins', 'Battly Emoji Sequences', sans-serif;
+}
+dialog.release-welcome .release-video-controls.is-visible,
+dialog.release-welcome .release-video-controls:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+}
+dialog.release-welcome .release-video-controls progress {
+  display: block;
+  width: 100%;
+  height: 6px;
+  margin: 0 0 12px;
+  border: 0;
+  border-radius: 999px;
+  overflow: hidden;
+  appearance: none;
+  pointer-events: none;
+  background: rgb(255 255 255 / 18%);
+}
+.release-video-controls progress::-webkit-progress-bar {
+  background: rgb(255 255 255 / 18%);
+  border-radius: 999px;
+}
+.release-video-controls progress::-webkit-progress-value {
+  background: #3e8ed0;
+  border-radius: 999px;
+}
+.release-video-controls progress::-moz-progress-bar {
+  background: #3e8ed0;
+  border-radius: 999px;
+}
+dialog.release-welcome .release-video-controls__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+dialog.release-welcome .release-video-controls__row button {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  transform: none;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 10px;
+  background: rgb(20 32 47 / 85%);
+  color: #f5f8fc;
+  cursor: pointer;
+}
+dialog.release-welcome .release-video-controls__row button:hover {
+  background: #244c6b;
+  border-color: #3e8ed0;
+}
+.release-video-controls__row button svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+dialog.release-welcome .release-video-controls__row input[type='range'] {
+  appearance: none;
+  box-sizing: border-box;
+  flex: 0 1 112px;
+  width: 112px;
+  min-width: 64px;
+  height: 32px;
+  margin: 0 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+dialog.release-welcome .release-video-controls__row input::-webkit-slider-runnable-track {
+  height: 6px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    #3e8ed0 var(--volume-level, 100%),
+    rgb(255 255 255 / 22%) var(--volume-level, 100%)
+  );
+}
+dialog.release-welcome .release-video-controls__row input::-moz-range-track {
+  height: 6px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    #3e8ed0 var(--volume-level, 100%),
+    rgb(255 255 255 / 22%) var(--volume-level, 100%)
+  );
+}
+dialog.release-welcome .release-video-controls__row input::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -5px;
+  border: 2px solid #f5f8fc;
+  border-radius: 50%;
+  background: #3e8ed0;
+  box-shadow: 0 0 0 3px rgb(62 142 208 / 18%);
+}
+.release-video-controls__row input::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #f5f8fc;
+  border-radius: 50%;
+  background: #3e8ed0;
+}
+dialog.release-welcome .release-video-controls__time {
+  margin-left: auto;
+  white-space: nowrap;
+  color: #e0e9f3;
+  font-size: 14px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+}
+.release-video-controls__row button:focus-visible,
+.release-video-controls__row input:focus-visible {
+  outline: 2px solid #78c5ff;
+  outline-offset: 4px;
+}
+@media (max-width: 600px) {
+  dialog.release-welcome .release-video-controls {
+    padding: 40px 14px 12px;
+  }
+  dialog.release-welcome .release-video-controls__row {
+    gap: 8px;
+  }
+  dialog.release-welcome .release-video-controls__time {
+    font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog.release-welcome .release-video-controls {
+    transition: none;
+  }
+}
+
+dialog.release-welcome > button.release-video-skip {
+  left: auto;
+  top: 20px;
+  right: 20px;
+  transform: none;
+  z-index: 2;
+  padding: 10px 18px;
+  border: 1px solid #ffffff60;
+  border-radius: 10px;
+  background: #101722e6;
+  color: #fff;
+  cursor: pointer;
+}
+dialog.release-welcome > button.release-video-skip:focus-visible {
+  outline: 2px solid #78c5ff;
+  outline-offset: 3px;
+}

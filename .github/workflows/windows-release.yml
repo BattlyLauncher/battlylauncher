@@ -1,0 +1,214 @@
+name: Battly desktop builds (Windows, Linux, macOS)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  unix:
+    environment: battly-updates-build
+    env:
+      BATTLY_MAC_SIGNING_MODE: ${{ vars.BATTLY_MAC_SIGNING_MODE || (github.event_name == 'workflow_dispatch' && 'adhoc' || 'self-signed') }}
+      BATTLY_MAC_CERT_SHA1: ${{ vars.BATTLY_MAC_CERT_SHA1 }}
+    if: github.event_name != 'release' || !github.event.release.prerelease
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux
+            runner: ubuntu-24.04
+          - platform: mac
+            runner: macos-15
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.3'
+          cache: npm
+      - name: Check release version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          node -e 'const fs=require("fs"),v=require("./package.json").version,t=process.env.RELEASE_TAG;if(t&&t!==v&&t!==`v${v}`)throw Error("Release version mismatch");fs.appendFileSync(process.env.GITHUB_ENV,`RELEASE_DIR=artifacts/releases/release-${v}\n`);'
+      - run: npm ci
+      - name: Prepare release public key
+        env:
+          PATCH_PUBLIC_KEY: ${{ secrets.BATTLY_PATCH_PUBLIC_KEY }}
+        run: node "public scripts/prepare-patch-ci.cjs"
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm audit --omit=dev --audit-level=high
+      - name: Check macOS signing prerequisites
+        if: matrix.platform == 'mac'
+        env:
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          BATTLY_MAC_SIGNING_P12: ${{ secrets.BATTLY_MAC_SIGNING_P12 }}
+          BATTLY_MAC_SIGNING_PASSWORD: ${{ secrets.BATTLY_MAC_SIGNING_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: node "public scripts/check-mac-signing.cjs"
+      - name: Prepare Linux package tools
+        if: matrix.platform == 'linux'
+        run: sudo apt-get -o Acquire::Retries=3 update && sudo apt-get -o Acquire::Retries=3 install -y rpm
+      - name: Build native packages
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          CSC_LINK: ${{ matrix.platform == 'mac' && secrets.MAC_CSC_LINK || '' }}
+          CSC_KEY_PASSWORD: ${{ matrix.platform == 'mac' && secrets.MAC_CSC_KEY_PASSWORD || '' }}
+          BATTLY_MAC_SIGNING_P12: ${{ matrix.platform == 'mac' && secrets.BATTLY_MAC_SIGNING_P12 || '' }}
+          BATTLY_MAC_SIGNING_PASSWORD: ${{ matrix.platform == 'mac' && secrets.BATTLY_MAC_SIGNING_PASSWORD || '' }}
+          APPLE_ID: ${{ matrix.platform == 'mac' && secrets.APPLE_ID || '' }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ matrix.platform == 'mac' && secrets.APPLE_APP_SPECIFIC_PASSWORD || '' }}
+          APPLE_TEAM_ID: ${{ matrix.platform == 'mac' && secrets.APPLE_TEAM_ID || '' }}
+        run: |
+          if [ "$PLATFORM" = mac ] && [ "$BATTLY_MAC_SIGNING_MODE" != developer-id ]; then
+            unset CSC_LINK CSC_KEY_PASSWORD
+          fi
+          npm run "build:${PLATFORM}:release"
+      - name: Release regressions
+        run: node --test "public scripts/update-service.test.cjs" "public scripts/build-patches.test.cjs" "public scripts/launcher-file-reuse.test.cjs" "public scripts/java-x86-launch.test.cjs" "public scripts/mesa-recovery.test.cjs" "public scripts/mesa-zero-exit.test.cjs" "public scripts/worlds-overlay-fullscreen.test.cjs"
+      - name: Verify packages
+        env:
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          if [ "$PLATFORM" = linux ]; then
+            node "public scripts/verify-release.cjs" "$RELEASE_DIR" --linux
+          else
+            node "public scripts/verify-mac-release.cjs" "$RELEASE_DIR"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: battly-${{ matrix.platform }}
+          if-no-files-found: error
+          path: |
+            ${{ env.RELEASE_DIR }}/*.AppImage
+            ${{ env.RELEASE_DIR }}/*.deb
+            ${{ env.RELEASE_DIR }}/*.rpm
+            ${{ env.RELEASE_DIR }}/*.dmg
+            ${{ env.RELEASE_DIR }}/*.dmg.blockmap
+            ${{ env.RELEASE_DIR }}/*.tar.gz
+            ${{ env.RELEASE_DIR }}/*-mac-*.zip
+            ${{ env.RELEASE_DIR }}/*-mac-*.zip.blockmap
+            ${{ env.RELEASE_DIR }}/*-mac.yml
+            ${{ env.RELEASE_DIR }}/verification.json
+      - name: Attach platform packages
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          shopt -s nullglob
+          if [ "$PLATFORM" = linux ]; then
+            files=("$RELEASE_DIR"/*.AppImage "$RELEASE_DIR"/*.deb "$RELEASE_DIR"/*.rpm "$RELEASE_DIR"/*.tar.gz)
+          else
+            files=("$RELEASE_DIR"/*.tar.gz "$RELEASE_DIR"/*.dmg "$RELEASE_DIR"/*.dmg.blockmap "$RELEASE_DIR"/*-mac-*.zip "$RELEASE_DIR"/*-mac-*.zip.blockmap "$RELEASE_DIR"/*-mac.yml)
+          fi
+          if [ "$PLATFORM" = linux ]; then test "${#files[@]}" -eq 4; else test "${#files[@]}" -ge 5; fi
+          gh release upload "$RELEASE_TAG" "${files[@]}"
+  windows:
+    if: github.event_name != 'release' || !github.event.release.prerelease
+    runs-on: windows-2022
+    timeout-minutes: 45
+    environment: windows-signing
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      BATTLY_SIGNING_MODE: azure
+      BATTLY_AZURE_SIGNING_ENDPOINT: ${{ secrets.AZURE_SIGNING_ENDPOINT }}
+      BATTLY_AZURE_SIGNING_ACCOUNT: ${{ secrets.AZURE_SIGNING_ACCOUNT_NAME }}
+      BATTLY_AZURE_SIGNING_PROFILE: ${{ secrets.AZURE_SIGNING_CERTIFICATE_PROFILE }}
+      BATTLY_OFFICIAL_INSTALLER_TAG: ${{ vars.BATTLY_OFFICIAL_INSTALLER_TAG }}
+      AZURE_CORE_OUTPUT: none
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.3'
+          cache: npm
+      - name: Check release version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          $version = (Get-Content package.json | ConvertFrom-Json).version
+          if ($env:RELEASE_TAG -and $env:RELEASE_TAG -cnotmatch ('^v?' + [regex]::Escape($version) + '$')) {
+            throw 'Release tag and package.json version do not match'
+          }
+          "RELEASE_DIR=artifacts/releases/release-$version" >> $env:GITHUB_ENV
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm audit --omit=dev --audit-level=high
+      - name: Compile
+        env:
+          PATCH_PUBLIC_KEY: ${{ secrets.BATTLY_PATCH_PUBLIC_KEY }}
+        run: |
+          node "public scripts/prepare-patch-ci.cjs"
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          npm run build
+      - name: Release regressions
+        run: |
+          node --test "public scripts/update-service.test.cjs" "public scripts/windows-updater-package.test.cjs" "public scripts/build-patches.test.cjs" "public scripts/launcher-file-reuse.test.cjs" "public scripts/java-x86-launch.test.cjs" "public scripts/mesa-recovery.test.cjs" "public scripts/mesa-zero-exit.test.cjs" "public scripts/worlds-overlay-fullscreen.test.cjs"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Authenticate signing identity (OIDC)
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Sign ZIPs and prepare the official updater installers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node "public scripts/package-update-base.cjs" win32 x64
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          node "public scripts/package-update-base.cjs" win32 ia32
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+      - name: Verify signed ZIPs and updater metadata
+        run: |
+          node "public scripts/verify-release.cjs" "$env:RELEASE_DIR" --arch=x64
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node "public scripts/verify-release.cjs" "$env:RELEASE_DIR" --arch=ia32
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node "public scripts/verify-windows-updater.cjs" "$env:RELEASE_DIR"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Retain verified packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: signed-windows
+          if-no-files-found: error
+          path: |
+            artifacts/patch-ci/github-assets/*
+      - name: Attach Windows packages and updater feed
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          $assets = 'artifacts/patch-ci/github-assets'
+          $files = @(Get-ChildItem -LiteralPath $assets -File -Filter '*.zip')
+          if ($files.Count -ne 2) { throw 'Expected x64 and ia32 Windows ZIPs for BattlyInstaller' }
+          $files = @(Get-ChildItem -LiteralPath $assets -File)
+          if ($files.Count -lt 10) { throw 'Missing official installers, blockmaps, feed or verification reports' }
+          # No --clobber: a retry must never replace already distributed binaries.
+          gh release upload $env:RELEASE_TAG @($files.FullName)
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

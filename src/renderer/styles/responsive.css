@@ -1,0 +1,114 @@
+/* Scale the original home controls together instead of changing their proportions. */
+body {
+  min-height: 0;
+  --home-scale: min(1, calc(100vw / 1280px), calc(100vh / 720px));
+}
+
+.home-panel .main-home-panel {
+  zoom: var(--home-scale);
+  height: calc((100vh - 40px) / var(--home-scale) - 90px);
+  min-height: 0;
+  margin-top: calc(40px / var(--home-scale));
+}
+
+.home-panel .main-home-panel-left {
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+  min-height: 0;
+}
+
+.home-panel .home-account-news-row {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 10px;
+}
+
+.home-panel .main-home-panel-left-news-type {
+  min-width: 0;
+  gap: 10px;
+}
+
+.home-panel .home-account-news-row .main-home-panel-left-title {
+  min-width: 0;
+}
+
+.home-panel .home-account-news-row .select {
+  flex-shrink: 0;
+}
+
+.home-panel [data-home-news-list] {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  overscroll-behavior: contain;
+}
+
+.home-panel [data-home-news-list] > :is(.news-block, .news-card) {
+  flex: 0 0 auto;
+}
+
+.home-panel .main-home-panel-left-online-friends {
+  flex: 0 0 auto;
+}
+
+.home-panel .main-home-panel-left-online-friends .main-home-panel-left-title {
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
+.home-panel #friends-btn {
+  flex-shrink: 0;
+  margin-top: 20px;
+}
+
+.home-panel .main-home-panel-right {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.home-panel .main-home-panel-right iframe.ad {
+  max-width: 100%;
+}
+
+.home-panel .bottom_bar.bottom-bar {
+  zoom: var(--home-scale);
+  max-width: none;
+  flex-shrink: 0;
+}
+
+.home-panel .bottom_bar.bottom-bar > .button,
+.home-panel .bottom_bar.bottom-bar .servers-dropdown > .button {
+  flex-shrink: 0;
+  min-height: 40px;
+  height: auto;
+  padding: 8px 15px;
+  font-size: 16px;
+}
+
+.home-panel .bottom_bar.bottom-bar > [data-more-options] {
+  height: 40px;
+  padding-block: 0;
+}
+.home-panel .bottom_bar.bottom-bar > [data-more-options] > span {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.home-tutorial-prompt {
+  zoom: var(--home-scale);
+  bottom: 90px;
+  max-width: min(440px, calc(30vw / var(--home-scale) - 44px));
+  flex-wrap: wrap;
+}
+
+.home-tutorial-prompt span {
+  flex-basis: calc(100% - 70px);
+}
+
+.home-tutorial-prompt [data-home-tutorial-dismiss] {
+  margin-left: auto;
+}

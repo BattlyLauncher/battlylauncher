@@ -1,0 +1,12 @@
+src/renderer/assets/fontawesome/css/all.min.css
+src/renderer/legacy/assets/js/libs/
+.real-minecraft-smoke/
+.real-java-core-smoke/
+
+# Preserve the published license text verbatim.
+/LICENSE.MD
+
+# Local operational tools are not part of the published source.
+/scripts/
+/server-staging/
+/resources/locales/dynamic-audit-source.json

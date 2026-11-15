@@ -1,0 +1,735 @@
+<div class="music-studio">
+  <header class="music-masthead">
+    <div class="music-wordmark">
+      <img
+        data-music-brand-logo
+        alt="Battly"
+      /><span>Battly<strong>Music</strong></span>
+    </div>
+    <div class="b-music-search-bar-container music-search">
+      <i
+        class="fa-solid fa-magnifying-glass music-search-icon"
+        aria-hidden="true"
+      ></i>
+      <input
+        id="top-search"
+        type="search"
+        placeholder="Busca una canción o un artista…"
+        aria-label="Buscar música"
+      />
+      <button
+        id="b-music-reproducir-btn"
+        type="button"
+        class="music-button music-button-primary"
+        aria-label="Buscar"
+      >
+        Buscar
+      </button>
+      <div class="b-music-search-results"></div>
+    </div>
+    <button
+      id="b-music-back-btn"
+      type="button"
+      class="music-button music-button-quiet"
+      aria-label="Volver a Battly"
+    >
+      <i
+        class="fa-solid fa-arrow-left"
+        aria-hidden="true"
+      ></i
+      ><span>Volver a Battly</span>
+    </button>
+  </header>
+  <aside class="music-rail">
+    <nav
+      class="b-music-nav"
+      aria-label="Secciones de Battly Music"
+    >
+      <button
+        type="button"
+        data-panel="b-music-panel-inicio"
+        aria-label="Explorar"
+      >
+        <i
+          class="fa-solid fa-compass"
+          aria-hidden="true"
+        ></i
+        ><span>Explorar</span></button
+      ><button
+        type="button"
+        data-panel="b-music-panel-biblioteca"
+        aria-label="Favoritos"
+      >
+        <i
+          class="fa-solid fa-heart"
+          aria-hidden="true"
+        ></i
+        ><span>Favoritos</span></button
+      ><button
+        type="button"
+        data-panel="b-music-panel-playlists"
+        id="b-music-show-playlists"
+        aria-label="Playlists"
+      >
+        <i
+          class="fa-solid fa-layer-group"
+          aria-hidden="true"
+        ></i
+        ><span>Playlists</span></button
+      ><button
+        type="button"
+        data-panel="b-music-queue-panel"
+        id="b-music-queue-panel-btn"
+        aria-label="Cola"
+      >
+        <i
+          class="fa-solid fa-list-ul"
+          aria-hidden="true"
+        ></i
+        ><span>Cola</span></button
+      ><button
+        type="button"
+        data-panel="b-music-panel-settings"
+        id="b-music-settings-btn"
+        aria-label="Audio"
+      >
+        <i
+          class="fa-solid fa-sliders"
+          aria-hidden="true"
+        ></i
+        ><span>Audio</span>
+      </button>
+    </nav>
+    <div class="music-rail-bottom">
+      <button
+        id="b-music-invites-subnav"
+        type="button"
+        aria-label="Invitaciones"
+      >
+        <i
+          class="fa-solid fa-user-group"
+          aria-hidden="true"
+        ></i
+        ><span>Invitaciones</span
+        ><span
+          id="b-music-collab-invites-badge"
+          class="b-music-nav-badge"
+          hidden
+          >0</span
+        >
+      </button>
+      <button
+        id="b-music-import-playlists-btn"
+        type="button"
+        aria-label="Importar playlists"
+      >
+        <i
+          class="fa-solid fa-file-import"
+          aria-hidden="true"
+        ></i
+        ><span>Importar</span>
+      </button>
+    </div>
+  </aside>
+  <main class="music-workspace">
+    <div class="music-workspace-toolbar">
+      <div class="music-history">
+        <button
+          id="arrow-back"
+          type="button"
+          aria-label="Vista anterior"
+        >
+          <i
+            class="fa-solid fa-chevron-left"
+            aria-hidden="true"
+          ></i></button
+        ><button
+          id="arrow-forward"
+          type="button"
+          aria-label="Vista siguiente"
+        >
+          <i
+            class="fa-solid fa-chevron-right"
+            aria-hidden="true"
+          ></i>
+        </button>
+      </div>
+      <span data-music-cache></span>
+    </div>
+    <p
+      class="music-status"
+      data-music-status
+      role="status"
+    ></p>
+    <div class="b-music-panel b-music-panel-inicio active">
+      <header class="music-page-heading">
+        <div><h1>Para ti</h1></div>
+        <button
+          class="music-button"
+          type="button"
+          data-music-shortcut="b-music-panel-playlists"
+        >
+          <i
+            class="fa-solid fa-layer-group"
+            aria-hidden="true"
+          ></i>
+          Tus playlists
+        </button>
+      </header>
+      <button
+        type="button"
+        class="music-spotlight"
+        data-music-spotlight
+        hidden
+      >
+        <img
+          data-music-spotlight-cover
+          alt=""
+        />
+        <div class="music-spotlight-shade"></div>
+        <div class="music-spotlight-copy">
+          <span class="music-spotlight-tag"
+            ><i
+              class="fa-solid fa-star"
+              aria-hidden="true"
+            ></i>
+            EN PRIMER PLANO</span
+          >
+          <h2 data-music-spotlight-title></h2>
+          <p data-music-spotlight-artist></p>
+          <span class="music-spotlight-play"
+            ><i
+              class="fa-solid fa-play"
+              aria-hidden="true"
+            ></i>
+            Escuchar ahora</span
+          >
+        </div>
+      </button>
+      <div class="music-discover-grid">
+        <section class="music-track-section">
+          <div class="music-section-title">
+            <h2>Selección Battly</h2>
+            <span data-music-spotlight-count></span>
+          </div>
+          <div class="b-music-recent-row"></div>
+        </section>
+        <section class="music-curation">
+          <div class="music-section-title"><h2>Hechas para ti</h2></div>
+          <div class="b-music-home-sections"></div>
+        </section>
+      </div>
+    </div>
+    <div class="b-music-panel b-music-panel-biblioteca">
+      <h1 data-string-id="music.yourLibrary"></h1>
+      <div class="b-music-library-sections">
+        <div class="b-music-library-section">
+          <h3 data-string-id="music.songsYouLike"></h3>
+          <div
+            class="b-music-library-list"
+            id="library-liked-list"
+          ></div>
+        </div>
+      </div>
+    </div>
+    <div class="b-music-panel b-music-panel-playlists">
+      <h1 data-string-id="music.yourPlaylists"></h1>
+      <div class="b-music-playlists-generated-wrap">
+        <h2>Para ti</h2>
+        <div
+          class="b-music-playlists-container b-music-generated-playlists"
+          data-music-generated
+        ></div>
+      </div>
+      <div class="b-music-playlists-library-wrap">
+        <h2>Tus playlists guardadas</h2>
+        <div class="b-music-playlists-container"></div>
+      </div>
+    </div>
+    <div class="b-music-panel b-music-panel-collab-invites">
+      <h1>Invitaciones</h1>
+      <div
+        id="b-music-collab-invites-list"
+        class="b-music-collab-invites-list"
+      ></div>
+    </div>
+    <div class="b-music-panel b-music-panel-settings">
+      <h1>Ajustes de audio</h1>
+      <div class="b-music-settings-grid">
+        <div class="music-settings-column">
+          <section class="b-music-settings-card">
+            <h3>Calidad de audio</h3>
+            <p>Selecciona el perfil de reproduccion para las canciones nuevas.</p>
+            <select
+              id="music-setting-quality"
+              class="b-music-settings-select"
+            >
+              <option value="low">Ahorro de datos</option>
+              <option value="balanced">Balanceado</option>
+              <option value="high">Alta calidad</option>
+            </select>
+            <p
+              class="b-music-setting-hint"
+              id="music-quality-hint"
+            ></p>
+          </section>
+          <section class="b-music-settings-card">
+            <h3>Normalizador</h3>
+            <label class="b-music-switch-row">
+              <span>Normalizar volumen automaticamente</span>
+              <input
+                type="checkbox"
+                id="music-setting-normalizer-enabled"
+              />
+            </label>
+            <label
+              class="b-music-setting-label"
+              for="music-setting-normalizer-target"
+              >Intensidad</label
+            >
+            <input
+              id="music-setting-normalizer-target"
+              type="range"
+              min="80"
+              max="130"
+              step="1"
+              value="100"
+            />
+            <p class="b-music-setting-hint">
+              Nivel objetivo: <strong id="music-setting-normalizer-value">100%</strong>
+            </p>
+          </section>
+          <section class="b-music-settings-card">
+            <h3>Extras</h3>
+            <label class="b-music-switch-row">
+              <span>Filtrar contenido explicito en recomendaciones</span>
+              <input
+                type="checkbox"
+                id="music-setting-explicit-filter"
+              />
+            </label>
+            <label class="b-music-switch-row">
+              <span>Precarga agresiva de canciones</span>
+              <input
+                type="checkbox"
+                id="music-setting-aggressive-preload"
+              />
+            </label>
+          </section>
+        </div>
+        <div class="music-settings-column">
+          <section class="b-music-settings-card">
+            <h3>Ecualizador</h3>
+            <label class="b-music-switch-row">
+              <span>Activar ecualizador</span>
+              <input
+                type="checkbox"
+                id="music-setting-eq-enabled"
+              />
+            </label>
+
+            <label
+              class="b-music-setting-label"
+              for="music-setting-eq-preset"
+              >Preajuste</label
+            >
+            <select
+              id="music-setting-eq-preset"
+              class="b-music-settings-select"
+            >
+              <option value="flat">Neutro</option>
+              <option value="bass_boost">Refuerzo de graves</option>
+              <option value="vocal">Voz</option>
+              <option value="treble_boost">Refuerzo de agudos</option>
+              <option value="night">Noche</option>
+              <option value="custom">Personalizado</option>
+            </select>
+
+            <div
+              class="b-music-eq-grid"
+              id="music-eq-controls"
+            >
+              <label
+                class="b-music-eq-band"
+                for="music-eq-band-60"
+              >
+                <span>60 Hz</span>
+                <input
+                  id="music-eq-band-60"
+                  type="range"
+                  min="-12"
+                  max="12"
+                  step="1"
+                  value="0"
+                />
+                <strong id="music-eq-band-60-value">0 dB</strong>
+              </label>
+              <label
+                class="b-music-eq-band"
+                for="music-eq-band-170"
+              >
+                <span>170 Hz</span>
+                <input
+                  id="music-eq-band-170"
+                  type="range"
+                  min="-12"
+                  max="12"
+                  step="1"
+                  value="0"
+                />
+                <strong id="music-eq-band-170-value">0 dB</strong>
+              </label>
+              <label
+                class="b-music-eq-band"
+                for="music-eq-band-350"
+              >
+                <span>350 Hz</span>
+                <input
+                  id="music-eq-band-350"
+                  type="range"
+                  min="-12"
+                  max="12"
+                  step="1"
+                  value="0"
+                />
+                <strong id="music-eq-band-350-value">0 dB</strong>
+              </label>
+              <label
+                class="b-music-eq-band"
+                for="music-eq-band-1000"
+              >
+                <span>1 kHz</span>
+                <input
+                  id="music-eq-band-1000"
+                  type="range"
+                  min="-12"
+                  max="12"
+                  step="1"
+                  value="0"
+                />
+                <strong id="music-eq-band-1000-value">0 dB</strong>
+              </label>
+              <label
+                class="b-music-eq-band"
+                for="music-eq-band-3500"
+              >
+                <span>3.5 kHz</span>
+                <input
+                  id="music-eq-band-3500"
+                  type="range"
+                  min="-12"
+                  max="12"
+                  step="1"
+                  value="0"
+                />
+                <strong id="music-eq-band-3500-value">0 dB</strong>
+              </label>
+              <label
+                class="b-music-eq-band"
+                for="music-eq-band-10000"
+              >
+                <span>10 kHz</span>
+                <input
+                  id="music-eq-band-10000"
+                  type="range"
+                  min="-12"
+                  max="12"
+                  step="1"
+                  value="0"
+                />
+                <strong id="music-eq-band-10000-value">0 dB</strong>
+              </label>
+            </div>
+
+            <button
+              class="button is-dark is-small"
+              id="music-eq-reset-btn"
+              type="button"
+            >
+              Reset EQ
+            </button>
+          </section>
+          <section class="b-music-settings-card">
+            <h3>Reproduccion inteligente</h3>
+            <label class="b-music-switch-row">
+              <span>Reproducir canciones similares al terminar</span>
+              <input
+                type="checkbox"
+                id="music-setting-autoplay-similar"
+              />
+            </label>
+            <label class="b-music-switch-row">
+              <span>Completar cola automaticamente</span>
+              <input
+                type="checkbox"
+                id="music-setting-autoqueue"
+              />
+            </label>
+            <label class="b-music-switch-row">
+              <span>Mezcla inteligente</span>
+              <input
+                type="checkbox"
+                id="music-setting-smart-shuffle"
+              />
+            </label>
+            <label class="b-music-switch-row">
+              <span>Repetir canción</span>
+              <input
+                type="checkbox"
+                id="music-setting-repeat-track"
+              />
+            </label>
+            <label class="b-music-switch-row">
+              <span>Repetir cola al terminar</span>
+              <input
+                type="checkbox"
+                id="music-setting-repeat-queue"
+              />
+            </label>
+          </section>
+        </div>
+      </div>
+    </div>
+    <div class="b-music-panel b-music-panel-playlist-view">
+      <div class="playlist-header">
+        <div class="playlist-cover-container">
+          <img
+            class="playlist-cover"
+            src=""
+            alt="Playlist Cover"
+          />
+          <button
+            class="playlist-cover-play-btn"
+            title="Reproducir playlist"
+          >
+            <i class="fa-solid fa-play"></i>
+          </button>
+        </div>
+        <div class="playlist-info">
+          <p
+            class="playlist-type-label"
+            id="playlist-type-label"
+          >
+            Playlist
+          </p>
+          <h1 class="playlist-title"></h1>
+          <p class="playlist-description"></p>
+          <p
+            class="playlist-meta-line"
+            id="playlist-meta-line"
+          ></p>
+          <div class="playlist-controls">
+            <button
+              id="playlist-play-btn"
+              class="button is-small is-success is-outlined btn-dont-change"
+            >
+              <i class="fas fa-play"></i>&nbsp;<span>Reproducir</span>
+            </button>
+            <button
+              id="playlist-share-btn"
+              class="button is-small is-link is-outlined btn-dont-change"
+            >
+              <i class="fas fa-share-nodes"></i>&nbsp;<span>Compartir</span>
+            </button>
+            <button
+              id="playlist-collab-btn"
+              class="button is-small is-warning is-outlined btn-dont-change"
+            >
+              <i class="fas fa-users"></i>&nbsp;<span>Colaborar</span>
+            </button>
+            <button
+              id="playlist-edit-btn"
+              class="button is-small is-info is-outlined btn-dont-change"
+            >
+              <i class="fas fa-pen"></i>&nbsp;<span data-string-id="common.edit"></span>
+            </button>
+            <button
+              id="playlist-delete-btn"
+              class="button is-small is-danger is-outlined btn-dont-change"
+            >
+              <i class="fas fa-trash"></i>&nbsp;<span data-string-id="common.delete"></span>
+            </button>
+            <button
+              id="playlist-activity-btn"
+              class="button is-small is-light is-outlined btn-dont-change"
+            >
+              <i class="fas fa-clock-rotate-left"></i>&nbsp;<span>Registro</span>
+            </button>
+          </div>
+          <div
+            id="playlist-share-status"
+            class="playlist-share-status"
+          ></div>
+          <div
+            id="playlist-collab-status"
+            class="playlist-collab-status"
+          ></div>
+          <div
+            id="playlist-collab-manager"
+            class="playlist-collab-manager"
+            style="display: none"
+          ></div>
+        </div>
+      </div>
+
+      <p
+        class="playlist-songs-title"
+        data-string-id="music.songs"
+      ></p>
+      <div class="playlist-songs-table-head">
+        <span class="col-index">#</span>
+        <span class="col-title">Título</span>
+        <span class="col-album">Añadido por</span>
+        <span class="col-added">Fecha de añadido</span>
+        <span class="col-duration"><i class="fa-regular fa-clock"></i></span>
+        <span class="col-actions"></span>
+      </div>
+      <div class="playlist-songs"></div>
+    </div>
+  </main>
+  <aside
+    class="music-listening"
+    aria-label="Reproductor y cola"
+  >
+    <section
+      class="b-music-bottom_bar_music music-player"
+      id="buttom_bar_music"
+    >
+      <div class="music-listening-heading">
+        <span class="music-eyebrow">SONANDO AHORA</span
+        ><span
+          class="music-playing-state"
+          data-music-now-state
+          >En pausa</span
+        ><button
+          id="music-player-collapse-toggle"
+          class="music-icon-button music-collapse-toggle"
+          type="button"
+          aria-expanded="true"
+          aria-label="Activar minirreproductor"
+          title="Activar minirreproductor"
+        >
+          <i
+            class="fa-solid fa-compress"
+            aria-hidden="true"
+          ></i>
+        </button>
+      </div>
+      <div class="music-now-art">
+        <img
+          id="music-player-card-img"
+          data-music-now-cover
+          alt="Portada de la canción"
+        />
+      </div>
+      <div class="music-now-copy">
+        <h2
+          id="no_song"
+          data-music-now-title
+        >
+          Tu próxima canción te espera
+        </h2>
+        <p
+          id="music-author"
+          data-music-now-artist
+        >
+          Elige algo para empezar
+        </p>
+      </div>
+      <div class="music-timeline">
+        <div
+          id="music-panel-progress"
+          class="music-seek"
+        >
+          <div
+            class="b-music-progress-bar"
+            style="width: 0%"
+          ></div>
+        </div>
+        <div class="music-time">
+          <span id="current-time">0:00</span><span id="max-duration">0:00</span>
+        </div>
+      </div>
+      <div class="music-transport">
+        <button
+          id="prev"
+          type="button"
+          aria-label="Canción anterior"
+        >
+          <i
+            class="fa-solid fa-backward-step"
+            aria-hidden="true"
+          ></i></button
+        ><button
+          id="music-player-card-pause"
+          type="button"
+          class="music-main-play"
+          aria-label="Reproducir o pausar"
+        >
+          <i
+            class="fa-solid fa-play"
+            aria-hidden="true"
+          ></i></button
+        ><button
+          id="next"
+          type="button"
+          aria-label="Canción siguiente"
+        >
+          <i
+            class="fa-solid fa-forward-step"
+            aria-hidden="true"
+          ></i>
+        </button>
+      </div>
+      <div class="music-volume">
+        <i
+          class="fa-solid fa-volume-high"
+          id="volume-info"
+          aria-hidden="true"
+        ></i
+        ><input
+          id="b-music-volumen"
+          type="range"
+          min="0"
+          max="100"
+          value="50"
+          aria-label="Volumen"
+        />
+      </div>
+      <audio
+        id="main-audio"
+        preload="metadata"
+      ></audio>
+    </section>
+    <section
+      class="b-music-queue-panel music-queue"
+      aria-label="Cola de reproducción"
+    >
+      <div class="queue-header">
+        <h2>A continuación</h2>
+        <button
+          id="b-music-queue-panel-close"
+          type="button"
+          aria-label="Cerrar cola"
+        >
+          <i
+            class="fa-solid fa-xmark"
+            aria-hidden="true"
+          ></i>
+        </button>
+      </div>
+      <div class="b-music-queue-list"></div>
+      <button
+        id="b-music-save-playlist-btn"
+        type="button"
+        class="music-button"
+      >
+        <i
+          class="fa-solid fa-plus"
+          aria-hidden="true"
+        ></i>
+        Guardar como playlist
+      </button>
+    </section>
+  </aside>
+</div>

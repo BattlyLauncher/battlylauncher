@@ -1,0 +1,502 @@
+/* Use Battly's modal palette and controls while keeping long content bounded. */
+.theme-review-dialog .modal-card {
+  width: min(620px, calc(100vw - 32px)) !important;
+  max-height: calc(100dvh - 48px);
+  border: 1px solid #2c3b50;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px #0008;
+}
+.theme-review-dialog .modal-card-body {
+  padding: 18px 24px 24px;
+}
+.theme-review-name {
+  margin: 0 0 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #edf3fc;
+  overflow-wrap: anywhere;
+}
+.theme-review-dialog .timeline {
+  --line: var(--theme-color, #7850c6);
+  --size: 22px;
+  --stroke: 4px;
+  width: calc(100% - 110px);
+  gap: 0;
+  margin: 0 auto 38px;
+}
+.theme-review-dialog .timeline .step small {
+  font-size: 12px;
+  font-weight: 500;
+}
+.theme-review-dialog .message.is-warning {
+  margin: 0;
+  background: #302719;
+  color: #eed4a1;
+  border-radius: 10px;
+}
+.theme-review-dialog .message.is-warning .message-body {
+  padding: 14px 16px;
+  border-color: #dfae55;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: #eed4a1;
+}
+.theme-review-dialog .message-body strong {
+  color: #f9dfa9;
+}
+.theme-review-dialog .modal-card-foot {
+  padding: 16px 24px;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-top: 1px solid #29384c;
+}
+.theme-review-dialog .modal-card-foot .button {
+  font-size: 13px;
+}
+
+.theme-dialog[data-theme-import-dialog] {
+  --share-text: #f2f6fc;
+  --share-muted: #a9bad0;
+  --share-line: #29394c;
+  width: min(660px, calc(100vw - 32px));
+  height: fit-content;
+  margin: auto;
+  max-height: calc(100dvh - 40px);
+  padding: 0;
+  overflow: hidden;
+  border-radius: 7px;
+  color: var(--share-text);
+}
+.theme-dialog[data-theme-import-dialog] .theme-sharing-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  max-height: calc(100dvh - 40px);
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--share-line);
+  border-radius: 7px;
+  background: #0f1623;
+}
+.theme-sharing-card > .modal-card-head {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  background: #0f1623;
+  border: 0;
+}
+.theme-sharing-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 26px;
+  height: 32px;
+  border: 0;
+  border-radius: 0;
+  color: var(--blue, #3e8ed0);
+  background: transparent;
+  font-size: 20px;
+}
+.theme-sharing-heading {
+  flex: 1;
+  min-width: 0;
+}
+.theme-sharing-card .theme-sharing-heading .modal-card-title {
+  font-weight: 700;
+  font-size: 23px;
+  line-height: 1.3;
+  white-space: normal;
+  color: var(--share-text);
+}
+.theme-sharing-heading p {
+  font-weight: 500;
+  margin: 5px 0 0;
+  color: var(--share-muted);
+  font-size: 12px;
+}
+.theme-sharing-card .modal-card-head .delete {
+  position: relative;
+  inset: auto;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  background: #1e2b3b;
+}
+.theme-sharing-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  flex: 0 0 auto;
+  gap: 4px;
+  margin: 0 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.theme-sharing-tabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px;
+  border: 0;
+  border-radius: 7px;
+  color: var(--share-muted);
+  background: transparent;
+  font:
+    700 12px/1.3 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences',
+    sans-serif;
+  cursor: pointer;
+  transition:
+    background 150ms,
+    color 150ms;
+}
+.theme-sharing-tabs button.is-active {
+  color: #fff;
+  background: var(--theme-color, #3e8ed0);
+  box-shadow: none;
+}
+.theme-sharing-tabs button:hover {
+  color: #fff;
+}
+.theme-sharing-card > .modal-card-body {
+  min-height: 0;
+  padding: 20px;
+  overflow: auto;
+  background: transparent;
+  scrollbar-width: thin;
+  scrollbar-color: #38546d transparent;
+}
+.theme-sharing-card > .modal-card-body {
+  isolation: isolate;
+}
+.theme-sharing-tabs {
+  position: relative;
+  z-index: 1;
+  background: #0f1623;
+}
+.theme-sharing-card .theme-share-item button {
+  background: var(--theme-color) !important;
+  border-color: var(--theme-color) !important;
+}
+.theme-sharing-card .theme-share-item button:hover {
+  background: color-mix(in srgb, var(--theme-color) 85%, black) !important;
+}
+.theme-sharing-card [data-theme-share-panel][hidden] {
+  display: none;
+}
+.theme-sharing-section-title {
+  margin-bottom: 20px;
+}
+.theme-sharing-section-title h2 {
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--share-text);
+  font-size: 18px;
+  line-height: 1.4;
+}
+.theme-sharing-section-title p {
+  font-weight: 500;
+  margin: 0;
+  color: var(--share-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.theme-import-fields {
+  display: grid;
+  gap: 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.theme-sharing-label {
+  display: grid;
+  gap: 8px;
+  color: var(--share-text);
+  font-size: 12px;
+  font-weight: 700;
+}
+.theme-sharing-label > span {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.theme-sharing-label small {
+  color: var(--share-muted);
+  font-size: 10px;
+  font-weight: 500;
+}
+.theme-sharing-card .theme-sharing-label .input {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #354960;
+  border-radius: 8px;
+  background: #0b1522;
+  color: var(--share-text) !important;
+  box-shadow: none;
+  font:
+    500 14px/1.5 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences',
+    sans-serif;
+}
+.theme-sharing-card .input::placeholder {
+  color: #94a7bf !important;
+  opacity: 1;
+}
+.theme-sharing-card .input:focus {
+  border-color: #79c6fa;
+  box-shadow: 0 0 0 3px rgb(82 168 226 / 12%);
+}
+.theme-sharing-help {
+  font-weight: 500;
+  margin: -8px 0 0;
+  color: var(--share-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.theme-sharing-card .theme-sharing-primary,
+.theme-sharing-card .theme-share-item button,
+.theme-sharing-card .theme-sharing-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  margin: 0;
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--blue, #3e8ed0);
+  font:
+    700 14px/1.4 'Battly Emoji',
+    Poppins,
+    'Battly Emoji Sequences',
+    sans-serif;
+  cursor: pointer;
+  transition: background 150ms;
+}
+.theme-sharing-card .theme-sharing-primary {
+  min-height: 44px;
+  margin-top: 2px;
+}
+.theme-sharing-primary > span {
+  flex: 0 1 auto;
+  text-align: center;
+}
+.theme-sharing-card button i {
+  margin: 0;
+  line-height: 1;
+}
+.theme-sharing-card .theme-sharing-primary:hover,
+.theme-sharing-card .theme-share-item button:hover {
+  background: #3488ce;
+}
+.theme-sharing-card button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+.theme-sharing-card button:focus-visible,
+.theme-sharing-card .modal-card-head .delete:focus-visible {
+  outline: 2px solid #8bd0ff;
+  outline-offset: 3px;
+}
+.theme-sharing-card > .modal-card-foot {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--share-line);
+  background: #0f1623;
+}
+.theme-sharing-card [data-theme-import-status] {
+  flex: 1;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #bcdcf5;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.theme-sharing-card .theme-sharing-close {
+  margin-left: auto;
+  background: #f14668;
+  border-color: transparent;
+  color: #fff;
+}
+.theme-sharing-card .theme-sharing-close:hover {
+  background: #ef2e55;
+}
+.theme-sharing-card .share-themes-list,
+.theme-sharing-card [data-theme-share-stats] {
+  display: grid;
+  gap: 10px;
+}
+.theme-sharing-card .theme-share-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  min-width: 0;
+  border: 1px solid var(--share-line);
+  border-radius: 10px;
+  background: #131f2f;
+}
+.theme-share-palette {
+  display: flex;
+  overflow: hidden;
+  flex: 0 0 48px;
+  height: 48px;
+  border-radius: 10px;
+  border: 1px solid rgb(255 255 255 / 15%);
+  transform: none;
+}
+.theme-share-palette span {
+  flex: 1;
+}
+.theme-share-copy {
+  min-width: 0;
+  flex: 1;
+}
+.theme-share-copy strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--share-text);
+  font-size: 14px;
+}
+.theme-share-copy small {
+  font-weight: 500;
+  display: block;
+  margin-top: 4px;
+  color: var(--share-muted);
+  font-size: 11px;
+}
+.theme-sharing-empty {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  padding: 32px 20px;
+  border: 1px dashed #354960;
+  border-radius: 12px;
+  background: #0f1623;
+  color: var(--share-muted);
+  font-size: 12px;
+  text-align: center;
+}
+.theme-sharing-empty i {
+  font-size: 24px;
+  color: #8bd0ff;
+}
+.theme-sharing-empty strong {
+  color: var(--share-text);
+  font-size: 15px;
+}
+.theme-sharing-card .share-stat-item {
+  padding: 16px;
+  border: 1px solid var(--share-line);
+  border-radius: 10px;
+  background: #131f2f;
+}
+.share-stat-item > strong {
+  display: block;
+  color: var(--share-text);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.theme-share-counters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.theme-share-counters > span {
+  display: grid;
+  gap: 5px;
+  color: var(--share-muted);
+  font-size: 10px;
+}
+.theme-share-counters b {
+  color: #eef5fe;
+  font-size: 18px;
+}
+@media (max-width: 540px) {
+  .theme-sharing-card > .modal-card-head {
+    padding: 18px 16px;
+    gap: 10px;
+  }
+  .theme-sharing-card .theme-sharing-heading .modal-card-title {
+    font-size: 19px;
+  }
+  .theme-sharing-mark {
+    display: none;
+  }
+  .theme-sharing-tabs {
+    margin: 0 16px;
+  }
+  .theme-sharing-tabs button {
+    font-size: 10px;
+    gap: 5px;
+    padding: 7px 4px;
+  }
+  .theme-sharing-card > .modal-card-body {
+    padding: 18px 16px;
+  }
+  .theme-import-fields {
+    padding: 14px;
+  }
+  .theme-sharing-card > .modal-card-foot {
+    padding: 12px 16px;
+  }
+  .theme-sharing-card .theme-share-item {
+    flex-wrap: wrap;
+  }
+  .theme-sharing-card .theme-share-item button {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-sharing-card *,
+  .theme-sharing-card {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.theme-sharing-card [data-theme-share-stats] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+}
+.theme-sharing-card .share-stat-item {
+  padding: 14px 16px;
+  border-left: 3px solid #3e8ed0;
+  background: linear-gradient(120deg, #16273a, #111b2a);
+}
+.theme-share-counters {
+  gap: 12px;
+  margin-top: 12px;
+}
+.theme-share-counters b {
+  font-size: 22px;
+  color: #8bd0ff;
+}
+.theme-sharing-card .share-stat-item > strong {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

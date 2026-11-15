@@ -1,0 +1,85 @@
+.empty-state-steve {
+  display: block;
+  width: 160px;
+  max-width: 100%;
+  height: 146px;
+  object-fit: contain;
+  flex: 0 0 auto;
+  margin: 0 auto;
+}
+.battly-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  padding: 24px 16px;
+  color: #c1d2e6;
+  text-align: center;
+  grid-column: 1 / -1;
+}
+.battly-empty-state > p {
+  margin: 0;
+  color: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.battly-empty-state > .empty-state-detail {
+  color: #9eb3cd;
+  font-size: 12px;
+  font-weight: 400;
+}
+.instance-content-dialog .instance-content-list .instance-content-empty {
+  display: flex;
+  min-height: 230px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.mods-message-state[data-mod-state='empty'] {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  text-align: center;
+}
+.mods-message-state[data-mod-state='empty'] .empty-state-steve {
+  width: 180px;
+  height: 165px;
+}
+.b-mybattly-empty .battly-empty-state {
+  padding: 18px;
+}
+.b-mybattly-empty .empty-state-steve {
+  width: 120px;
+  height: 110px;
+}
+.friends-empty .empty-icon:has(.empty-state-steve),
+.friends-no-results .empty-icon:has(.empty-state-steve) {
+  width: auto;
+  height: auto;
+  background: transparent;
+}
+@media (max-height: 620px) {
+  .battly-empty-state {
+    padding: 16px;
+    gap: 10px;
+  }
+  .empty-state-steve {
+    width: 128px;
+    height: 117px;
+  }
+  .instance-content-dialog .instance-content-list .instance-content-empty {
+    min-height: 185px;
+  }
+}
+
+.instance-content-dialog .instance-content-list:has(> .instance-content-empty) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.instance-content-dialog .instance-content-empty {
+  width: 100%;
+}

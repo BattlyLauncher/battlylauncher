@@ -1,0 +1,220 @@
+@font-face {
+  font-family: Poppins;
+  src: url('./legacy/assets/fonts/Poppins-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: Poppins;
+  src: url('./legacy/assets/fonts/Poppins-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+:root {
+  font-family: Poppins, sans-serif;
+  color: #f4f6fc;
+  background: #0e1624;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button {
+  font: inherit;
+}
+.startup-update {
+  min-height: 100vh;
+  padding: 26px 36px 22px;
+  background: radial-gradient(ellipse at 100% 0%, #5a3c762e, transparent 65%);
+}
+header {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+header img {
+  width: 31px;
+  height: 35px;
+  object-fit: contain;
+}
+.channel {
+  margin-inline-start: auto;
+  font-size: 11px;
+  color: #cdb9f8;
+  padding: 4px 9px;
+  border: 1px solid #6f52905e;
+  border-radius: 7px;
+  font-weight: 400;
+}
+.version {
+  overflow-wrap: anywhere;
+  color: #c5a9f5;
+  font-size: 12px;
+  margin: 0 0 8px;
+  min-height: 18px;
+  font-variant-numeric: tabular-nums;
+}
+h1 {
+  font-size: 27px;
+  line-height: 1.3;
+  margin: 0 0 10px;
+  letter-spacing: -0.5px;
+}
+.description {
+  font-size: 13px;
+  color: #bdc9db;
+  line-height: 1.7;
+  margin: 0;
+  min-height: 45px;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-top: 22px;
+  font-size: 12px;
+}
+.progress-label strong {
+  font-weight: 400;
+  color: #e5e9f2;
+}
+.progress-label span {
+  color: #d4b9ff;
+  font-variant-numeric: tabular-nums;
+}
+progress {
+  display: block;
+  width: 100%;
+  height: 7px;
+  margin: 10px 0 0;
+  border: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  appearance: none;
+}
+progress::-webkit-progress-bar {
+  background: #273246;
+  border-radius: 8px;
+}
+progress::-webkit-progress-value {
+  background: #ad82f5;
+  border-radius: 8px;
+  transition: width 0.15s;
+}
+progress:not([value])::-webkit-progress-bar {
+  background: linear-gradient(90deg, #273246 15%, #ad82f5 50%, #273246 85%);
+  background-size: 220% 100%;
+  animation: travel 1.8s linear infinite;
+}
+.transfer {
+  font-size: 11px;
+  color: #aab9cd;
+  margin: 10px 0 0;
+  min-height: 19px;
+  font-variant-numeric: tabular-nums;
+}
+.steps {
+  display: flex;
+  list-style: none;
+  gap: 22px;
+  margin: 16px 0 0;
+  padding: 0;
+  font-size: 11px;
+  color: #a5b2c7;
+}
+.steps li {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+.steps li::before {
+  content: '';
+  height: 6px;
+  width: 6px;
+  border: 1px solid #718299;
+  border-radius: 50%;
+}
+.steps .active {
+  color: #e6d5ff;
+}
+.steps .active::before {
+  background: #ba91ff;
+  border-color: #ba91ff;
+}
+.steps .complete::before {
+  background: #69cda7;
+  border-color: #69cda7;
+}
+footer {
+  margin-top: 25px;
+  color: #a5b2c7;
+  font-size: 11px;
+}
+.error-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 17px;
+}
+.error-actions[hidden] {
+  display: none;
+}
+button {
+  cursor: pointer;
+  font-size: 12px;
+  border: 1px solid #4b3c69;
+  border-radius: 8px;
+  background: #7147b8;
+  color: #fff;
+  padding: 9px 14px;
+}
+button:last-child {
+  background: transparent;
+  border-color: #40516a;
+}
+button:hover {
+  filter: brightness(1.16);
+}
+button:focus-visible {
+  outline: 2px solid #d5b9ff;
+  outline-offset: 3px;
+}
+body[data-phase='error'] progress {
+  display: none;
+}
+body[data-phase='error'] .steps {
+  display: none;
+}
+body[data-phase='error'] .progress-label {
+  display: none;
+}
+body[data-phase='error'] .transfer {
+  display: none;
+}
+@keyframes travel {
+  to {
+    background-position: -220% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+@media (max-width: 560px) {
+  .startup-update {
+    padding: 25px;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  .steps {
+    gap: 14px;
+  }
+}

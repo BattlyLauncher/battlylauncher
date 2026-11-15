@@ -1,0 +1,207 @@
+<div class="b-mods-wrapper">
+  <div class="b-mods-title-container">
+    <div style="display: flex; flex-direction: column; gap: 0px">
+      <h1 style="line-height: 1">
+        Battly
+        <span
+          id="battlymodstext"
+          data-string-id="mods.mods"
+        ></span>
+      </h1>
+      <span style="font-size: 12px; color: #fff"
+        >Con la tecnología de
+        <span style="color: #1bd96a; font-weight: 700">Modrinth</span>
+      </span>
+    </div>
+    <div class="friends-header-actions">
+      <button
+        type="button"
+        class="btn-action mod-basket-trigger"
+        data-mod-basket-open
+      >
+        <i
+          class="fa-solid fa-basket-shopping"
+          aria-hidden="true"
+        ></i
+        ><span>Cesta de mods</span><span data-mod-basket-count>0</span
+        ><small class="mod-basket-beta">Beta</small>
+      </button>
+      <button
+        class="btn-action btn-primary"
+        id="button_ver_mods"
+      >
+        <i
+          class="fa-solid fa-folder-open"
+          aria-hidden="true"
+        ></i
+        ><span data-string-id="mods.modsListButton"></span>
+      </button>
+      <button
+        class="btn-action btn-secondary"
+        id="button_instalar_modpack"
+      >
+        <i
+          class="fa-solid fa-box-open"
+          aria-hidden="true"
+        ></i
+        ><span data-string-id="mods.installModpack"></span>
+      </button>
+      <button
+        class="btn-action btn-back"
+        id="volver"
+      >
+        <i
+          class="fa-solid fa-arrow-left"
+          aria-hidden="true"
+        ></i
+        ><span data-string-id="common.return"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="b-mods-search-sort-container">
+    <div class="b-mods-search-bar">
+      <input
+        type="text"
+        data-string-id-placeholder="mods.searchPlaceholder"
+        id="input_buscar_mods"
+        placeholder=""
+      />
+      <button id="searchBtn"><i class="fa fa-search"></i></button>
+    </div>
+    <div class="b-mods-sort-container">
+      <label
+        for="sort-select"
+        data-string-id="mods.sortBy"
+      ></label>
+      <select id="sort-select">
+        <option
+          value="relevance"
+          data-string-id="mods.relevance"
+        ></option>
+        <option
+          value="downloads"
+          data-string-id="mods.downloads"
+        ></option>
+        <option
+          value="follows"
+          data-string-id="mods.follows"
+        ></option>
+        <option
+          value="updated"
+          data-string-id="mods.updated"
+        ></option>
+      </select>
+    </div>
+    <div class="b-mods-sort-container">
+      <label
+        for="loader-select"
+        data-string-id="mods.loader"
+      ></label>
+      <select id="loader-select">
+        <option
+          value=""
+          data-string-id="mods.any"
+        ></option>
+        <option
+          value="fabric"
+          data-string-id="mods.fabric"
+        ></option>
+        <option
+          value="forge"
+          data-string-id="mods.forge"
+        ></option>
+        <option
+          value="quilt"
+          data-string-id="mods.quilt"
+        ></option>
+        <option
+          value="neoforge"
+          data-string-id="mods.neoforge"
+        ></option>
+      </select>
+    </div>
+    <div class="b-mods-sort-container">
+      <label
+        for="content-select"
+        data-string-id="mods.type"
+      ></label>
+      <select id="content-select">
+        <option
+          value=""
+          data-string-id="mods.any"
+        ></option>
+        <option
+          value="mod"
+          data-string-id="mods.mod"
+        ></option>
+        <option
+          value="resourcepack"
+          data-string-id="mods.resourcepack"
+        ></option>
+        <option
+          value="shader"
+          data-string-id="mods.shader"
+        ></option>
+        <option
+          value="modpack"
+          data-string-id="mods.modpack"
+        ></option>
+        <option
+          value="datapack"
+          data-string-id="mods.datapack"
+        ></option>
+      </select>
+    </div>
+    <span
+      class="b-mods-results-count"
+      id="results-count"
+      >0 - 0</span
+    >
+  </div>
+
+  <div class="b-mods-versions-container">
+    <span data-string-id="mods.gameVersion"></span
+    ><button
+      class="b-mods-reset-btn"
+      id="resetBtn"
+      data-string-id="mods.reset"
+    ></button>
+  </div>
+
+  <div class="b-mods-mod-list-container">
+    <div
+      class="b-mods-mod-grid"
+      id="mod-grid"
+    ></div>
+  </div>
+
+  <div class="b-mods-pagination">
+    <button
+      id="prevPage"
+      data-string-id="mods.previous"
+    ></button>
+    <span
+      id="pageInfo"
+      data-string-id="mods.page"
+    ></span>
+    <button
+      id="nextPage"
+      data-string-id="mods.next"
+    ></button>
+    <label
+      for="goToPageInput"
+      style="margin-left: 0.5rem"
+      data-string-id="mods.goToPage"
+    ></label>
+    <input
+      type="number"
+      id="goToPageInput"
+      min="1"
+    />
+    <button
+      id="goToPageBtn"
+      data-string-id="mods.go"
+    ></button>
+  </div>
+</div>
