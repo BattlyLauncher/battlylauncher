@@ -133,7 +133,7 @@ export function publicCoreError(value: unknown, options: MinecraftLaunchOptions)
     .join('')
     .trim()
     .slice(0, 2_000);
-  return /(?:ENOENT|EACCES|EPERM|HTTP\s*\d|no such file|not found|unable|invalid|loader|forge|fabric|quilt|java|version|archivo|file|directory|spawn|download|install|permission|could not reserve|heap|initialization of VM)/i.test(
+  return /(?:ENOENT|EACCES|EPERM|HTTP\s*\d|no such file|not found|unable|invalid|loader|forge|optifine|fabric|quilt|java|version|archivo|file|directory|spawn|download|install|permission|could not reserve|heap|initialization of VM)/i.test(
     detail,
   )
     ? detail
@@ -261,6 +261,8 @@ export class MinecraftJavaCoreAdapter implements MinecraftLauncherAdapter {
       throw new TypeError('Minecraft core package descriptor does not match the adapter');
     }
 
+    await ensureForgeOptiFine(options, emit);
+
     emit({ type: 'state', state: 'preparing' });
     await assertOfflineFiles(options);
     await ensureExtraAssetsFallback(options);
@@ -282,16 +284,6 @@ export class MinecraftJavaCoreAdapter implements MinecraftLauncherAdapter {
       throw new TypeError('minecraft-java-core has no launcher');
     }
     const launcher = new core.Launch();
-    if (options.installOptiForge && typeof launcher.DownloadGame === 'function') {
-      const prepareGame = launcher.DownloadGame.bind(launcher);
-      launcher.DownloadGame = async () => {
-        const result = await prepareGame();
-        if (!(result && typeof result === 'object' && 'error' in result)) {
-          await ensureForgeOptiFine(options, emit);
-        }
-        return result;
-      };
-    }
     let gameProcess: ObservedLauncherProcess | undefined;
     let expectingGameProcess = false;
 

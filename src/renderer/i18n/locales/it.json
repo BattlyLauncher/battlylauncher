@@ -7746,7 +7746,11 @@
     "text1320": "Battly si chiuderà tra qualche secondo.",
     "text1321": "Avvia comunque",
     "text1322": "Alcune mod hanno lo stesso identificatore. Puoi controllarle o provare ad avviare il gioco senza modificare i file.",
-    "text1323": "Opzione per ignorare le mod duplicate non valida"
+    "text1323": "Opzione per ignorare le mod duplicate non valida",
+    "text1324": "OptiFine non è disponibile per questa combinazione",
+    "text1325": "Mantieni una sola edizione di OptiFine per la versione di Minecraft che stai aprendo. Un’edizione per un’altra versione o più edizioni insieme possono impedire l’avvio.",
+    "text1326": "OptiFine non ha un’edizione compatibile con Forge per Minecraft {0}. Scegli Forge senza OptiFine oppure OptiFine da solo.",
+    "text1327": "Forge non è riuscito a caricare OptiFine"
   },
   "startupUpdates": {
     "text1": "Preparazione di Battly",

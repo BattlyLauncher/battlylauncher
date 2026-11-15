@@ -7746,7 +7746,11 @@
     "text1320": "Battly se fermera dans quelques secondes.",
     "text1321": "Lancer quand même",
     "text1322": "Certains mods ont le même identifiant. Vous pouvez les vérifier ou essayer de lancer le jeu sans modifier les fichiers.",
-    "text1323": "L’option permettant d’ignorer les doublons est invalide"
+    "text1323": "L’option permettant d’ignorer les doublons est invalide",
+    "text1324": "OptiFine n’est pas disponible pour cette combinaison",
+    "text1325": "Garde une seule édition d’OptiFine pour la version de Minecraft que tu ouvres. Une édition pour une autre version ou plusieurs éditions ensemble peuvent empêcher le démarrage.",
+    "text1326": "OptiFine n’a pas d’édition compatible avec Forge pour Minecraft {0}. Choisis Forge sans OptiFine ou OptiFine seul.",
+    "text1327": "Forge n’a pas pu charger OptiFine"
   },
   "startupUpdates": {
     "text1": "Préparation de Battly",

@@ -4,6 +4,7 @@ export type MinecraftLoaderKind =
 export interface LoaderBuild {
   readonly isStable: boolean;
   readonly version: string;
+  readonly forgeVersion?: string | null;
 }
 
 export interface LoaderBuildSnapshot {

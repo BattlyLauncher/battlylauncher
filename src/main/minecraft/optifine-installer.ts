@@ -173,6 +173,11 @@ async function optiFineInstaller(
     );
   });
   if (!filename) {
+    if (forge) {
+      throw new Error(
+        `OptiFine no tiene una edición compatible con Forge para Minecraft ${mc}. Elige Forge sin OptiFine u OptiFine por separado.`,
+      );
+    }
     throw new Error(
       `OptiFine ${mc} ${requested}: la edición del anfitrión no está disponible en el catálogo oficial`,
     );

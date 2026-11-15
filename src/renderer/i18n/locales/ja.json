@@ -7746,7 +7746,11 @@
     "text1320": "Battlyは数秒後に終了します。",
     "text1321": "そのまま起動",
     "text1322": "同じIDを持つModがあります。内容を確認するか、ファイルを変更せずに起動を試せます。",
-    "text1323": "重複Modのチェックを省略する設定が無効です"
+    "text1323": "重複Modのチェックを省略する設定が無効です",
+    "text1324": "この組み合わせではOptiFineを利用できません",
+    "text1325": "起動するMinecraftのバージョンに対応するOptiFineを1つだけ残してください。別バージョン用や複数のOptiFineがあると起動できない場合があります。",
+    "text1326": "Minecraft {0}用のOptiFineにはForge対応版がありません。OptiFineなしのForge、またはOptiFine単体を選んでください。",
+    "text1327": "ForgeがOptiFineを読み込めませんでした"
   },
   "startupUpdates": {
     "text1": "Battly を準備中",

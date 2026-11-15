@@ -7746,7 +7746,11 @@
     "text1320": "Battly wird in wenigen Sekunden geschlossen.",
     "text1321": "Trotzdem starten",
     "text1322": "Einige Mods haben dieselbe ID. Du kannst sie prüfen oder den Start versuchen, ohne Dateien zu ändern.",
-    "text1323": "Ungültige Option zum Überspringen doppelter Mods"
+    "text1323": "Ungültige Option zum Überspringen doppelter Mods",
+    "text1324": "OptiFine ist für diese Kombination nicht verfügbar",
+    "text1325": "Behalte nur eine OptiFine-Ausgabe für die Minecraft-Version, die du öffnest. Eine Ausgabe für eine andere Version oder mehrere Ausgaben gleichzeitig können den Start verhindern.",
+    "text1326": "OptiFine bietet keine Forge-kompatible Ausgabe für Minecraft {0}. Wähle Forge ohne OptiFine oder OptiFine allein.",
+    "text1327": "Forge konnte OptiFine nicht laden"
   },
   "startupUpdates": {
     "text1": "Battly wird vorbereitet",

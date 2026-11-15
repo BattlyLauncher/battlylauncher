@@ -415,6 +415,16 @@ async function detectIssues(
       .filter((id) => /^[a-z0-9_.-]{1,128}$/i.test(id))
       .map((id) => id.toLowerCase()),
   );
+  if (
+    /Invalid Services found OptiFine|Error loading OptiFine ZIP file|Service failed to load OptiFine/i.test(
+      content,
+    )
+  ) {
+    const current = await getInventory();
+    if ((current.filesById.get('optifine')?.length ?? 0) > 1) {
+      duplicateIds.add('optifine');
+    }
+  }
   if (duplicateIds.size) {
     const current = await getInventory();
     const groups = [...duplicateIds].map((id) => ({

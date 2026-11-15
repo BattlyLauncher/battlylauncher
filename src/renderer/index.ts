@@ -9342,16 +9342,27 @@ function bindLegacyDownloadPanel(): void {
               loaderVersionTitle.textContent = `Selecciona la subversión de ${loaderName} que quieres descargar`;
             }
             if (optiForgeRow) {
-              optiForgeRow.hidden = selectedLoader !== 'forge';
+              optiForgeRow.hidden = true;
+            }
+            if (optiForge) {
+              optiForge.checked = false;
             }
             if (create) {
               create.style.visibility = 'hidden';
             }
             showPage('loaderVersions');
-            const builds = await loaderCatalog
-              .builds(officialLoader, value)
-              .then((snapshot) => snapshot.builds.map((build) => build.version))
-              .catch((): readonly string[] => []);
+            const [builds, optiFineBuilds] = await Promise.all([
+              loaderCatalog
+                .builds(officialLoader, value)
+                .then((snapshot) => snapshot.builds.map((build) => build.version))
+                .catch((): readonly string[] => []),
+              selectedLoader === 'forge'
+                ? loaderCatalog
+                    .builds('optifine', value)
+                    .then((snapshot) => snapshot.builds)
+                    .catch(() => [])
+                : Promise.resolve([]),
+            ]);
             if (
               buildRevision !== buildsRevision ||
               !current() ||
@@ -9360,6 +9371,11 @@ function bindLegacyDownloadPanel(): void {
               selectedLoader !== officialLoader
             ) {
               return;
+            }
+            if (optiForgeRow) {
+              optiForgeRow.hidden = !optiFineBuilds.some(
+                (build) => typeof build.forgeVersion === 'string',
+              );
             }
             const buildFragment = document.createDocumentFragment();
             if (!builds.length && loaderVersions) {

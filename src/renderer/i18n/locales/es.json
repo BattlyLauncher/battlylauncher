@@ -7316,7 +7316,11 @@
     "text1320": "Battly se cerrará en unos segundos.",
     "text1321": "Iniciar de todos modos",
     "text1322": "Hay mods con el mismo identificador. Puedes revisarlos o intentar iniciar sin cambiar los archivos.",
-    "text1323": "La opción para omitir duplicados no es válida"
+    "text1323": "La opción para omitir duplicados no es válida",
+    "text1324": "OptiFine no está disponible para esta combinación",
+    "text1325": "Deja una sola edición de OptiFine para la versión de Minecraft que estás abriendo. Una edición de otra versión o varias ediciones juntas pueden impedir el inicio.",
+    "text1326": "OptiFine no tiene una edición compatible con Forge para Minecraft {0}. Elige Forge sin OptiFine u OptiFine por separado.",
+    "text1327": "Forge no pudo cargar OptiFine"
   },
   "startupUpdates": {
     "text1": "Preparando Battly",

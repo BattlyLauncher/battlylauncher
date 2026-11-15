@@ -21277,6 +21277,70 @@
         "zh": "跳过重复模组检查的选项无效"
       },
       "sourceLanguage": "en"
+    },
+    {
+      "source": "OptiFine no está disponible para esta combinación",
+      "translations": {
+        "es": "OptiFine no está disponible para esta combinación",
+        "en": "OptiFine is not available for this combination",
+        "pt": "O OptiFine não está disponível para esta combinação",
+        "fr": "OptiFine n’est pas disponible pour cette combinaison",
+        "de": "OptiFine ist für diese Kombination nicht verfügbar",
+        "it": "OptiFine non è disponibile per questa combinazione",
+        "ru": "OptiFine недоступен для этой комбинации",
+        "ja": "この組み合わせではOptiFineを利用できません",
+        "ar": "OptiFine غير متاح لهذه المجموعة",
+        "zh": "此组合不支持 OptiFine"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Deja una sola edición de OptiFine para la versión de Minecraft que estás abriendo. Una edición de otra versión o varias ediciones juntas pueden impedir el inicio.",
+      "translations": {
+        "es": "Deja una sola edición de OptiFine para la versión de Minecraft que estás abriendo. Una edición de otra versión o varias ediciones juntas pueden impedir el inicio.",
+        "en": "Keep only one OptiFine edition for the Minecraft version you are opening. An edition for another version or multiple editions together can prevent startup.",
+        "pt": "Deixa apenas uma edição do OptiFine para a versão do Minecraft que estás a abrir. Uma edição de outra versão ou várias edições juntas podem impedir o arranque.",
+        "fr": "Garde une seule édition d’OptiFine pour la version de Minecraft que tu ouvres. Une édition pour une autre version ou plusieurs éditions ensemble peuvent empêcher le démarrage.",
+        "de": "Behalte nur eine OptiFine-Ausgabe für die Minecraft-Version, die du öffnest. Eine Ausgabe für eine andere Version oder mehrere Ausgaben gleichzeitig können den Start verhindern.",
+        "it": "Mantieni una sola edizione di OptiFine per la versione di Minecraft che stai aprendo. Un’edizione per un’altra versione o più edizioni insieme possono impedire l’avvio.",
+        "ru": "Оставь только одну сборку OptiFine для запускаемой версии Minecraft. Сборка для другой версии или несколько сборок одновременно могут помешать запуску.",
+        "ja": "起動するMinecraftのバージョンに対応するOptiFineを1つだけ残してください。別バージョン用や複数のOptiFineがあると起動できない場合があります。",
+        "ar": "احتفظ بإصدار واحد فقط من OptiFine يتوافق مع نسخة Minecraft التي تفتحها. قد يمنع إصدار لنسخة أخرى أو وجود عدة إصدارات معًا بدء التشغيل.",
+        "zh": "只保留一个与正在启动的 Minecraft 版本对应的 OptiFine。其他版本的 OptiFine 或同时存在多个 OptiFine 可能导致无法启动。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "OptiFine no tiene una edición compatible con Forge para Minecraft {0}. Elige Forge sin OptiFine u OptiFine por separado.",
+      "translations": {
+        "es": "OptiFine no tiene una edición compatible con Forge para Minecraft {0}. Elige Forge sin OptiFine u OptiFine por separado.",
+        "en": "OptiFine has no Forge-compatible edition for Minecraft {0}. Choose Forge without OptiFine or OptiFine on its own.",
+        "pt": "O OptiFine não tem uma edição compatível com Forge para Minecraft {0}. Escolhe Forge sem OptiFine ou OptiFine separadamente.",
+        "fr": "OptiFine n’a pas d’édition compatible avec Forge pour Minecraft {0}. Choisis Forge sans OptiFine ou OptiFine seul.",
+        "de": "OptiFine bietet keine Forge-kompatible Ausgabe für Minecraft {0}. Wähle Forge ohne OptiFine oder OptiFine allein.",
+        "it": "OptiFine non ha un’edizione compatibile con Forge per Minecraft {0}. Scegli Forge senza OptiFine oppure OptiFine da solo.",
+        "ru": "У OptiFine нет совместимой с Forge сборки для Minecraft {0}. Выбери Forge без OptiFine или OptiFine отдельно.",
+        "ja": "Minecraft {0}用のOptiFineにはForge対応版がありません。OptiFineなしのForge、またはOptiFine単体を選んでください。",
+        "ar": "لا يوجد إصدار من OptiFine متوافق مع Forge لنسخة Minecraft {0}. اختر Forge دون OptiFine أو OptiFine بمفرده.",
+        "zh": "OptiFine 没有适用于 Minecraft {0} 的 Forge 兼容版本。请选择不带 OptiFine 的 Forge，或单独使用 OptiFine。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Forge no pudo cargar OptiFine",
+      "translations": {
+        "es": "Forge no pudo cargar OptiFine",
+        "en": "Forge could not load OptiFine",
+        "pt": "O Forge não conseguiu carregar o OptiFine",
+        "fr": "Forge n’a pas pu charger OptiFine",
+        "de": "Forge konnte OptiFine nicht laden",
+        "it": "Forge non è riuscito a caricare OptiFine",
+        "ru": "Forge не удалось загрузить OptiFine",
+        "ja": "ForgeがOptiFineを読み込めませんでした",
+        "ar": "تعذر على Forge تحميل OptiFine",
+        "zh": "Forge 无法加载 OptiFine"
+      },
+      "sourceLanguage": "es"
     }
   ]
 }

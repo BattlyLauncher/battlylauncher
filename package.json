@@ -13,9 +13,9 @@
     "channel": "stable",
     "repository": "BattlyLauncher/battlylauncher",
     "baseTag": "v3.1.0",
-    "build": 3,
-    "patchVersion": "3.1.0-patch3",
-    "notes": "Corregido el inicio de Minecraft después de instalar un parche. El proceso de preparación vuelve a encontrar las dependencias incluidas en Battly, sin modificar tus mods, mundos ni cuentas. Incluye los arreglos anteriores de mods duplicados y Forge + OptiFine."
+    "build": 4,
+    "patchVersion": "3.1.0-patch4",
+    "notes": "Forge + OptiFine solo se ofrece cuando el catálogo oficial anuncia una edición compatible. Si no existe, Battly lo explica antes de preparar Forge. También identifica los fallos al cargar OptiFine y permite elegir qué edición duplicada desactivar, con opción de deshacer el cambio. Incluye las correcciones de los parches anteriores."
   },
   "engines": {
     "node": ">=22.13.0"

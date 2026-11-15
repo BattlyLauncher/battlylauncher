@@ -15,6 +15,20 @@ interface Rule {
 // Independent rules: logs are evidence, never executable instructions.
 const rules: readonly Rule[] = [
   {
+    id: 'optifine-forge-unavailable',
+    title: 'OptiFine no está disponible para esta combinación',
+    pattern: /OptiFine no tiene una edición compatible con Forge para Minecraft/i,
+    advice: 'Elige Forge sin OptiFine u OptiFine por separado. No hace falta reinstalar Minecraft.',
+  },
+  {
+    id: 'optifine-service-load',
+    title: 'Forge no pudo cargar OptiFine',
+    pattern:
+      /Invalid Services found OptiFine|Error loading OptiFine ZIP file|Service failed to load OptiFine/i,
+    advice:
+      'Deja una sola edición de OptiFine para la versión de Minecraft que estás abriendo. Una edición de otra versión o varias ediciones juntas pueden impedir el inicio.',
+  },
+  {
     id: 'bytecode-verification',
     title: 'Java ha rechazado una clase modificada',
     pattern: /java\.lang\.VerifyError:|Bad local variable type|Inconsistent stackmap frames/,
@@ -215,6 +229,11 @@ export function rankDiagnostics(
 ): MinecraftCrashIssue[] {
   const ids = new Set(issues.map((issue) => issue.id));
   const suppressed = new Set<string>();
+  if (
+    issues.some((issue) => issue.id === 'duplicate-mods' && /\boptifine\b/i.test(issue.description))
+  ) {
+    suppressed.add('optifine-service-load');
+  }
   if (ids.has('sodium-lwjgl-conflict')) {
     suppressed.add('binary-mod-conflict');
     suppressed.add('unclassified-exception');

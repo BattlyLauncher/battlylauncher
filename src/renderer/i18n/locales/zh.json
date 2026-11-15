@@ -7317,7 +7317,11 @@
     "text1320": "Battly 将在几秒后关闭。",
     "text1321": "仍然启动",
     "text1322": "部分模组使用了相同的 ID。你可以检查它们，或尝试在不更改文件的情况下启动。",
-    "text1323": "跳过重复模组检查的选项无效"
+    "text1323": "跳过重复模组检查的选项无效",
+    "text1324": "此组合不支持 OptiFine",
+    "text1325": "只保留一个与正在启动的 Minecraft 版本对应的 OptiFine。其他版本的 OptiFine 或同时存在多个 OptiFine 可能导致无法启动。",
+    "text1326": "OptiFine 没有适用于 Minecraft {0} 的 Forge 兼容版本。请选择不带 OptiFine 的 Forge，或单独使用 OptiFine。",
+    "text1327": "Forge 无法加载 OptiFine"
   },
   "startupUpdates": {
     "text1": "正在准备 Battly",
