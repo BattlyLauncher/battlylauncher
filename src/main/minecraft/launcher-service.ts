@@ -52,6 +52,7 @@ export class LauncherService {
       error?: unknown,
     ) => void | Promise<void>,
     launchId = Symbol('minecraft-launch'),
+    allowDuplicateMods = false,
   ): Promise<void> {
     if (this.#active.has(launchId)) {
       throw new Error('Identificador de lanzamiento duplicado');
@@ -95,7 +96,16 @@ export class LauncherService {
       }
     };
     try {
-      await checkLaunchModDuplicates(options);
+      if (allowDuplicateMods) {
+        emit({
+          type: 'log',
+          stream: 'game',
+          message:
+            '[Battly/duplicate-mod-check] Skipped by user for this launch only; mod files are unchanged.',
+        });
+      } else {
+        await checkLaunchModDuplicates(options);
+      }
       if (active.cancelRequested) {
         throw new LaunchMemoryCancelledError();
       }

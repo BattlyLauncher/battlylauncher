@@ -6367,14 +6367,15 @@ function registerDesktopIpc(): void {
             },
           });
         } else {
-          options = normalizeMinecraftLaunchOptions({
-            ...baseOptions,
-            installOptiForge: request.loader === 'forge' && request.installOptiForge === true,
-            installOnly: request.installOnly === true,
-          });
+          options = normalizeMinecraftLaunchOptions(baseOptions);
         }
         options = await prepareLaunchJava(
-          options,
+          {
+            ...options,
+            installOnly: request.installOnly === true,
+            installOptiForge:
+              request.loader === 'forge' && request.installOptiForge === true && !request.safeMode,
+          },
           {
             contentRoot: root,
             requiredJavaVersion: request.requiredJavaVersion,
@@ -6399,7 +6400,13 @@ function registerDesktopIpc(): void {
         cancelSelectedLaunch = () => service.cancel(launchId);
         await accessMonitor?.check();
         accessMonitor?.assertAllowed();
-        await service.start(options, emit, finalizeLaunch, launchId);
+        await service.start(
+          options,
+          emit,
+          finalizeLaunch,
+          launchId,
+          request.allowDuplicateMods === true,
+        );
         handedOff = true;
         if (!request.installOnly) {
           await resolvePlayVersionService().recordLaunch({ ...request, version: baseVersion });
@@ -7060,7 +7067,13 @@ function registerDesktopIpc(): void {
         cancelSelectedLaunch = () => service.cancel(launchId);
         await accessMonitor?.check();
         accessMonitor?.assertAllowed();
-        await service.start(options, emit, finalizeLaunch, launchId);
+        await service.start(
+          options,
+          emit,
+          finalizeLaunch,
+          launchId,
+          request.allowDuplicateMods === true,
+        );
         handedOff = true;
         return { ok: true };
       } catch (error) {

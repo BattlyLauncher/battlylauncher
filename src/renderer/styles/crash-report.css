@@ -217,7 +217,8 @@ dialog.crash-report-modal {
   font-size: 12px;
   color: #b9c8dc;
 }
-.crash-report-modal [data-crash-log-content][hidden] {
+.crash-report-modal [data-crash-log-content][hidden],
+.crash-report-modal [data-crash-force-launch][hidden] {
   display: none;
 }
 .crash-report-modal .crash-report-log {

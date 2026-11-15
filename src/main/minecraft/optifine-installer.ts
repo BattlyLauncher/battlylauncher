@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
-import { mkdir, readFile, rename, stat, unlink, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, rename, stat, unlink, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import AdmZip from 'adm-zip';
 import { optifineDownloadsUrl, parseOptiFineCatalog } from './optifine-catalog';
@@ -143,33 +143,27 @@ export async function isOptiFineInstalled(options: MinecraftLaunchOptions): Prom
   }
 }
 
-/** The same Patcher + LaunchWrapper installation contract used by Battly Mobile. */
-export async function ensureOptiFine(
-  options: MinecraftLaunchOptions,
+async function optiFineInstaller(
+  root: string,
+  mc: string,
+  requested: string,
   emit: MinecraftLaunchEventSink,
   signal?: AbortSignal,
-): Promise<MinecraftLaunchOptions> {
+  forge = false,
+): Promise<{ filename: string; build: string; installer: Buffer }> {
   signal?.throwIfAborted();
   const get = (url: string, sink: MinecraftLaunchEventSink, item: string, limit?: number) =>
     download(url, sink, item, limit, signal);
-  const target = parseWorldsVersion(options.version.customId || '');
-  if (target?.loader !== 'optifine') {
-    return options;
-  }
-  if (await isOptiFineInstalled(options)) {
-    return options;
-  }
-  if (!options.javaPath) {
-    throw new Error('Java no está preparado para instalar OptiFine');
-  }
-  const mc = options.version.id;
-  emit({ type: 'phase', phase: 'downloading' });
-  emit({ type: 'log', stream: 'game', message: `[OptiFine] Preparando ${mc} automáticamente` });
   const index = (
     await get(optifineDownloadsUrl, emit, 'Catálogo OptiFine', 4 * 1024 * 1024)
   ).toString('utf8');
-  const requested = target.loaderVersion === 'latest' ? '' : target.loaderVersion;
-  const files = parseOptiFineCatalog(index).map((entry) => entry.filename);
+  const releases = parseOptiFineCatalog(index).filter(
+    (entry) => !forge || typeof entry.forgeVersion === 'string',
+  );
+  if (forge) {
+    releases.sort((a, b) => Number(b.isStable) - Number(a.isStable));
+  }
+  const files = releases.map((entry) => entry.filename);
   const prefix = `OptiFine_${mc}_HD_`;
   const filename = files.find((file) => {
     const name = file.replace(/^preview_/, '');
@@ -184,8 +178,7 @@ export async function ensureOptiFine(
     );
   }
   const build = filename.replace(/^preview_/, '').slice(prefix.length, -4);
-  const id = `${mc}-OptiFine_HD_${build}`;
-  const installerPath = join(options.root, 'optifine', filename);
+  const installerPath = join(root, 'optifine', filename);
   let installer: Buffer | undefined = await readFile(installerPath).catch(() => undefined);
   if (installer) {
     try {
@@ -220,6 +213,41 @@ export async function ensureOptiFine(
     validJar(installer);
     await atomic(installerPath, installer);
   }
+  return { filename, build, installer };
+}
+
+/** The same Patcher + LaunchWrapper installation contract used by Battly Mobile. */
+export async function ensureOptiFine(
+  options: MinecraftLaunchOptions,
+  emit: MinecraftLaunchEventSink,
+  signal?: AbortSignal,
+): Promise<MinecraftLaunchOptions> {
+  signal?.throwIfAborted();
+  const get = (url: string, sink: MinecraftLaunchEventSink, item: string, limit?: number) =>
+    download(url, sink, item, limit, signal);
+  const target = parseWorldsVersion(options.version.customId || '');
+  if (target?.loader !== 'optifine') {
+    return options;
+  }
+  if (await isOptiFineInstalled(options)) {
+    return options;
+  }
+  if (!options.javaPath) {
+    throw new Error('Java no está preparado para instalar OptiFine');
+  }
+  const mc = options.version.id;
+  emit({ type: 'phase', phase: 'downloading' });
+  emit({ type: 'log', stream: 'game', message: `[OptiFine] Preparando ${mc} automáticamente` });
+  const requested = target.loaderVersion === 'latest' ? '' : target.loaderVersion;
+  const { filename, build, installer } = await optiFineInstaller(
+    options.root,
+    mc,
+    requested,
+    emit,
+    signal,
+  );
+  const installerPath = join(options.root, 'optifine', filename);
+  const id = `${mc}-OptiFine_HD_${build}`;
   const manifest = JSON.parse(
     (
       await get(
@@ -344,4 +372,58 @@ export async function ensureOptiFine(
   await atomic(join(options.root, 'versions', id, id + '.json'), JSON.stringify(json, null, 2));
   emit({ type: 'log', stream: 'game', message: `[OptiFine] ${id} instalado` });
   return { ...options, version: { ...options.version, customId: id } };
+}
+
+/** Forge discovers the official OptiFine JAR in mods; it does not use a standalone OptiFine profile. */
+export async function ensureForgeOptiFine(
+  options: MinecraftLaunchOptions,
+  emit: MinecraftLaunchEventSink,
+  signal?: AbortSignal,
+): Promise<void> {
+  if (!options.installOptiForge) {
+    return;
+  }
+  signal?.throwIfAborted();
+  const mc = options.version.id;
+  const directory = join(options.gameDirectory, 'mods');
+  const prefix = `OptiFine_${mc}_HD_`;
+  const entries = await readdir(directory, { withFileTypes: true }).catch(
+    (error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') {
+        return [];
+      }
+      throw error;
+    },
+  );
+  const validMod = (bytes: Buffer): boolean => {
+    try {
+      validJar(bytes);
+      return Boolean(new AdmZip(bytes).getEntry('optifine/OptiFineTweaker.class'));
+    } catch {
+      return false;
+    }
+  };
+  for (const entry of entries) {
+    if (
+      !entry.isFile() ||
+      !entry.name.replace(/^preview_/, '').startsWith(prefix) ||
+      !entry.name.endsWith('.jar')
+    ) {
+      continue;
+    }
+    const file = join(directory, entry.name);
+    const info = await stat(file);
+    if (info.size <= 128 * 1024 * 1024 && validMod(await readFile(file))) {
+      return;
+    }
+  }
+  emit({ type: 'phase', phase: 'downloading' });
+  const { filename, installer } = await optiFineInstaller(options.root, mc, '', emit, signal, true);
+  if (!validMod(installer)) {
+    throw new Error('La descarga no es un JAR válido');
+  }
+  signal?.throwIfAborted();
+  emit({ type: 'phase', phase: 'loader-install' });
+  await atomic(join(directory, filename), installer);
+  emit({ type: 'file-complete', category: 'mods', item: filename });
 }

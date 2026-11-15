@@ -7743,7 +7743,10 @@
     "text1317": "Bildschirm {0}",
     "text1318": "Battly wird gewartet",
     "text1319": "Wir führen Wartungsarbeiten durch. Versuche es später erneut.",
-    "text1320": "Battly wird in wenigen Sekunden geschlossen."
+    "text1320": "Battly wird in wenigen Sekunden geschlossen.",
+    "text1321": "Trotzdem starten",
+    "text1322": "Einige Mods haben dieselbe ID. Du kannst sie prüfen oder den Start versuchen, ohne Dateien zu ändern.",
+    "text1323": "Ungültige Option zum Überspringen doppelter Mods"
   },
   "startupUpdates": {
     "text1": "Battly wird vorbereitet",

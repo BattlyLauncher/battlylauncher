@@ -7313,7 +7313,10 @@
     "text1317": "Display {0}",
     "text1318": "Battly is under maintenance",
     "text1319": "We are carrying out maintenance. Please try again later.",
-    "text1320": "Battly will close in a few seconds."
+    "text1320": "Battly will close in a few seconds.",
+    "text1321": "Launch anyway",
+    "text1322": "Some mods share the same ID. You can review them or try launching without changing any files.",
+    "text1323": "Invalid duplicate mod override"
   },
   "startupUpdates": {
     "text1": "Preparing Battly",

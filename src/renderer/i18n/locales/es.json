@@ -7313,7 +7313,10 @@
     "text1317": "Pantalla {0}",
     "text1318": "Battly está en mantenimiento",
     "text1319": "Estamos realizando tareas de mantenimiento. Vuelve a intentarlo más tarde.",
-    "text1320": "Battly se cerrará en unos segundos."
+    "text1320": "Battly se cerrará en unos segundos.",
+    "text1321": "Iniciar de todos modos",
+    "text1322": "Hay mods con el mismo identificador. Puedes revisarlos o intentar iniciar sin cambiar los archivos.",
+    "text1323": "La opción para omitir duplicados no es válida"
   },
   "startupUpdates": {
     "text1": "Preparando Battly",

@@ -1397,4 +1397,5 @@ export const sourceAliases: ReadonlyArray<readonly [string, string]> = [
     'La descarga de Terracotta no supera la comprobación de integridad.',
   ],
   ['Invalid injector archive', 'El archivo del inyector no es válido'],
+  ['Invalid duplicate mod override', 'La opción para omitir duplicados no es válida'],
 ];

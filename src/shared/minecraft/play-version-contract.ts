@@ -35,6 +35,7 @@ export interface PlayVersionSnapshot {
 }
 
 export interface PlayVersionLaunchRequest {
+  readonly allowDuplicateMods?: boolean;
   readonly instanceId?: string;
   readonly directConnect?: MinecraftDirectConnectServer | null;
   readonly installedVersionId?: string;
@@ -68,6 +69,9 @@ export function normalizePlayVersionLaunchRequest(value: unknown): PlayVersionLa
   }
   const source = value as Record<string, unknown>;
   const own = (key: string): unknown => Object.getOwnPropertyDescriptor(source, key)?.value;
+  if (own('allowDuplicateMods') !== undefined && typeof own('allowDuplicateMods') !== 'boolean') {
+    throw new TypeError('Invalid duplicate mod override');
+  }
   const instanceId = own('instanceId');
   if (
     instanceId !== undefined &&
@@ -98,6 +102,7 @@ export function normalizePlayVersionLaunchRequest(value: unknown): PlayVersionLa
     throw new TypeError('Invalid custom play version');
   }
   return {
+    ...(own('allowDuplicateMods') === true ? { allowDuplicateMods: true } : {}),
     ...(instanceId ? { instanceId } : {}),
     installedVersionId,
     directConnect: normalizeDirectConnectServer(own('directConnect')),

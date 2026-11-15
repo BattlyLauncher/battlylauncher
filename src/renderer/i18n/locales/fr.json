@@ -7743,7 +7743,10 @@
     "text1317": "Écran {0}",
     "text1318": "Battly est en maintenance",
     "text1319": "Nous effectuons des travaux de maintenance. Réessaie plus tard.",
-    "text1320": "Battly se fermera dans quelques secondes."
+    "text1320": "Battly se fermera dans quelques secondes.",
+    "text1321": "Lancer quand même",
+    "text1322": "Certains mods ont le même identifiant. Vous pouvez les vérifier ou essayer de lancer le jeu sans modifier les fichiers.",
+    "text1323": "L’option permettant d’ignorer les doublons est invalide"
   },
   "startupUpdates": {
     "text1": "Préparation de Battly",

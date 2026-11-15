@@ -18,7 +18,7 @@ import {
 import { networkAvailable, OfflineError } from '../network/connectivity';
 import { assertOfflineFiles } from './offline-files';
 import { parseWorldsVersion } from '../../shared/social/worlds-version';
-import { ensureOptiFine, isOptiFineInstalled } from './optifine-installer';
+import { ensureOptiFine, isOptiFineInstalled, ensureForgeOptiFine } from './optifine-installer';
 import { prepareLegacyGameOptionsBeforeSpawn } from './legacy-game-options';
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -1166,6 +1166,7 @@ export class MinecraftLauncherCoreAdapter implements MinecraftLauncherAdapter {
       throw new TypeError(`Invalid launch engine for ${this.engine}`);
     }
     await assertOfflineFiles(options);
+    await ensureForgeOptiFine(options, emit);
 
     if (
       parseWorldsVersion(options.version.customId || '')?.loader === 'optifine' &&

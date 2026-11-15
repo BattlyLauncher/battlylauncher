@@ -64,6 +64,7 @@ export function isMinecraftGracefulShutdownMessage(value: string): boolean {
 }
 
 export interface MinecraftInstanceLaunchRequest {
+  readonly allowDuplicateMods?: boolean;
   readonly javaPath?: string;
   readonly directConnect: MinecraftDirectConnectServer | null;
   readonly safeMode: boolean;
@@ -111,6 +112,9 @@ export function normalizeInstanceLaunchRequest(value: unknown): MinecraftInstanc
     throw new TypeError('Invalid instance launch request');
   }
   const source = value as Record<string, unknown>;
+  if (source.allowDuplicateMods !== undefined && typeof source.allowDuplicateMods !== 'boolean') {
+    throw new TypeError('Invalid duplicate mod override');
+  }
   if (!Object.hasOwn(source, 'safeMode')) {
     throw new TypeError('Invalid safe mode option');
   }
@@ -127,6 +131,7 @@ export function normalizeInstanceLaunchRequest(value: unknown): MinecraftInstanc
     throw new TypeError('Invalid safe mode option');
   }
   return {
+    ...(source.allowDuplicateMods === true ? { allowDuplicateMods: true } : {}),
     directConnect: normalizeDirectConnectServer(source.directConnect),
     safeMode,
     ...(typeof source.javaPath === 'string' ? { javaPath: source.javaPath } : {}),

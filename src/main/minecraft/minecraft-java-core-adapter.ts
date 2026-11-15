@@ -32,6 +32,7 @@ import {
 import type { MinecraftCoreModule, MinecraftCoreRuntime } from './minecraft-core-runtime';
 import { networkAvailable } from '../network/connectivity';
 import { assertOfflineFiles } from './offline-files';
+import { ensureForgeOptiFine } from './optifine-installer';
 
 export interface MinecraftCoreRuntimeLoader {
   load(descriptor: MinecraftCorePackage): Promise<MinecraftCoreModule>;
@@ -95,7 +96,6 @@ function toJavaCoreOptions(options: MinecraftLaunchOptions): Record<string, unkn
           loaderMetadataCacheTtl: Number.MAX_SAFE_INTEGER,
         }
       : {}),
-    isOptiForgeChecked: options.installOptiForge === true,
   };
 }
 
@@ -282,6 +282,16 @@ export class MinecraftJavaCoreAdapter implements MinecraftLauncherAdapter {
       throw new TypeError('minecraft-java-core has no launcher');
     }
     const launcher = new core.Launch();
+    if (options.installOptiForge && typeof launcher.DownloadGame === 'function') {
+      const prepareGame = launcher.DownloadGame.bind(launcher);
+      launcher.DownloadGame = async () => {
+        const result = await prepareGame();
+        if (!(result && typeof result === 'object' && 'error' in result)) {
+          await ensureForgeOptiFine(options, emit);
+        }
+        return result;
+      };
+    }
     let gameProcess: ObservedLauncherProcess | undefined;
     let expectingGameProcess = false;
 

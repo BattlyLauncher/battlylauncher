@@ -7435,7 +7435,10 @@ let currentLaunchPhase = 'preparing';
 let activeLaunchSurface: 'instance' | 'play' | 'worlds' | null = null;
 let worldsLaunchProgress: ((event: MinecraftLaunchEvent) => void) | undefined;
 let crashRepairBusy = false;
-let crashLaunchAgain: { instanceId: string | null; start: () => void } | null = null;
+let crashLaunchAgain: {
+  instanceId: string | null;
+  start: (allowDuplicateMods?: boolean) => void;
+} | null = null;
 let instanceLaunchTelemetry = {
   filesStarted: 0,
   filesCompleted: 0,
@@ -7749,7 +7752,11 @@ function showCrashReport(report: MinecraftCrashReport): void {
         request.customVersion ||
         `${request.loader} ${request.version}${request.loaderVersion ? ` (${request.loaderVersion})` : ''}`,
     );
-    crashLaunchAgain = { instanceId: null, start: () => startPlayVersion(request, label) };
+    crashLaunchAgain = {
+      instanceId: null,
+      start: (allowDuplicateMods = false) =>
+        startPlayVersion({ ...request, allowDuplicateMods }, label),
+    };
   }
   const dialog = document.querySelector<HTMLDialogElement>('[data-crash-report-dialog]');
   const summary = document.querySelector<HTMLElement>('[data-crash-report-summary]');
@@ -7773,7 +7780,10 @@ function showCrashReport(report: MinecraftCrashReport): void {
   }
   if (summary) {
     if (report.stage === 'preflight') {
-      setUiText(summary, 'Antes de jugar, deja una sola copia de cada mod.');
+      setUiText(
+        summary,
+        'Hay mods con el mismo identificador. Puedes revisarlos o intentar iniciar sin cambiar los archivos.',
+      );
     } else if (report.issues.length) {
       summary.replaceChildren();
       setUiText(
@@ -7789,6 +7799,26 @@ function showCrashReport(report: MinecraftCrashReport): void {
   if (status) {
     status.textContent = '';
   }
+  let forceLaunch = dialog.querySelector<HTMLButtonElement>('[data-crash-force-launch]');
+  if (!forceLaunch) {
+    forceLaunch = document.createElement('button');
+    forceLaunch.type = 'button';
+    forceLaunch.className = 'button is-warning';
+    forceLaunch.dataset.crashForceLaunch = '';
+    setUiText(forceLaunch, 'Iniciar de todos modos');
+    dialog.querySelector('.modal-card-foot')?.prepend(forceLaunch);
+  }
+  const retry = crashLaunchAgain?.instanceId === report.instanceId ? crashLaunchAgain : null;
+  forceLaunch.hidden = report.stage !== 'preflight' || !retry;
+  forceLaunch.onclick = () => {
+    if (!retry || report.stage !== 'preflight' || crashRepairBusy) {
+      return;
+    }
+    forceLaunch.disabled = true;
+    dialog.close();
+    retry.start(true);
+  };
+  forceLaunch.disabled = false;
   renderLogLines(log, formatCrashLog(report.rawLog) || 'No hay registros disponibles.');
   issues.replaceChildren();
   report.issues.forEach((entry) => issues.append(crashIssueElement(report, entry)));
@@ -8358,13 +8388,15 @@ function startInstance(
   safeMode = false,
   directConnect: { readonly host: string; readonly port: number } | null = null,
   javaPath?: string,
+  allowDuplicateMods = false,
 ): void {
   if (showActiveMinecraftNotice()) {
     return;
   }
   crashLaunchAgain = {
     instanceId: instance.id,
-    start: () => startInstance(instance, safeMode, directConnect, javaPath),
+    start: (allowDuplicateMods = false) =>
+      startInstance(instance, safeMode, directConnect, javaPath, allowDuplicateMods),
   };
   minecraftLaunchPreparing = true;
   const launchSequence = ++launchUiSequence;
@@ -8460,7 +8492,12 @@ function startInstance(
       : `Preparando ${instance.name}…`;
   }
   void window.battly
-    .startInstance(instance.id, { directConnect, safeMode, ...(javaPath ? { javaPath } : {}) })
+    .startInstance(instance.id, {
+      directConnect,
+      safeMode,
+      allowDuplicateMods,
+      ...(javaPath ? { javaPath } : {}),
+    })
     .then((outcome) => {
       if (launchSequence !== launchUiSequence) {
         return;
@@ -8518,7 +8555,11 @@ function startPlayVersion(
   playSelectorServer = null;
   playSelectorRevision += 1;
   if (!installMode) {
-    crashLaunchAgain = { instanceId: null, start: () => startPlayVersion(request, label) };
+    crashLaunchAgain = {
+      instanceId: null,
+      start: (allowDuplicateMods = false) =>
+        startPlayVersion({ ...request, allowDuplicateMods }, label),
+    };
   }
   minecraftLaunchPreparing = true;
   const launchSequence = ++launchUiSequence;

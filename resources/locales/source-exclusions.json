@@ -538,5 +538,10 @@
     "file": "src/main/config/maintenance-window.ts",
     "text": "Battly Launcher",
     "reason": "Product name; kept unchanged in the maintenance window title."
+  },
+  {
+    "file": "src/main/minecraft/launcher-service.ts",
+    "text": "[Battly/duplicate-mod-check] Skipped by user for this launch only; mod files are unchanged.",
+    "reason": "Raw launch log; preserves the diagnostic marker for a one-launch user override"
   }
 ]

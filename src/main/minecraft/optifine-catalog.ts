@@ -5,6 +5,7 @@ export interface OptiFineRelease {
   readonly version: string;
   readonly filename: string;
   readonly isStable: boolean;
+  readonly forgeVersion?: string | null;
 }
 
 /** Includes the releases hidden behind More/Preview on the official page. */
@@ -14,11 +15,22 @@ export function parseOptiFineCatalog(html: string): readonly OptiFineRelease[] {
     /\b((preview_)?OptiFine_(\d+\.\d+(?:\.\d+)?)_HD_([A-Za-z0-9_]+)\.jar)\b/g,
   )) {
     const [, filename, preview, minecraftVersion, version] = match;
+    const rowStart = html.lastIndexOf('<tr', match.index);
+    const rowEnd = html.indexOf('</tr>', match.index);
+    const forge =
+      rowStart >= 0 && rowEnd >= 0
+        ? html
+            .slice(rowStart, rowEnd)
+            .match(/class=['"](?:colForge|downloadLineForge)['"][^>]*>\s*Forge\s+([^<\r\n]+)/i)?.[1]
+            ?.trim()
+            .replace(/^#/, '')
+        : undefined;
     releases.set(filename, {
       filename,
       minecraftVersion,
       version,
       isStable: !preview && !/pre\d/i.test(version),
+      ...(forge ? { forgeVersion: /^\d[\d.]*$/.test(forge) ? forge : null } : {}),
     });
   }
   return [...releases.values()];

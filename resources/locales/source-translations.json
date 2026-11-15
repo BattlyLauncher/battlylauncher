@@ -21229,6 +21229,54 @@
         "ar": "سيُغلق Battly خلال بضع ثوانٍ.",
         "zh": "Battly 将在几秒后关闭。"
       }
+    },
+    {
+      "source": "Iniciar de todos modos",
+      "translations": {
+        "es": "Iniciar de todos modos",
+        "en": "Launch anyway",
+        "pt": "Iniciar mesmo assim",
+        "fr": "Lancer quand même",
+        "de": "Trotzdem starten",
+        "it": "Avvia comunque",
+        "ru": "Всё равно запустить",
+        "ja": "そのまま起動",
+        "ar": "التشغيل على أي حال",
+        "zh": "仍然启动"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Hay mods con el mismo identificador. Puedes revisarlos o intentar iniciar sin cambiar los archivos.",
+      "translations": {
+        "es": "Hay mods con el mismo identificador. Puedes revisarlos o intentar iniciar sin cambiar los archivos.",
+        "en": "Some mods share the same ID. You can review them or try launching without changing any files.",
+        "pt": "Alguns mods têm o mesmo identificador. Podes revê-los ou tentar iniciar sem alterar os ficheiros.",
+        "fr": "Certains mods ont le même identifiant. Vous pouvez les vérifier ou essayer de lancer le jeu sans modifier les fichiers.",
+        "de": "Einige Mods haben dieselbe ID. Du kannst sie prüfen oder den Start versuchen, ohne Dateien zu ändern.",
+        "it": "Alcune mod hanno lo stesso identificatore. Puoi controllarle o provare ad avviare il gioco senza modificare i file.",
+        "ru": "У некоторых модов одинаковый идентификатор. Можно проверить их или попробовать запустить игру, не меняя файлы.",
+        "ja": "同じIDを持つModがあります。内容を確認するか、ファイルを変更せずに起動を試せます。",
+        "ar": "لبعض المودات المعرّف نفسه. يمكنك مراجعتها أو محاولة التشغيل دون تغيير الملفات.",
+        "zh": "部分模组使用了相同的 ID。你可以检查它们，或尝试在不更改文件的情况下启动。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Invalid duplicate mod override",
+      "translations": {
+        "es": "La opción para omitir duplicados no es válida",
+        "en": "Invalid duplicate mod override",
+        "pt": "A opção para ignorar duplicados não é válida",
+        "fr": "L’option permettant d’ignorer les doublons est invalide",
+        "de": "Ungültige Option zum Überspringen doppelter Mods",
+        "it": "Opzione per ignorare le mod duplicate non valida",
+        "ru": "Недопустимый параметр пропуска проверки дубликатов модов",
+        "ja": "重複Modのチェックを省略する設定が無効です",
+        "ar": "خيار تجاوز المودات المكررة غير صالح",
+        "zh": "跳过重复模组检查的选项无效"
+      },
+      "sourceLanguage": "en"
     }
   ]
 }
