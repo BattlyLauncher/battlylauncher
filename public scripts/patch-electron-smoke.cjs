@@ -35,10 +35,20 @@ const { createRuntime, hash } = require('../bootstrap/patch-runtime.cjs');
     put('bootstrap/' + p, fs.readFileSync(path.join(__dirname, '../bootstrap', p)));
   put('bootstrap/config.json', JSON.stringify(config));
   put('node_modules/fixture-dependency/index.js', `module.exports='bundled-dependency';`);
+  fs.cpSync(
+    path.dirname(require.resolve('adm-zip/package.json')),
+    path.join(base, 'node_modules/adm-zip'),
+    { recursive: true },
+  );
   const main = (label) =>
-    `const {app,BrowserWindow}=require('electron');const path=require('path');const dep=require('fixture-dependency');app.whenReady().then(async()=>{const w=new BrowserWindow({show:false,webPreferences:{offscreen:true,preload:path.join(__dirname,'../preload/index.js')}});await w.loadFile(path.join(__dirname,'../renderer/index.html'));const ui=await w.webContents.executeJavaScript('({text:document.body.textContent,bridge:window.fixture})');globalThis[Symbol.for('battly.patch.runtime')].healthy();console.log(JSON.stringify({label:${JSON.stringify(label)},dep,ui,build:globalThis[Symbol.for('battly.patch.runtime')].snapshot().build}));app.exit(0)}).catch(e=>{console.error(e);app.exit(2)});`;
+    `const {app,BrowserWindow}=require('electron');const path=require('path');const dep=require('fixture-dependency');app.whenReady().then(async()=>{const workerDep=await new Promise((resolve,reject)=>{const worker=new(require('node:worker_threads').Worker)(path.join(__dirname,'minecraft/core-worker-bootstrap.js'));worker.once('message',resolve);worker.once('error',reject);worker.once('exit',code=>{if(code)reject(Error('Worker exited '+code))})});const w=new BrowserWindow({show:false,webPreferences:{offscreen:true,preload:path.join(__dirname,'../preload/index.js')}});await w.loadFile(path.join(__dirname,'../renderer/index.html'));const ui=await w.webContents.executeJavaScript('({text:document.body.textContent,bridge:window.fixture})');globalThis[Symbol.for('battly.patch.runtime')].healthy();console.log(JSON.stringify({label:${JSON.stringify(label)},dep,workerDep,ui,build:globalThis[Symbol.for('battly.patch.runtime')].snapshot().build}));app.exit(0)}).catch(e=>{console.error(e);app.exit(2)});`;
   let tree = {
     'dist/main/index.js': main('base'),
+    'dist/main/minecraft/core-worker-bootstrap.js': fs.readFileSync(
+      path.join(__dirname, '../dist/main/minecraft/core-worker-bootstrap.js'),
+      'utf8',
+    ),
+    'dist/main/minecraft/core-launch-worker.js': `const zip=new(require('adm-zip'))();zip.addFile('worker.txt',Buffer.from('ready'));require('node:worker_threads').parentPort.postMessage({dependency:require('fixture-dependency'),zip:zip.getEntries()[0].entryName});`,
     'dist/preload/index.js': `require('electron').contextBridge.exposeInMainWorld('fixture','preload-ready');`,
     'dist/renderer/index.html':
       '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'"><body>Renderer ready</body>',
@@ -135,6 +145,7 @@ const { createRuntime, hash } = require('../bootstrap/patch-runtime.cjs');
   assert.match(r.stdout, /"label":"patch"/);
   assert.match(r.stdout, /"build":2/);
   assert.match(r.stdout, /bundled-dependency/);
+  assert.match(r.stdout, /"workerDep":\{"dependency":"bundled-dependency","zip":"worker.txt"\}/);
   assert.match(r.stdout, /preload-ready/);
   console.log(
     'Signed patch loaded main, preload and renderer from a separate build, resolving installed ASAR dependencies.',

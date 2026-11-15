@@ -13,9 +13,9 @@
     "channel": "stable",
     "repository": "BattlyLauncher/battlylauncher",
     "baseTag": "v3.1.0",
-    "build": 2,
-    "patchVersion": "3.1.0-patch2",
-    "notes": "Ahora puedes iniciar Minecraft aunque Battly detecte mods duplicados, sin desactivar ni borrar archivos. La excepción solo afecta a ese intento.\nForge + OptiFine vuelve a descargar el JAR oficial y guardarlo en la carpeta de mods, también al preparar la versión sin abrir Minecraft."
+    "build": 3,
+    "patchVersion": "3.1.0-patch3",
+    "notes": "Corregido el inicio de Minecraft después de instalar un parche. El proceso de preparación vuelve a encontrar las dependencias incluidas en Battly, sin modificar tus mods, mundos ni cuentas. Incluye los arreglos anteriores de mods duplicados y Forge + OptiFine."
   },
   "engines": {
     "node": ">=22.13.0"

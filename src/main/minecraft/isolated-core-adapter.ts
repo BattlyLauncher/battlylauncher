@@ -85,7 +85,7 @@ export class IsolatedCoreAdapter implements MinecraftLauncherAdapter {
           throw Error('Minecraft core installation is unavailable');
         }
 
-        worker = new Worker(join(__dirname, 'core-launch-worker.js'), {
+        worker = new Worker(join(__dirname, 'core-worker-bootstrap.js'), {
           workerData: {
             packagePath: this.runtime.installedPath,
             descriptor: this.descriptor,
