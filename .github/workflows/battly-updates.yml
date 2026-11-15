@@ -239,7 +239,7 @@ jobs:
   publish:
     needs: [plan, build, verify]
     # Opt-in repository switch: remains off until explicitly enabled after dry runs.
-    if: vars.BATTLY_RELEASE_PUBLISH_ENABLED == 'true' && (github.event_name == 'push' || inputs.dry_run == false)
+    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.build.result == 'success' && needs.verify.result == 'success' && vars.BATTLY_RELEASE_PUBLISH_ENABLED == 'true' && (github.event_name == 'push' || inputs.dry_run == false) }}
     runs-on: ubuntu-24.04
     environment: battly-updates
     permissions:
