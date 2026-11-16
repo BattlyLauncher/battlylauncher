@@ -470,6 +470,7 @@ import { SettingsStore } from './settings/settings-store';
 import { WindowBehaviorService } from './settings/window-behavior-service';
 import { GoogleDriveSyncService } from './settings/google-drive-sync-service';
 import { BattlyDataRootService } from './settings/battly-data-root-service';
+import { blocksDataRootMigration } from './settings/data-root-operation-policy';
 import { ManagedJavaRuntimeService } from './settings/managed-java-runtime-service';
 import { StructuredLogger } from './diagnostics/structured-logger';
 import { DiagnosticReportService } from './diagnostics/diagnostic-report-service';
@@ -1369,7 +1370,7 @@ function resolveLabyModService(): LabyModService {
 }
 
 function instancesPath(): string {
-  return process.env.BATTLY_INSTANCES_PATH || join(app.getPath('appData'), '.battly', 'instances');
+  return process.env.BATTLY_INSTANCES_PATH || join(contentRootPath(), 'instances');
 }
 
 function resolveLaunchLogService(): LaunchLogService {
@@ -1882,7 +1883,7 @@ function resolveServerSharingService(): ServerSharingService {
             `linux-${process.arch}`,
             'frpc',
           )
-        : join(app.getPath('appData'), '.battly', 'battly', 'launcher', 'frpc.exe'),
+        : join(contentRootPath(), 'battly', 'launcher', 'frpc.exe'),
     frpcSha256:
       process.env.BATTLY_FRPC_SHA256 ||
       (fixture
@@ -2036,7 +2037,7 @@ function resolveModrinthModpackInstaller(): ModrinthModpackInstaller {
 function resolveMinecraftCoreRuntime(): MinecraftCoreRuntime {
   minecraftCoreRuntime ??= new MinecraftCoreRuntime(
     new MinecraftCoreInstaller({
-      libraryPath: join(app.getPath('appData'), '.battly', 'battly', 'launcher', 'mc'),
+      libraryPath: join(contentRootPath(), 'battly', 'launcher', 'mc'),
     }),
   );
   return minecraftCoreRuntime;
@@ -2201,7 +2202,7 @@ function resolveSpotifyImportService(): SpotifyImportService {
 
 function resolveYtDlpResolver(): YtDlpResolver {
   ytDlpResolver ??= new YtDlpResolver(
-    join(app.getPath('appData'), '.battly', 'battly', 'launcher', 'music', 'bin'),
+    join(contentRootPath(), 'battly', 'launcher', 'music', 'bin'),
     {
       metadataCachePath: join(app.getPath('userData'), 'cache', 'music-metadata.json'),
       ...(process.env.BATTLY_YTDLP_RELEASE_API_URL
@@ -2849,25 +2850,25 @@ function registerDesktopIpc(): void {
       if (rootMigrationActive) {
         throw new Error('Battly is moving its data. Wait for the restart.');
       }
-      if (
-        channel.startsWith('servers:') &&
-        ![
-          desktopChannels.getServers,
-          desktopChannels.createServer,
-          desktopChannels.getServerSoftwareAvailability,
-        ].includes(channel as typeof desktopChannels.getServers) &&
-        process.env.BATTLY_DISABLE_SERVER_RUNTIME !== '1'
-      ) {
-        const id = normalizeServerId(args[0]);
-        if (!(await resolveServerStore().list()).some((server) => server.id === id)) {
-          throw new Error('El servidor no pertenece a la cuenta activa');
-        }
-      }
-      const counted = channel !== desktopChannels.migrateBattlyDataRoot;
+      const counted = blocksDataRootMigration(channel);
       if (counted) {
         activeIpcOperations++;
       }
       try {
+        if (
+          channel.startsWith('servers:') &&
+          ![
+            desktopChannels.getServers,
+            desktopChannels.createServer,
+            desktopChannels.getServerSoftwareAvailability,
+          ].includes(channel as typeof desktopChannels.getServers) &&
+          process.env.BATTLY_DISABLE_SERVER_RUNTIME !== '1'
+        ) {
+          const id = normalizeServerId(args[0]);
+          if (!(await resolveServerStore().list()).some((server) => server.id === id)) {
+            throw new Error('El servidor no pertenece a la cuenta activa');
+          }
+        }
         const result: unknown = await listener(event, ...args);
         return result;
       } finally {
@@ -3410,6 +3411,14 @@ function registerDesktopIpc(): void {
       if (result.canceled || !selected) {
         return null;
       }
+      event.sender.send(desktopChannels.dataRootProgress, {
+        phase: 'checking',
+        source: (await battlyDataRootSnapshot()).currentPath,
+        target: selected,
+        bytes: 0,
+        total: 0,
+        file: '',
+      });
       if (
         runningMinecraftGames.size ||
         launcherService?.active ||

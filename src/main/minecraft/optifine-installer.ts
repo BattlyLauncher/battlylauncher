@@ -1,7 +1,17 @@
 import { execFile } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
-import { mkdir, readFile, readdir, rename, stat, unlink, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import {
+  copyFile,
+  mkdir,
+  readFile,
+  readdir,
+  rename,
+  stat,
+  unlink,
+  writeFile,
+} from 'node:fs/promises';
+import { constants } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import AdmZip from 'adm-zip';
 import { optifineDownloadsUrl, parseOptiFineCatalog } from './optifine-catalog';
 import { parseWorldsVersion } from '../../shared/social/worlds-version';
@@ -380,12 +390,97 @@ export async function ensureOptiFine(
 }
 
 /** Forge discovers the official OptiFine JAR in mods; it does not use a standalone OptiFine profile. */
+async function restoreProfileOptiFine(
+  options: MinecraftLaunchOptions,
+  emit: MinecraftLaunchEventSink,
+  signal?: AbortSignal,
+): Promise<void> {
+  const id = options.version.customId;
+  if (
+    !id ||
+    !/^[a-z0-9_.+ -]{1,128}$/i.test(id) ||
+    resolve(options.root) === resolve(options.gameDirectory)
+  ) {
+    return;
+  }
+  let profile: { libraries?: { name?: string }[] };
+  try {
+    profile = JSON.parse(
+      await readFile(join(options.root, 'versions', id, `${id}.json`), 'utf8'),
+    ) as typeof profile;
+  } catch {
+    return;
+  }
+  if (
+    !profile ||
+    !Array.isArray(profile.libraries) ||
+    !profile.libraries.some(
+      (library) =>
+        typeof library?.name === 'string' && library.name.startsWith('net.minecraftforge:forge:'),
+    )
+  ) {
+    return;
+  }
+  const matches = (name: string): boolean =>
+    name.replace(/^preview_/, '').startsWith(`OptiFine_${options.version.id}_HD_`) &&
+    name.endsWith('.jar');
+  const destination = join(options.gameDirectory, 'mods');
+  const existing = await readdir(destination).catch((error: NodeJS.ErrnoException) => {
+    if (error.code === 'ENOENT') {
+      return [];
+    }
+    throw error;
+  });
+  if (existing.some(matches)) {
+    return;
+  }
+  const source = join(options.root, 'mods');
+  const entries = await readdir(source, { withFileTypes: true }).catch(
+    (error: NodeJS.ErrnoException) => {
+      if (error.code === 'ENOENT') {
+        return [];
+      }
+      throw error;
+    },
+  );
+  const candidates = entries.filter((entry) => entry.isFile() && matches(entry.name));
+  // Preserve the user's selection if the shared directory has multiple editions.
+  if (candidates.length !== 1) {
+    return;
+  }
+  const filename = candidates[0].name;
+  const original = join(source, filename);
+  if ((await stat(original)).size > 128 * 1024 * 1024) {
+    return;
+  }
+  try {
+    const bytes = await readFile(original);
+    validJar(bytes);
+    if (!new AdmZip(bytes).getEntry('optifine/OptiFineTweaker.class')) {
+      return;
+    }
+  } catch {
+    return;
+  }
+  signal?.throwIfAborted();
+  await mkdir(destination, { recursive: true });
+  await copyFile(original, join(destination, filename), constants.COPYFILE_EXCL).catch(
+    (error: NodeJS.ErrnoException) => {
+      if (error.code !== 'EEXIST') {
+        throw error;
+      }
+    },
+  );
+  emit({ type: 'file-complete', category: 'mods', item: filename });
+}
+
 export async function ensureForgeOptiFine(
   options: MinecraftLaunchOptions,
   emit: MinecraftLaunchEventSink,
   signal?: AbortSignal,
 ): Promise<void> {
   if (!options.installOptiForge) {
+    await restoreProfileOptiFine(options, emit, signal);
     return;
   }
   signal?.throwIfAborted();

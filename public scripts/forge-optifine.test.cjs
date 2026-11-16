@@ -6,6 +6,44 @@ const os = require('node:os');
 const AdmZip = require('adm-zip');
 const { ensureForgeOptiFine } = require('../dist/main/minecraft/optifine-installer');
 
+test('installed legacy Forge restores its matching OptiFine JAR to the actual game directory offline', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'battly-optifine-profile-'));
+  t.after(() => fs.rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 50 }));
+  const id = '1.8.9-forge1.8.9-11.15.1.2318-1.8.9';
+  const directory = path.join(root, 'client-profiles', id);
+  await fs.mkdir(path.join(root, 'versions', id), { recursive: true });
+  await fs.mkdir(path.join(root, 'mods'));
+  await fs.writeFile(
+    path.join(root, 'versions', id, id + '.json'),
+    JSON.stringify({ libraries: [{ name: 'net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9' }] }),
+  );
+  const jar = new AdmZip();
+  jar.addFile('optifine/OptiFineTweaker.class', Buffer.from('fixture'));
+  const bytes = jar.toBuffer(),
+    name = 'OptiFine_1.8.9_HD_U_M5.jar';
+  await fs.writeFile(path.join(root, 'mods', name), bytes);
+  await fs.writeFile(path.join(root, 'mods', 'OptiFine_1.20.1_HD_U_I6.jar'), bytes);
+  t.mock.method(global, 'fetch', async () => {
+    throw Error('Must not download again');
+  });
+  const options = { root, gameDirectory: directory, version: { id: '1.8.9', customId: id } };
+  await ensureForgeOptiFine(options, () => {});
+  assert.deepEqual(await fs.readFile(path.join(directory, 'mods', name)), bytes);
+  assert.deepEqual(await fs.readFile(path.join(root, 'mods', name)), bytes);
+  assert.deepEqual(await fs.readdir(path.join(directory, 'mods')), [name]);
+  const selected = Buffer.from('user selection');
+  await fs.writeFile(path.join(directory, 'mods', name), selected);
+  await ensureForgeOptiFine(options, () => {});
+  assert.deepEqual(await fs.readFile(path.join(directory, 'mods', name)), selected);
+  await fs.writeFile(
+    path.join(root, 'versions', id, id + '.json'),
+    JSON.stringify({ libraries: [{ name: 'net.fabricmc:fabric-loader:0.18.0' }] }),
+  );
+  const fabric = path.join(root, 'fabric-profile');
+  await ensureForgeOptiFine({ ...options, gameDirectory: fabric }, () => {});
+  await assert.rejects(fs.stat(fabric), { code: 'ENOENT' });
+});
+
 test('Forge N/A is rejected before the core installer starts, with a specific diagnosis', async (t) => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'battly-optifine-unavailable-'));
   t.after(() => fs.rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 50 }));
