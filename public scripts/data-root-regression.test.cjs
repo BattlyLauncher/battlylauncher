@@ -72,7 +72,7 @@ test('pending online snapshots do not block a verified migration; installs remai
   await assert.rejects(serverWrite, /no pertenece/);
   assert.equal(harness.active(), 0);
   assert.equal(wroteServerFile, false);
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'battly-root-online-'));
+  const root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), 'battly-root-online-'));
   t.after(() => fs.rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 50 }));
   const source = path.join(root, 'old'),
     target = path.join(root, 'new'),
