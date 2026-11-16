@@ -6,7 +6,9 @@ const os = require('node:os');
 const { BattlyDataRootService } = require('../dist/main/settings/battly-data-root-service');
 
 test('migration inventories 190,000 instance entries without exceeding the argument limit', async () => {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'battly-large-migration-'));
+  const root = await fs.realpath(
+    await fs.mkdtemp(path.join(os.tmpdir(), 'battly-large-migration-')),
+  );
   const source = path.join(root, 'source');
   const instances = path.join(source, 'instances');
   const target = path.join(root, 'target');
