@@ -9,7 +9,7 @@ import {
 import { launchErrorDetail } from './launch-error-detail';
 import { release as osRelease } from 'node:os';
 import { mkdir, readFile, rename, stat, unlink, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { delimiter, join } from 'node:path';
 
 import type { MinecraftCorePackage } from '../../shared/minecraft/core-package';
 import {
@@ -34,6 +34,12 @@ import { networkAvailable } from '../network/connectivity';
 import { assertOfflineFiles } from './offline-files';
 import { ensureForgeOptiFine } from './optifine-installer';
 import { forgeOptiFineClasspath } from './forge-optifine-classpath';
+import { labyModLaunchOptions } from './labymod-launch-compatibility';
+import {
+  ensureLabyModAssetArtifacts,
+  ensureLabyModClientArtifact,
+  mergeLabyLwjglClasspath,
+} from './minecraft-launcher-core-adapter';
 
 export interface MinecraftCoreRuntimeLoader {
   load(descriptor: MinecraftCorePackage): Promise<MinecraftCoreModule>;
@@ -45,7 +51,10 @@ function toLegacyAuthenticator(options: MinecraftLaunchOptions): Record<string, 
     client_token: options.authorization.clientToken,
     uuid: options.authorization.uuid,
     name: options.authorization.name,
-    user_properties: options.authorization.userProperties ?? {},
+    user_properties:
+      typeof options.authorization.userProperties === 'string'
+        ? options.authorization.userProperties
+        : JSON.stringify(options.authorization.userProperties ?? {}),
     type: options.authorization.type,
     meta: {
       type: options.authorization.type === 'microsoft' ? 'Xbox' : options.authorization.type,
@@ -74,7 +83,12 @@ function toJavaCoreOptions(options: MinecraftLaunchOptions): Record<string, unkn
       ...(core.loader.path ? { path: core.loader.path } : {}),
     },
     verify: core.verify,
-    ignored: [...core.ignored],
+    // Laby and OptiFine add runtime files outside Minecraft's download manifest.
+    // Keep download verification, but do not prune their profiles, assets or mods.
+    ignored: [
+      ...core.ignored,
+      ...(labyModLaunchOptions(options) || options.installOptiForge ? ['.'] : []),
+    ],
     java: options.javaPath ? { path: options.javaPath, type: 'jre' } : false,
     memory: {
       min: `${options.memory.minimumMiB}M`,
@@ -263,6 +277,11 @@ export class MinecraftJavaCoreAdapter implements MinecraftLauncherAdapter {
     }
 
     await ensureForgeOptiFine(options, emit);
+    const labyOptions = labyModLaunchOptions(options);
+    if (labyOptions) {
+      await ensureLabyModAssetArtifacts(labyOptions, emit);
+      await ensureLabyModClientArtifact(labyOptions, emit);
+    }
 
     emit({ type: 'state', state: 'preparing' });
     await assertOfflineFiles(options);
@@ -472,6 +491,17 @@ export class MinecraftJavaCoreAdapter implements MinecraftLauncherAdapter {
             configuredJavaSpawnArguments(arguments_, options.memory),
             options,
           );
+          if (labyOptions) {
+            const classpath = resolved.findIndex((value) =>
+              ['-cp', '-classpath', '--class-path'].includes(value),
+            );
+            if (classpath >= 0 && typeof resolved[classpath + 1] === 'string') {
+              resolved[classpath + 1] = mergeLabyLwjglClasspath(
+                labyOptions,
+                resolved[classpath + 1].split(delimiter),
+              ).join(delimiter);
+            }
+          }
           const boundary = resolved.findIndex(
             (value, index) =>
               index > 0 &&

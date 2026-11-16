@@ -68,3 +68,49 @@ test('installed LabyMod 4 assets do not replace the LabyMod 3 client classpath',
     await rm(root, { recursive: true, force: true });
   }
 });
+
+test('LabyMod 4 keeps its declared LWJGL core and JNA together, excluding inherited copies', async (t) => {
+  const root = await mkdtemp(join(tmpdir(), 'battly-laby-classpath-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const id = 'LabyMod-1.8';
+  const declarations = [
+    ['org.lwjgl:lwjgl:3.4.3:unsafe', 'org/lwjgl/lwjgl/3.4.3/lwjgl-3.4.3-unsafe.jar'],
+    ['net.java.dev.jna:jna:5.17.0', 'net/java/dev/jna/jna/5.17.0/jna-5.17.0.jar'],
+    [
+      'net.java.dev.jna:jna-platform:5.17.0',
+      'net/java/dev/jna/jna-platform/5.17.0/jna-platform-5.17.0.jar',
+    ],
+  ];
+  await mkdir(join(root, 'versions', id), { recursive: true });
+  await writeFile(
+    join(root, 'versions', id, id + '.json'),
+    JSON.stringify({
+      inheritsFrom: '1.8.9',
+      labymod_data: { commitReference: '12345678', lwjglVersion: '3.4.3' },
+      libraries: declarations.map(([name, path]) => ({ name, downloads: { artifact: { path } } })),
+    }),
+  );
+  const preferred = [];
+  for (const [, file] of declarations) {
+    const full = join(root, 'libraries', file);
+    await mkdir(require('node:path').dirname(full), { recursive: true });
+    await writeFile(full, 'fixture');
+    preferred.push(full);
+  }
+  const inherited = [
+    join(root, 'libraries/org/lwjgl/lwjgl/lwjgl/2.9.4/lwjgl.jar'),
+    join(root, 'libraries/net/java/dev/jna/platform/3.4.0/platform.jar'),
+    join(root, 'libraries/net/java/dev/jna/jna/3.4.0/jna.jar'),
+  ];
+  const { labyModLaunchOptions } = require('../dist/main/minecraft/labymod-launch-compatibility');
+  const legacy = labyModLaunchOptions({ root, version: { id } });
+  assert.equal(legacy.version.id, '1.8.9');
+  assert.equal(legacy.version.customId, id);
+  const explicit = labyModLaunchOptions({ root, version: { id: '1.8.9', customId: id } });
+  assert.deepEqual(legacy, explicit);
+  const result = mergeLabyLwjglClasspath(legacy, [...inherited, 'minecraft.jar']);
+  for (const entry of preferred) assert(result.includes(entry), entry);
+  for (const entry of inherited) assert(!result.includes(entry), entry);
+  assert(result.includes('minecraft.jar'));
+  assert.equal(labyModLaunchOptions({ root, version: { id: 'LabyMod-3-1.8.9' } }), null);
+});

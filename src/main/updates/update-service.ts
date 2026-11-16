@@ -9,7 +9,7 @@ import { dirname, join } from 'node:path';
 import { decodePrivateData, encodePrivateData } from '../storage/protected-data';
 import type { UpdateAction, UpdateSettings, UpdateSnapshot } from '../../shared/updates';
 
-interface PatchRuntime {
+export interface PatchRuntime {
   snapshot(): {
     build: number;
     enabled: boolean;

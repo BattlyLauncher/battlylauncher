@@ -1,16 +1,5 @@
 {
-  "languages": [
-    "es",
-    "en",
-    "pt",
-    "fr",
-    "de",
-    "it",
-    "ru",
-    "ja",
-    "ar",
-    "zh"
-  ],
+  "languages": ["es", "en", "pt", "fr", "de", "it", "ru", "ja", "ar", "zh"],
   "entries": [
     {
       "source": "Account store path must be absolute",
@@ -21512,6 +21501,38 @@
         "zh": "修复此文件"
       },
       "sourceLanguage": "es"
+    },
+    {
+      "source": "El índice de parches está vacío",
+      "sourceLanguage": "es",
+      "translations": {
+        "es": "El índice de parches está vacío",
+        "en": "The patch index is empty",
+        "pt": "O índice de patches está vazio",
+        "fr": "L’index des correctifs est vide",
+        "de": "Der Patch-Index ist leer",
+        "it": "L’indice delle patch è vuoto",
+        "ru": "Индекс патчей пуст",
+        "ja": "パッチのインデックスが空です",
+        "ar": "فهرس التصحيحات فارغ",
+        "zh": "补丁索引为空"
+      }
+    },
+    {
+      "source": "GitHub ha limitado las peticiones y la CDN no está disponible. Se volverá a intentar más tarde.",
+      "sourceLanguage": "es",
+      "translations": {
+        "es": "GitHub ha limitado las peticiones y la CDN no está disponible. Se volverá a intentar más tarde.",
+        "en": "GitHub has temporarily limited requests and the CDN is unavailable. Battly will try again later.",
+        "pt": "O GitHub limitou temporariamente as solicitações e a CDN está indisponível. O Battly tentará novamente mais tarde.",
+        "fr": "GitHub a temporairement limité les requêtes et le CDN est indisponible. Battly réessaiera plus tard.",
+        "de": "GitHub hat die Anfragen vorübergehend begrenzt und das CDN ist nicht verfügbar. Battly versucht es später erneut.",
+        "it": "GitHub ha temporaneamente limitato le richieste e la CDN non è disponibile. Battly riproverà più tardi.",
+        "ru": "GitHub временно ограничил запросы, а CDN недоступна. Battly повторит попытку позже.",
+        "ja": "GitHub のリクエストが一時的に制限されており、CDN も利用できません。Battly は後でもう一度試します。",
+        "ar": "فرض GitHub حدًا مؤقتًا على الطلبات، وشبكة CDN غير متاحة. سيحاول Battly مرة أخرى لاحقًا.",
+        "zh": "GitHub 暂时限制了请求，CDN 也无法使用。Battly 稍后会重试。"
+      }
     }
   ]
 }

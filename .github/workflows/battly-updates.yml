@@ -261,3 +261,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: node "public scripts/publish-battly-update.cjs" artifacts/update-ready --publish
+
+  mirror-patch:
+    needs: [plan, publish]
+    if: needs.plan.outputs.type == 'patch' && needs.publish.result == 'success'
+    uses: ./.github/workflows/patch-cdn.yml
+    with:
+      tag: ${{ needs.plan.outputs.tag }}

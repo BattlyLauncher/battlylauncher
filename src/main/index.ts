@@ -233,6 +233,7 @@ import { previewMinecraftWindow } from './settings/window-size-preview';
 import { MesaRuntimeService } from './minecraft/mesa-runtime-service';
 import { sanitizeDiagnosticValue } from './diagnostics/redaction';
 import { UpdateService, patchRuntime } from './updates/update-service';
+import { installPatchCdn } from './updates/patch-cdn-runtime';
 import { createUpdateNotifier } from './updates/update-notice';
 import { focusStartupUpdate, showStartupUpdates } from './updates/startup-update-window';
 import type { UpdateAction } from '../shared/updates';
@@ -3160,6 +3161,7 @@ function registerDesktopIpc(): void {
     }
     patchRuntime()?.healthy();
     if (packagedApplication && !process.windowsStore && !process.env.FLATPAK_ID) {
+      installPatchCdn({ installedRoot: app.getAppPath(), userData: app.getPath('userData') });
       startupUpdateRun ??= (async () => {
         await splashPresentation?.wait();
         return showStartupUpdates(

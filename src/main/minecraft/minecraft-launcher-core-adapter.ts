@@ -969,6 +969,7 @@ function labyLwjglClasspath(options: MinecraftLaunchOptions): string[] {
   }
 
   const root = join(options.root, 'labymod-neo', 'libraries', 'org', 'lwjgl');
+  const declaredCore = labyDeclaredClasspath(options, /^org\.lwjgl:lwjgl:[^:]+(?::unsafe)?$/);
 
   const nativeClassifier =
     process.platform === 'win32'
@@ -981,12 +982,38 @@ function labyLwjglClasspath(options: MinecraftLaunchOptions): string[] {
     const directory = join(root, module, version);
 
     const candidates = [
-      join(directory, `${module}-${version}.jar`),
+      ...(module === 'lwjgl' && declaredCore.length
+        ? declaredCore
+        : [join(directory, `${module}-${version}.jar`)]),
       join(directory, `${module}-${version}-${nativeClassifier}.jar`),
     ];
 
     return candidates.filter((candidate) => existsSync(candidate));
   });
+}
+
+function labyDeclaredClasspath(options: MinecraftLaunchOptions, names: RegExp): string[] {
+  try {
+    const id = options.version.customId;
+    if (!id) {
+      return [];
+    }
+    const profile = JSON.parse(
+      readFileSync(join(options.root, 'versions', id, `${id}.json`), 'utf8'),
+    ) as { libraries?: { name?: string; downloads?: { artifact?: { path?: string } } }[] };
+    const root = resolve(options.root, 'libraries');
+    return (profile.libraries || []).flatMap((library) => {
+      const part = library.downloads?.artifact?.path;
+      if (!library.name || !names.test(library.name) || !part) {
+        return [];
+      }
+      const file = resolve(root, part);
+      const rel = relative(root, file);
+      return rel && !rel.startsWith('..') && !isAbsolute(rel) && existsSync(file) ? [file] : [];
+    });
+  } catch {
+    return [];
+  }
 }
 
 function labyAssetClasspath(options: MinecraftLaunchOptions): string[] {
@@ -1049,7 +1076,19 @@ export function mergeLabyLwjglClasspath(
     return [...existing];
   }
   const replacedModules = new Set<string>(labyLwjglModules);
+  const jna = labyDeclaredClasspath(options, /^net\.java\.dev\.jna:(?:jna|jna-platform):[^:]+$/);
   const preserved = existing.filter((entry) => {
+    if (
+      jna.length &&
+      /[\\/]libraries[\\/]net[\\/]java[\\/]dev[\\/]jna[\\/](?:jna|platform|jna-platform|jna-platform-jpms|jna-jpms)[\\/]/i.test(
+        entry,
+      )
+    ) {
+      return false;
+    }
+    if (upgraded.length && /[\\/]libraries[\\/]org[\\/]lwjgl[\\/]lwjgl[\\/]/i.test(entry)) {
+      return false;
+    }
     if (/[\\/]libraries[\\/]net[\\/]labymod[\\/]LabyMod[\\/]/i.test(entry)) {
       return false;
     }
@@ -1065,6 +1104,7 @@ export function mergeLabyLwjglClasspath(
       ...(client && existsSync(client) ? [client] : []),
       ...assets,
       ...upgraded,
+      ...jna,
       ...preserved,
     ]),
   ];

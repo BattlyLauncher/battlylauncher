@@ -26,7 +26,8 @@ test('modern Forge with OptiFine exposes the matching vanilla JAR to the system 
   assert.deepEqual(forgeOptiFineClasspath(args, options), args);
   await fs.writeFile(path.join(root, 'mods', 'OptiFine_1.20.1_HD_U_I6.jar'), 'matching version');
   const result = forgeOptiFineClasspath(args, options);
-  assert.equal(result[2], ['forge.jar', client].join(path.delimiter));
+  assert.equal(result[result.indexOf('-cp') + 1], ['forge.jar', client].join(path.delimiter));
+  assert(result.includes('-DignoreList=1.20.1.jar'));
   assert.deepEqual(forgeOptiFineClasspath(result, options), result);
   assert.deepEqual(
     forgeOptiFineClasspath(args, {
@@ -36,6 +37,17 @@ test('modern Forge with OptiFine exposes the matching vanilla JAR to the system 
     args,
   );
   assert.equal(args[2], 'forge.jar');
+  const withIgnores = forgeOptiFineClasspath(
+    ['java', '-DignoreList=asm,securejarhandler,forge-', ...args.slice(1)],
+    options,
+  );
+  assert(withIgnores.includes('-DignoreList=asm,securejarhandler,forge-,1.20.1.jar'));
+  assert.deepEqual(forgeOptiFineClasspath(withIgnores, options), withIgnores);
+  const legacy = forgeOptiFineClasspath(
+    ['java', '-cp', 'forge.jar', 'net.minecraft.launchwrapper.Launch'],
+    options,
+  );
+  assert(!legacy.some((value) => value.startsWith('-DignoreList=')));
 });
 
 test('installed legacy Forge restores its matching OptiFine JAR to the actual game directory offline', async (t) => {
@@ -243,7 +255,9 @@ test('ForgeOptiFine installs the official Forge-compatible JAR in the game direc
     MinecraftJavaCoreAdapter,
   } = require('../dist/main/minecraft/minecraft-java-core-adapter');
   class Launch extends require('node:events').EventEmitter {
-    async Launch() {
+    async Launch(value) {
+      assert.equal(value.authenticator.user_properties, '{}');
+      assert(value.ignored.includes('.'), 'The verifier must preserve OptiFine and game files');
       return this.start();
     }
     async DownloadGame() {

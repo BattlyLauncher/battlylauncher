@@ -7760,7 +7760,9 @@
     "text1334": "Não foi possível transferir um ficheiro do modpack a partir do CurseForge. Abre os detalhes para ver qual.",
     "text1335": "Battly · Recuperar dados locais",
     "text1336": "O Battly não consegue ler o ficheiro «{0}».",
-    "text1337": "Reparar este ficheiro"
+    "text1337": "Reparar este ficheiro",
+    "text1338": "O índice de patches está vazio",
+    "text1339": "O GitHub limitou temporariamente as solicitações e a CDN está indisponível. O Battly tentará novamente mais tarde."
   },
   "startupUpdates": {
     "text1": "Preparando o Battly",

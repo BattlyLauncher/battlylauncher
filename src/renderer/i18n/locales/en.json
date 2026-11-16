@@ -7330,7 +7330,9 @@
     "text1334": "A modpack file could not be downloaded from CurseForge. Open the details to see which file.",
     "text1335": "Battly · Recover local data",
     "text1336": "Battly cannot read the file “{0}”.",
-    "text1337": "Repair this file"
+    "text1337": "Repair this file",
+    "text1338": "The patch index is empty",
+    "text1339": "GitHub has temporarily limited requests and the CDN is unavailable. Battly will try again later."
   },
   "startupUpdates": {
     "text1": "Preparing Battly",

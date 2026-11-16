@@ -7331,7 +7331,9 @@
     "text1334": "无法从 CurseForge 下载整合包中的某个文件。打开详情可查看具体文件。",
     "text1335": "Battly · 恢复本地数据",
     "text1336": "Battly 无法读取文件“{0}”。",
-    "text1337": "修复此文件"
+    "text1337": "修复此文件",
+    "text1338": "补丁索引为空",
+    "text1339": "GitHub 暂时限制了请求，CDN 也无法使用。Battly 稍后会重试。"
   },
   "startupUpdates": {
     "text1": "正在准备 Battly",

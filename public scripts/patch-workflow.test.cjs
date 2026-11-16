@@ -1,7 +1,8 @@
 const test = require('node:test'),
   assert = require('node:assert/strict'),
   fs = require('node:fs'),
-  yaml = require('js-yaml');
+  yaml = require('js-yaml'),
+  path = require('node:path');
 test('Actions publication is opt-in and depends on successful builds plus complete verification', () => {
   const w = yaml.load(fs.readFileSync('.github/workflows/battly-updates.yml', 'utf8'));
   assert.equal(w.on.workflow_dispatch.inputs.dry_run.default, true);
@@ -53,11 +54,33 @@ test('only the canonical workflow automatically publishes a desktop release', ()
   );
   assert.equal(upload.with.name, 'update-flatpak-linux-x64');
 });
-test('all patch transports and private keys remain outside the patchable runtime tree', () => {
+test('installer trust anchors and private keys remain outside the patchable runtime tree', () => {
   const source = fs.readFileSync('public scripts/build-patches.cjs', 'utf8');
   assert(source.includes("'bootstrap/github-patch-feed.cjs'"));
   assert(source.includes("files(path.join(root, 'dist'), 'dist/')"));
   const prep = fs.readFileSync('public scripts/prepare-patch-ci.cjs', 'utf8');
   assert(prep.includes('process.env.RUNNER_TEMP'));
   assert(!prep.includes('console.log(secret)'));
+});
+
+test('CDN mirroring follows a successful patch publication and supports isolated retries', () => {
+  const yaml = require('js-yaml');
+  const workflow = yaml.load(
+    fs.readFileSync(path.join(__dirname, '../.github/workflows/battly-updates.yml'), 'utf8'),
+  );
+  const mirror = yaml.load(
+    fs.readFileSync(path.join(__dirname, '../.github/workflows/patch-cdn.yml'), 'utf8'),
+  );
+  assert.deepEqual(workflow.jobs['mirror-patch'].needs, ['plan', 'publish']);
+  assert.match(workflow.jobs['mirror-patch'].if, /type == 'patch'/);
+  assert.match(workflow.jobs['mirror-patch'].if, /publish.result == 'success'/);
+  assert(mirror.on.workflow_dispatch);
+  assert(mirror.on.workflow_call);
+  assert.equal(mirror.jobs.mirror.environment, 'battly-updates');
+  assert.equal(mirror.jobs.mirror.concurrency['cancel-in-progress'], false);
+  assert.equal(mirror.permissions.contents, 'read');
+  const step = mirror.jobs.mirror.steps.at(-1);
+  assert.equal(step.env.PATCH_TAG, '${{ inputs.tag }}');
+  assert.match(step.run, /"\$PATCH_TAG"/);
+  assert.match(step.env.WASABI_SECRET, /secrets\.BATTLY_CDN_SECRET/);
 });

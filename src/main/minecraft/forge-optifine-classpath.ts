@@ -1,5 +1,5 @@
 import { existsSync, readdirSync } from 'node:fs';
-import { delimiter, join, resolve } from 'node:path';
+import { basename, delimiter, join, resolve } from 'node:path';
 import type { MinecraftLaunchOptions } from './launcher-adapter';
 
 /** OptiFine's transformer reads vanilla patch inputs through the system classloader. */
@@ -37,10 +37,21 @@ export function forgeOptiFineClasspath(
     return [...arguments_];
   }
   const entries = arguments_[index + 1].split(delimiter);
-  if (entries.some((entry) => resolve(entry) === resolve(client))) {
-    return [...arguments_];
-  }
   const result = [...arguments_];
-  result[index + 1] = [...entries, client].join(delimiter);
+  if (!entries.some((entry) => resolve(entry) === resolve(client))) {
+    result[index + 1] = [...entries, client].join(delimiter);
+  }
+  if (arguments_.includes('cpw.mods.bootstraplauncher.BootstrapLauncher')) {
+    // OptiFine needs vanilla resources on the system classpath, but Forge already
+    // supplies the transformed "minecraft" module. Do not create a second one.
+    const ignore = result.findIndex((value) => value.startsWith('-DignoreList='));
+    const filename = basename(client);
+    if (ignore >= 0) {
+      const names = result[ignore].slice('-DignoreList='.length).split(',');
+      result[ignore] = `-DignoreList=${[...new Set([...names, filename])].join(',')}`;
+    } else {
+      result.splice(index, 0, `-DignoreList=${filename}`);
+    }
+  }
   return result;
 }
