@@ -84,3 +84,18 @@ test('CDN mirroring follows a successful patch publication and supports isolated
   assert.match(step.run, /"\$PATCH_TAG"/);
   assert.match(step.env.WASABI_SECRET, /secrets\.BATTLY_CDN_SECRET/);
 });
+
+test('macOS ARM patch sources can use Intel macOS while full installers retain native runners', () => {
+  const workflow = yaml.load(fs.readFileSync('.github/workflows/battly-updates.yml', 'utf8'));
+  const runner = workflow.jobs.build['runs-on'];
+  assert.match(runner, /type == 'patch'/);
+  assert.match(runner, /platform == 'darwin'/);
+  assert.match(runner, /arch == 'arm64'/);
+  assert.match(runner, /macos-15-intel/);
+  assert.match(runner, /\|\| matrix.runner/);
+  assert(
+    workflow.jobs.build.strategy.matrix.include.some(
+      (row) => row.platform === 'darwin' && row.arch === 'arm64' && row.runner === 'macos-15',
+    ),
+  );
+});

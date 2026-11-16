@@ -71,7 +71,8 @@ jobs:
           - { runner: ubuntu-24.04, platform: linux, arch: x64 }
           - { runner: macos-15-intel, platform: darwin, arch: x64 }
           - { runner: macos-15, platform: darwin, arch: arm64 }
-    runs-on: ${{ matrix.runner }}
+    # Patch payloads contain JS/resources only; full ARM packages still use their native runner.
+    runs-on: ${{ needs.plan.outputs.type == 'patch' && matrix.platform == 'darwin' && matrix.arch == 'arm64' && 'macos-15-intel' || matrix.runner }}
     environment: ${{ needs.plan.outputs.type == 'full' && matrix.platform == 'win32' && 'windows-signing' || 'battly-updates-build' }}
     timeout-minutes: 60
     env:
