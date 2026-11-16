@@ -13,9 +13,9 @@
     "channel": "stable",
     "repository": "BattlyLauncher/battlylauncher",
     "baseTag": "v3.1.0",
-    "build": 5,
-    "patchVersion": "3.1.0-patch5",
-    "notes": "Las instancias, el motor de Minecraft y las herramientas respetan la ubicación configurada para los datos de Battly. Las consultas de red ya no bloquean el traslado de esa carpeta. También se recupera el JAR de OptiFine existente en la carpeta de mods de los perfiles de Forge instalados. Incluye las correcciones anteriores."
+    "build": 6,
+    "patchVersion": "3.1.0-patch6",
+    "notes": "Recuperación de archivos privados dañados sin restablecer toda la instalación. Detección de instancias de Battly 3.0.1 y traslado de carpetas grandes. Correcciones de LabyMod 3, Forge con OptiFine 1.20.1, descargas de clientes y modpacks de CurseForge. Ajustes del progreso de inicio y traducciones. Incluye las correcciones de los parches anteriores."
   },
   "engines": {
     "node": ">=22.13.0"
@@ -256,7 +256,7 @@
     "patches:keygen": "node \"public scripts/build-patches.cjs\" keygen",
     "patches:release": "node \"public scripts/build-patches.cjs\" release",
     "patches:plan": "node \"public scripts/patch-release-config.cjs\"",
-    "patches:test": "node --test \"public scripts/build-patches.test.cjs\" \"public scripts/github-patches.test.cjs\" \"public scripts/patch-release-config.test.cjs\" \"public scripts/patch-builder.test.cjs\" \"public scripts/patch-workflow.test.cjs\" \"public scripts/update-service.test.cjs\" \"public scripts/update-config.test.cjs\" \"public scripts/windows-updater-package.test.cjs\" \"public scripts/update-notice.test.cjs\" \"public scripts/official-installer-names.test.cjs\" \"public scripts/package-update-base.test.cjs\" \"public scripts/full-release-publication.test.cjs\" \"public scripts/mac-updater-package.test.cjs\" \"public scripts/mod-duplicate-override.test.cjs\" \"public scripts/forge-optifine.test.cjs\" && node --test \"public scripts/data-root-regression.test.cjs\"",
+    "patches:test": "node --test \"public scripts/build-patches.test.cjs\" \"public scripts/github-patches.test.cjs\" \"public scripts/patch-release-config.test.cjs\" \"public scripts/patch-builder.test.cjs\" \"public scripts/patch-workflow.test.cjs\" \"public scripts/update-service.test.cjs\" \"public scripts/update-config.test.cjs\" \"public scripts/windows-updater-package.test.cjs\" \"public scripts/update-notice.test.cjs\" \"public scripts/official-installer-names.test.cjs\" \"public scripts/package-update-base.test.cjs\" \"public scripts/full-release-publication.test.cjs\" \"public scripts/mac-updater-package.test.cjs\" \"public scripts/mod-duplicate-override.test.cjs\" \"public scripts/forge-optifine.test.cjs\" && node --test \"public scripts/data-root-regression.test.cjs\" && node --test \"public scripts/labymod-java.test.cjs\" && node --test \"public scripts/custom-client-download.test.cjs\" && node --test \"public scripts/data-root-large-inventory.test.cjs\" && node --test \"public scripts/legacy-instance-discovery.test.cjs\" && node --test \"public scripts/curseforge-cdn-path.test.cjs\" && node --test \"public scripts/private-data-recovery.test.cjs\"",
     "build:preload": "esbuild src/preload/index.ts --bundle --platform=node --format=cjs --external:electron --sourcemap --outfile=dist/preload/index.js && esbuild src/preload/worlds-overlay.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist/preload/worlds-overlay.js && esbuild src/preload/splash.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist/preload/splash.js && esbuild src/preload/startup-update.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist/preload/startup-update.js",
     "build:renderer": "vite build",
     "check:build-runtime": "node \"public scripts/require-build-node.cjs\"",

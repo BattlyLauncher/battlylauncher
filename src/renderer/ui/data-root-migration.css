@@ -115,3 +115,8 @@
 .data-root-migration.has-error [data-phase] {
   color: #ffbf67;
 }
+.data-root-migration.has-error [data-detail] {
+  text-align: left;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}

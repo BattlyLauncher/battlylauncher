@@ -7898,7 +7898,7 @@ function readableLaunchPhase(value: string): string {
     loader: 'Preparando loader',
     'loader-install': 'Instalando loader',
     preparing: 'Preparando Minecraft',
-    ready: 'Archivos preparados',
+    ready: 'Iniciando Minecraft',
     runtime: 'Preparando Java',
     'version-json': 'Comprobando versión',
   };
@@ -7960,7 +7960,7 @@ function renderInstanceLaunchEvent(event: MinecraftLaunchEvent): void {
       }
     }
     if (percent) {
-      percent.textContent = checkingOrInstalling ? 'Comprobando…' : `${milestone.toFixed(2)}%`;
+      percent.textContent = checkingOrInstalling ? 'Comprobando' : `${milestone.toFixed(2)}%`;
     }
     if (speed) {
       speed.hidden = checkingOrInstalling;
@@ -7981,7 +7981,7 @@ function renderInstanceLaunchEvent(event: MinecraftLaunchEvent): void {
       }
     }
     if (percent) {
-      percent.textContent = installing ? 'Comprobando…' : `${overall.toFixed(2)}%`;
+      percent.textContent = installing ? 'Comprobando' : `${overall.toFixed(2)}%`;
     }
     if (file) {
       file.textContent = `Archivo: ${event.item.split(/[\\/]/).at(-1) ?? event.item}`;
@@ -8076,14 +8076,14 @@ function renderInstanceLaunchEvent(event: MinecraftLaunchEvent): void {
   if (event.type === 'state') {
     document.body.dataset.launchState = event.state;
     if (event.state === 'running' && message) {
-      message.textContent = 'Esperando respuesta de Minecraft…';
+      message.textContent = 'Iniciando Minecraft';
     }
     if (event.state === 'running') {
       if (phase) {
-        phase.textContent = 'Archivos preparados';
+        phase.textContent = 'Iniciando Minecraft';
       }
       if (file) {
-        file.textContent = 'Esperando a que Minecraft termine de iniciar…';
+        file.textContent = '';
       }
       if (progress) {
         progress.max = 100;
@@ -8225,7 +8225,7 @@ function renderLaunchEvent(event: MinecraftLaunchEvent): void {
         progress.value = milestone;
       }
       if (percent) {
-        percent.textContent = milestone === 0 ? 'Comprobando…' : `${milestone}%`;
+        percent.textContent = milestone === 0 ? 'Comprobando' : `${milestone}%`;
       }
     }
     appendLaunchLog(`[fase] ${readable}`);
@@ -8237,7 +8237,7 @@ function renderLaunchEvent(event: MinecraftLaunchEvent): void {
     if (event.type === 'check' || isInstallOnlyPhase(currentLaunchPhase)) {
       progress.removeAttribute('value');
       if (percent) {
-        percent.textContent = 'Comprobando…';
+        percent.textContent = 'Comprobando';
       }
     } else {
       progress.value = overall;
@@ -8300,7 +8300,7 @@ function renderLaunchEvent(event: MinecraftLaunchEvent): void {
         event.state === 'preparing'
           ? 'Preparando…'
           : event.state === 'running'
-            ? 'Esperando respuesta de Minecraft…'
+            ? 'Iniciando Minecraft'
             : event.state === 'exited'
               ? 'Minecraft cerrado'
               : 'No se pudo iniciar Minecraft';
@@ -8311,25 +8311,25 @@ function renderLaunchEvent(event: MinecraftLaunchEvent): void {
       if (dialog?.classList.contains('is-installing')) {
         const downloadTitle = document.querySelector<HTMLElement>('[data-launch-download-title]');
         if (downloadTitle) {
-          downloadTitle.textContent = 'Archivos instalados · Iniciando Minecraft…';
+          downloadTitle.textContent = 'Iniciando Minecraft';
         }
       }
       if (phase) {
-        phase.textContent = 'Archivos preparados';
+        phase.textContent = 'Iniciando Minecraft';
       }
       if (files) {
-        files.textContent = 'Archivos preparados';
+        files.textContent = '';
       }
       const title = document.querySelector<HTMLElement>('#launch-title');
       if (title) {
-        title.textContent = 'Esperando a Minecraft…';
+        title.textContent = 'Iniciando Minecraft';
       }
       if (progress) {
         progress.max = 100;
         progress.removeAttribute('value');
       }
       if (percent) {
-        percent.textContent = 'Preparando…';
+        percent.textContent = '';
       }
       filesIcon?.classList.remove('fa-sync', 'fa-spin');
       filesIcon?.classList.add('fa-check');
@@ -8587,7 +8587,7 @@ function startPlayVersion(
     progress.removeAttribute('value');
   }
   if (percent) {
-    percent.textContent = 'Comprobando…';
+    percent.textContent = 'Comprobando';
   }
   launchLogLines = [];
   launchLogDecoder = new Log4jLogDecoder();
@@ -9641,10 +9641,17 @@ function bindLegacyDownloadPanel(): void {
     hideLegacyModal(dialog);
     void operation
       .then(() => showTypes())
-      .catch(() => {
+      .catch((error: unknown) => {
         launchDialog?.close();
         showLegacyModal(dialog);
         create.textContent = 'Error al descargar';
+        showToast(
+          'Error al descargar',
+          error instanceof Error
+            ? error.message
+            : 'No se pudo descargar el cliente. Vuelve a intentarlo.',
+          'error',
+        );
       })
       .finally(() => {
         create.disabled = false;

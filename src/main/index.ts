@@ -219,6 +219,8 @@ import {
   initializePrivateStorage,
   migratePrivateMetadata,
 } from './storage/private-storage-bootstrap';
+import { registerPrivateMetadataRoot } from './storage/protected-data';
+import { offerPrivateStorageRecovery } from './storage/private-storage-recovery-dialog';
 import { RendererPreferences } from './storage/renderer-preferences';
 import { migrate301Profile } from './storage/legacy-301-migration';
 import { readLegacyBrowserStorage } from './storage/legacy-browser-storage';
@@ -1284,12 +1286,19 @@ function resolveInstanceStore(): InstanceStore {
   instanceStore ??= new InstanceStore(
     instancesPath(),
     process.env.BATTLY_INSTANCE_ARCHIVE_PATH || join(app.getPath('userData'), 'instance-archive'),
+    undefined,
+    undefined,
+    legacyInstanceRoots(),
   );
   return instanceStore;
 }
 
 async function protectContentMetadata(): Promise<void> {
   await migratePrivateMetadata(instancesPath(), ['instance.json']);
+  for (const root of legacyInstanceRoots()) {
+    // Recognize existing encrypted metadata without rewriting the legacy tree.
+    registerPrivateMetadataRoot(root, ['instance.json']);
+  }
   await migratePrivateMetadata(
     process.env.BATTLY_INSTANCE_ARCHIVE_PATH || join(app.getPath('userData'), 'instance-archive'),
     ['instance.json'],
@@ -1371,6 +1380,21 @@ function resolveLabyModService(): LabyModService {
 
 function instancesPath(): string {
   return process.env.BATTLY_INSTANCES_PATH || join(contentRootPath(), 'instances');
+}
+
+function legacyInstanceRoots(): readonly string[] {
+  // 3.0.1 always stored instances here, even with a custom game data location.
+  // Explicit test/portable roots must remain isolated from the user's files.
+  if (process.env.BATTLY_INSTANCES_PATH || process.env.BATTLY_CONTENT_ROOT) {
+    return [];
+  }
+  return [
+    join(
+      process.platform === 'linux' ? app.getPath('home') : app.getPath('appData'),
+      '.battly',
+      'instances',
+    ),
+  ];
 }
 
 function resolveLaunchLogService(): LaunchLogService {
@@ -7624,6 +7648,19 @@ if (singleInstanceLock) {
       await protectContentMetadata();
     } catch (error) {
       console.error('[startup] Could not unlock local storage:', error);
+      try {
+        if (
+          await offerPrivateStorageRecovery(
+            app.getPath('userData'),
+            error,
+            await nativeTranslator(app.getLocale().split(/[-_]/)[0]),
+          )
+        ) {
+          return;
+        }
+      } catch (recoveryError) {
+        console.error('[startup] Could not recover the affected file:', recoveryError);
+      }
       const { dialog: startupDialog } = await import('electron');
       // The encrypted preferences cannot be read yet; use the system language.
       const translateStartup = await nativeTranslator(app.getLocale().split(/[-_]/)[0]);

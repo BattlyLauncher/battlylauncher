@@ -6,6 +6,14 @@ const aad = Buffer.from(prefix);
 let key: Buffer | undefined;
 let accepts: (path: string) => boolean = () => false;
 const metadataRoots = new Map<string, ReadonlySet<string>>();
+
+export class PrivateDataDecryptionError extends Error {
+  readonly code = 'BATTLY_PRIVATE_DATA_UNREADABLE';
+  constructor(readonly filePath: string) {
+    super('Private data cannot be decrypted. The original file has been preserved.');
+    this.name = 'PrivateDataDecryptionError';
+  }
+}
 export function registerPrivateMetadataRoot(root: string, names: readonly string[]): void {
   metadataRoots.set(resolve(root), new Set(names));
 }
@@ -73,7 +81,7 @@ export function decodePrivateData(path: string, bytes: Buffer): Buffer {
     throw new Error('Private storage is locked');
   }
   try {
-    const records = bytes.toString('ascii').trimEnd().split('\n');
+    const records = bytes.toString('ascii').trimEnd().split(/\r?\n/);
     return Buffer.concat(
       records.map((line) => {
         if (!line.startsWith(prefix)) {
@@ -97,7 +105,7 @@ export function decodePrivateData(path: string, bytes: Buffer): Buffer {
       }),
     );
   } catch {
-    throw new Error('Private data cannot be decrypted. The original file has been preserved.');
+    throw new PrivateDataDecryptionError(path);
   }
 }
 

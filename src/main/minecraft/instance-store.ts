@@ -97,6 +97,7 @@ export class InstanceStore {
   readonly #clock: InstanceClock;
   readonly #createId: InstanceIdFactory;
   readonly #root: string;
+  readonly #roots: readonly string[];
   #writeQueue: Promise<void> = Promise.resolve();
 
   constructor(
@@ -104,9 +105,16 @@ export class InstanceStore {
     archiveRoot: string,
     createId: InstanceIdFactory = () => randomUUID().replaceAll('-', '').slice(0, 12),
     clock: InstanceClock = Date.now,
+    legacyRoots: readonly string[] = [],
   ) {
     this.#root = absoluteDirectory(root, 'Instance root');
     this.#archiveRoot = absoluteDirectory(archiveRoot, 'Instance archive root');
+    this.#roots = [
+      ...new Set([
+        this.#root,
+        ...legacyRoots.map((root) => absoluteDirectory(root, 'Legacy instance root')),
+      ]),
+    ];
     if (this.#root === this.#archiveRoot) {
       throw new TypeError('Instance root and archive root must be different');
     }
@@ -118,19 +126,33 @@ export class InstanceStore {
     await this.#writeQueue;
     await mkdir(this.#root, { recursive: true });
     await assertRealDirectory(this.#root);
-    const entries = await readdir(this.#root, { withFileTypes: true });
     const summaries: InstanceSummary[] = [];
-    for (const entry of entries.slice(0, maximumInstances)) {
-      if (!entry.isDirectory() || entry.isSymbolicLink() || !instanceIdPattern.test(entry.name)) {
+    const seen = new Set<string>();
+    for (const root of this.#roots) {
+      if (!(await pathExists(root))) {
         continue;
       }
-      try {
-        const metadata = await readMetadata(join(this.#root, entry.name, 'instance.json'));
-        const summary = normalizeInstanceSummary(entry.name, metadata);
-        const iconDataUrl = await readIconDataUrl(join(this.#root, entry.name));
-        summaries.push(iconDataUrl ? { ...summary, iconDataUrl } : summary);
-      } catch {
-        // A partially downloaded or historical invalid instance remains untouched.
+      await assertRealDirectory(root);
+      const entries = await readdir(root, { withFileTypes: true });
+      for (const entry of entries) {
+        if (summaries.length >= maximumInstances) {
+          return summaries;
+        }
+        if (!entry.isDirectory() || entry.isSymbolicLink() || !instanceIdPattern.test(entry.name)) {
+          continue;
+        }
+        if (seen.has(entry.name)) {
+          continue;
+        }
+        seen.add(entry.name);
+        try {
+          const metadata = await readMetadata(join(root, entry.name, 'instance.json'));
+          const summary = normalizeInstanceSummary(entry.name, metadata);
+          const iconDataUrl = await readIconDataUrl(join(root, entry.name));
+          summaries.push(iconDataUrl ? { ...summary, iconDataUrl } : summary);
+        } catch {
+          // A partially downloaded or historical invalid instance remains untouched.
+        }
       }
     }
     // Keep the filesystem order used by Battly legacy. On Windows this is the
@@ -159,7 +181,10 @@ export class InstanceStore {
       }
       const target = join(this.#root, id);
       const staging = join(this.#root, `.creating-${id}`);
-      if ((await pathExists(target)) || (await pathExists(staging))) {
+      if (
+        (await pathExists(staging)) ||
+        (await Promise.all(this.#roots.map((root) => pathExists(join(root, id))))).some(Boolean)
+      ) {
         throw new Error('Instance id already exists');
       }
       await mkdir(staging);
@@ -232,9 +257,15 @@ export class InstanceStore {
     if (!instanceIdPattern.test(id)) {
       throw new TypeError('Invalid instance id');
     }
-    const directory = join(this.#root, id);
-    await assertRealDirectory(directory);
-    return directory;
+    for (const root of this.#roots) {
+      const directory = join(root, id);
+      if (await pathExists(directory)) {
+        await assertRealDirectory(root);
+        await assertRealDirectory(directory);
+        return directory;
+      }
+    }
+    throw new Error('Instance directory does not exist');
   }
 
   #enqueue<T>(operation: () => Promise<T>): Promise<T> {

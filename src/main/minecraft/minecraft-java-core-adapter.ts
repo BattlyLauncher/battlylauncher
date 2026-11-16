@@ -33,6 +33,7 @@ import type { MinecraftCoreModule, MinecraftCoreRuntime } from './minecraft-core
 import { networkAvailable } from '../network/connectivity';
 import { assertOfflineFiles } from './offline-files';
 import { ensureForgeOptiFine } from './optifine-installer';
+import { forgeOptiFineClasspath } from './forge-optifine-classpath';
 
 export interface MinecraftCoreRuntimeLoader {
   load(descriptor: MinecraftCorePackage): Promise<MinecraftCoreModule>;
@@ -467,7 +468,10 @@ export class MinecraftJavaCoreAdapter implements MinecraftLauncherAdapter {
             return arguments_;
           }
           prepareLegacyGameOptionsBeforeSpawn(options, emit, arguments_);
-          const resolved = configuredJavaSpawnArguments(arguments_, options.memory);
+          const resolved = forgeOptiFineClasspath(
+            configuredJavaSpawnArguments(arguments_, options.memory),
+            options,
+          );
           const boundary = resolved.findIndex(
             (value, index) =>
               index > 0 &&

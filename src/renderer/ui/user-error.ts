@@ -32,6 +32,9 @@ export function userErrorMessage(
   if (/\b429\b/.test(raw)) {
     return 'El servidor ha recibido demasiadas solicitudes. Espera unos minutos y vuelve a intentarlo.';
   }
+  if (/CurseForge download failed/i.test(raw)) {
+    return 'No se pudo descargar un archivo del modpack desde CurseForge. Abre los detalles para ver cuál.';
+  }
   if (/\b(?:401|403)\b/.test(raw)) {
     return 'El servidor ha rechazado el acceso. Comprueba tu sesión y los permisos de la cuenta.';
   }

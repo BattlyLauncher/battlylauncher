@@ -7750,7 +7750,17 @@
     "text1324": "O OptiFine não está disponível para esta combinação",
     "text1325": "Deixa apenas uma edição do OptiFine para a versão do Minecraft que estás a abrir. Uma edição de outra versão ou várias edições juntas podem impedir o arranque.",
     "text1326": "O OptiFine não tem uma edição compatível com Forge para Minecraft {0}. Escolhe Forge sem OptiFine ou OptiFine separadamente.",
-    "text1327": "O Forge não conseguiu carregar o OptiFine"
+    "text1327": "O Forge não conseguiu carregar o OptiFine",
+    "text1328": "A transferência de {0} já não está disponível no servidor (HTTP 404).",
+    "text1329": "O cliente contém ficheiros de versão duplicados",
+    "text1330": "{0} precisa do Java {1}. O caminho configurado usa Java {2}; seleciona Java {3} ou ativa a seleção automática.",
+    "text1331": "Podes reparar apenas este ficheiro. Será guardada uma cópia do original antes de o repor. Se contiver a tua sessão ou preferências, terás de iniciar sessão ou configurá-las novamente. As tuas versões, instâncias, mods e mundos não serão eliminados.",
+    "text1332": "O ficheiro original é preservado. O seu conteúdo não será eliminado nem substituído. Confirma que estás a usar a conta original do sistema e restaura uma cópia do ficheiro, se tiveres uma.",
+    "text1333": "Não foi possível transferir o cliente. Tenta novamente.",
+    "text1334": "Não foi possível transferir um ficheiro do modpack a partir do CurseForge. Abre os detalhes para ver qual.",
+    "text1335": "Battly · Recuperar dados locais",
+    "text1336": "O Battly não consegue ler o ficheiro «{0}».",
+    "text1337": "Reparar este ficheiro"
   },
   "startupUpdates": {
     "text1": "Preparando o Battly",

@@ -543,5 +543,45 @@
     "file": "src/main/minecraft/launcher-service.ts",
     "text": "[Battly/duplicate-mod-check] Skipped by user for this launch only; mod files are unchanged.",
     "reason": "Raw launch log; preserves the diagnostic marker for a one-launch user override"
+  },
+  {
+    "file": "src/main/minecraft/instance-store.ts",
+    "text": "Instance directory does not exist",
+    "reason": "Low-level diagnostic retained in technical details; the user-facing error is translated separately"
+  },
+  {
+    "file": "src/main/mods/curseforge-modpack-installer.ts",
+    "text": "CurseForge download failed ({0}): {1}",
+    "reason": "Low-level diagnostic retained in technical details; the user-facing error is translated separately"
+  },
+  {
+    "file": "src/main/storage/private-data-recovery.ts",
+    "text": "Recovery file is outside the active profile",
+    "reason": "Internal recovery safety guard; logged on failure, with a translated storage dialog shown to the user"
+  },
+  {
+    "file": "src/main/storage/private-data-recovery.ts",
+    "text": "Invalid recovery path",
+    "reason": "Internal recovery safety guard; logged on failure, with a translated storage dialog shown to the user"
+  },
+  {
+    "file": "src/main/storage/private-data-recovery.ts",
+    "text": "Invalid recovery root",
+    "reason": "Internal recovery safety guard; logged on failure, with a translated storage dialog shown to the user"
+  },
+  {
+    "file": "src/main/storage/private-data-recovery.ts",
+    "text": "Recovery requires a regular file",
+    "reason": "Internal recovery safety guard; logged on failure, with a translated storage dialog shown to the user"
+  },
+  {
+    "file": "src/main/storage/private-data-recovery.ts",
+    "text": "Invalid recovery directory",
+    "reason": "Internal recovery safety guard; logged on failure, with a translated storage dialog shown to the user"
+  },
+  {
+    "file": "src/main/storage/private-data-recovery.ts",
+    "text": "This file cannot be reset automatically",
+    "reason": "Internal recovery safety guard; logged on failure, with a translated storage dialog shown to the user"
   }
 ]

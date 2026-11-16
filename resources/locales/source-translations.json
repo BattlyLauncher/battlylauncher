@@ -1,5 +1,16 @@
 {
-  "languages": ["es", "en", "pt", "fr", "de", "it", "ru", "ja", "ar", "zh"],
+  "languages": [
+    "es",
+    "en",
+    "pt",
+    "fr",
+    "de",
+    "it",
+    "ru",
+    "ja",
+    "ar",
+    "zh"
+  ],
   "entries": [
     {
       "source": "Account store path must be absolute",
@@ -21339,6 +21350,166 @@
         "ja": "ForgeがOptiFineを読み込めませんでした",
         "ar": "تعذر على Forge تحميل OptiFine",
         "zh": "Forge 无法加载 OptiFine"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "La descarga de {0} ya no está disponible en el servidor (HTTP 404).",
+      "translations": {
+        "es": "La descarga de {0} ya no está disponible en el servidor (HTTP 404).",
+        "en": "The download for {0} is no longer available on the server (HTTP 404).",
+        "pt": "A transferência de {0} já não está disponível no servidor (HTTP 404).",
+        "fr": "Le téléchargement de {0} n’est plus disponible sur le serveur (HTTP 404).",
+        "de": "Der Download für {0} ist auf dem Server nicht mehr verfügbar (HTTP 404).",
+        "it": "Il download di {0} non è più disponibile sul server (HTTP 404).",
+        "ru": "Загрузка {0} больше недоступна на сервере (HTTP 404).",
+        "ja": "{0} のダウンロードはサーバーで利用できなくなりました（HTTP 404）。",
+        "ar": "لم يعد تنزيل {0} متاحًا على الخادم (HTTP 404).",
+        "zh": "服务器已不再提供 {0} 的下载（HTTP 404）。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "El cliente contiene archivos de versión duplicados",
+      "translations": {
+        "es": "El cliente contiene archivos de versión duplicados",
+        "en": "The client contains duplicate version files",
+        "pt": "O cliente contém ficheiros de versão duplicados",
+        "fr": "Le client contient des fichiers de version en double",
+        "de": "Der Client enthält doppelte Versionsdateien",
+        "it": "Il client contiene file di versione duplicati",
+        "ru": "Клиент содержит повторяющиеся файлы версии",
+        "ja": "クライアントに重複したバージョンファイルがあります",
+        "ar": "يحتوي العميل على ملفات إصدار مكررة",
+        "zh": "客户端包含重复的版本文件"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "{0} necesita Java {1}. La ruta configurada usa Java {2}; selecciona Java {3} o activa la selección automática.",
+      "translations": {
+        "es": "{0} necesita Java {1}. La ruta configurada usa Java {2}; selecciona Java {3} o activa la selección automática.",
+        "en": "{0} requires Java {1}. The configured path uses Java {2}; select Java {3} or enable automatic selection.",
+        "pt": "{0} precisa do Java {1}. O caminho configurado usa Java {2}; seleciona Java {3} ou ativa a seleção automática.",
+        "fr": "{0} nécessite Java {1}. Le chemin configuré utilise Java {2} ; sélectionnez Java {3} ou activez la sélection automatique.",
+        "de": "{0} benötigt Java {1}. Der konfigurierte Pfad verwendet Java {2}; wähle Java {3} oder aktiviere die automatische Auswahl.",
+        "it": "{0} richiede Java {1}. Il percorso configurato usa Java {2}; seleziona Java {3} o attiva la selezione automatica.",
+        "ru": "{0} требуется Java {1}. Настроенный путь использует Java {2}; выберите Java {3} или включите автоматический выбор.",
+        "ja": "{0} には Java {1} が必要です。設定されたパスは Java {2} を使用しています。Java {3} を選択するか、自動選択を有効にしてください。",
+        "ar": "يتطلب {0} Java {1}. يستخدم المسار المحدد Java {2}؛ اختر Java {3} أو فعّل الاختيار التلقائي.",
+        "zh": "{0} 需要 Java {1}。配置的路径使用 Java {2}；请选择 Java {3} 或启用自动选择。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Puedes reparar solo este archivo. Se guardará una copia del original antes de restablecerlo. Si contiene tu sesión o tus preferencias, tendrás que iniciar sesión o configurarlas de nuevo. Tus versiones, instancias, mods y mundos no se borran.",
+      "translations": {
+        "es": "Puedes reparar solo este archivo. Se guardará una copia del original antes de restablecerlo. Si contiene tu sesión o tus preferencias, tendrás que iniciar sesión o configurarlas de nuevo. Tus versiones, instancias, mods y mundos no se borran.",
+        "en": "You can repair just this file. A copy of the original will be saved before it is reset. If it contains your session or preferences, you will need to sign in or configure them again. Your versions, instances, mods and worlds will not be deleted.",
+        "pt": "Podes reparar apenas este ficheiro. Será guardada uma cópia do original antes de o repor. Se contiver a tua sessão ou preferências, terás de iniciar sessão ou configurá-las novamente. As tuas versões, instâncias, mods e mundos não serão eliminados.",
+        "fr": "Vous pouvez réparer uniquement ce fichier. Une copie de l’original sera conservée avant sa réinitialisation. S’il contient votre session ou vos préférences, vous devrez vous reconnecter ou les configurer à nouveau. Vos versions, instances, mods et mondes ne seront pas supprimés.",
+        "de": "Du kannst nur diese Datei reparieren. Vor dem Zurücksetzen wird eine Kopie des Originals gespeichert. Enthält sie deine Sitzung oder Einstellungen, musst du dich erneut anmelden oder diese neu einrichten. Deine Versionen, Instanzen, Mods und Welten werden nicht gelöscht.",
+        "it": "Puoi riparare solo questo file. Prima di ripristinarlo verrà salvata una copia dell’originale. Se contiene la sessione o le preferenze, dovrai accedere o configurarle di nuovo. Le versioni, le istanze, le mod e i mondi non verranno eliminati.",
+        "ru": "Можно восстановить только этот файл. Перед сбросом будет сохранена копия оригинала. Если в нём хранится сеанс или настройки, потребуется снова войти в аккаунт или настроить их заново. Версии, сборки, моды и миры не будут удалены.",
+        "ja": "このファイルだけを修復できます。リセットする前に元のファイルのコピーを保存します。ログイン情報や設定が含まれている場合は、再ログインまたは再設定が必要です。バージョン、インスタンス、MOD、ワールドは削除されません。",
+        "ar": "يمكنك إصلاح هذا الملف وحده. ستُحفظ نسخة من الملف الأصلي قبل إعادة ضبطه. إذا كان يحتوي على جلستك أو تفضيلاتك، فستحتاج إلى تسجيل الدخول أو ضبطها من جديد. لن تُحذف إصداراتك أو نسخ اللعب أو المودات أو العوالم.",
+        "zh": "你可以只修复这个文件。重置前会保存原文件的副本。如果文件中包含登录会话或偏好设置，你需要重新登录或设置。游戏版本、实例、模组和世界不会被删除。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "El archivo original se conserva. No se borrará ni se sustituirá su contenido. Comprueba que estás usando la cuenta original del sistema y restaura una copia del archivo si dispones de ella.",
+      "translations": {
+        "es": "El archivo original se conserva. No se borrará ni se sustituirá su contenido. Comprueba que estás usando la cuenta original del sistema y restaura una copia del archivo si dispones de ella.",
+        "en": "The original file is preserved. Its contents will not be deleted or replaced. Check that you are using the original system account and restore a backup of the file if you have one.",
+        "pt": "O ficheiro original é preservado. O seu conteúdo não será eliminado nem substituído. Confirma que estás a usar a conta original do sistema e restaura uma cópia do ficheiro, se tiveres uma.",
+        "fr": "Le fichier original est conservé. Son contenu ne sera ni supprimé ni remplacé. Vérifiez que vous utilisez le compte système d’origine et restaurez une copie du fichier si vous en avez une.",
+        "de": "Die Originaldatei bleibt erhalten. Ihr Inhalt wird weder gelöscht noch ersetzt. Prüfe, ob du das ursprüngliche Systemkonto verwendest, und stelle eine Sicherung der Datei wieder her, falls vorhanden.",
+        "it": "Il file originale viene conservato. Il contenuto non verrà eliminato né sostituito. Verifica di usare l’account di sistema originale e ripristina una copia del file, se disponibile.",
+        "ru": "Исходный файл сохранён. Его содержимое не будет удалено или заменено. Убедитесь, что используете исходную учётную запись системы, и восстановите резервную копию файла, если она есть.",
+        "ja": "元のファイルは保持されます。内容の削除や置き換えは行いません。元のシステムアカウントを使用していることを確認し、バックアップがあれば復元してください。",
+        "ar": "سيُحتفظ بالملف الأصلي. لن يُحذف محتواه أو يُستبدل. تأكد من استخدام حساب النظام الأصلي واستعد نسخة احتياطية من الملف إن كانت لديك.",
+        "zh": "原文件会被保留，内容不会被删除或替换。请确认你使用的是原来的系统账户；如果有文件备份，请将其恢复。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No se pudo descargar el cliente. Vuelve a intentarlo.",
+      "translations": {
+        "es": "No se pudo descargar el cliente. Vuelve a intentarlo.",
+        "en": "The client could not be downloaded. Try again.",
+        "pt": "Não foi possível transferir o cliente. Tenta novamente.",
+        "fr": "Impossible de télécharger le client. Réessayez.",
+        "de": "Der Client konnte nicht heruntergeladen werden. Versuche es erneut.",
+        "it": "Impossibile scaricare il client. Riprova.",
+        "ru": "Не удалось скачать клиент. Попробуйте ещё раз.",
+        "ja": "クライアントをダウンロードできませんでした。もう一度お試しください。",
+        "ar": "تعذر تنزيل العميل. حاول مرة أخرى.",
+        "zh": "无法下载客户端，请重试。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No se pudo descargar un archivo del modpack desde CurseForge. Abre los detalles para ver cuál.",
+      "translations": {
+        "es": "No se pudo descargar un archivo del modpack desde CurseForge. Abre los detalles para ver cuál.",
+        "en": "A modpack file could not be downloaded from CurseForge. Open the details to see which file.",
+        "pt": "Não foi possível transferir um ficheiro do modpack a partir do CurseForge. Abre os detalhes para ver qual.",
+        "fr": "Un fichier du modpack n’a pas pu être téléchargé depuis CurseForge. Ouvrez les détails pour savoir lequel.",
+        "de": "Eine Modpack-Datei konnte nicht von CurseForge heruntergeladen werden. Öffne die Details, um zu sehen, welche Datei betroffen ist.",
+        "it": "Impossibile scaricare un file del modpack da CurseForge. Apri i dettagli per sapere quale.",
+        "ru": "Не удалось скачать файл сборки с CurseForge. Откройте подробности, чтобы узнать, какой именно.",
+        "ja": "CurseForge からMODパックのファイルをダウンロードできませんでした。詳細を開いて対象のファイルを確認してください。",
+        "ar": "تعذر تنزيل أحد ملفات حزمة المودات من CurseForge. افتح التفاصيل لمعرفة الملف.",
+        "zh": "无法从 CurseForge 下载整合包中的某个文件。打开详情可查看具体文件。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Battly · Recuperar datos locales",
+      "translations": {
+        "es": "Battly · Recuperar datos locales",
+        "en": "Battly · Recover local data",
+        "pt": "Battly · Recuperar dados locais",
+        "fr": "Battly · Récupérer les données locales",
+        "de": "Battly · Lokale Daten wiederherstellen",
+        "it": "Battly · Recupera dati locali",
+        "ru": "Battly · Восстановление локальных данных",
+        "ja": "Battly · ローカルデータの復元",
+        "ar": "Battly · استعادة البيانات المحلية",
+        "zh": "Battly · 恢复本地数据"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Battly no puede leer el archivo «{0}».",
+      "translations": {
+        "es": "Battly no puede leer el archivo «{0}».",
+        "en": "Battly cannot read the file “{0}”.",
+        "pt": "O Battly não consegue ler o ficheiro «{0}».",
+        "fr": "Battly ne peut pas lire le fichier « {0} ».",
+        "de": "Battly kann die Datei „{0}“ nicht lesen.",
+        "it": "Battly non riesce a leggere il file «{0}».",
+        "ru": "Battly не может прочитать файл «{0}».",
+        "ja": "Battly はファイル「{0}」を読み取れません。",
+        "ar": "لا يستطيع Battly قراءة الملف «{0}».",
+        "zh": "Battly 无法读取文件“{0}”。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Reparar este archivo",
+      "translations": {
+        "es": "Reparar este archivo",
+        "en": "Repair this file",
+        "pt": "Reparar este ficheiro",
+        "fr": "Réparer ce fichier",
+        "de": "Diese Datei reparieren",
+        "it": "Ripara questo file",
+        "ru": "Восстановить этот файл",
+        "ja": "このファイルを修復",
+        "ar": "إصلاح هذا الملف",
+        "zh": "修复此文件"
       },
       "sourceLanguage": "es"
     }

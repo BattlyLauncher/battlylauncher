@@ -8,8 +8,10 @@ import {
   isProtectedDataPath,
   privateDataPolicy,
   registerPrivateMetadataRoot,
+  PrivateDataDecryptionError,
 } from './protected-data';
 import { readBoundedRegularFile, writeFileAtomically } from '../files/atomic-file';
+import { recoverDisposablePrivateFile, restorePrivateFile } from './private-data-recovery';
 
 export async function initializePrivateStorage(
   root: string,
@@ -101,8 +103,18 @@ export async function initializePrivateStorage(
     }
     // Existing logs/caches are authenticated on use, not reread in full at every startup.
     if (isEncryptedData(header)) {
-      if (extraFiles.includes(file) || resolve(dirname(file)) === resolve(root)) {
-        await readBoundedRegularFile(file, 128 * 1024 * 1024);
+      const transient = /\.(?:pending|displaced|previous)$/.test(file);
+      if (!transient && (extraFiles.includes(file) || resolve(dirname(file)) === resolve(root))) {
+        try {
+          await readBoundedRegularFile(file, 128 * 1024 * 1024);
+        } catch (error) {
+          if (
+            !(await restorePrivateFile(root, error)) &&
+            !(await recoverDisposablePrivateFile(root, error))
+          ) {
+            throw error;
+          }
+        }
       }
       return;
     }
@@ -186,6 +198,12 @@ export async function migratePrivateMetadata(
           await writeFileAtomically(file, content);
         }
       } catch (error) {
+        if (error instanceof PrivateDataDecryptionError) {
+          // One unreadable instance must not prevent the launcher from opening.
+          // Keep the metadata intact; InstanceStore can still load other instances.
+          console.warn('[storage] Unreadable content metadata retained:', entry.name, name);
+          continue;
+        }
         if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
           throw error;
         }

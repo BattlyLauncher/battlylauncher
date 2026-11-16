@@ -155,7 +155,7 @@
   overflow-wrap: anywhere;
 }
 
-/* Reserve the phase's two lines so library/file updates never move the bar. */
+/* Allow long phase labels to wrap without reserving an empty second line. */
 .launching-modal .launching-download-panel .launch-download-progress-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) max-content;
@@ -171,7 +171,7 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   min-width: 0;
-  height: 3em;
+  max-height: 3em;
   overflow: hidden;
   overflow-wrap: anywhere;
   color: #c6d9ed;
@@ -222,7 +222,7 @@
 .launching-modal .launch-download-progress-row [data-launch-percent] {
   box-sizing: border-box;
   min-width: 5ch;
-  max-width: 15ch;
+  min-inline-size: max-content;
   padding: 2px 8px;
   border: 1px solid #ffffff12;
   border-radius: 6px;
@@ -233,8 +233,6 @@
   text-align: end;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .launching-modal .launching-download-panel [data-launch-download-status] {
   display: block;
@@ -297,7 +295,7 @@
   font-size: clamp(24px, 2.5vw, 32px);
 }
 .launching-modal .launching-download-panel .launch-download-progress-row {
-  margin: 0 0 14px;
+  margin: 0 0 6px;
 }
 .launching-modal .launch-download-progress-row [data-launch-phase] {
   white-space: normal;

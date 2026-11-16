@@ -82,7 +82,11 @@ async function inventory(root: string, sub = ''): Promise<Entry[]> {
       directory: info.isDirectory(),
     });
     if (info.isDirectory()) {
-      result.push(...(await inventory(root, path)));
+      // Instance trees can contain hundreds of thousands of entries. Spreading
+      // them into push exceeds V8's argument limit before copying even starts.
+      for (const entry of await inventory(root, path)) {
+        result.push(entry);
+      }
     }
   }
   return result;

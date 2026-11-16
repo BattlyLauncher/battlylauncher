@@ -198,6 +198,7 @@ async function executable(path: string): Promise<boolean> {
 export interface MinecraftJavaSelection {
   readonly major: ManagedJavaMajor;
   readonly path: string | null;
+  readonly maximumMajor?: ManagedJavaMajor;
 }
 
 export async function ensureMinecraftJava(
@@ -240,7 +241,16 @@ export async function resolveMinecraftJava(
     forcedClientJavaMajor(versionId),
     managedMajor(requiredJavaVersion),
   ].filter((value): value is ManagedJavaMajor => value !== null);
-  const major = requirements.length ? (Math.max(...requirements) as ManagedJavaMajor) : null;
+  // LabyMod 3 uses the original LaunchWrapper, which casts the application
+  // classloader to URLClassLoader. Java 9+ cannot run it, even if a recent
+  // launch entry saved Java 21 while sharing LabyMod 4's runtime rule.
+  const legacyLabyMod = /^labymod-3-1\.(?:8\.9|12(?:\.2)?)$/i.test(versionId);
+  const major = legacyLabyMod
+    ? 8
+    : requirements.length
+      ? (Math.max(...requirements) as ManagedJavaMajor)
+      : null;
+  const compatibility = legacyLabyMod ? { maximumMajor: 8 as const } : {};
   if (!major) {
     throw new Error(
       `No se pudo obtener la versión de Java necesaria para ${baseVersionId}. Comprueba la conexión e inténtalo de nuevo.`,
@@ -250,7 +260,7 @@ export async function resolveMinecraftJava(
   const runtimeRoot = join(contentRoot, 'runtime');
   const managedPath = join(runtimeRoot, `java-${major}`, 'bin', executableName);
   if (await executable(managedPath)) {
-    return { major, path: managedPath };
+    return { major, path: managedPath, ...compatibility };
   }
 
   const directories = await readdir(runtimeRoot, { withFileTypes: true }).catch(() => []);
@@ -265,8 +275,8 @@ export async function resolveMinecraftJava(
     .map((entry) => join(runtimeRoot, entry.name, 'bin', executableName));
   for (const candidate of candidates) {
     if (await executable(candidate)) {
-      return { major, path: candidate };
+      return { major, path: candidate, ...compatibility };
     }
   }
-  return { major, path: null };
+  return { major, path: null, ...compatibility };
 }

@@ -83,6 +83,11 @@ export class CustomClientInstaller {
           : controller.signal,
       });
       if (!response.ok || !response.body) {
+        if (response.status === 404) {
+          throw new Error(
+            `La descarga de ${client.name} ya no está disponible en el servidor (HTTP 404).`,
+          );
+        }
         throw new Error(`La descarga devolvió HTTP ${response.status}`);
       }
       const finalUrl = new URL(response.url || client.downloadUrl);
@@ -122,13 +127,32 @@ export class CustomClientInstaller {
       if (!entries.length || entries.length > maximumEntries) {
         throw new TypeError('ZIP de cliente inválido');
       }
+      const names = entries.map((entry) => entryName(entry.entryName));
+      const versionPrefix = `versions/${client.folderName}/`;
+      const manifestName = `${client.folderName}.json`;
+      const nestedPrefix = `${versionPrefix}${client.folderName}/`;
+      const canonical = names.includes(`${versionPrefix}${manifestName}`);
+      const bare = !canonical && names.includes(manifestName);
+      const nested = !canonical && !bare && names.includes(`${nestedPrefix}${manifestName}`);
+      const destinations = new Set<string>();
       let expanded = 0;
-      for (const entry of entries) {
+      for (const [index, entry] of entries.entries()) {
         this.#signal?.throwIfAborted();
-        const name = entryName(entry.entryName);
+        let name = names[index];
         if (!name) {
           continue;
         }
+        // Older client packages contain either the version pair at the ZIP root
+        // or a duplicated version directory. Keep shared libraries at the root.
+        if (bare && (name === manifestName || name === `${client.folderName}.jar`)) {
+          name = `${versionPrefix}${name}`;
+        } else if (nested && name.startsWith(nestedPrefix)) {
+          name = `${versionPrefix}${name.slice(nestedPrefix.length)}`;
+        }
+        if (destinations.has(name)) {
+          throw new TypeError('El cliente contiene archivos de versión duplicados');
+        }
+        destinations.add(name);
         expanded += entry.header.size;
         if (expanded > maximumExtractedBytes) {
           throw new TypeError('El cliente extraído supera el límite');

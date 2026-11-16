@@ -7321,7 +7321,17 @@
     "text1324": "此组合不支持 OptiFine",
     "text1325": "只保留一个与正在启动的 Minecraft 版本对应的 OptiFine。其他版本的 OptiFine 或同时存在多个 OptiFine 可能导致无法启动。",
     "text1326": "OptiFine 没有适用于 Minecraft {0} 的 Forge 兼容版本。请选择不带 OptiFine 的 Forge，或单独使用 OptiFine。",
-    "text1327": "Forge 无法加载 OptiFine"
+    "text1327": "Forge 无法加载 OptiFine",
+    "text1328": "服务器已不再提供 {0} 的下载（HTTP 404）。",
+    "text1329": "客户端包含重复的版本文件",
+    "text1330": "{0} 需要 Java {1}。配置的路径使用 Java {2}；请选择 Java {3} 或启用自动选择。",
+    "text1331": "你可以只修复这个文件。重置前会保存原文件的副本。如果文件中包含登录会话或偏好设置，你需要重新登录或设置。游戏版本、实例、模组和世界不会被删除。",
+    "text1332": "原文件会被保留，内容不会被删除或替换。请确认你使用的是原来的系统账户；如果有文件备份，请将其恢复。",
+    "text1333": "无法下载客户端，请重试。",
+    "text1334": "无法从 CurseForge 下载整合包中的某个文件。打开详情可查看具体文件。",
+    "text1335": "Battly · 恢复本地数据",
+    "text1336": "Battly 无法读取文件“{0}”。",
+    "text1337": "修复此文件"
   },
   "startupUpdates": {
     "text1": "正在准备 Battly",

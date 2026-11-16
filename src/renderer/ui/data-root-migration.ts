@@ -113,7 +113,7 @@ export function showDataRootMigration() {
               : 'No se pudo completar el traslado. La carpeta original se conserva.',
       );
       element('[data-file]').textContent = '';
-      element('[data-detail]').textContent = '';
+      element('[data-detail]').textContent = message;
       modal.classList.add('has-error');
     },
   };

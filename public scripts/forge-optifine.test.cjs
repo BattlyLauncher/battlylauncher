@@ -5,6 +5,38 @@ const path = require('node:path');
 const os = require('node:os');
 const AdmZip = require('adm-zip');
 const { ensureForgeOptiFine } = require('../dist/main/minecraft/optifine-installer');
+const { forgeOptiFineClasspath } = require('../dist/main/minecraft/forge-optifine-classpath');
+
+test('modern Forge with OptiFine exposes the matching vanilla JAR to the system classloader', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'battly-optifine-classpath-'));
+  t.after(() => fs.rm(root, { recursive: true, force: true }));
+  await fs.mkdir(path.join(root, 'versions', '1.20.1'), { recursive: true });
+  await fs.mkdir(path.join(root, 'mods'));
+  const client = path.join(root, 'versions', '1.20.1', '1.20.1.jar');
+  await fs.writeFile(client, 'vanilla');
+  const options = {
+    root,
+    gameDirectory: root,
+    version: { id: '1.20.1' },
+    core: { loader: { type: 'forge', enabled: true } },
+  };
+  const args = ['java', '-cp', 'forge.jar', 'cpw.mods.bootstraplauncher.BootstrapLauncher'];
+  assert.deepEqual(forgeOptiFineClasspath(args, options), args);
+  await fs.writeFile(path.join(root, 'mods', 'OptiFine_1.8.9_HD_U_M5.jar'), 'other version');
+  assert.deepEqual(forgeOptiFineClasspath(args, options), args);
+  await fs.writeFile(path.join(root, 'mods', 'OptiFine_1.20.1_HD_U_I6.jar'), 'matching version');
+  const result = forgeOptiFineClasspath(args, options);
+  assert.equal(result[2], ['forge.jar', client].join(path.delimiter));
+  assert.deepEqual(forgeOptiFineClasspath(result, options), result);
+  assert.deepEqual(
+    forgeOptiFineClasspath(args, {
+      ...options,
+      core: { loader: { type: 'fabric', enabled: true } },
+    }),
+    args,
+  );
+  assert.equal(args[2], 'forge.jar');
+});
 
 test('installed legacy Forge restores its matching OptiFine JAR to the actual game directory offline', async (t) => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'battly-optifine-profile-'));

@@ -990,7 +990,7 @@ function labyLwjglClasspath(options: MinecraftLaunchOptions): string[] {
 }
 
 function labyAssetClasspath(options: MinecraftLaunchOptions): string[] {
-  if (!options.version.customId?.startsWith('LabyMod-')) {
+  if (!installedLabyMetadata(options)) {
     return [];
   }
   return labyAssetNames

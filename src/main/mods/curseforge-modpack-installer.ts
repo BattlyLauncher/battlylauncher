@@ -236,7 +236,7 @@ function safeFilename(value: unknown): string {
 function forgeCdnUrl(fileId: number, filename: string): string {
   const id = String(fileId);
   const group = id.slice(0, -3) || '0';
-  const tail = id.slice(-3).padStart(3, '0');
+  const tail = String(Number(id.slice(-3)));
   return `https://edge.forgecdn.net/files/${group}/${tail}/${encodeURIComponent(filename)}`;
 }
 
@@ -601,7 +601,7 @@ export class CurseForgeModpackInstaller {
         : AbortSignal.timeout(120_000),
     });
     if (!response.ok || !response.body) {
-      throw new Error(`CurseForge download failed (${response.status})`);
+      throw new Error(`CurseForge download failed (${response.status}): ${metadata.filename}`);
     }
     const length = response.headers.get('content-length');
     if (length !== null && Number(length) !== metadata.size) {

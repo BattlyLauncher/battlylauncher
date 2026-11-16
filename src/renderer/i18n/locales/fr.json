@@ -7750,7 +7750,17 @@
     "text1324": "OptiFine n’est pas disponible pour cette combinaison",
     "text1325": "Garde une seule édition d’OptiFine pour la version de Minecraft que tu ouvres. Une édition pour une autre version ou plusieurs éditions ensemble peuvent empêcher le démarrage.",
     "text1326": "OptiFine n’a pas d’édition compatible avec Forge pour Minecraft {0}. Choisis Forge sans OptiFine ou OptiFine seul.",
-    "text1327": "Forge n’a pas pu charger OptiFine"
+    "text1327": "Forge n’a pas pu charger OptiFine",
+    "text1328": "Le téléchargement de {0} n’est plus disponible sur le serveur (HTTP 404).",
+    "text1329": "Le client contient des fichiers de version en double",
+    "text1330": "{0} nécessite Java {1}. Le chemin configuré utilise Java {2} ; sélectionnez Java {3} ou activez la sélection automatique.",
+    "text1331": "Vous pouvez réparer uniquement ce fichier. Une copie de l’original sera conservée avant sa réinitialisation. S’il contient votre session ou vos préférences, vous devrez vous reconnecter ou les configurer à nouveau. Vos versions, instances, mods et mondes ne seront pas supprimés.",
+    "text1332": "Le fichier original est conservé. Son contenu ne sera ni supprimé ni remplacé. Vérifiez que vous utilisez le compte système d’origine et restaurez une copie du fichier si vous en avez une.",
+    "text1333": "Impossible de télécharger le client. Réessayez.",
+    "text1334": "Un fichier du modpack n’a pas pu être téléchargé depuis CurseForge. Ouvrez les détails pour savoir lequel.",
+    "text1335": "Battly · Récupérer les données locales",
+    "text1336": "Battly ne peut pas lire le fichier « {0} ».",
+    "text1337": "Réparer ce fichier"
   },
   "startupUpdates": {
     "text1": "Préparation de Battly",

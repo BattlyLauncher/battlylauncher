@@ -170,6 +170,11 @@ export async function prepareLaunchJava(
     if (explicit) {
       const runtime = await inspectJavaRuntime(options.javaPath);
       const selectedMajor = runtime.major;
+      if (required.maximumMajor && selectedMajor > required.maximumMajor) {
+        throw new Error(
+          `${options.version.customId ?? options.version.id} necesita Java ${required.major}. La ruta configurada usa Java ${selectedMajor}; selecciona Java ${required.major} o activa la selección automática.`,
+        );
+      }
       if (selectedMajor < required.major) {
         throw new Error(
           `La ruta de Java configurada usa Java ${selectedMajor}; ${options.version.id} requiere Java ${required.major}. Selecciona un Java compatible o activa la selección automática.`,
