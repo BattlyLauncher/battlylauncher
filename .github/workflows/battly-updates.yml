@@ -264,7 +264,7 @@ jobs:
 
   mirror-patch:
     needs: [plan, publish]
-    if: needs.plan.outputs.type == 'patch' && needs.publish.result == 'success'
+    if: ${{ !cancelled() && needs.plan.outputs.type == 'patch' && needs.publish.result == 'success' }}
     uses: ./.github/workflows/patch-cdn.yml
     with:
       tag: ${{ needs.plan.outputs.tag }}
