@@ -59,16 +59,22 @@ if (require.main === module)
     const tooEarly =
       process.env.BATTLY_CI_DRY_RUN !== 'true' &&
       !publicationWindow(process.env.BATTLY_RELEASE_NOT_BEFORE);
-    const skip =
-      tooEarly ||
-      (process.env.GITHUB_OUTPUT && process.env.GH_TOKEN && process.env.BATTLY_CI_DRY_RUN !== 'true'
-        ? await alreadyPublished(value, process.env.GH_TOKEN)
-        : false);
+    const published =
+      !tooEarly &&
+      Boolean(
+        process.env.GITHUB_OUTPUT &&
+          process.env.GH_TOKEN &&
+          process.env.BATTLY_CI_DRY_RUN !== 'true'
+          ? await alreadyPublished(value, process.env.GH_TOKEN)
+          : false,
+      );
+    const skip = tooEarly || published;
     if (process.env.GITHUB_OUTPUT)
       fs.appendFileSync(
         process.env.GITHUB_OUTPUT,
         Object.entries({
           skip: String(skip),
+          published: String(published),
           type: value.type,
           channel: value.channel,
           tag: value.tag,

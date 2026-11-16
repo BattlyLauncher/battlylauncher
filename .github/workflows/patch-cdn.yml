@@ -1,14 +1,9 @@
 name: Copy published patch to Battly CDN
-on:
+'on':
   workflow_dispatch:
     inputs:
       tag:
         description: Published patch tag
-        required: true
-        type: string
-  workflow_call:
-    inputs:
-      tag:
         required: true
         type: string
 permissions:
@@ -26,7 +21,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
-          node-version: '22.22.3'
+          node-version: 22.22.3
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm ci --ignore-scripts --prefix "public scripts/cdn-publisher"

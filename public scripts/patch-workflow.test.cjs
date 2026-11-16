@@ -75,7 +75,15 @@ test('CDN mirroring follows a successful patch publication and supports isolated
   assert.match(workflow.jobs['mirror-patch'].if, /type == 'patch'/);
   assert.match(workflow.jobs['mirror-patch'].if, /publish.result == 'success'/);
   assert(mirror.on.workflow_dispatch);
-  assert(mirror.on.workflow_call);
+  assert(!mirror.on.workflow_call);
+  assert.equal(workflow.jobs['mirror-patch'].environment, 'battly-updates');
+  assert.equal(workflow.jobs['mirror-patch'].uses, undefined);
+  assert.match(workflow.jobs['mirror-patch'].if, /outputs.published == 'true'/);
+  assert.equal(workflow.jobs.plan.outputs.published, '${{ steps.plan.outputs.published }}');
+  assert.match(
+    workflow.jobs['mirror-patch'].steps.at(-1).env.WASABI_SECRET,
+    /secrets\.BATTLY_CDN_SECRET/,
+  );
   assert.equal(mirror.jobs.mirror.environment, 'battly-updates');
   assert.equal(mirror.jobs.mirror.concurrency['cancel-in-progress'], false);
   assert.equal(mirror.permissions.contents, 'read');

@@ -32,6 +32,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       skip: ${{ steps.plan.outputs.skip }}
+      published: ${{ steps.plan.outputs.published }}
       type: ${{ steps.plan.outputs.type }}
       tag: ${{ steps.plan.outputs.tag }}
       baseTag: ${{ steps.plan.outputs.baseTag }}
@@ -264,8 +265,36 @@ jobs:
         run: node "public scripts/publish-battly-update.cjs" artifacts/update-ready --publish
 
   mirror-patch:
-    needs: [plan, publish]
-    if: ${{ !cancelled() && needs.plan.outputs.type == 'patch' && needs.publish.result == 'success' }}
-    uses: ./.github/workflows/patch-cdn.yml
-    with:
-      tag: ${{ needs.plan.outputs.tag }}
+    needs:
+      - plan
+      - publish
+    if: ${{ !cancelled() && vars.BATTLY_RELEASE_PUBLISH_ENABLED == 'true' && needs.plan.outputs.type == 'patch' && (needs.publish.result == 'success' || needs.plan.outputs.published == 'true') }}
+    permissions:
+      contents: read
+    runs-on: ubuntu-24.04
+    environment: battly-updates
+    concurrency:
+      group: battly-patch-cdn
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.22.3
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm ci --ignore-scripts --prefix "public scripts/cdn-publisher"
+      - name: Check mirror publication
+        run: node --test "public scripts/mirror-patch-release.test.cjs"
+      - name: Copy and verify immutable patch files before updating discovery
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WASABI_ENDPOINT: ${{ secrets.BATTLY_CDN_ENDPOINT }}
+          WASABI_REGION: ${{ secrets.BATTLY_CDN_REGION }}
+          WASABI_BUCKET: ${{ secrets.BATTLY_CDN_BUCKET }}
+          WASABI_KEY: ${{ secrets.BATTLY_CDN_KEY }}
+          WASABI_SECRET: ${{ secrets.BATTLY_CDN_SECRET }}
+          PATCH_TAG: ${{ needs.plan.outputs.tag }}
+        run: node "public scripts/mirror-patch-release.cjs" "$PATCH_TAG"
