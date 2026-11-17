@@ -77,7 +77,10 @@ test('CurseForge CDN rejection does not blame the Battly account', async () => {
     compilerOptions: { module: ts.ModuleKind.CommonJS },
   }).outputText;
   const exports = {};
-  new Function('exports', code)(exports);
+  const rendererRequire = require('node:module').createRequire(
+    path.join(__dirname, '../dist/renderer/ui/user-error.js'),
+  );
+  new Function('exports', 'require', code)(exports, rendererRequire);
   const message = exports.userErrorMessage(
     new Error(
       "Error invoking remote method 'mods:import-mrpack': Error: CurseForge download failed (403): entityculling.jar",

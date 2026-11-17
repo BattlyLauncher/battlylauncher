@@ -7316,11 +7316,13 @@ function secureWebContents(window: BrowserWindow, allowGoogleDriveAuth = false):
         },
       };
     }
+    void confirmExternalLink(url).catch(() => undefined);
     return { action: 'deny' };
   });
   window.webContents.on('will-navigate', (event, targetUrl) => {
     if (!isTrustedRendererUrl(targetUrl, rendererUrl)) {
       event.preventDefault();
+      void confirmExternalLink(targetUrl).catch(() => undefined);
     }
   });
 }

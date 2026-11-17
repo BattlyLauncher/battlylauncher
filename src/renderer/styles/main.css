@@ -722,6 +722,12 @@ a[href]:focus-visible,
 .header-edition {
   margin-left: 4px;
 }
+.header-patch {
+  margin-left: 6px;
+  font-size: 0.75em;
+  font-weight: 500;
+  white-space: nowrap;
+}
 .titlebar-actions {
   display: flex;
   align-items: center;
@@ -3027,6 +3033,37 @@ body:has(.music-mini-player:not([hidden])) [data-guided-tutorial] .home-tutorial
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.mod-changelog {
+  margin-top: 12px;
+  color: #bfd0e4;
+  font-size: 13px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.mod-detail-version .mod-changelog :is(h1, h2, h3, h4, h5, h6) {
+  margin: 16px 0 8px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+.mod-detail-release-list .mod-detail-version .mod-changelog :is(p, ul, ol, pre, blockquote) {
+  margin: 8px 0;
+  font-size: 13px !important;
+}
+.mod-detail-version .mod-changelog :is(ul, ol) {
+  padding-inline-start: 22px;
+}
+.mod-detail-version .mod-changelog ul {
+  list-style: disc;
+}
+.mod-detail-version .mod-changelog ol {
+  list-style: decimal;
+}
+.mod-detail-version .mod-changelog :is(strong, small) {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  font-size: inherit;
 }
 .mod-detail-version b,
 .mod-detail-dependency span {

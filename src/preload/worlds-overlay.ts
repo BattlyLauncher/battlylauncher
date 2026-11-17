@@ -1,6 +1,7 @@
 import type { SocialFriend } from '../shared/social/social-contract';
 import type { WorldsOverlayPreferences } from '../shared/social/worlds-overlay-preferences';
 import { contextBridge, ipcRenderer } from 'electron';
+import { createIpcInvoker } from '../shared/ipc-errors';
 import { desktopChannels } from '../shared/desktop-api';
 import type { WorldsOverlayApi } from '../shared/social/worlds-overlay-api';
 import type {
@@ -8,11 +9,12 @@ import type {
   WorldsPublicRoom,
   WorldsSnapshot,
 } from '../shared/social/battly-worlds-contract';
+const invokeDesktop = createIpcInvoker(ipcRenderer.invoke.bind(ipcRenderer));
 const api: WorldsOverlayApi = {
   writeClipboardText: (value) =>
-    ipcRenderer.invoke(desktopChannels.writeClipboardText, value) as Promise<boolean>,
-  language: () => ipcRenderer.invoke('settings:language') as Promise<string>,
-  respondLan: (accept) => ipcRenderer.invoke('worlds:lan-response', accept) as Promise<void>,
+    invokeDesktop(desktopChannels.writeClipboardText, value) as Promise<boolean>,
+  language: () => invokeDesktop('settings:language') as Promise<string>,
+  respondLan: (accept) => invokeDesktop('worlds:lan-response', accept) as Promise<void>,
   onLanPrompt: (listener) => {
     ipcRenderer.on('worlds:lan-prompt', (_event, visible: unknown) => {
       if (typeof visible === 'boolean') {
@@ -21,33 +23,33 @@ const api: WorldsOverlayApi = {
     });
   },
   getWorldsSnapshot: () =>
-    ipcRenderer.invoke(desktopChannels.getWorldsSnapshot) as Promise<WorldsSnapshot>,
+    invokeDesktop(desktopChannels.getWorldsSnapshot) as Promise<WorldsSnapshot>,
   worldsAction: (action) =>
-    ipcRenderer.invoke(desktopChannels.worldsAction, action) as Promise<WorldsSnapshot>,
+    invokeDesktop(desktopChannels.worldsAction, action) as Promise<WorldsSnapshot>,
   getWorldsPublicRooms: (page) =>
-    ipcRenderer.invoke(desktopChannels.worldsPublicRooms, page) as Promise<WorldsPublicRoom[]>,
+    invokeDesktop(desktopChannels.worldsPublicRooms, page) as Promise<WorldsPublicRoom[]>,
   worldsVoiceCommand: (command) =>
-    ipcRenderer.invoke(desktopChannels.worldsVoiceCommand, command) as Promise<void>,
+    invokeDesktop(desktopChannels.worldsVoiceCommand, command) as Promise<void>,
   worldsVoiceParty: (action, value) =>
-    ipcRenderer.invoke(desktopChannels.worldsVoiceParty, action, value) as Promise<void>,
+    invokeDesktop(desktopChannels.worldsVoiceParty, action, value) as Promise<void>,
   preferences: () =>
-    ipcRenderer.invoke('worlds:overlay-preferences') as Promise<WorldsOverlayPreferences>,
-  configure: (value) => ipcRenderer.invoke('worlds:overlay-configure', value) as Promise<void>,
-  compactHeight: (value) => ipcRenderer.invoke('worlds:overlay-height', value) as Promise<void>,
+    invokeDesktop('worlds:overlay-preferences') as Promise<WorldsOverlayPreferences>,
+  configure: (value) => invokeDesktop('worlds:overlay-configure', value) as Promise<void>,
+  compactHeight: (value) => invokeDesktop('worlds:overlay-height', value) as Promise<void>,
   onPreferences: (listener) => {
     ipcRenderer.on('worlds:overlay-preferences', (_event, value: WorldsOverlayPreferences) =>
       listener(value),
     );
   },
-  expand: (expanded) => ipcRenderer.invoke('worlds:overlay-expand', expanded) as Promise<void>,
-  friends: () => ipcRenderer.invoke('worlds:overlay-friends') as Promise<readonly SocialFriend[]>,
+  expand: (expanded) => invokeDesktop('worlds:overlay-expand', expanded) as Promise<void>,
+  friends: () => invokeDesktop('worlds:overlay-friends') as Promise<readonly SocialFriend[]>,
   searchUsers: (query) =>
-    ipcRenderer.invoke('worlds:overlay-search-users', query) as Promise<readonly string[]>,
+    invokeDesktop('worlds:overlay-search-users', query) as Promise<readonly string[]>,
   faceImageUrl: (username) => {
     if (typeof username !== 'string' || username.length > 128 || username.includes('\0')) {
       throw new TypeError('Invalid username');
     }
-    return ipcRenderer.invoke('worlds:overlay-avatar', username) as Promise<string>;
+    return invokeDesktop('worlds:overlay-avatar', username) as Promise<string>;
   },
   onWorldsEvent: (listener) => {
     const handler = (_event: Electron.IpcRendererEvent, value: WorldsEvent): void =>

@@ -587,7 +587,9 @@
     "text154": "Sélectionner les mods concernés",
     "text155": "L’hôte a fermé la salle. Vous avez été déconnecté du monde.",
     "text156": "La salle a été fermée.",
-    "text157": "La voix Battly ne répond pas. Réessayez lorsque la connexion à la salle sera rétablie."
+    "text157": "La voix Battly ne répond pas. Réessayez lorsque la connexion à la salle sera rétablie.",
+    "text158": "Ce sous-domaine est déjà utilisé. Choisissez-en un autre.",
+    "text159": "(correctif {0})"
   },
   "launcher": {
     "loading_config": "Chargement de la configuration",

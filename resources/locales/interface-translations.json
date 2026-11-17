@@ -1797,6 +1797,30 @@
       "Battlyのボイスチャットが応答しません。ルームへの接続が復旧したら再試行してください。",
       "لم تستجب خدمة الصوت في Battly. حاول مجددًا عند استعادة الاتصال بالغرفة.",
       "Battly语音未响应。房间连接恢复后请重试。"
+    ],
+    [
+      "Este subdominio ya está en uso. Elige otro.",
+      "This subdomain is already in use. Choose another.",
+      "Este subdomínio já está em uso. Escolhe outro.",
+      "Ce sous-domaine est déjà utilisé. Choisissez-en un autre.",
+      "Diese Subdomain wird bereits verwendet. Wähle eine andere.",
+      "Questo sottodominio è già in uso. Scegline un altro.",
+      "Этот поддомен уже занят. Выберите другой.",
+      "このサブドメインは既に使用されています。別の名前を選んでください。",
+      "هذا النطاق الفرعي مستخدم بالفعل. اختر اسمًا آخر.",
+      "此子域名已被使用，请选择其他名称。"
+    ],
+    [
+      "(parche {0})",
+      "(patch {0})",
+      "(patch {0})",
+      "(correctif {0})",
+      "(Patch {0})",
+      "(patch {0})",
+      "(патч {0})",
+      "(パッチ {0})",
+      "(التصحيح {0})",
+      "(补丁 {0})"
     ]
   ]
 }

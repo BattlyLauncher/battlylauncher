@@ -587,7 +587,9 @@
     "text154": "Betroffene Mods auswählen",
     "text155": "Der Gastgeber hat den Raum geschlossen. Du wurdest von der Welt getrennt.",
     "text156": "Der Raum wurde geschlossen.",
-    "text157": "Der Battly-Sprachchat antwortet nicht. Versuche es erneut, sobald die Raumverbindung wiederhergestellt ist."
+    "text157": "Der Battly-Sprachchat antwortet nicht. Versuche es erneut, sobald die Raumverbindung wiederhergestellt ist.",
+    "text158": "Diese Subdomain wird bereits verwendet. Wähle eine andere.",
+    "text159": "(Patch {0})"
   },
   "launcher": {
     "loading_config": "Konfiguration laden",

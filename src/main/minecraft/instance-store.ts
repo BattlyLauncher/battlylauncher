@@ -1,4 +1,5 @@
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
+import { PrivateDataDecryptionError } from '../storage/protected-data';
 import { setTimeout as delay } from 'node:timers/promises';
 import { lstat, mkdir, readdir, rename, rm } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
@@ -128,32 +129,31 @@ export class InstanceStore {
     await assertRealDirectory(this.#root);
     const summaries: InstanceSummary[] = [];
     const seen = new Set<string>();
-    for (const root of this.#roots) {
-      if (!(await pathExists(root))) {
+    let unreadable: PrivateDataDecryptionError | undefined;
+    for (const entry of await this.#directories()) {
+      if (summaries.length >= maximumInstances) {
+        break;
+      }
+      if (seen.has(entry.id)) {
         continue;
       }
-      await assertRealDirectory(root);
-      const entries = await readdir(root, { withFileTypes: true });
-      for (const entry of entries) {
-        if (summaries.length >= maximumInstances) {
-          return summaries;
+      try {
+        const directory = join(entry.root, entry.name);
+        await assertRealDirectory(directory);
+        const metadata = await readMetadata(join(directory, 'instance.json'));
+        const summary = normalizeInstanceSummary(entry.id, metadata);
+        const iconDataUrl = await readIconDataUrl(directory);
+        summaries.push(iconDataUrl ? { ...summary, iconDataUrl } : summary);
+        seen.add(entry.id);
+      } catch (error) {
+        if (error instanceof PrivateDataDecryptionError) {
+          unreadable ??= error;
         }
-        if (!entry.isDirectory() || entry.isSymbolicLink() || !instanceIdPattern.test(entry.name)) {
-          continue;
-        }
-        if (seen.has(entry.name)) {
-          continue;
-        }
-        seen.add(entry.name);
-        try {
-          const metadata = await readMetadata(join(root, entry.name, 'instance.json'));
-          const summary = normalizeInstanceSummary(entry.name, metadata);
-          const iconDataUrl = await readIconDataUrl(join(root, entry.name));
-          summaries.push(iconDataUrl ? { ...summary, iconDataUrl } : summary);
-        } catch {
-          // A partially downloaded or historical invalid instance remains untouched.
-        }
+        // Incomplete metadata remains untouched; another configured root may have a valid copy.
       }
+    }
+    if (!summaries.length && unreadable) {
+      throw unreadable;
     }
     // Keep the filesystem order used by Battly legacy. On Windows this is the
     // instance directory order, and users rely on it remaining stable.
@@ -183,7 +183,8 @@ export class InstanceStore {
       const staging = join(this.#root, `.creating-${id}`);
       if (
         (await pathExists(staging)) ||
-        (await Promise.all(this.#roots.map((root) => pathExists(join(root, id))))).some(Boolean)
+        (await Promise.all(this.#roots.map((root) => pathExists(join(root, id))))).some(Boolean) ||
+        (await this.#directories()).some((entry) => entry.id === id)
       ) {
         throw new Error('Instance id already exists');
       }
@@ -257,15 +258,68 @@ export class InstanceStore {
     if (!instanceIdPattern.test(id)) {
       throw new TypeError('Invalid instance id');
     }
-    for (const root of this.#roots) {
-      const directory = join(root, id);
-      if (await pathExists(directory)) {
-        await assertRealDirectory(root);
-        await assertRealDirectory(directory);
+    let unreadable: PrivateDataDecryptionError | undefined;
+    for (const entry of await this.#directories()) {
+      if (entry.id !== id) {
+        continue;
+      }
+      const directory = join(entry.root, entry.name);
+      await assertRealDirectory(entry.root);
+      await assertRealDirectory(directory);
+      try {
+        normalizeInstanceSummary(id, await readMetadata(join(directory, 'instance.json')));
         return directory;
+      } catch (error) {
+        if (error instanceof PrivateDataDecryptionError) {
+          unreadable ??= error;
+        }
       }
     }
+    if (unreadable) {
+      throw unreadable;
+    }
     throw new Error('Instance directory does not exist');
+  }
+
+  async #directories(): Promise<{ root: string; name: string; id: string }[]> {
+    const directories: { root: string; name: string }[] = [];
+    const reserved = new Set<string>();
+    for (const root of this.#roots) {
+      if (!(await pathExists(root))) {
+        continue;
+      }
+      await assertRealDirectory(root);
+      for (const entry of await readdir(root, { withFileTypes: true })) {
+        if (!entry.isDirectory() || entry.isSymbolicLink() || entry.name.startsWith('.')) {
+          continue;
+        }
+        directories.push({ root, name: entry.name });
+        if (instanceIdPattern.test(entry.name)) {
+          reserved.add(entry.name);
+        }
+      }
+    }
+    const aliases = new Map<string, string>();
+    return directories.map((entry) => {
+      if (instanceIdPattern.test(entry.name)) {
+        return { ...entry, id: entry.name };
+      }
+      let id = aliases.get(entry.name);
+      if (!id) {
+        let attempt = 0;
+        do {
+          id =
+            'legacy-' +
+            createHash('sha256')
+              .update(JSON.stringify([entry.name, attempt++]))
+              .digest('base64url');
+        } while (reserved.has(id));
+        aliases.set(entry.name, id);
+        reserved.add(id);
+      }
+      // Keep the folder and its encrypted metadata unchanged. Only the API ID is normalized.
+      return { ...entry, id };
+    });
   }
 
   #enqueue<T>(operation: () => Promise<T>): Promise<T> {

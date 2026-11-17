@@ -1,3 +1,4 @@
+import { createIpcInvoker } from '../shared/ipc-errors';
 import type { NoticeSettings as ImportedNoticeSettings } from '../shared/notifications';
 import type { NoticeSnapshot as ImportedNoticeSnapshot } from '../shared/notifications';
 import type { DriveTransferProgress as ImportedDriveTransferProgress } from '../shared/settings/drive-progress';
@@ -204,7 +205,7 @@ ipcRenderer.on(desktopChannels.bypackOpenRequested, (_event, path: unknown) => {
     bypackListeners.forEach((listener) => listener(path));
   }
 });
-const invokeDesktop = ipcRenderer.invoke.bind(ipcRenderer);
+const invokeDesktop = createIpcInvoker(ipcRenderer.invoke.bind(ipcRenderer));
 
 const desktopApi: BattlyDesktopApi = Object.freeze({
   migratePrivatePreferences: (legacy: Readonly<Record<string, string>>) =>

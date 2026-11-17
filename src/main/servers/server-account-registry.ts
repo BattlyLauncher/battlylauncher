@@ -1,5 +1,6 @@
 import { normalizeServerSummary, type ServerSummary } from '../../shared/servers/server-contract';
 import { readBoundedResponse } from '../network/read-bounded-response';
+import { serverDomainTakenMessage } from '../../shared/servers/server-errors';
 
 export interface ServerAccountRegistry {
   list(local: readonly ServerSummary[]): Promise<ServerSummary[]>;
@@ -36,8 +37,11 @@ export function serverAccountRegistry(
       1024 * 1024,
       'Respuesta de servidores demasiado grande',
     );
-    const value = JSON.parse(raw) as { servers?: unknown[]; error?: string };
+    const value = JSON.parse(raw) as { servers?: unknown[]; error?: string; code?: string };
     if (!response.ok) {
+      if (response.status === 409 && value.code === 'SERVER_DOMAIN_TAKEN') {
+        throw new Error(serverDomainTakenMessage);
+      }
       throw new Error(value.error || 'No se pudo consultar Battly Servers');
     }
     if (!Array.isArray(value.servers) || value.servers.length > 1) {

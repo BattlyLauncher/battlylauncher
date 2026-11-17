@@ -1811,7 +1811,9 @@
     "text154": "Select affected mods",
     "text155": "The host closed the room. You have been disconnected from the world.",
     "text156": "The room has closed.",
-    "text157": "Battly voice did not respond. Try again when the room connection recovers."
+    "text157": "Battly voice did not respond. Try again when the room connection recovers.",
+    "text158": "This subdomain is already in use. Choose another.",
+    "text159": "(patch {0})"
   },
   "launcher": {
     "ending": "Almost ready",

@@ -1,6 +1,8 @@
-import { readFile, rename } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
+import { rename } from 'node:fs/promises';
 import { join } from 'node:path';
 import AdmZip from 'adm-zip';
+import { readBoundedRegularFile } from '../files/atomic-file';
 
 export function hasLabyMappingCollision(mapping: string, classes: readonly string[]): boolean {
   const names = new Map<string, string>();
@@ -36,6 +38,7 @@ export async function repairLabyMappingCache(
   root: string,
   gameDirectory: string,
   version: string,
+  minecraftJar = join(root, 'versions', version, `${version}.jar`),
 ): Promise<boolean> {
   if (!['1.8.9', '1.12.2'].includes(version)) {
     return false;
@@ -43,23 +46,43 @@ export async function repairLabyMappingCache(
   const paths = ['mcp', 'searge'].map((kind) =>
     join(gameDirectory, 'labymod-neo', 'mappings', `${version}-${kind}.tsrg2`),
   );
-  const mappings = await Promise.all(paths.map((path) => readFile(path, 'utf8').catch(() => null)));
+  const mappings = await Promise.all(
+    paths.map((path) =>
+      readBoundedRegularFile(path, 16 * 1024 * 1024)
+        .then((bytes) => bytes.toString('utf8'))
+        .catch(() => null),
+    ),
+  );
   if (!mappings.some(Boolean)) {
     return false;
   }
-  const jar = new AdmZip(join(root, 'versions', version, `${version}.jar`));
-  const classes = jar
-    .getEntries()
-    .filter((entry) => entry.entryName.endsWith('.class'))
-    .map((entry) => entry.entryName.slice(0, -6));
+  let classes: string[];
+  try {
+    const bytes = await readBoundedRegularFile(minecraftJar, 128 * 1024 * 1024);
+    classes = new AdmZip(bytes)
+      .getEntries()
+      .filter((entry) => entry.entryName.endsWith('.class'))
+      .map((entry) => entry.entryName.slice(0, -6));
+  } catch {
+    // Inspection is optional: an absent or unreadable game JAR cannot prove a bad cache.
+    return false;
+  }
   if (!mappings.some((mapping) => mapping && hasLabyMappingCollision(mapping, classes))) {
     return false;
   }
-  const suffix = `.invalid-${Date.now()}.bak`;
+  const suffix = `.invalid-${Date.now()}-${randomUUID()}.bak`;
+  let repaired = false;
   for (let i = 0; i < paths.length; i++) {
     if (mappings[i] !== null) {
-      await rename(paths[i], paths[i] + suffix);
+      try {
+        await rename(paths[i], paths[i] + suffix);
+        repaired = true;
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+          throw error;
+        }
+      }
     }
   }
-  return true;
+  return repaired;
 }

@@ -96,3 +96,173 @@ test('missing legacy roots and explicit isolated stores do not import unrelated 
   assert.deepEqual(await missing.list(), []);
   await assert.rejects(f.store.directoryPathInternal('../old123'), /Invalid instance id/);
 });
+
+test('named encrypted instance folders remain visible without renaming or rewriting their files', async (t) => {
+  const f = await fixture(t);
+  const name = 'pimp. og server';
+  const directory = path.join(f.previous, name);
+  await fs.rename(f.directory, directory);
+  const {
+    configureProtectedData,
+    registerPrivateMetadataRoot,
+    encodePrivateData,
+    isEncryptedData,
+  } = require('../dist/main/storage/protected-data');
+  configureProtectedData(Buffer.alloc(32, 23), () => false);
+  registerPrivateMetadataRoot(f.previous, ['instance.json']);
+  const metadata = { ...legacy, name };
+  const file = path.join(directory, 'instance.json');
+  await fs.writeFile(file, encodePrivateData(file, JSON.stringify(metadata)));
+  const before = await fs.readFile(file);
+  assert(isEncryptedData(before));
+  const rows = await f.store.list();
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].name, name);
+  assert.match(rows[0].id, /^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$/);
+  assert.notEqual(rows[0].id, name);
+  const reopened = new InstanceStore(
+    f.current,
+    path.join(f.root, 'archive'),
+    undefined,
+    undefined,
+    [f.previous],
+  );
+  assert.equal(await reopened.directoryPathInternal(rows[0].id), directory);
+  assert.equal((await reopened.readInternal(rows[0].id)).version, metadata.version);
+  assert.equal(
+    (await new InstanceContentService(reopened).list(rows[0].id, 'mods'))[0].name,
+    'original.jar',
+  );
+  assert.deepEqual(await fs.readFile(file), before);
+  assert.equal(
+    await fs.readFile(path.join(directory, 'saves/World/level.dat'), 'utf8'),
+    'original-world',
+  );
+  await reopened.update(rows[0].id, { ...metadata, name: 'Renamed display name' });
+  assert.equal((await reopened.list())[0].id, rows[0].id);
+  assert.equal((await reopened.readInternal(rows[0].id)).extraLegacyValue, 'preserve');
+  assert(isEncryptedData(await fs.readFile(file)));
+  const archive = await reopened.archive(rows[0].id);
+  assert.equal(await fs.readFile(path.join(archive, 'mods/original.jar'), 'utf8'), 'original-mod');
+  assert.equal(
+    await fs.readFile(path.join(archive, 'saves/World/level.dat'), 'utf8'),
+    'original-world',
+  );
+  assert.deepEqual(await reopened.list(), []);
+});
+test('legacy folder identifiers survive data-root relocation and support Unicode names', async (t) => {
+  const f = await fixture(t);
+  const directory = path.join(f.current, 'Mi mundo 日本 1.20.1');
+  await fs.mkdir(directory, { recursive: true });
+  await fs.writeFile(
+    path.join(directory, 'instance.json'),
+    JSON.stringify({ ...legacy, name: 'Mi mundo 日本' }),
+  );
+  const isolated = new InstanceStore(f.current, path.join(f.root, 'archive'));
+  const first = (await isolated.list())[0];
+  assert(first);
+  const next = path.join(f.root, 'moved', 'instances');
+  await fs.mkdir(path.dirname(next), { recursive: true });
+  await fs.rename(f.current, next);
+  const relocated = new InstanceStore(next, path.join(f.root, 'archive'));
+  assert.equal((await relocated.list())[0].id, first.id);
+  assert.equal(
+    await relocated.directoryPathInternal(first.id),
+    path.join(next, 'Mi mundo 日本 1.20.1'),
+  );
+});
+test('invalid current metadata does not hide a valid legacy instance with the same folder name', async (t) => {
+  const f = await fixture(t);
+  await fs.mkdir(path.join(f.current, 'old123'), { recursive: true });
+  await fs.writeFile(path.join(f.current, 'old123/instance.json'), 'interrupted write');
+  assert.equal((await f.store.list()).length, 1);
+  assert.equal(await f.store.directoryPathInternal('old123'), f.directory);
+  assert.equal((await f.store.readInternal('old123')).name, legacy.name);
+  assert.equal(
+    await fs.readFile(path.join(f.current, 'old123/instance.json'), 'utf8'),
+    'interrupted write',
+  );
+});
+test('staging directories and symlinks are excluded even when they contain valid metadata', async (t) => {
+  const f = await fixture(t);
+  const stage = path.join(f.current, '.creating-pending');
+  await fs.mkdir(stage, { recursive: true });
+  await fs.writeFile(path.join(stage, 'instance.json'), JSON.stringify(legacy));
+  await fs.symlink(
+    f.directory,
+    path.join(f.current, 'Linked world'),
+    process.platform === 'win32' ? 'junction' : 'dir',
+  );
+  assert.deepEqual(
+    (await f.store.list()).map((x) => x.id),
+    ['old123'],
+  );
+  await assert.rejects(f.store.directoryPathInternal('../old123'), /Invalid instance id/);
+});
+test('a decryption failure is reported instead of claiming the instance folder is empty', async (t) => {
+  const f = await fixture(t);
+  const {
+    configureProtectedData,
+    registerPrivateMetadataRoot,
+    encodePrivateData,
+  } = require('../dist/main/storage/protected-data');
+  configureProtectedData(Buffer.alloc(32, 42), () => false);
+  registerPrivateMetadataRoot(f.previous, ['instance.json']);
+  const file = path.join(f.directory, 'instance.json');
+  const bytes = encodePrivateData(file, JSON.stringify(legacy));
+  await fs.writeFile(file, bytes);
+  configureProtectedData(Buffer.alloc(32, 43), () => false);
+  await assert.rejects(f.store.list(), (error) => error.code === 'BATTLY_PRIVATE_DATA_UNREADABLE');
+  assert.deepEqual(await fs.readFile(file), bytes);
+});
+
+test('encrypted named folders in the selected root are discovered with the same protected-data policy', async (t) => {
+  const f = await fixture(t);
+  const {
+    configureProtectedData,
+    registerPrivateMetadataRoot,
+    encodePrivateData,
+  } = require('../dist/main/storage/protected-data');
+  configureProtectedData(Buffer.alloc(32, 18), () => false);
+  registerPrivateMetadataRoot(f.current, ['instance.json']);
+  const folder = path.join(f.current, 'pimp. og server');
+  await fs.mkdir(folder, { recursive: true });
+  const file = path.join(folder, 'instance.json');
+  const bytes = encodePrivateData(
+    file,
+    JSON.stringify({ ...legacy, name: 'Current encrypted pack' }),
+  );
+  await fs.writeFile(file, bytes);
+  const row = (await f.store.list()).find((x) => x.name === 'Current encrypted pack');
+  assert(row);
+  assert.equal(await f.store.directoryPathInternal(row.id), folder);
+  assert.deepEqual(await fs.readFile(file), bytes);
+});
+test('generated legacy identifiers cannot shadow real directory IDs or be reused by creation', async (t) => {
+  const f = await fixture(t);
+  const folder = path.join(f.previous, 'Named. pack');
+  await fs.rename(f.directory, folder);
+  const first = (await f.store.list())[0];
+  assert(first);
+  const factory = new InstanceStore(
+    f.current,
+    path.join(f.root, 'archive'),
+    () => first.id,
+    undefined,
+    [f.previous],
+  );
+  await assert.rejects(factory.create(legacy), /already exists/);
+  const modern = path.join(f.current, first.id);
+  await fs.mkdir(modern, { recursive: true });
+  await fs.writeFile(
+    path.join(modern, 'instance.json'),
+    JSON.stringify({ ...legacy, name: 'Modern instance' }),
+  );
+  const rows = await f.store.list();
+  assert.equal(rows.length, 2);
+  assert.equal(new Set(rows.map((x) => x.id)).size, 2);
+  const historical = rows.find((x) => x.name === legacy.name);
+  assert(historical);
+  assert.equal(await f.store.directoryPathInternal(historical.id), folder);
+  assert.equal(await f.store.directoryPathInternal(first.id), modern);
+});

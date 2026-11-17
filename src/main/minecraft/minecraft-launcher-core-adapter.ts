@@ -603,9 +603,34 @@ function createDefaultClient(): LauncherCoreClient {
   ) => Promise<unknown>) & { battlyInheritance?: boolean };
   if (!launchOptionsMethod.battlyInheritance) {
     const launchOptions = async function (
-      this: { version: Record<string, unknown> },
+      this: {
+        version: Record<string, unknown>;
+        options?: {
+          root: string;
+          mcPath?: string;
+          version: { number: string; custom?: string };
+        };
+        client?: EventEmitter;
+      },
       modification?: Record<string, unknown>,
     ) {
+      const options = this.options;
+      // MCLC has now selected/downloaded mcPath. A standalone Laby profile does
+      // not need a second copy at versions/<vanilla>/<vanilla>.jar.
+      if (
+        options?.version.custom?.startsWith('LabyMod-') &&
+        (await repairLabyMappingCache(
+          options.root,
+          options.root,
+          options.version.number,
+          options.mcPath,
+        ))
+      ) {
+        this.client?.emit(
+          'debug',
+          '[LabyMod] Caché de mappings incompatible respaldada; LabyMod la regenerará.',
+        );
+      }
       return launchOptionsMethod.call(
         this,
         inheritLauncherGameArguments(this.version, modification),
@@ -1248,16 +1273,6 @@ export class MinecraftLauncherCoreAdapter implements MinecraftLauncherAdapter {
     await ensureForgeClientArtifact(options, emit);
     await ensureLabyModAssetArtifacts(options, emit);
     await ensureLabyModClientArtifact(options, emit);
-    if (
-      options.version.customId?.startsWith('LabyMod-') &&
-      (await repairLabyMappingCache(options.root, options.root, options.version.id))
-    ) {
-      emit({
-        type: 'log',
-        stream: 'game',
-        message: '[LabyMod] Caché de mappings incompatible respaldada; LabyMod la regenerará.',
-      });
-    }
 
     if (options.version.customId) {
       const compatibility = await repairKnownCustomClient(options.root, options.version.customId);

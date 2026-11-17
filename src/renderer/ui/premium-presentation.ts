@@ -1,6 +1,7 @@
 import type { AccountCollection } from '../../shared/accounts/account';
 import { presentPremiumWelcome } from './premium-celebration';
 import { applyLaunchBoostEntitlement } from './launch-boost-presentation';
+import { renderAppTitle } from './app-title';
 
 export function applyPremiumPresentation(
   collection: AccountCollection,
@@ -22,7 +23,7 @@ export function applyPremiumPresentation(
     title &&
     (!premium || !['waiting', 'explosion'].includes(root.body.dataset.plusWelcomeStage ?? ''))
   ) {
-    title.textContent = `Battly Launcher 3.1.0 ${premium ? 'Premium' : 'Free'} Edition`;
+    renderAppTitle(root);
   }
   root.querySelectorAll<HTMLElement>('#ads, .b-ad-slot, [data-ad-slot]').forEach((slot) => {
     slot.hidden = premium;

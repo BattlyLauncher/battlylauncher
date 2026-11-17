@@ -2,6 +2,7 @@ import { privateStorage } from '../private-storage';
 /** Increment only when a future release deliberately introduces a new welcome. */
 import battlyLogo from '../assets/battly-logo.png';
 import { PremiumWelcomeAudio } from './premium-audio';
+import { renderAppTitle } from './app-title';
 const welcomeVersion = '4';
 const seenThisSession = new Set<string>();
 const active = new WeakMap<Document, { accountId: string; cancel: () => void }>();
@@ -54,7 +55,6 @@ export function presentPremiumWelcome(
   const stages: ReturnType<typeof setTimeout>[] = [];
   const previousFocus = root.activeElement;
   const title = root.querySelector<HTMLElement>('[data-app-info]');
-  const premiumTitle = title?.textContent ?? '';
   const dismiss = (event: KeyboardEvent): void => {
     if (event.key === 'Escape') {
       cancel();
@@ -70,7 +70,7 @@ export function presentPremiumWelcome(
     root.querySelector('.titlebar')?.classList.remove('plus-welcome-shine');
     delete root.body.dataset.plusWelcomeStage;
     if (title && root.body.dataset.battlyPlus === 'true') {
-      title.textContent = premiumTitle;
+      renderAppTitle(root);
     }
     root.removeEventListener('keydown', dismiss);
     active.delete(root);
@@ -82,7 +82,7 @@ export function presentPremiumWelcome(
   if (!view.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     root.body.dataset.plusWelcomeStage = 'waiting';
     if (title) {
-      title.textContent = premiumTitle.replace(' Premium Edition', '');
+      renderAppTitle(root, false);
     }
   }
 
@@ -220,7 +220,7 @@ export function presentPremiumWelcome(
           root.body.dataset.plusWelcomeStage = 'header';
           sound.play('upgrade');
           if (title) {
-            title.textContent = premiumTitle;
+            renderAppTitle(root);
           }
           root.querySelector('.titlebar')?.classList.add('plus-welcome-shine');
         }, headerAt),

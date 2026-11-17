@@ -201,7 +201,14 @@ export class BattlyDataRootService {
         }
       }
       const parent = dirname(target);
-      await mkdir(parent, { recursive: true });
+      // Windows rejects mkdir('D:\\', { recursive: true }) even when the drive
+      // exists. Only create missing parents; never try to create a volume root.
+      if (!(await pathExists(parent))) {
+        await mkdir(parent, { recursive: true });
+      }
+      if (!(await lstat(parent)).isDirectory()) {
+        throw new Error('Invalid destination');
+      }
       this.progress({ phase: 'checking', source, target, bytes: 0, total: 0, file: '' });
       const entries = await inventory(source);
       const total = entries.reduce((sum, entry) => sum + entry.size, 0);

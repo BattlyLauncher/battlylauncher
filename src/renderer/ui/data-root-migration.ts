@@ -1,5 +1,6 @@
 import type { DataRootProgress } from '../../shared/settings/data-root-contract';
 import { setUiText } from '../i18n/dialog-text';
+import { userErrorMessage } from './user-error';
 import './data-root-migration.css';
 
 export function showDataRootMigration() {
@@ -113,7 +114,7 @@ export function showDataRootMigration() {
               : 'No se pudo completar el traslado. La carpeta original se conserva.',
       );
       element('[data-file]').textContent = '';
-      element('[data-detail]').textContent = message;
+      setUiText(element('[data-detail]'), userErrorMessage(error, message));
       modal.classList.add('has-error');
     },
   };

@@ -1872,7 +1872,9 @@
     "text154": "Seleccionar afectados",
     "text155": "El anfitrión ha cerrado la sala. Te has desconectado del mundo.",
     "text156": "La sala se ha cerrado.",
-    "text157": "La voz de Battly no ha respondido. Reintenta cuando se recupere la conexión con la sala."
+    "text157": "La voz de Battly no ha respondido. Reintenta cuando se recupere la conexión con la sala.",
+    "text158": "Este subdominio ya está en uso. Elige otro.",
+    "text159": "(parche {0})"
   },
   "modalCopy": {
     "text0": "Confirmar acción",

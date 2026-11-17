@@ -143,7 +143,9 @@ import forgeInstanceBannerUrl from './assets/instance-banners/forge.png?url';
 import neoforgeInstanceBannerUrl from './assets/instance-banners/neoforge.png?url';
 import vanillaInstanceBannerUrl from './assets/instance-banners/vanilla.png?url';
 import clickSoundUrl from './assets/click.mp3';
-import alertSoundUrl from './assets/audio/alert.mp3?url';
+import { playAlertSound } from './ui/alert-sound';
+import { renderAppTitle } from './ui/app-title';
+import { bindModImageZoom } from './ui/mod-image-zoom';
 import startSoundUrl from './assets/audio/start.mp3?url';
 import start1SoundUrl from './assets/audio/start1.mp3?url';
 import start2SoundUrl from './assets/audio/start2.mp3?url';
@@ -214,16 +216,6 @@ async function copyTextToClipboard(value: string): Promise<void> {
   }
 }
 
-function playInterfaceSound(source: string, volume = 0.8): void {
-  try {
-    const audio = new Audio(source);
-    audio.volume = Math.max(0, Math.min(1, volume));
-    void audio.play().catch(() => undefined);
-  } catch {
-    // Audio feedback must never interrupt the action that triggered it.
-  }
-}
-
 let launcherNetworkOnline = navigator.onLine;
 window.addEventListener('online', () => {
   launcherNetworkOnline = true;
@@ -231,7 +223,12 @@ window.addEventListener('online', () => {
 window.addEventListener('offline', () => {
   launcherNetworkOnline = false;
 });
-function showToast(title: string, text = '', status: ToastStatus = 'info', timeout = 5_000): void {
+function showToast(
+  title: string,
+  text = '',
+  status: ToastStatus = 'info',
+  timeout = 5_000,
+): Notify | undefined {
   if (
     status === 'error' &&
     (!navigator.onLine || !launcherNetworkOnline) &&
@@ -275,7 +272,8 @@ function showToast(title: string, text = '', status: ToastStatus = 'info', timeo
   } catch {
     /* Fixed positioning remains available on older Chromium versions. */
   }
-  playInterfaceSound(alertSoundUrl);
+  playAlertSound();
+  return notification;
 }
 
 class BattlyAlert {
@@ -1291,14 +1289,11 @@ function mountLegacyOnboardingPanels(): void {
     }
     setLegacyBinding(login, '#cancelar-btn-login', 'data-login-back');
     setLegacyBinding(login, '#info-login', 'data-login-status');
-    // The legacy information modal stays closed during authentication. Keep its
-    // status in the form so progress and rejected credentials remain visible.
+    // Authentication feedback is shown by Battly's popup notification.
     const loginStatus = login.querySelector<HTMLElement>('[data-login-status]');
     if (form && loginStatus) {
       loginStatus.textContent = '';
-      loginStatus.setAttribute('role', 'status');
-      loginStatus.setAttribute('aria-live', 'polite');
-      form.querySelector('button[type="submit"]')?.insertAdjacentElement('afterend', loginStatus);
+      loginStatus.hidden = true;
     }
     setLegacyBinding(login, '#code-login-panel', 'data-legacy-two-factor');
     setLegacyBinding(login, '#code-text', 'data-legacy-two-factor-code');
@@ -1643,6 +1638,15 @@ async function renderAppInfo(): Promise<void> {
   }
   try {
     const info = await window.battly.getAppInfo();
+    title.dataset.version = info.version;
+    renderAppTitle();
+    void window.battly
+      .getUpdates()
+      .then((snapshot) => {
+        title.dataset.build = String(snapshot.build);
+        renderAppTitle();
+      })
+      .catch(() => undefined);
     launcherNetworkOnline = info.online ?? navigator.onLine;
     title.dataset.state = 'ready';
     title.setAttribute('aria-label', `${info.name} · ${info.version} · ${info.platform}`);
@@ -6003,7 +6007,7 @@ async function renderHome(): Promise<void> {
 
 function setLoginPending(pending: boolean): void {
   const legacyInformation = document.querySelector<HTMLElement>('#info-login-panel');
-  // Keep login progress inline so the form's cancel control remains reachable.
+  // Popup notifications leave the form's cancel control reachable.
   legacyInformation?.classList.remove('is-active');
   const status = document.querySelector<HTMLElement>('[data-login-status]');
   if (status) {
@@ -6049,13 +6053,6 @@ function openGoogleLogin(): void {
       pattern="[A-Za-z0-9]{6}"
       required
     />
-    <p
-      data-google-code-status
-      role="status"
-      aria-live="polite"
-    >
-      Esperando a Google…
-    </p>
     <div>
       <button
         type="button"
@@ -6068,7 +6065,6 @@ function openGoogleLogin(): void {
   document.body.append(dialog);
   dialog.showModal();
   let submitting = false;
-  const status = dialog.querySelector<HTMLElement>('[data-google-code-status]')!;
   const close = (): void => {
     dialog.close();
     dialog.remove();
@@ -6079,8 +6075,6 @@ function openGoogleLogin(): void {
     }
     if (outcome.ok) {
       close();
-    } else {
-      status.textContent = outcome.message;
     }
   };
   const pending = startAuthentication({ method: 'battly-google' });
@@ -6108,7 +6102,6 @@ function openGoogleLogin(): void {
       return;
     }
     submitting = true;
-    status.textContent = 'Verificando código y guardando cuenta…';
     const submit = dialog.querySelector<HTMLButtonElement>('[type=submit]')!;
     submit.disabled = true;
     void (async () => {
@@ -6126,7 +6119,11 @@ function openGoogleLogin(): void {
         showOutcome(await startAuthentication({ method: 'battly-google', code }));
       } catch {
         if (dialog.isConnected) {
-          status.textContent = 'No se pudo verificar el código. Vuelve a intentarlo.';
+          showToast(
+            'Iniciar sesión',
+            'No se pudo verificar el código. Vuelve a intentarlo.',
+            'error',
+          );
         }
       } finally {
         submitting = false;
@@ -6137,24 +6134,30 @@ function openGoogleLogin(): void {
 }
 
 function startAuthentication(request: AuthRequest): Promise<AuthOutcome> {
-  const status = document.querySelector<HTMLElement>('[data-login-status]');
-  const twoFactorStatus = document.querySelector<HTMLElement>('[data-two-factor-status]');
-  const offlineStatus = document.querySelector<HTMLElement>('[data-offline-status]');
+  document
+    .querySelectorAll<HTMLElement>(
+      '[data-login-status], [data-two-factor-status], [data-offline-status], [data-legacy-two-factor-status]',
+    )
+    .forEach((element) => {
+      element.textContent = '';
+    });
   const isTwoFactor = request.method === 'battly-two-factor';
+  const pendingNotice = showToast(
+    'Iniciar sesión',
+    isTwoFactor
+      ? 'Verificando…'
+      : request.method === 'offline'
+        ? 'Creando perfil local…'
+        : request.method === 'battly-google' && request.code
+          ? 'Verificando código y guardando cuenta…'
+          : 'Iniciando sesión…',
+  );
   const twoFactorControls = document.querySelectorAll<HTMLInputElement | HTMLButtonElement>(
     '[data-two-factor-form] input, [data-two-factor-form] button',
   );
   if (isTwoFactor) {
     twoFactorControls.forEach((control) => (control.disabled = true));
-    if (twoFactorStatus) {
-      twoFactorStatus.textContent = 'Verificando…';
-    }
   } else {
-    if (request.method === 'offline' && offlineStatus) {
-      offlineStatus.textContent = 'Creando perfil local…';
-    } else if (status) {
-      status.textContent = 'Iniciando sesión…';
-    }
     setLoginPending(true);
   }
   return window.battly
@@ -6167,9 +6170,6 @@ function startAuthentication(request: AuthRequest): Promise<AuthOutcome> {
           ?.classList.remove('is-active');
         document.querySelector<HTMLDialogElement>('[data-offline-dialog]')?.close();
         renderAccountCollection(outcome.accounts);
-        if (status) {
-          status.textContent = '';
-        }
         const news = await window.battly.getNewsState().catch(() => ({ seen: false }));
         const panelId = news.seen ? 'home' : 'news';
         // Avoid the generic transition loader after saving the account.
@@ -6203,35 +6203,27 @@ function startAuthentication(request: AuthRequest): Promise<AuthOutcome> {
         }
         dialog?.showModal();
         code?.focus();
+        return outcome;
       }
-      if (isTwoFactor) {
-        if (twoFactorStatus) {
-          twoFactorStatus.textContent = outcome.message;
-        }
-      } else if (request.method === 'offline' && offlineStatus) {
-        offlineStatus.textContent = outcome.message;
-      } else if (status) {
-        status.textContent = outcome.message;
+      if (outcome.code !== 'cancelled') {
+        showToast(
+          'Iniciar sesión',
+          userErrorMessage(outcome.message, 'No se pudo iniciar sesión'),
+          'error',
+        );
       }
       return outcome;
     })
     .catch((error: unknown): AuthOutcome => {
-      const detail =
-        error instanceof Error
-          ? error.message.replace(/^Error invoking remote method '[^']+':\s*/, '')
-          : '';
-      if (isTwoFactor) {
-        if (twoFactorStatus) {
-          twoFactorStatus.textContent = detail || 'No se pudo verificar el código';
-        }
-      } else if (request.method === 'offline' && offlineStatus) {
-        offlineStatus.textContent = 'No se pudo crear el perfil local';
-      } else if (status) {
-        status.textContent = detail || 'No se pudo iniciar sesión';
-      }
-      return { ok: false, code: 'failed', message: detail || 'No se pudo iniciar sesión' };
+      const detail = userErrorMessage(
+        error,
+        isTwoFactor ? 'No se pudo verificar el código' : 'No se pudo iniciar sesión',
+      );
+      showToast('Iniciar sesión', detail, 'error');
+      return { ok: false, code: 'failed', message: detail };
     })
     .finally(() => {
+      pendingNotice?.close();
       if (isTwoFactor) {
         twoFactorControls.forEach((control) => (control.disabled = false));
       } else {
@@ -6283,9 +6275,7 @@ function bindTwoFactor(): void {
       (mode === 'totp' && normalizedCode.length !== 6) ||
       (mode === 'recovery' && normalizedCode.length < 8)
     ) {
-      if (status) {
-        status.textContent = 'Introduce un código válido';
-      }
+      showToast('Iniciar sesión', 'Introduce un código válido', 'warning');
       return;
     }
     void startAuthentication({ method: 'battly-two-factor', mode, code: normalizedCode });
@@ -6301,11 +6291,8 @@ function bindTwoFactor(): void {
   const legacyCode = document.querySelector<HTMLInputElement>('[data-legacy-two-factor-code]');
   document.querySelector<HTMLButtonElement>('#code-btn')?.addEventListener('click', () => {
     const normalizedCode = legacyCode?.value.replace(/\D/g, '') ?? '';
-    const legacyStatus = document.querySelector<HTMLElement>('[data-legacy-two-factor-status]');
     if (normalizedCode.length !== 6) {
-      if (legacyStatus) {
-        legacyStatus.textContent = 'Introduce un código válido de 6 dígitos';
-      }
+      showToast('Iniciar sesión', 'Introduce un código válido de 6 dígitos', 'warning');
       return;
     }
     void startAuthentication({ method: 'battly-two-factor', mode: 'totp', code: normalizedCode });
@@ -8318,7 +8305,7 @@ function renderLaunchEvent(event: MinecraftLaunchEvent): void {
         phase.textContent = 'Iniciando Minecraft';
       }
       if (files) {
-        files.textContent = '';
+        setUiText(files, 'Archivos preparados');
       }
       const title = document.querySelector<HTMLElement>('#launch-title');
       if (title) {
@@ -10600,6 +10587,7 @@ function renderModMarkdown(target: HTMLElement, markdown: string): void {
     link.rel = 'noopener noreferrer';
   });
   target.querySelectorAll<HTMLImageElement>('img').forEach((image) => {
+    bindModImageZoom(image);
     image.loading = 'lazy';
     image.referrerPolicy = 'no-referrer';
     image.addEventListener('error', () => {
@@ -10684,6 +10672,7 @@ function renderModDetail(detail: ModProjectDetail): void {
     picture.alt = image.title ?? image.description ?? '';
     picture.loading = 'lazy';
     picture.referrerPolicy = 'no-referrer';
+    bindModImageZoom(picture);
     const caption = document.createElement('figcaption');
     const title = document.createElement('strong');
     setUserText(title, image.title ?? image.description, 'Captura del proyecto');
@@ -10753,7 +10742,8 @@ function renderModDetail(detail: ModProjectDetail): void {
     metadata.textContent = `${version.versionNumber} · ${readableModDate(version.datePublished)} · ${formatCount(version.downloads)} descargas`;
     copy.append(title, metadata);
     if (version.changelog) {
-      const changelog = document.createElement('p');
+      const changelog = document.createElement('div');
+      changelog.className = 'mod-changelog content';
       renderModMarkdown(changelog, version.changelog);
       copy.append(changelog);
     }

@@ -13,6 +13,7 @@ import serverMarkup from '../legacy/panels/servers.html?raw';
 import legacySpanishStrings from '../legacy/assets/langs/strings.es.json';
 import { askBattly } from '../ui/ask-modal';
 import { serverSlotText } from './server-slot-copy';
+import { serverDomainTakenMessage, serverErrorMessage } from '../../shared/servers/server-errors';
 
 import type {
   ServerContentEntry,
@@ -409,12 +410,14 @@ function annotateLegacyServers(mount: HTMLElement): void {
 
   const loading = mount.querySelector<HTMLElement>('.fullscreen-text-div');
   if (loading) {
-    conceal(loading);
+    loading.hidden = false;
+    loading.style.display = 'flex';
   }
   const createContainer = mount.querySelector<HTMLElement>('.panel-container');
   const createCard = createContainer?.querySelector<HTMLElement>('.box2');
   if (createContainer) {
     createContainer.dataset.serverCreateView = '';
+    conceal(createContainer);
   }
   if (createCard && createContainer) {
     const form = document.createElement('form');
@@ -514,6 +517,7 @@ function annotateLegacyServers(mount: HTMLElement): void {
   const dashboard = mount.querySelector<HTMLElement>('.b-servers-main-container');
   if (dashboard) {
     dashboard.dataset.serverDashboard = '';
+    conceal(dashboard);
   }
   const title = mount.querySelector<HTMLElement>('#b-servers-header-title');
   if (title) {
@@ -2912,14 +2916,28 @@ export function mountServersPanel(
         void refreshCreationSoftware();
       })()
         .catch((error: unknown) => {
+          const message = serverErrorMessage(error, 'Error desconocido');
+          if (message === serverDomainTakenMessage) {
+            installationDialog?.finish(creationProgressId);
+            const input = form.querySelector<HTMLInputElement>('#domainInput');
+            const warning = form.querySelector<HTMLElement>('#warningMessage');
+            if (warning) {
+              setUiText(warning, message);
+              warning.hidden = false;
+            }
+            input?.setCustomValidity(translateUiText(message));
+            input?.focus();
+            input?.select();
+            if (status) {
+              setUiText(status, message);
+            }
+            return;
+          }
           if (creationProgressId) {
-            installationDialog?.fail(
-              creationProgressId,
-              error instanceof Error ? error.message : 'Error desconocido',
-            );
+            installationDialog?.fail(creationProgressId, message);
           }
           if (status) {
-            status.textContent = `No se pudo crear: ${error instanceof Error ? error.message : 'datos no válidos'}`;
+            status.textContent = `No se pudo crear: ${message}`;
           }
         })
         .finally(() => {
@@ -3584,6 +3602,14 @@ export function mountServersPanel(
 }
 
 export function loadServersPanel(): void {
+  const loading = document.querySelector<HTMLElement>('[data-server-mount] .fullscreen-text-div');
+  if (loading) {
+    loading.hidden = false;
+    loading.style.display = 'flex';
+  }
+  document
+    .querySelectorAll<HTMLElement>('[data-server-create-view], [data-server-dashboard]')
+    .forEach(conceal);
   const status = document.querySelector<HTMLElement>('[data-server-create-status]');
   if (status) {
     status.textContent = 'Cargando Battly Servers…';
@@ -3598,6 +3624,7 @@ export function loadServersPanel(): void {
       }
     })
     .catch(() => {
+      renderServers(servers);
       if (status) {
         status.textContent = 'No se pudieron cargar los servidores locales';
       }

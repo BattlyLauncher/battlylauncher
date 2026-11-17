@@ -587,7 +587,9 @@
     "text154": "Selecionar afetados",
     "text155": "O anfitrião fechou a sala. Você foi desconectado do mundo.",
     "text156": "A sala foi fechada.",
-    "text157": "A voz do Battly não respondeu. Tente novamente quando a conexão com a sala for restabelecida."
+    "text157": "A voz do Battly não respondeu. Tente novamente quando a conexão com a sala for restabelecida.",
+    "text158": "Este subdomínio já está em uso. Escolhe outro.",
+    "text159": "(patch {0})"
   },
   "launcher": {
     "loading_config": "Configuração de carregamento",

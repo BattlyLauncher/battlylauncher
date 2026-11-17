@@ -309,9 +309,9 @@ function version(value: unknown): ModrinthVersion {
   }
   return {
     changelog:
-      own(source, 'changelog') === null
+      own(source, 'changelog') == null || own(source, 'changelog') === ''
         ? null
-        : optionalText(own(source, 'changelog'), 'version changelog', 200_000),
+        : stringValue(own(source, 'changelog'), 'version changelog', 200_000),
     datePublished: optionalIsoDate(own(source, 'date_published'), 'version publication date'),
     downloads:
       own(source, 'downloads') === undefined

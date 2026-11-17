@@ -3,6 +3,7 @@ import type { BattlyNotice, NoticeSnapshot, NoticeSettings } from '../../shared/
 import { setUiText } from '../i18n/dialog-text';
 import './notifications.css';
 import { uiLocale } from '../i18n/locale';
+import { playAlertSound } from './alert-sound';
 
 export function mountNotifications(): void {
   const bell = document.createElement('button');
@@ -278,6 +279,7 @@ export function mountNotifications(): void {
       toast.dataset.category = newest.category;
       toast.replaceChildren(icon, content, dismiss);
       toast.hidden = false;
+      playAlertSound();
       scheduleDismiss();
     }
     if (openId) {

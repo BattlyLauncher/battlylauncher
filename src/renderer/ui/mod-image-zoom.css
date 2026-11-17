@@ -1,0 +1,43 @@
+.mod-zoomable {
+  cursor: zoom-in;
+}
+.mod-zoomable:focus-visible {
+  outline: 2px solid var(--theme-color);
+  outline-offset: 4px;
+}
+.mod-image-zoom {
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  inset: 0;
+  margin: 0;
+  padding: 60px 32px 32px;
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+}
+.mod-image-zoom[open] {
+  display: grid;
+  place-items: center;
+}
+.mod-image-zoom::backdrop {
+  background: #050a12ed;
+  backdrop-filter: blur(10px);
+}
+.mod-image-zoom > img {
+  max-width: 100%;
+  max-height: calc(100dvh - 100px);
+  object-fit: contain;
+  border-radius: 10px;
+}
+.mod-image-zoom > button {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  padding: 8px 16px;
+  border: 1px solid #53657c;
+  border-radius: 8px;
+  background: #1b293b;
+  color: #fff;
+}

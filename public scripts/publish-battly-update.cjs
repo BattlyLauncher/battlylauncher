@@ -365,18 +365,21 @@ async function publish(
       name: plan.patchVersion || plan.version,
       draft: true,
       prerelease: plan.prerelease,
-      body: JSON.stringify(
-        {
-          type: plan.type,
-          channel: plan.channel,
-          baseVersion: plan.version,
-          patchVersion: plan.patchVersion,
-          build: plan.build,
-          commit: sha,
-        },
-        null,
-        2,
-      ),
+      body:
+        (plan.notes ? plan.notes + '\n\n<!-- battly-update\n' : '') +
+        JSON.stringify(
+          {
+            type: plan.type,
+            channel: plan.channel,
+            baseVersion: plan.version,
+            patchVersion: plan.patchVersion,
+            build: plan.build,
+            commit: sha,
+          },
+          null,
+          2,
+        ) +
+        (plan.notes ? '\n-->' : ''),
     });
   }
   const existing = [];

@@ -2,6 +2,7 @@ import { constants, copyFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 import type { MinecraftLaunchEventSink, MinecraftLaunchOptions } from './launcher-adapter';
 import { prepareAccessibilityOnboarding } from './accessibility-onboarding';
+import { prepareCustomClientSettings } from './custom-client-settings';
 
 /** 1.7's fixed occlusion buffer cannot hold the chunks requested by newer options files. */
 export function prepareLegacyGameOptionsBeforeSpawn(
@@ -19,6 +20,7 @@ export function prepareLegacyGameOptionsBeforeSpawn(
       options = { ...options, gameDirectory: directory };
     }
   }
+  prepareCustomClientSettings(options);
   prepareAccessibilityOnboarding(options);
   if (options.installOnly || !/^1\.7(?:\.\d+)?$/.test(options.version.id)) {
     return;

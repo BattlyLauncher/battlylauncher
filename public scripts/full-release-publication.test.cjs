@@ -6,6 +6,42 @@ const assert = require('node:assert/strict'),
   crypto = require('node:crypto'),
   yaml = require('js-yaml');
 const { publicationPlan, targets } = require('./publish-battly-update.cjs');
+test('release publication keeps the human changelog visible and metadata in an HTML comment', async () => {
+  const { publish } = require('./publish-battly-update.cjs');
+  const notes = '### Minecraft\n\n- Corregido el inicio de LabyMod.\n- Recuperadas las instancias.';
+  let created;
+  await publish(
+    {
+      repository: 'BattlyLauncher/battlylauncher',
+      tag: 'battly-patch-3.1.0-patch8',
+      type: 'patch',
+      channel: 'stable',
+      version: '3.1.0',
+      patchVersion: '3.1.0-patch8',
+      build: 8,
+      prerelease: true,
+      notes,
+      files: [],
+    },
+    {
+      token: 'fixture',
+      sha: 'a'.repeat(40),
+      notBefore: '',
+      fetcher: async (url, options) => {
+        if (options.method === 'POST') {
+          created = JSON.parse(options.body);
+          return Response.json({ id: 1, draft: true });
+        }
+        if (options.method === 'PATCH') return Response.json({ id: 1, draft: false });
+        if (url.includes('/assets?')) return Response.json([]);
+        return Response.json({}, { status: 404 });
+      },
+    },
+  );
+  assert.ok(created.body.startsWith(notes + '\n\n<!-- battly-update\n'));
+  assert.ok(created.body.endsWith('\n-->'));
+  assert.equal(created.draft, true);
+});
 const sha512 = (bytes) => crypto.createHash('sha512').update(bytes).digest('base64');
 const sha256 = (bytes) => crypto.createHash('sha256').update(bytes).digest('hex');
 function fixture(t, channel = 'beta') {

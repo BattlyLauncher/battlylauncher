@@ -1,10 +1,12 @@
+import { stripElectronErrorPrefix } from '../../shared/ipc-errors';
+
 export function userErrorMessage(
   value: unknown,
   fallback = 'No se pudo completar la acción. Vuelve a intentarlo.',
 ): string {
-  const raw = (
-    value instanceof Error ? value.message : typeof value === 'string' ? value : ''
-  ).replace(/^Error invoking remote method '[^']+':\s*(?:Error:\s*)?/, '');
+  const raw = stripElectronErrorPrefix(
+    value instanceof Error ? value.message : typeof value === 'string' ? value : '',
+  );
   if (/BATTLY_OFFLINE|ENETUNREACH/.test(raw)) {
     return 'Estás sin conexión';
   }
@@ -45,8 +47,9 @@ export function userErrorMessage(
   ) {
     return fallback;
   }
-  return /^(?:No |El |La |Los |Las |Se |Necesitas|Debes|Selecciona|Comprueba)/.test(raw) &&
-    raw.length < 350
+  return /^(?:No |El |La |Los |Las |Esta |Este |Método |Código |Credenciales |Usuario |Contraseña |Se |Necesitas|Debes|Selecciona|Comprueba)/.test(
+    raw,
+  ) && raw.length < 350
     ? raw
     : fallback;
 }

@@ -156,7 +156,7 @@ export class SettingsStore {
       downloadConcurrency: own(launcher, 'downloadFileMultiple') ?? 50,
       simpleMode: own(launcher, 'simpleMode') === true,
       clickSounds: own(values, 'sound-click') === 'true',
-      startupSoundEnabled: own(values, 'startup-sound-enabled') === true,
+      startupSoundEnabled: own(values, 'startup-sound-enabled') !== false,
       ogIntroEnabled: own(values, 'og-intro-enabled') === true,
       launchBoostEnabled: own(values, 'launchboost') !== false,
       backupSharedWorlds: own(values, 'backup-shared-worlds'),
@@ -346,7 +346,7 @@ export class SettingsStore {
     return {
       sound,
       volume:
-        own(values, 'startup-sound-enabled') === true
+        own(values, 'startup-sound-enabled') !== false
           ? Number.isFinite(rawVolume)
             ? Math.max(0, Math.min(1, rawVolume))
             : 0.8

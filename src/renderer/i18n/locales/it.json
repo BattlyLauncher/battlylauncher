@@ -587,7 +587,9 @@
     "text154": "Seleziona mod interessate",
     "text155": "Il proprietario ha chiuso la stanza. Sei stato disconnesso dal mondo.",
     "text156": "La stanza è stata chiusa.",
-    "text157": "La chat vocale di Battly non risponde. Riprova quando la connessione alla stanza viene ripristinata."
+    "text157": "La chat vocale di Battly non risponde. Riprova quando la connessione alla stanza viene ripristinata.",
+    "text158": "Questo sottodominio è già in uso. Scegline un altro.",
+    "text159": "(patch {0})"
   },
   "launcher": {
     "loading_config": "Configurazione di caricamento",

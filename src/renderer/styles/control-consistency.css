@@ -36,10 +36,12 @@
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  flex: 0 0 36px;
-  width: 36px;
-  height: 36px;
-  min-height: 36px;
+  flex: 0 0 var(--help-control-size, 32px);
+  width: var(--help-control-size, 32px);
+  min-width: var(--help-control-size, 32px);
+  height: var(--help-control-size, 32px);
+  min-height: var(--help-control-size, 32px);
+  box-sizing: border-box;
   padding: 0 !important;
   margin: 0 !important;
   border: 1px solid #34465f !important;
