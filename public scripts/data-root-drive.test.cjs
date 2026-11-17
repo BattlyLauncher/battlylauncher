@@ -7,7 +7,7 @@ const { randomUUID, createHash } = require('node:crypto');
 const { BattlyDataRootService } = require('../dist/main/settings/battly-data-root-service');
 
 test('migration must not recreate an existing destination parent that rejects mkdir', async () => {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'battly-migration-parent-'));
+  const root = await fs.mkdtemp(path.join(await fs.realpath(os.tmpdir()), 'battly-migration-parent-'));
   const source = path.join(root, 'old');
   const config = path.join(root, 'config/data-root.json');
   await fs.mkdir(source);
