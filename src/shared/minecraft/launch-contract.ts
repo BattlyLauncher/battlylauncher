@@ -12,6 +12,10 @@ export interface MinecraftLaunchWindow {
 
 export type MinecraftLaunchEvent =
   | { readonly type: 'client-ready' }
+  | {
+      readonly type: 'memory-warning';
+      readonly severity: 'safe' | 'warning' | 'critical' | 'unknown';
+    }
   | { readonly type: 'process'; readonly pid: number }
   | { readonly state: MinecraftLaunchState; readonly type: 'state' }
   | { readonly code: number | null; readonly signal: string | null; readonly type: 'exit' }
@@ -144,6 +148,9 @@ export function isMinecraftLaunchEvent(value: unknown): value is MinecraftLaunch
   }
   const event = value as Record<string, unknown>;
   const type = event.type;
+  if (type === 'memory-warning') {
+    return ['safe', 'warning', 'critical', 'unknown'].includes(String(event.severity));
+  }
   if (type === 'client-ready') {
     return true;
   }

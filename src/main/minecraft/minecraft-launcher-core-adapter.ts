@@ -7,7 +7,7 @@ import {
   normalizeLegacyForgeLibraries,
   verifyLauncherLibraries,
 } from './legacy-forge-libraries';
-import { configuredHeapArguments, isHeapArgument } from './launch-memory';
+import { configuredGameJvmArguments, isHeapArgument } from './launch-memory';
 import { writeFileAtomically } from '../files/atomic-file';
 import {
   checkModernAssets,
@@ -1404,7 +1404,7 @@ export class MinecraftLauncherCoreAdapter implements MinecraftLauncherAdapter {
       // the final JVM prefix before spawn so inherited flags cannot override RAM.
       const prefix = value.slice(0, classpathIndex);
       if (prefix.every((argument): argument is string => typeof argument === 'string')) {
-        value.splice(0, classpathIndex, ...configuredHeapArguments(prefix, options.memory));
+        value.splice(0, classpathIndex, ...configuredGameJvmArguments(prefix, options.memory));
         classpathIndex = value.indexOf('-cp');
         for (const event of logs.push(
           `[launch-memory] ${JSON.stringify({

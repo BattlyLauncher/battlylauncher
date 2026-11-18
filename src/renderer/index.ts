@@ -8118,6 +8118,20 @@ function closeMinecraftProgress(state: 'failed' | 'exited'): void {
 }
 
 function renderLaunchEvent(event: MinecraftLaunchEvent): void {
+  if (event.type === 'memory-warning') {
+    if (event.severity === 'safe') {
+      return;
+    }
+    showToast(
+      event.severity === 'unknown' ? 'No se pudo comprobar la memoria' : 'Memoria insuficiente',
+      event.severity === 'unknown'
+        ? 'Minecraft se iniciará sin comprobar la memoria disponible.'
+        : 'No hay suficiente memoria disponible. Cierra otras aplicaciones o reduce la RAM asignada en Ajustes.',
+      'warning',
+      9_000,
+    );
+    return;
+  }
   if (activeLaunchSurface === 'worlds') {
     worldsLaunchProgress?.(event);
   }
@@ -14827,7 +14841,6 @@ const bindSongMenu = createSongMenu(
 let musicFavorites: MusicSong[] = [];
 let musicQueue: MusicSong[] = [];
 let musicQueueIndex = -1;
-let musicWorker: Worker | undefined;
 const musicResolvedSongIds = new Set<string>();
 let detailedMusicSong: MusicSong | null = null;
 let lastMusicPlaybackSync = 0;
@@ -16032,6 +16045,10 @@ function openLegacyMusicPlaylist(playlist: MusicPlaylist): void {
     main.className = 'song-main-cell';
     const thumbnail = document.createElement('img');
     thumbnail.className = 'song-thumbnail';
+    if (index >= 12) {
+      thumbnail.loading = 'lazy';
+      thumbnail.decoding = 'async';
+    }
     thumbnail.src = song.thumbnailUrl ?? battlyIconUrl;
     thumbnail.alt = song.title;
     const copy = document.createElement('div');
@@ -16187,10 +16204,6 @@ function renderMusicLibrary(snapshot: MusicSnapshot): void {
   if (!musicQueue[musicQueueIndex]) {
     renderMusicNow();
   }
-  musicWorker?.postMessage({
-    type: 'prepare-queue',
-    songIds: snapshot.featured.map((song) => song.id),
-  });
   const recent = document.querySelector<HTMLElement>('[data-music-tracks]');
   recent?.replaceChildren();
   snapshot.featured.forEach((song, index) => {
@@ -17133,18 +17146,6 @@ function bindMusic(): void {
     .querySelector('[data-panel-view="music"]')
     ?.addEventListener('battly:panel-enter', refreshInvites);
   renderMusicNow();
-  musicWorker = new Worker(new URL('./music-worker.ts', import.meta.url), { type: 'module' });
-  musicWorker.addEventListener('message', (event: MessageEvent<unknown>) => {
-    if (
-      event.data &&
-      typeof event.data === 'object' &&
-      !Array.isArray(event.data) &&
-      Object.getOwnPropertyDescriptor(event.data, 'type')?.value === 'queue-prepared'
-    ) {
-      document.body.dataset.musicWorker = 'ready';
-    }
-  });
-  window.addEventListener('beforeunload', () => musicWorker?.terminate(), { once: true });
   const searchResults = document.querySelector<HTMLElement>('.b-music-search-results');
   const searchOverlay = document.createElement('div');
   searchOverlay.className = 'b-music-search-overlay';

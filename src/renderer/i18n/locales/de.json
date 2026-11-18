@@ -7837,5 +7837,10 @@
     "copy5": "Wählen Sie einen Ton aus oder drücken Sie „Play“, um ihn anzuhören.",
     "copy6": "Minecraft-EULA",
     "copy7": "Lesen Sie die Minecraft-EULA und aktivieren Sie das Kontrollkästchen, wenn Sie sie akzeptieren."
+  },
+  "memoryNotice": {
+    "copy0": "Nicht genug Arbeitsspeicher",
+    "copy1": "Minecraft startet ohne Prüfung des verfügbaren Arbeitsspeichers.",
+    "copy2": "Es ist nicht genug Arbeitsspeicher verfügbar. Schließe andere Apps oder verringere den zugewiesenen RAM in den Einstellungen."
   }
 }

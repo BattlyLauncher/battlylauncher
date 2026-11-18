@@ -7837,5 +7837,10 @@
     "copy5": "Sélectionnez un son ou appuyez sur Play pour l'écouter.",
     "copy6": "CLUF Minecraft",
     "copy7": "Lisez le CLUF Minecraft et cochez la case si vous l'acceptez."
+  },
+  "memoryNotice": {
+    "copy0": "Mémoire insuffisante",
+    "copy1": "Minecraft démarrera sans vérifier la mémoire disponible.",
+    "copy2": "La mémoire disponible est insuffisante. Ferme les autres applications ou réduis la RAM allouée dans les paramètres."
   }
 }

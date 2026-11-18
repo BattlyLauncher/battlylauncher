@@ -7407,5 +7407,10 @@
     "copy5": "Select a sound or press Play to listen to it.",
     "copy6": "Minecraft EULA",
     "copy7": "Read the Minecraft EULA and check the box if you accept it."
+  },
+  "memoryNotice": {
+    "copy0": "Not enough memory",
+    "copy1": "Minecraft will start without checking available memory.",
+    "copy2": "There is not enough memory available. Close other apps or lower the allocated RAM in Settings."
   }
 }

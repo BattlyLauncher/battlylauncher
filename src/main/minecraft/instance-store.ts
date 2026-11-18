@@ -15,6 +15,7 @@ import { pathExists, readBoundedRegularFile, writeFileAtomically } from '../file
 const maximumInstances = 500;
 const maximumMetadataBytes = 1024 * 1024;
 const maximumIconBytes = 1024 * 1024;
+type InstanceDirectory = { root: string; name: string; id: string };
 
 function iconBytes(dataUrl: string | null | undefined): Buffer | null {
   if (!dataUrl) {
@@ -93,6 +94,41 @@ async function readMetadata(path: string): Promise<Record<string, unknown>> {
   return value as Record<string, unknown>;
 }
 
+async function savedWorldState(directory: string): Promise<'present' | 'empty' | 'unknown'> {
+  const saves = join(directory, 'saves');
+  try {
+    const stats = await lstat(saves);
+    if (!stats.isDirectory() || stats.isSymbolicLink()) {
+      return 'unknown';
+    }
+    for (const world of await readdir(saves, { withFileTypes: true })) {
+      if (world.isSymbolicLink()) {
+        return 'unknown';
+      }
+      if (world.isDirectory()) {
+        for (const name of ['level.dat', 'level.dat_old']) {
+          try {
+            const level = await lstat(join(saves, world.name, name));
+            if (level.isFile()) {
+              return 'present';
+            }
+            if (level.isSymbolicLink()) {
+              return 'unknown';
+            }
+          } catch (error) {
+            if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+              return 'unknown';
+            }
+          }
+        }
+      }
+    }
+    return 'empty';
+  } catch (error) {
+    return (error as NodeJS.ErrnoException).code === 'ENOENT' ? 'empty' : 'unknown';
+  }
+}
+
 export class InstanceStore {
   readonly #archiveRoot: string;
   readonly #clock: InstanceClock;
@@ -128,23 +164,24 @@ export class InstanceStore {
     await mkdir(this.#root, { recursive: true });
     await assertRealDirectory(this.#root);
     const summaries: InstanceSummary[] = [];
-    const seen = new Set<string>();
     let unreadable: PrivateDataDecryptionError | undefined;
+    const groups = new Map<string, InstanceDirectory[]>();
     for (const entry of await this.#directories()) {
+      const group = groups.get(entry.id);
+      if (group) {
+        group.push(entry);
+      } else {
+        groups.set(entry.id, [entry]);
+      }
+    }
+    for (const entries of groups.values()) {
       if (summaries.length >= maximumInstances) {
         break;
       }
-      if (seen.has(entry.id)) {
-        continue;
-      }
       try {
-        const directory = join(entry.root, entry.name);
-        await assertRealDirectory(directory);
-        const metadata = await readMetadata(join(directory, 'instance.json'));
-        const summary = normalizeInstanceSummary(entry.id, metadata);
+        const { directory, summary } = await this.#selectDirectory(entries);
         const iconDataUrl = await readIconDataUrl(directory);
         summaries.push(iconDataUrl ? { ...summary, iconDataUrl } : summary);
-        seen.add(entry.id);
       } catch (error) {
         if (error instanceof PrivateDataDecryptionError) {
           unreadable ??= error;
@@ -258,22 +295,51 @@ export class InstanceStore {
     if (!instanceIdPattern.test(id)) {
       throw new TypeError('Invalid instance id');
     }
+    const selected = await this.#selectDirectory(
+      (await this.#directories()).filter((entry) => entry.id === id),
+    );
+    return selected.directory;
+  }
+
+  async #selectDirectory(entries: readonly InstanceDirectory[]) {
     let unreadable: PrivateDataDecryptionError | undefined;
-    for (const entry of await this.#directories()) {
-      if (entry.id !== id) {
-        continue;
-      }
+    let primary: { directory: string; summary: InstanceSummary } | undefined;
+    let recovered: typeof primary;
+    for (const entry of entries) {
       const directory = join(entry.root, entry.name);
-      await assertRealDirectory(entry.root);
-      await assertRealDirectory(directory);
       try {
-        normalizeInstanceSummary(id, await readMetadata(join(directory, 'instance.json')));
-        return directory;
+        await assertRealDirectory(directory);
+        const summary = normalizeInstanceSummary(
+          entry.id,
+          await readMetadata(join(directory, 'instance.json')),
+        );
+        if (!primary) {
+          primary = { directory, summary };
+          if (entries.length === 1 || (await savedWorldState(directory)) !== 'empty') {
+            return primary;
+          }
+          continue;
+        }
+        if (
+          summary.name === primary.summary.name &&
+          summary.version === primary.summary.version &&
+          summary.loader === primary.summary.loader &&
+          summary.loaderVersion === primary.summary.loaderVersion &&
+          (await savedWorldState(directory)) === 'present'
+        ) {
+          if (recovered) {
+            return primary;
+          }
+          recovered = { directory, summary };
+        }
       } catch (error) {
         if (error instanceof PrivateDataDecryptionError) {
           unreadable ??= error;
         }
       }
+    }
+    if (primary) {
+      return recovered ?? primary;
     }
     if (unreadable) {
       throw unreadable;
@@ -281,7 +347,7 @@ export class InstanceStore {
     throw new Error('Instance directory does not exist');
   }
 
-  async #directories(): Promise<{ root: string; name: string; id: string }[]> {
+  async #directories(): Promise<InstanceDirectory[]> {
     const directories: { root: string; name: string }[] = [];
     const reserved = new Set<string>();
     for (const root of this.#roots) {

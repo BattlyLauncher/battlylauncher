@@ -7837,5 +7837,10 @@
     "copy5": "Selecione um som ou pressione Play para ouvi-lo.",
     "copy6": "EULA do Minecraft",
     "copy7": "Leia o EULA do Minecraft e marque a caixa se você aceitá-lo."
+  },
+  "memoryNotice": {
+    "copy0": "Memória insuficiente",
+    "copy1": "O Minecraft vai iniciar sem verificar a memória disponível.",
+    "copy2": "Não há memória disponível suficiente. Fecha outras aplicações ou reduz a RAM atribuída nas definições."
   }
 }

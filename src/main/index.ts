@@ -22,7 +22,6 @@ import {
   LaunchMemoryCancelledError,
   readWindowsMemorySnapshot,
 } from './minecraft/launch-memory-preflight';
-import { launchMemoryDialog } from './minecraft/launch-memory-dialog';
 import { writeVerifiedClipboardText } from './clipboard/write-clipboard-text';
 import { remoteOperations, remoteOperation } from '../shared/social/remote-operations';
 import { RemoteFiles } from './social/remote-files';
@@ -2089,19 +2088,15 @@ function resolveLauncherService(
     const memory = new LaunchMemoryPreflight({
       supported: process.platform === 'win32',
       read: readWindowsMemorySnapshot,
-      ask: async (assessment) => {
-        const prompt = launchMemoryDialog(assessment, translateNative);
+      ask: (assessment, emit) => {
+        emit({ type: 'memory-warning', severity: assessment.severity });
         if (mainWindow && !mainWindow.isDestroyed()) {
           if (mainWindow.isMinimized()) {
             mainWindow.restore();
           }
           mainWindow.show();
         }
-        const result =
-          mainWindow && !mainWindow.isDestroyed()
-            ? await dialog.showMessageBox(mainWindow, prompt.options)
-            : await dialog.showMessageBox(prompt.options);
-        return prompt.decisions[result.response] ?? 'cancel';
+        return Promise.resolve('continue');
       },
       openSettings: () =>
         new Promise<void>((resolve, reject) => {

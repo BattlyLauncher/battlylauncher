@@ -136,7 +136,10 @@ export function assessLaunchMemory(
 interface Dependencies {
   supported: boolean;
   read: () => Promise<WindowsMemorySnapshot>;
-  ask: (assessment: LaunchMemoryAssessment) => Promise<LaunchMemoryDecision>;
+  ask: (
+    assessment: LaunchMemoryAssessment,
+    emit: MinecraftLaunchEventSink,
+  ) => Promise<LaunchMemoryDecision>;
   openSettings: () => Promise<void>;
 }
 export class LaunchMemoryPreflight {
@@ -173,7 +176,7 @@ export class LaunchMemoryPreflight {
       if (assessment.severity === 'safe') {
         return options;
       }
-      const decision = await this.dependencies.ask(assessment);
+      const decision = await this.dependencies.ask(assessment, emit);
       if (decision === 'retry') {
         continue;
       }
@@ -189,7 +192,7 @@ export class LaunchMemoryPreflight {
         }
         continue;
       }
-      if (decision === 'continue' && assessment.severity === 'unknown') {
+      if (decision === 'continue') {
         return options;
       }
       if (

@@ -5,6 +5,7 @@ const path = require('node:path');
 const os = require('node:os');
 const { InstanceStore } = require('../dist/main/minecraft/instance-store');
 const { InstanceContentService } = require('../dist/main/minecraft/instance-content-service');
+const { buildInstanceLaunchOptions } = require('../dist/main/minecraft/instance-launch-profile');
 
 const legacy = {
   id: 'old123',
@@ -84,6 +85,48 @@ test('current instances take priority; creation cannot overwrite a legacy ID', a
     JSON.parse(await fs.readFile(path.join(f.directory, 'instance.json'))).name,
     legacy.name,
   );
+});
+
+test('an empty migrated copy does not shadow the matching instance with worlds', async (t) => {
+  const f = await fixture(t);
+  const current = path.join(f.current, 'old123');
+  await fs.mkdir(path.join(current, 'saves'), { recursive: true });
+  const metadataPath = path.join(current, 'instance.json');
+  const migrated = JSON.stringify({ ...legacy, description: 'Migrated' });
+  await fs.writeFile(metadataPath, migrated);
+  assert.equal((await f.store.list())[0].description, legacy.description);
+  assert.equal((await f.store.readInternal('old123')).description, legacy.description);
+  const instanceDirectory = await f.store.directoryPathInternal('old123');
+  assert.equal(instanceDirectory, f.directory);
+  const launch = buildInstanceLaunchOptions({
+    account: { type: 'offline', uuid: '123456781234123412341234567890ab', name: 'QA' },
+    config: {
+      gameArguments: [],
+      raw: {
+        libraries: {
+          package_mimbpyzw_s52o: {
+            version: 'qa',
+            sha256: 'a'.repeat(64),
+            url: 'https://cdn.battlylauncher.com/qa.zip',
+          },
+        },
+      },
+    },
+    instanceDirectory,
+    instanceId: 'old123',
+    instanceMetadata: await f.store.readInternal('old123'),
+    profileValues: {},
+  });
+  assert.equal(
+    await fs.readFile(path.join(launch.gameDirectory, 'saves', 'World', 'level.dat'), 'utf8'),
+    'original-world',
+  );
+  assert.equal(await fs.readFile(metadataPath, 'utf8'), migrated);
+  const world = path.join(current, 'saves', 'New World');
+  await fs.mkdir(world);
+  await fs.writeFile(path.join(world, 'level.dat'), 'new world');
+  assert.equal(await f.store.directoryPathInternal('old123'), current);
+  assert.equal((await f.store.list())[0].description, 'Migrated');
 });
 
 test('missing legacy roots and explicit isolated stores do not import unrelated instances', async (t) => {
