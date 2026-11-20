@@ -37,21 +37,56 @@ export function configuredGameJvmArguments(
   ];
 }
 
+const javaOptionsWithValue = new Set([
+  '-cp',
+  '-classpath',
+  '--class-path',
+  '-p',
+  '--module-path',
+  '--upgrade-module-path',
+  '--add-modules',
+  '--limit-modules',
+  '--add-reads',
+  '--add-exports',
+  '--add-opens',
+  '--patch-module',
+  '--enable-native-access',
+  '--source',
+]);
+
+/** Java accepts JVM options both before and after the classpath option. */
+export function javaApplicationArgumentIndex(arguments_: readonly string[]): number {
+  for (let index = 0; index < arguments_.length; index++) {
+    const argument = arguments_[index];
+    if (
+      !argument.startsWith('-') ||
+      argument === '-jar' ||
+      argument === '-m' ||
+      argument === '--module' ||
+      argument.startsWith('--module=')
+    ) {
+      return index;
+    }
+    if (javaOptionsWithValue.has(argument)) {
+      index++;
+    }
+  }
+  return -1;
+}
+
 /** Node's normalized spawn argv includes the executable at index zero. */
 export function configuredJavaSpawnArguments(
   arguments_: readonly string[],
   memory: MinecraftLaunchOptions['memory'],
 ): string[] {
-  const boundary = arguments_.findIndex(
-    (value, index) =>
-      index > 0 && ['-cp', '-classpath', '--class-path', '-jar', '--module', '-m'].includes(value),
-  );
+  const javaArguments = arguments_.slice(1);
+  const boundary = javaApplicationArgumentIndex(javaArguments);
   if (boundary < 0) {
     return [...arguments_];
   }
   return [
     arguments_[0],
-    ...configuredGameJvmArguments(arguments_.slice(1, boundary), memory),
-    ...arguments_.slice(boundary),
+    ...configuredGameJvmArguments(javaArguments.slice(0, boundary), memory),
+    ...javaArguments.slice(boundary),
   ];
 }

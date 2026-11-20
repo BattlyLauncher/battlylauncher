@@ -7334,7 +7334,11 @@
     "text1336": "Battly cannot read the file “{0}”.",
     "text1337": "Repair this file",
     "text1338": "The patch index is empty",
-    "text1339": "GitHub has temporarily limited requests and the CDN is unavailable. Battly will try again later."
+    "text1339": "GitHub has temporarily limited requests and the CDN is unavailable. Battly will try again later.",
+    "text1340": "This YouTube playlist is private. Set it to Unlisted to import it.",
+    "text1341": "This YouTube playlist is unavailable. Check that the link opens without signing in.",
+    "text1342": "Java rejected the configured memory",
+    "text1343": "Under Settings > RAM, check that both values are valid and that the minimum does not exceed the maximum. If the instance has its own RAM settings, check those too."
   },
   "startupUpdates": {
     "text1": "Preparing Battly",

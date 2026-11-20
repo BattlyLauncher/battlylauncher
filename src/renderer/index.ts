@@ -17049,16 +17049,16 @@ async function openMusicImportFlow(): Promise<void> {
     }, 350);
     try {
       const imported = await window.battly.getYouTubeMusicPlaylist(playlistUrl);
-      window.clearInterval(youtubeTimer);
-      progress.finish();
       showImportedMusicActions(imported);
-    } catch {
+    } catch (error) {
+      showToast(
+        'Battly Music',
+        userErrorMessage(error, 'No se pudo importar la playlist de YouTube'),
+        'error',
+      );
+    } finally {
       window.clearInterval(youtubeTimer);
       progress.finish();
-      const status = document.querySelector<HTMLElement>('[data-music-status]');
-      if (status) {
-        status.textContent = 'No se pudo importar la playlist de YouTube';
-      }
     }
     return;
   }

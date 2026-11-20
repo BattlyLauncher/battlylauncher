@@ -70,6 +70,11 @@ const qualityFormats: Readonly<Record<MusicQuality, string>> = {
   low: 'bestaudio[abr<=64]/worstaudio/best',
 };
 
+const privatePlaylistMessage =
+  'La playlist de YouTube es privada. Cámbiala a No listada para poder importarla.';
+const unavailablePlaylistMessage =
+  'La playlist de YouTube no está disponible. Comprueba el enlace y que se pueda abrir sin iniciar sesión.';
+
 function waitForBinary(installation: Promise<string>, signal?: AbortSignal): Promise<string> {
   if (!signal) {
     return installation;
@@ -337,33 +342,53 @@ export class YtDlpResolver {
   }
 
   async playlist(value: string, signal?: AbortSignal): Promise<MusicPlaylistImport> {
-    if (value.length > 2048) {
-      throw new TypeError('Invalid YouTube playlist URL');
-    }
-    const url = new URL(value);
+    const url = value.length <= 2048 ? URL.parse(value.trim()) : null;
+    const list = url?.searchParams.get('list');
     if (
+      !url ||
       url.protocol !== 'https:' ||
-      !['www.youtube.com', 'youtube.com', 'm.youtube.com', 'youtu.be'].includes(url.hostname) ||
+      ![
+        'www.youtube.com',
+        'youtube.com',
+        'm.youtube.com',
+        'music.youtube.com',
+        'youtu.be',
+      ].includes(url.hostname) ||
       url.username ||
       url.password ||
-      !url.searchParams.get('list')
+      url.port ||
+      !list ||
+      !/^[A-Za-z0-9_-]{2,150}$/.test(list)
     ) {
-      throw new TypeError('Invalid YouTube playlist URL');
+      throw new TypeError('URL de lista de reproducción YouTube no válida');
     }
-    const output = await this.#runner(
-      await this.#binary(signal),
-      [
-        '--ignore-config',
-        '--flat-playlist',
-        '--skip-download',
-        '--dump-single-json',
-        '--playlist-end',
-        '500',
-        '--no-warnings',
-        url.toString(),
-      ],
-      signal,
-    );
+    const binary = await this.#binary(signal);
+    let output: string;
+    try {
+      output = await this.#runner(
+        binary,
+        [
+          '--ignore-config',
+          '--flat-playlist',
+          '--skip-download',
+          '--dump-single-json',
+          '--playlist-end',
+          '500',
+          '--no-warnings',
+          `https://www.youtube.com/playlist?list=${list}`,
+        ],
+        signal,
+      );
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : '';
+      if (/\b(?:private playlist|playlist is private)\b/i.test(detail)) {
+        throw new Error(privatePlaylistMessage, { cause: error });
+      }
+      if (/\bplaylist (?:does not exist|is (?:not available|unavailable))\b/i.test(detail)) {
+        throw new Error(unavailablePlaylistMessage, { cause: error });
+      }
+      throw error;
+    }
     if (output.length > 4 * 1024 * 1024) {
       throw new TypeError('YouTube playlist is too large');
     }
@@ -372,8 +397,14 @@ export class YtDlpResolver {
       throw new TypeError('Invalid YouTube playlist response');
     }
     const source = result as Record<string, unknown>;
+    if (source.availability === 'private') {
+      throw new Error(privatePlaylistMessage);
+    }
+    if (source.availability === 'needs_auth') {
+      throw new Error(unavailablePlaylistMessage);
+    }
     const entries = source.entries;
-    if (!Array.isArray(entries) || !entries.length || entries.length > 500) {
+    if (!Array.isArray(entries) || entries.length > 500) {
       throw new TypeError('Invalid YouTube playlist entries');
     }
     const rawTitle = source.title;
@@ -382,8 +413,20 @@ export class YtDlpResolver {
         ? rawTitle.trim()
         : 'Playlist de YouTube';
     const videos = entries
+      .filter((entry: unknown) => {
+        const video = entry as { availability?: unknown; title?: unknown } | null;
+        return (
+          video?.availability !== 'private' &&
+          !(
+            typeof video?.title === 'string' && /^\[(?:Private|Deleted) video\]$/i.test(video.title)
+          )
+        );
+      })
       .map(parseYouTubeVideo)
       .filter((entry): entry is MusicSong => entry !== null);
+    if (!videos.length) {
+      throw new Error('La playlist está vacía o no se pudo leer');
+    }
     const songs = await Promise.all(
       videos.map(async (video) => {
         const cached = (await this.#metadataCache.get(video.id))?.song;

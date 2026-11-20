@@ -7334,7 +7334,11 @@
     "text1336": "Battly no puede leer el archivo «{0}».",
     "text1337": "Reparar este archivo",
     "text1338": "El índice de parches está vacío",
-    "text1339": "GitHub ha limitado las peticiones y la CDN no está disponible. Se volverá a intentar más tarde."
+    "text1339": "GitHub ha limitado las peticiones y la CDN no está disponible. Se volverá a intentar más tarde.",
+    "text1340": "La playlist de YouTube es privada. Cámbiala a No listada para poder importarla.",
+    "text1341": "La playlist de YouTube no está disponible. Comprueba el enlace y que se pueda abrir sin iniciar sesión.",
+    "text1342": "Java ha rechazado la RAM configurada",
+    "text1343": "En Ajustes > RAM, comprueba que la memoria mínima no supere la máxima y que ambas sean válidas. Si la instancia tiene su propia configuración de RAM, revísala también."
   },
   "startupUpdates": {
     "text1": "Preparando Battly",

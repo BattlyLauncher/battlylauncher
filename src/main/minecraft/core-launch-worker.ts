@@ -17,6 +17,11 @@ const input = workerData as CoreWorkerInput;
 const port = parentPort!;
 configureConnectivity(() => input.online);
 Object.assign(process.env, input.options.environment || {});
+const loadModule = createRequire(__filename);
+const workerHttp = loadModule('./core-worker-http.js') as {
+  configureCoreWorkerHttp(): void;
+};
+workerHttp.configureCoreWorkerHttp();
 channel('child_process').subscribe((message: unknown) => {
   const child: unknown =
     message && typeof message === 'object' ? Reflect.get(message, 'process') : null;
@@ -25,7 +30,6 @@ channel('child_process').subscribe((message: unknown) => {
     child.once('close', () => port.postMessage({ kind: 'child-exit', pid: child.pid }));
   }
 });
-const loadModule = createRequire(__filename);
 const adapter = new MinecraftJavaCoreAdapter(
   { load: () => Promise.resolve(loadModule(input.packagePath) as MinecraftCoreModule) },
   input.descriptor,

@@ -7764,7 +7764,11 @@
     "text1336": "Battly ne peut pas lire le fichier « {0} ».",
     "text1337": "Réparer ce fichier",
     "text1338": "L’index des correctifs est vide",
-    "text1339": "GitHub a temporairement limité les requêtes et le CDN est indisponible. Battly réessaiera plus tard."
+    "text1339": "GitHub a temporairement limité les requêtes et le CDN est indisponible. Battly réessaiera plus tard.",
+    "text1340": "Cette playlist YouTube est privée. Passez-la en Non répertoriée pour l’importer.",
+    "text1341": "Cette playlist YouTube est indisponible. Vérifiez que le lien s’ouvre sans vous connecter.",
+    "text1342": "Java a refusé la mémoire configurée",
+    "text1343": "Dans Paramètres > RAM, vérifie que les deux valeurs sont valides et que le minimum ne dépasse pas le maximum. Si l’instance a ses propres paramètres de RAM, vérifie-les aussi."
   },
   "startupUpdates": {
     "text1": "Préparation de Battly",

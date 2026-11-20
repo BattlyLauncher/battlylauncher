@@ -5,6 +5,7 @@ import {
   configuredHeapArguments,
   configuredJavaSpawnArguments,
   isHeapArgument,
+  javaApplicationArgumentIndex,
 } from './launch-memory';
 import { launchErrorDetail } from './launch-error-detail';
 import { release as osRelease } from 'node:os';
@@ -502,13 +503,10 @@ export class MinecraftJavaCoreAdapter implements MinecraftLauncherAdapter {
               ).join(delimiter);
             }
           }
-          const boundary = resolved.findIndex(
-            (value, index) =>
-              index > 0 &&
-              ['-cp', '-classpath', '--class-path', '-jar', '--module', '-m'].includes(value),
-          );
+          const javaArguments = resolved.slice(1);
+          const boundary = javaApplicationArgumentIndex(javaArguments);
           evidence(
-            `[launch-memory] ${JSON.stringify({ minimumMiB: options.memory.minimumMiB, maximumMiB: options.memory.maximumMiB, heapArguments: resolved.slice(1, boundary < 0 ? 1 : boundary).filter(isHeapArgument) })}`,
+            `[launch-memory] ${JSON.stringify({ minimumMiB: options.memory.minimumMiB, maximumMiB: options.memory.maximumMiB, heapArguments: javaArguments.slice(0, Math.max(0, boundary)).filter(isHeapArgument) })}`,
           );
           return resolved;
         },

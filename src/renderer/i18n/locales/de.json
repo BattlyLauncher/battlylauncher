@@ -7764,7 +7764,11 @@
     "text1336": "Battly kann die Datei „{0}“ nicht lesen.",
     "text1337": "Diese Datei reparieren",
     "text1338": "Der Patch-Index ist leer",
-    "text1339": "GitHub hat die Anfragen vorübergehend begrenzt und das CDN ist nicht verfügbar. Battly versucht es später erneut."
+    "text1339": "GitHub hat die Anfragen vorübergehend begrenzt und das CDN ist nicht verfügbar. Battly versucht es später erneut.",
+    "text1340": "Diese YouTube-Playlist ist privat. Stelle sie zum Importieren auf Nicht gelistet.",
+    "text1341": "Diese YouTube-Playlist ist nicht verfügbar. Prüfe, ob sich der Link ohne Anmeldung öffnen lässt.",
+    "text1342": "Java hat die Speichereinstellung abgelehnt",
+    "text1343": "Prüfe unter Einstellungen > RAM, ob beide Werte gültig sind und der Mindestwert den Höchstwert nicht überschreitet. Prüfe auch die RAM-Einstellungen der Instanz, falls sie eigene verwendet."
   },
   "startupUpdates": {
     "text1": "Battly wird vorbereitet",

@@ -53,6 +53,13 @@ const maximumEvidenceLineCharacters = 420;
 // Ordinary ERROR lines (for example Realms authentication) are not fatal evidence.
 const fatalFailurePattern =
   /---- Minecraft Crash Report ----|Crash report saved to\b|ModLoadingException:|java\.lang\.Exception: Mod Loading has failed|\[[^\r\n]*?FATAL\][^\r\n]*Error during pre-loading phase/i;
+const exhaustedHeapPattern = /Java heap space|GC overhead limit exceeded/i;
+const fatalHeapExhaustionPattern =
+  /(?:Caused by:|Exception in thread "[^"\r\n]+")\s+(?:java\.lang\.)?OutOfMemoryError:\s*(?:Java heap space|GC overhead limit exceeded)/i;
+const heapReservationPattern =
+  /Could not reserve enough space|(?:Could not|Unable to) allocate [^\r\n]*\b(?:Java|object) heap/i;
+const invalidHeapSizePattern =
+  /Invalid (?:initial|minimum|maximum) heap size|Too small (?:initial|minimum|maximum) heap|(?:Initial|Minimum) heap size set to a larger value than the maximum heap size|Incompatible (?:initial|minimum) and maximum heap sizes/i;
 
 type RepairOperation =
   | { readonly kind: 'adjust-memory'; readonly maximumGb: number }
@@ -564,9 +571,7 @@ async function detectIssues(
   const runtimeGameVersion = runtime.gameVersion;
   const runtimeLoader = runtime.loader;
 
-  if (
-    /OutOfMemoryError: Java heap space|GC overhead limit exceeded|Java heap space/i.test(content)
-  ) {
+  if (exhaustedHeapPattern.test(content)) {
     const totalGb = Math.max(2, Math.floor(totalmem() / 1024 ** 3));
     const freeGb = Math.max(0.5, Math.floor((freemem() / 1024 ** 3) * 2) / 2);
     const recommended = Math.min(
@@ -591,13 +596,13 @@ async function detectIssues(
         'El heap alcanzó su límite. Battly puede ajustar la RAM del perfil sin tocar otros argumentos.',
         'critical',
         'high',
-        matchingEvidence(sources, /OutOfMemoryError|GC overhead limit exceeded|Java heap space/i),
+        matchingEvidence(sources, exhaustedHeapPattern),
         fixes,
       ),
     );
   }
 
-  if (/Could not reserve enough space/i.test(content)) {
+  if (heapReservationPattern.test(content)) {
     const recommended = Math.max(
       1,
       Math.min(currentMemoryGb - 1, Math.floor(freemem() / 1024 ** 3)),
@@ -620,8 +625,21 @@ async function detectIssues(
         'La reserva configurada supera la memoria que Java puede obtener en este momento. Cierra aplicaciones pesadas o reduce la RAM.',
         'critical',
         'high',
-        matchingEvidence(sources, /Could not reserve enough space/i),
+        matchingEvidence(sources, heapReservationPattern),
         fixes,
+      ),
+    );
+  }
+
+  if (invalidHeapSizePattern.test(content)) {
+    add(
+      issue(
+        'invalid-heap-size',
+        'Java ha rechazado la RAM configurada',
+        'En Ajustes > RAM, comprueba que la memoria mínima no supere la máxima y que ambas sean válidas. Si la instancia tiene su propia configuración de RAM, revísala también.',
+        'critical',
+        'high',
+        matchingEvidence(sources, invalidHeapSizePattern),
       ),
     );
   }
@@ -1326,7 +1344,11 @@ export class CrashAnalysisService {
       recent[index] = { ...source, content: normalizeDiagnosticText(bounded) };
     }
     const combinedRecentLogs = recent.map((source) => source.content).join('\n');
-    const hasFatalFailure = fatalFailurePattern.test(combinedRecentLogs);
+    const hasFatalFailure =
+      fatalFailurePattern.test(combinedRecentLogs) ||
+      fatalHeapExhaustionPattern.test(combinedRecentLogs) ||
+      heapReservationPattern.test(combinedRecentLogs) ||
+      invalidHeapSizePattern.test(combinedRecentLogs);
     if (numericCleanExit && !hasFatalFailure) {
       return null;
     }

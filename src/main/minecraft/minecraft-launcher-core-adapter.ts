@@ -7,7 +7,11 @@ import {
   normalizeLegacyForgeLibraries,
   verifyLauncherLibraries,
 } from './legacy-forge-libraries';
-import { configuredGameJvmArguments, isHeapArgument } from './launch-memory';
+import {
+  configuredGameJvmArguments,
+  isHeapArgument,
+  javaApplicationArgumentIndex,
+} from './launch-memory';
 import { writeFileAtomically } from '../files/atomic-file';
 import {
   checkModernAssets,
@@ -1402,20 +1406,22 @@ export class MinecraftLauncherCoreAdapter implements MinecraftLauncherAdapter {
 
       // MCLC appends profile/custom JVM flags after its own -Xmx/-Xms. Normalize
       // the final JVM prefix before spawn so inherited flags cannot override RAM.
-      const prefix = value.slice(0, classpathIndex);
-      if (prefix.every((argument): argument is string => typeof argument === 'string')) {
-        value.splice(0, classpathIndex, ...configuredGameJvmArguments(prefix, options.memory));
-        classpathIndex = value.indexOf('-cp');
-        for (const event of logs.push(
-          `[launch-memory] ${JSON.stringify({
-            minimumMiB: options.memory.minimumMiB,
-            maximumMiB: options.memory.maximumMiB,
-            heapArguments: value
-              .slice(0, classpathIndex)
-              .filter((argument) => typeof argument === 'string' && isHeapArgument(argument)),
-          })}`,
-        )) {
-          emit(event);
+      const arguments_ = value as unknown[];
+      if (arguments_.every((argument): argument is string => typeof argument === 'string')) {
+        const boundary = javaApplicationArgumentIndex(arguments_);
+        if (boundary >= 0) {
+          const prefix = configuredGameJvmArguments(arguments_.slice(0, boundary), options.memory);
+          value.splice(0, boundary, ...prefix);
+          classpathIndex = value.indexOf('-cp');
+          for (const event of logs.push(
+            `[launch-memory] ${JSON.stringify({
+              minimumMiB: options.memory.minimumMiB,
+              maximumMiB: options.memory.maximumMiB,
+              heapArguments: prefix.filter(isHeapArgument),
+            })}`,
+          )) {
+            emit(event);
+          }
         }
       }
 

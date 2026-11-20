@@ -1,0 +1,7 @@
+{
+  "name": "battly-core-worker-http",
+  "private": true,
+  "devDependencies": {
+    "undici": "8.12.4"
+  }
+}

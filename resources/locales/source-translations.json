@@ -21533,6 +21533,70 @@
         "ar": "فرض GitHub حدًا مؤقتًا على الطلبات، وشبكة CDN غير متاحة. سيحاول Battly مرة أخرى لاحقًا.",
         "zh": "GitHub 暂时限制了请求，CDN 也无法使用。Battly 稍后会重试。"
       }
+    },
+    {
+      "source": "La playlist de YouTube es privada. Cámbiala a No listada para poder importarla.",
+      "sourceLanguage": "es",
+      "translations": {
+        "es": "La playlist de YouTube es privada. Cámbiala a No listada para poder importarla.",
+        "en": "This YouTube playlist is private. Set it to Unlisted to import it.",
+        "pt": "Esta lista de reprodução do YouTube é privada. Altere a visibilidade para Não listada para importá-la.",
+        "fr": "Cette playlist YouTube est privée. Passez-la en Non répertoriée pour l’importer.",
+        "de": "Diese YouTube-Playlist ist privat. Stelle sie zum Importieren auf Nicht gelistet.",
+        "it": "Questa playlist di YouTube è privata. Impostala su Non in elenco per importarla.",
+        "ru": "Этот плейлист YouTube закрыт. Включите доступ по ссылке, чтобы импортировать его.",
+        "ja": "この YouTube プレイリストは非公開です。インポートするには限定公開に変更してください。",
+        "ar": "قائمة تشغيل YouTube هذه خاصة. غيّر مستوى ظهورها إلى غير مدرجة لاستيرادها.",
+        "zh": "此 YouTube 播放列表是私享的。请将其设为不公开后再导入。"
+      }
+    },
+    {
+      "source": "La playlist de YouTube no está disponible. Comprueba el enlace y que se pueda abrir sin iniciar sesión.",
+      "sourceLanguage": "es",
+      "translations": {
+        "es": "La playlist de YouTube no está disponible. Comprueba el enlace y que se pueda abrir sin iniciar sesión.",
+        "en": "This YouTube playlist is unavailable. Check that the link opens without signing in.",
+        "pt": "Esta lista de reprodução do YouTube não está disponível. Verifique se o link abre sem iniciar sessão.",
+        "fr": "Cette playlist YouTube est indisponible. Vérifiez que le lien s’ouvre sans vous connecter.",
+        "de": "Diese YouTube-Playlist ist nicht verfügbar. Prüfe, ob sich der Link ohne Anmeldung öffnen lässt.",
+        "it": "Questa playlist di YouTube non è disponibile. Verifica che il link si apra senza accedere.",
+        "ru": "Этот плейлист YouTube недоступен. Проверьте, открывается ли ссылка без входа в аккаунт.",
+        "ja": "この YouTube プレイリストは利用できません。ログインせずにリンクを開けるか確認してください。",
+        "ar": "قائمة تشغيل YouTube هذه غير متاحة. تأكد من إمكانية فتح الرابط دون تسجيل الدخول.",
+        "zh": "此 YouTube 播放列表不可用。请检查链接是否能在未登录时打开。"
+      }
+    },
+    {
+      "source": "Java ha rechazado la RAM configurada",
+      "sourceLanguage": "es",
+      "translations": {
+        "es": "Java ha rechazado la RAM configurada",
+        "en": "Java rejected the configured memory",
+        "pt": "O Java rejeitou a memória configurada",
+        "fr": "Java a refusé la mémoire configurée",
+        "de": "Java hat die Speichereinstellung abgelehnt",
+        "it": "Java ha rifiutato la memoria configurata",
+        "ru": "Java отклонила настройки памяти",
+        "ja": "Java がメモリの設定を受け付けませんでした",
+        "ar": "رفضت Java إعدادات الذاكرة",
+        "zh": "Java 拒绝了当前内存设置"
+      }
+    },
+    {
+      "source": "En Ajustes > RAM, comprueba que la memoria mínima no supere la máxima y que ambas sean válidas. Si la instancia tiene su propia configuración de RAM, revísala también.",
+      "sourceLanguage": "es",
+      "translations": {
+        "es": "En Ajustes > RAM, comprueba que la memoria mínima no supere la máxima y que ambas sean válidas. Si la instancia tiene su propia configuración de RAM, revísala también.",
+        "en": "Under Settings > RAM, check that both values are valid and that the minimum does not exceed the maximum. If the instance has its own RAM settings, check those too.",
+        "pt": "Em Configurações > RAM, confira se os dois valores são válidos e se o mínimo não excede o máximo. Se a instância tiver configurações de RAM próprias, confira essas configurações também.",
+        "fr": "Dans Paramètres > RAM, vérifie que les deux valeurs sont valides et que le minimum ne dépasse pas le maximum. Si l’instance a ses propres paramètres de RAM, vérifie-les aussi.",
+        "de": "Prüfe unter Einstellungen > RAM, ob beide Werte gültig sind und der Mindestwert den Höchstwert nicht überschreitet. Prüfe auch die RAM-Einstellungen der Instanz, falls sie eigene verwendet.",
+        "it": "In Impostazioni > RAM, verifica che entrambi i valori siano validi e che il minimo non superi il massimo. Se l’istanza ha impostazioni RAM proprie, controlla anche quelle.",
+        "ru": "В разделе «Настройки > ОЗУ» проверьте, что оба значения допустимы, а минимум не превышает максимум. Если у сборки есть свои настройки ОЗУ, проверьте и их.",
+        "ja": "設定の「RAM」で、最小値と最大値が有効で、最小値が最大値を超えていないか確認してください。インスタンスに個別の RAM 設定がある場合は、そちらも確認してください。",
+        "ar": "في الإعدادات > ذاكرة RAM، تأكد من صحة القيمتين ومن أن الحد الأدنى لا يتجاوز الحد الأقصى. إذا كان لبيئة اللعب إعدادات ذاكرة خاصة بها، فتحقق منها أيضًا.",
+        "zh": "在设置 > 内存中，确认两个值均有效，且最小值未超过最大值。如果实例使用独立的内存设置，也请检查这些设置。"
+      }
     }
   ]
 }

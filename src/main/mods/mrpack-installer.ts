@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { lstat, mkdir, rename, rm, writeFile } from 'node:fs/promises';
+import { lstat, mkdir, rename, rm, statfs, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 import AdmZip from 'adm-zip';
@@ -130,10 +130,6 @@ function manifest(value: unknown): MrpackManifest {
       },
     ];
   });
-  const totalSize = files.reduce((total, file) => total + file.size, 0);
-  if (!Number.isSafeInteger(totalSize) || totalSize > maximumExtractedBytes) {
-    throw new TypeError('Mrpack download size limit exceeded');
-  }
   return {
     name: stringValue(own(source, 'name'), 'name', 128),
     description:
@@ -248,20 +244,29 @@ export class MrpackInstaller {
       throw new TypeError('Mrpack instance id is invalid');
     }
     await mkdir(this.#instancesRoot, { recursive: true });
+    const overrideEntries = entries.filter(
+      (entry) =>
+        !entry.isDirectory &&
+        (entry.entryName.startsWith('overrides/') ||
+          entry.entryName.startsWith('client-overrides/')),
+    );
+    const downloadBytes = pack.files.reduce((total, file) => total + file.size, 0);
+    const overrideBytes = overrideEntries.reduce((total, entry) => total + entry.header.size, 0);
+    const space = await statfs(this.#instancesRoot, { bigint: true }).catch(() => null);
+    const diskFull = () =>
+      new Error('No queda espacio suficiente en el disco. Libera espacio y vuelve a intentarlo.');
+    if (space && space.bavail * space.bsize < BigInt(downloadBytes + overrideBytes)) {
+      throw diskFull();
+    }
+    signal?.throwIfAborted();
     const staging = join(this.#instancesRoot, `.installing-${id}`);
     const target = join(this.#instancesRoot, id);
     await mkdir(staging);
     try {
-      const overrideEntries = entries.filter(
-        (entry) =>
-          !entry.isDirectory &&
-          (entry.entryName.startsWith('overrides/') ||
-            entry.entryName.startsWith('client-overrides/')),
-      );
       let extracted = 0;
       for (const prefix of ['overrides/', 'client-overrides/']) {
-        for (const entry of entries) {
-          if (entry.isDirectory || !entry.entryName.startsWith(prefix)) {
+        for (const entry of overrideEntries) {
+          if (!entry.entryName.startsWith(prefix)) {
             continue;
           }
           const relativePath = safeRelativePath(entry.entryName.slice(prefix.length));
@@ -278,10 +283,7 @@ export class MrpackInstaller {
           });
         }
       }
-      const totalDownloadBytes = Math.max(
-        1,
-        pack.files.reduce((total, file) => total + file.size, 0),
-      );
+      const totalDownloadBytes = Math.max(1, downloadBytes);
       let completedDownloadBytes = 0;
       for (const file of pack.files) {
         let lastPercent = -1;
@@ -318,6 +320,10 @@ export class MrpackInstaller {
               downloaded = true;
               break;
             } catch (error) {
+              signal?.throwIfAborted();
+              if ((error as NodeJS.ErrnoException | undefined)?.code === 'ENOSPC') {
+                throw error;
+              }
               lastError = error;
             }
           }
@@ -371,6 +377,9 @@ export class MrpackInstaller {
       return { id, ...draft };
     } catch (error) {
       await discardStaging(staging);
+      if ((error as NodeJS.ErrnoException | undefined)?.code === 'ENOSPC') {
+        throw diskFull();
+      }
       throw error;
     }
   }
