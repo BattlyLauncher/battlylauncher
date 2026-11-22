@@ -152,7 +152,7 @@ export class NotificationService {
       this.#seen.set(notice.id, notice.expiresAt);
       await this.#save();
       this.#shown = this.#shown.filter((time) => time > Date.now() - 60000);
-      if (this.#settings.native && this.#shown.length < 5) {
+      if (!notice.silent && this.#settings.native && this.#shown.length < 5) {
         this.#shown.push(Date.now());
         try {
           this.native(notice, () => this.changed(this.#snapshot(), notice.id));
@@ -162,12 +162,18 @@ export class NotificationService {
       }
     });
   }
-  action(title: string, body: string, category: BattlyNotice['category'] = 'action'): void {
-    void this.publish({ id: randomUUID(), title, body, category }).catch((error: unknown) =>
-      console.warn(
-        '[notifications] Action could not be stored',
-        error instanceof Error ? error.name : 'UnknownError',
-      ),
+  action(
+    title: string,
+    body: string,
+    category: BattlyNotice['category'] = 'action',
+    options: { silent?: boolean } = {},
+  ): void {
+    void this.publish({ id: randomUUID(), title, body, category, silent: options.silent }).catch(
+      (error: unknown) =>
+        console.warn(
+          '[notifications] Action could not be stored',
+          error instanceof Error ? error.name : 'UnknownError',
+        ),
     );
   }
   update(settings: unknown): Promise<NoticeSnapshot> {

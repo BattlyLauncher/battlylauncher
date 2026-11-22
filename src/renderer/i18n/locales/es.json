@@ -120,7 +120,7 @@
   "navigation": {
     "home": "Inicio",
     "instances": "Instancias",
-    "mods": "Workspace",
+    "mods": "Mods",
     "music": "Música",
     "friends": "Amigos",
     "settings": "Ajustes",
@@ -1874,7 +1874,7 @@
     "text156": "La sala se ha cerrado.",
     "text157": "La voz de Battly no ha respondido. Reintenta cuando se recupere la conexión con la sala.",
     "text158": "Este subdominio ya está en uso. Elige otro.",
-    "text159": "(parche {0})"
+    "text159": "parche {0}"
   },
   "modalCopy": {
     "text0": "Confirmar acción",
@@ -7338,7 +7338,9 @@
     "text1340": "La playlist de YouTube es privada. Cámbiala a No listada para poder importarla.",
     "text1341": "La playlist de YouTube no está disponible. Comprueba el enlace y que se pueda abrir sin iniciar sesión.",
     "text1342": "Java ha rechazado la RAM configurada",
-    "text1343": "En Ajustes > RAM, comprueba que la memoria mínima no supere la máxima y que ambas sean válidas. Si la instancia tiene su propia configuración de RAM, revísala también."
+    "text1343": "En Ajustes > RAM, comprueba que la memoria mínima no supere la máxima y que ambas sean válidas. Si la instancia tiene su propia configuración de RAM, revísala también.",
+    "text1344": "Fabric Loader {0} no es compatible con Minecraft {1}. Conéctate a Internet para instalar una versión compatible.",
+    "text1345": "[Battly] Fabric Loader actualizado de {0} a {1} para Minecraft {2}."
   },
   "startupUpdates": {
     "text1": "Preparando Battly",

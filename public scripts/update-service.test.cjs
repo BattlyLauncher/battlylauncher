@@ -6,6 +6,17 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { EventEmitter } = require('node:events');
 const { runStartupUpdate } = require('../dist/main/updates/startup-update-flow');
+
+test('a late startup check prepares an available update without checking again', async (t) => {
+  const { updates, calls } = service(t);
+  const checked = await updates.action('check');
+  assert.equal(checked.status, 'available');
+
+  await updates.automatic(false);
+
+  assert.deepEqual(calls, ['check', 'download']);
+  assert.equal(updates.snapshot().status, 'ready');
+});
 function service(
   t,
   packaged = true,

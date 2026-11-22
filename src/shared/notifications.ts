@@ -16,6 +16,7 @@ export interface BattlyNotice {
   actions: NoticeLink[];
   dropdowns: NoticeSelect[];
   read: boolean;
+  silent?: true;
 }
 export interface NoticeSettings {
   native: boolean;
@@ -107,5 +108,6 @@ export function normalizeNotice(value: unknown, now = Date.now()): BattlyNotice 
       return { label: text(d.label, 80), options };
     }),
     read: v.read === true,
+    ...(v.silent === true ? { silent: true as const } : {}),
   };
 }

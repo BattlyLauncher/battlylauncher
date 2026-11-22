@@ -1,5 +1,6 @@
 import { readBoundedResponseBytes } from '../network/read-bounded-response';
 import { fabricMenuCompatibility } from './fabric-menu-compatibility';
+import { resolveFabricLoader } from './fabric-loader-compatibility';
 import { prepareLegacyGameOptionsBeforeSpawn } from './legacy-game-options';
 import {
   configuredHeapArguments,
@@ -265,7 +266,6 @@ export class MinecraftJavaCoreAdapter implements MinecraftLauncherAdapter {
     options: MinecraftLaunchOptions,
     emit: MinecraftLaunchEventSink,
   ): Promise<MinecraftLaunchHandle> {
-    options = fabricMenuCompatibility(options);
     if (options.engine !== this.engine) {
       throw new TypeError(`Invalid launch engine for ${this.engine}`);
     }
@@ -276,6 +276,7 @@ export class MinecraftJavaCoreAdapter implements MinecraftLauncherAdapter {
     ) {
       throw new TypeError('Minecraft core package descriptor does not match the adapter');
     }
+    options = fabricMenuCompatibility(await resolveFabricLoader(options, emit));
 
     await ensureForgeOptiFine(options, emit);
     const labyOptions = labyModLaunchOptions(options);

@@ -57,7 +57,7 @@ async function sampleDesktopUsage(): Promise<void> {
 import {
   canSkipStartupSplash,
   revealStartupMainWindow,
-  startupPremium,
+  startupResultWithin,
   StartupSplashPresentation,
 } from './startup-presentation';
 import { DiscordPresence } from './discord/discord-presence';
@@ -2859,7 +2859,7 @@ function assertTrustedSender(senderUrl: string | undefined): void {
   }
 }
 
-function registerDesktopIpc(): void {
+function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['snapshot']>>): void {
   const remoteHandlers = new Map<string, Parameters<typeof ipcMain.handle>[1]>();
   const remoteControllers = new Set<AbortController>();
   // Covers all invoke handlers, including overlay handlers with their own sender validation.
@@ -3002,6 +3002,28 @@ function registerDesktopIpc(): void {
   }
   let updateStartupChecked = false;
   let startupUpdateRun: Promise<boolean> | undefined;
+  let startupSettings: typeof initialSettings | undefined = initialSettings;
+  const startUpdateCheck = () => {
+    installPatchCdn({ installedRoot: app.getAppPath(), userData: app.getPath('userData') });
+    const check = updates.action('check');
+    return startupResultWithin(check, 2_000).then((checked) => {
+      if (!checked) {
+        // Keep a slow discovery running and prepare its result through the normal in-app flow.
+        void check
+          .then(() => {
+            if (!accessMonitor?.ban) {
+              return updates.automatic(false);
+            }
+          })
+          .catch(() => undefined);
+      }
+      return checked;
+    });
+  };
+  const startupUpdateCheck =
+    packagedApplication && !process.windowsStore && !process.env.FLATPAK_ID && !accessMonitor?.ban
+      ? startUpdateCheck()
+      : undefined;
   const operationEvents: Record<string, string> = {
     'mods:install': 'mod:installed',
     'settings:save': 'launcher:settings_changed',
@@ -3087,7 +3109,9 @@ function registerDesktopIpc(): void {
             Array.isArray(result.installed)
               ? result.installed.filter((v) => typeof v === 'string').join(', ')
               : 'Battly';
-          notifications().action(noticeTitles[channel], names.slice(0, 4000) || 'Battly');
+          notifications().action(noticeTitles[channel], names.slice(0, 4000) || 'Battly', 'action', {
+            silent: channel === desktopChannels.installMod,
+          });
         }
         return result;
       } catch (error) {
@@ -3155,20 +3179,19 @@ function registerDesktopIpc(): void {
       return;
     }
     patchRuntime()?.healthy();
-    if (packagedApplication && !process.windowsStore && !process.env.FLATPAK_ID) {
-      installPatchCdn({ installedRoot: app.getAppPath(), userData: app.getPath('userData') });
+    startupSettings = undefined;
+    if (startupUpdateCheck) {
       startupUpdateRun ??= (async () => {
-        await splashPresentation?.wait();
+        const checked = await startupUpdateCheck;
+        if (!checked || accessMonitor?.ban) {
+          return false;
+        }
         return showStartupUpdates(
           updates,
           () => requestUpdateAction('install'),
-          (await resolveSettingsStore().snapshot()).visual.language,
-          () => {
-            if (splashWindow && !splashWindow.isDestroyed()) {
-              splashWindow.close();
-            }
-            splashWindow = undefined;
-          },
+          initialSettings.visual.language,
+          closeStartupSplash,
+          checked,
         );
       })();
       if (await startupUpdateRun) {
@@ -3177,13 +3200,9 @@ function registerDesktopIpc(): void {
     }
     if (!updateStartupChecked) {
       updateStartupChecked = true;
-      updates.start(!startupUpdateRun);
+      updates.start(!startupUpdateCheck);
     }
     await splashPresentation?.wait();
-    if (splashWindow && !splashWindow.isDestroyed()) {
-      startupProgress.complete('renderer', 'Battly está listo');
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    }
     if (!mainWindow || !(await revealStartupMainWindow(mainWindow, () => !accessMonitor?.ban))) {
       void resolveStructuredLogger()
         .log('error', 'startup.main-window-not-visible', {})
@@ -3191,10 +3210,7 @@ function registerDesktopIpc(): void {
       return;
     }
     startupProgress.complete('renderer', 'Battly está listo');
-    if (splashWindow && !splashWindow.isDestroyed()) {
-      splashWindow.close();
-    }
-    splashWindow = undefined;
+    closeStartupSplash();
   });
   ipcMain.handle(desktopChannels.getAppInfo, (event) => {
     assertTrustedSender(event.senderFrame?.url);
@@ -3230,6 +3246,9 @@ function registerDesktopIpc(): void {
   }
   ipcMain.handle(desktopChannels.getVisualPreferences, async (event) => {
     assertTrustedSender(event.senderFrame?.url);
+    if (startupSettings) {
+      return startupSettings.visual;
+    }
     try {
       const visual = await readVisualPreferencesFile(visualPreferenceStorePath());
       return visual.backgroundUrl &&
@@ -3244,6 +3263,9 @@ function registerDesktopIpc(): void {
 
   ipcMain.handle(desktopChannels.getSettings, async (event) => {
     assertTrustedSender(event.senderFrame?.url);
+    if (startupSettings) {
+      return startupSettings;
+    }
     const snapshot = await resolveSettingsStore().snapshot();
     if (
       (snapshot.runtime.startupSoundEnabled ||
@@ -3707,6 +3729,7 @@ function registerDesktopIpc(): void {
       (account) => account.uuid === accounts.selectedAccountUuid,
     );
     let playedSeconds: number | null = null;
+    let launcherSeconds: number | null = null;
     let cloudUsageHistory: ImportedUsageDay[] | undefined;
     let social: {
       friendCount: number;
@@ -3724,6 +3747,7 @@ function registerDesktopIpc(): void {
         ]);
         if (statistics.status === 'fulfilled') {
           playedSeconds = statistics.value.playedSeconds;
+          launcherSeconds = statistics.value.launcherSeconds;
           cloudUsageHistory = statistics.value.days;
         }
         if (socialSnapshot.status === 'fulfilled') {
@@ -3748,6 +3772,7 @@ function registerDesktopIpc(): void {
       backupCount,
       latestBackupAt,
       playedSeconds,
+      launcherSeconds,
       social,
       usageHistory: cloudUsageHistory,
     };
@@ -7370,13 +7395,20 @@ function createMainWindow(
       opacity: String(visual.footerOpacity),
       loading: loadingColor,
       introVolume: String(introVolume),
-      startupSound: showWhenReady ? startupSound : '',
+      startupSound,
     },
   });
 
   mainWindow = window;
   taskbarProgress.refresh();
   return window;
+}
+
+function closeStartupSplash(): void {
+  if (splashWindow && !splashWindow.isDestroyed()) {
+    splashWindow.close();
+  }
+  splashWindow = undefined;
 }
 
 function createSplashWindow(
@@ -7428,7 +7460,9 @@ function createSplashWindow(
     .catch((error) => {
       presentation.closed();
       if (!window.isDestroyed()) {
-        window.close();
+        // The splash can fail before the main window exists. Keep it inert until handoff.
+        window.removeAllListeners('ready-to-show');
+        window.hide();
       }
       console.warn(
         '[startup] Splash could not load:',
@@ -7608,6 +7642,11 @@ if (singleInstanceLock) {
     if (process.platform === 'linux') {
       app.setDesktopName('com.battlylauncher.launcher.desktop');
     }
+    const maintenanceCheck = launcherMaintenance(() => resolveConfigClient().load());
+    let settings: Awaited<ReturnType<SettingsStore['snapshot']>>;
+    let loadingColor: string;
+    let startupAudio: Awaited<ReturnType<SettingsStore['startupSoundPreference']>>;
+    let splashPlayedSound = false;
     try {
       await initializePrivateStorage(
         app.getPath('userData'),
@@ -7635,16 +7674,55 @@ if (singleInstanceLock) {
       });
       migratingLegacyData = false;
       activeContentRootPath = (await battlyDataRootSnapshot()).currentPath;
-      void sampleDesktopUsage().catch(() => undefined);
       setInterval(() => void sampleDesktopUsage().catch(() => undefined), 30_000).unref();
+      const settingsStore = resolveSettingsStore();
+      [settings, loadingColor, startupAudio] = await Promise.all([
+        settingsStore.snapshot(),
+        settingsStore.startupLoadingColorPreference(),
+        settingsStore.startupSoundPreference(),
+      ]);
+      const premiumCheck =
+        settings.runtime.launchBoostEnabled ||
+        settings.runtime.startupSoundEnabled ||
+        (settings.visual.backgroundUrl && !/\.(png|jpe?g)$/i.test(settings.visual.backgroundUrl))
+          ? startupResultWithin(
+              selectedBattlyToken().then(
+                async (token) => (await resolveThemeService().sounds(token)).premium,
+              ),
+              4_000,
+            )
+          : Promise.resolve(false);
+      const earlyPremium = await startupResultWithin(premiumCheck, 350);
+      if (!canSkipStartupSplash(settings.runtime.launchBoostEnabled, earlyPremium === true)) {
+        splashPlayedSound =
+          earlyPremium === true && settings.runtime.startupSoundEnabled && startupAudio.volume > 0;
+        createSplashWindow(
+          settings.visual.language,
+          startupAudio.sound,
+          splashPlayedSound ? startupAudio.volume : 0,
+        );
+      }
       await migrate301Servers(
         contentRootPath(),
         process.env.BATTLY_SERVERS_PATH ||
           join(contentRootPath(), 'battly', 'servers', 'battlyservers.net'),
         app.getPath('userData'),
-        (await resolveSettingsStore().snapshot()).runtime.ramMaxGb * 1024,
+        settings.runtime.ramMaxGb * 1024,
       );
       await protectContentMetadata();
+      if (!(await premiumCheck)) {
+        settings = {
+          ...settings,
+          visual: {
+            ...settings.visual,
+            backgroundUrl:
+              settings.visual.backgroundUrl && /\.(png|jpe?g)$/i.test(settings.visual.backgroundUrl)
+                ? settings.visual.backgroundUrl
+                : null,
+          },
+          runtime: { ...settings.runtime, startupSoundEnabled: false },
+        };
+      }
     } catch (error) {
       console.error('[startup] Could not unlock local storage:', error);
       try {
@@ -7672,46 +7750,12 @@ if (singleInstanceLock) {
       app.exit(1);
       return;
     }
-    let settings = await resolveSettingsStore().snapshot();
-    const maintenance = await launcherMaintenance(() => resolveConfigClient().load());
+    const maintenance = await maintenanceCheck;
     if (maintenance) {
       translateNative = await nativeTranslator(settings.visual.language);
       maintenanceWindow.show(maintenance.message, translateNative);
+      closeStartupSplash();
       return;
-    }
-    const loadingColor = await resolveSettingsStore().startupLoadingColorPreference();
-    const storedStartupAudio = await resolveSettingsStore().startupSoundPreference();
-    let premium = false;
-    // Check the entitlement for Boost too, even when no premium media is selected.
-    if (
-      settings.runtime.launchBoostEnabled ||
-      settings.runtime.startupSoundEnabled ||
-      (settings.visual.backgroundUrl && !/\.(png|jpe?g)$/i.test(settings.visual.backgroundUrl))
-    ) {
-      premium = await startupPremium(
-        async () => (await resolveThemeService().sounds(await selectedBattlyToken())).premium,
-      );
-    }
-    const launchBoost = canSkipStartupSplash(settings.runtime.launchBoostEnabled, premium);
-    if (!premium) {
-      settings = {
-        ...settings,
-        visual: {
-          ...settings.visual,
-          backgroundUrl:
-            settings.visual.backgroundUrl && /\.(png|jpe?g)$/i.test(settings.visual.backgroundUrl)
-              ? settings.visual.backgroundUrl
-              : null,
-        },
-        runtime: { ...settings.runtime, startupSoundEnabled: false },
-      };
-    }
-    const startupAudio = {
-      ...storedStartupAudio,
-      volume: settings.runtime.startupSoundEnabled ? storedStartupAudio.volume : 0,
-    };
-    if (!launchBoost) {
-      createSplashWindow(settings.visual.language, startupAudio.sound, startupAudio.volume);
     }
     protocol.handle('battly-audio', async (request) => {
       const url = new URL(request.url);
@@ -7769,10 +7813,9 @@ if (singleInstanceLock) {
       },
     );
 
-    registerDesktopIpc();
     translateNative = await nativeTranslator(settings.visual.language);
     discordPresence.configure(settings.privacy);
-    await refreshDiscordIdentity();
+    void refreshDiscordIdentity();
     accessMonitor = new AccessMonitor(
       join(app.getPath('userData'), 'access-restriction.json'),
       selectedBattlyToken,
@@ -7782,6 +7825,7 @@ if (singleInstanceLock) {
           worldsDesktop?.stop();
           void worldsService?.stop();
           banWindow.show(ban, translateNative);
+          closeStartupSplash();
         } else {
           banWindow.lift();
           mainWindow?.show();
@@ -7796,12 +7840,13 @@ if (singleInstanceLock) {
       });
     });
     await accessMonitor.start();
+    registerDesktopIpc(settings);
     startupProgress.complete('services', 'Iniciando servicios de Battly…');
     const window = createMainWindow(
-      launchBoost && !packagedApplication,
+      false,
       settings.visual,
       loadingColor,
-      startupAudio.volume,
+      settings.runtime.startupSoundEnabled && !splashPlayedSound ? startupAudio.volume : 0,
       startupAudio.sound,
     );
     startupProgress.complete('window', 'Cargando la interfaz…');

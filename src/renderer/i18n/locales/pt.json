@@ -589,7 +589,7 @@
     "text156": "A sala foi fechada.",
     "text157": "A voz do Battly não respondeu. Tente novamente quando a conexão com a sala for restabelecida.",
     "text158": "Este subdomínio já está em uso. Escolhe outro.",
-    "text159": "(patch {0})"
+    "text159": "patch {0}"
   },
   "launcher": {
     "loading_config": "Configuração de carregamento",
@@ -714,7 +714,7 @@
     "friends": "Amigos",
     "settings": "Definições",
     "home": "Página inicial",
-    "mods": "Espaço de trabalho",
+    "mods": "Modificações",
     "news": "Notícias",
     "myBattly": "Meu Battly",
     "discord": "Discord",
@@ -7768,7 +7768,9 @@
     "text1340": "Esta lista de reprodução do YouTube é privada. Altere a visibilidade para Não listada para importá-la.",
     "text1341": "Esta lista de reprodução do YouTube não está disponível. Verifique se o link abre sem iniciar sessão.",
     "text1342": "O Java rejeitou a memória configurada",
-    "text1343": "Em Configurações > RAM, confira se os dois valores são válidos e se o mínimo não excede o máximo. Se a instância tiver configurações de RAM próprias, confira essas configurações também."
+    "text1343": "Em Configurações > RAM, confira se os dois valores são válidos e se o mínimo não excede o máximo. Se a instância tiver configurações de RAM próprias, confira essas configurações também.",
+    "text1344": "O Fabric Loader {0} não é compatível com o Minecraft {1}. Conecte-se à internet para instalar uma versão compatível.",
+    "text1345": "[Battly] Fabric Loader atualizado de {0} para {1} para o Minecraft {2}."
   },
   "startupUpdates": {
     "text1": "Preparando o Battly",

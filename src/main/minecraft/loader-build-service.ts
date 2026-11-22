@@ -8,6 +8,7 @@ import type {
 } from '../../shared/minecraft/loader-build-contract';
 
 import { fetchOptiFineCatalog } from './optifine-catalog';
+import { isObsoleteFabricLoader } from './fabric-loader-compatibility';
 
 type Fetch = typeof fetch;
 
@@ -188,7 +189,9 @@ export class LoaderBuildService {
     return value.slice(0, maximumBuilds).flatMap((candidate) => {
       const loader = object(own(object(candidate), 'loader'));
       const version = validBuild(own(loader, 'version'));
-      return version ? [{ version, isStable: own(loader, 'stable') === true }] : [];
+      return version && !isObsoleteFabricLoader(minecraftVersion, version)
+        ? [{ version, isStable: own(loader, 'stable') === true }]
+        : [];
     });
   }
 

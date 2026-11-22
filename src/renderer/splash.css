@@ -54,14 +54,14 @@ body {
   opacity: 0;
   object-fit: contain;
   transition:
-    top 1.5s,
+    top 360ms,
     opacity 220ms;
   -webkit-user-drag: none;
 }
 
 .logo-visible .startup-logo {
   opacity: 1;
-  animation: jackInTheBox 3s both;
+  animation: jackInTheBox 460ms both;
 }
 
 .copy-visible .startup-logo {
@@ -83,7 +83,7 @@ body {
 }
 
 .copy-visible .startup-copy > * {
-  animation: flipInX 2s both;
+  animation: flipInX 280ms both;
   backface-visibility: visible;
 }
 

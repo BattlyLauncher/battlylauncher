@@ -214,7 +214,7 @@ export function mountWorldsCatalog(
       if (!document.hidden && (dialog?.open || catalog.getClientRects().length > 0)) {
         void loadRooms(true);
       }
-    }, 15_000);
+    }, 60_000);
   }
   return { update, loadRooms };
 }

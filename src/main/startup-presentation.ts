@@ -1,3 +1,5 @@
+import { clearTimeout, setTimeout } from 'node:timers';
+
 export function canSkipStartupSplash(enabled: boolean, premium: boolean): boolean {
   return enabled && premium;
 }
@@ -40,59 +42,43 @@ export async function revealStartupMainWindow(
   return false;
 }
 
-export async function startupPremium(
-  check: () => Promise<boolean>,
-  timeoutMs = 4000,
-): Promise<boolean> {
+export async function startupResultWithin<T>(
+  result: Promise<T>,
+  timeoutMs: number,
+): Promise<T | undefined> {
   let timeout: ReturnType<typeof setTimeout> | undefined;
   try {
     return await Promise.race([
-      check().catch(() => false),
-      new Promise<boolean>((resolve) => {
-        timeout = setTimeout(() => resolve(false), timeoutMs);
+      result,
+      new Promise<undefined>((resolve) => {
+        timeout = setTimeout(() => resolve(undefined), timeoutMs);
       }),
     ]);
   } catch {
-    return false;
+    return undefined;
   } finally {
     clearTimeout(timeout);
   }
 }
 
-/** Wait for the splash to paint, then keep it visible briefly even on fast machines. */
+/** Avoid flashing a splash that has already appeared. */
 export class StartupSplashPresentation {
   #shownAt: number | undefined;
-  #resolve!: () => void;
-  #ready = new Promise<void>((resolve) => {
-    this.#resolve = resolve;
-  });
-  #closed = false;
   constructor(
     private readonly now = Date.now,
-    private readonly minimumVisibleMs = 4100,
+    private readonly minimumVisibleMs = 300,
   ) {}
 
   shown(): void {
     this.#shownAt ??= this.now();
-    this.#resolve();
   }
 
   closed(): void {
-    this.#closed = true;
-    this.#resolve();
+    this.#shownAt = undefined;
   }
 
   async wait(): Promise<void> {
-    // A failed splash must never prevent the launcher from opening.
-    let timeout: ReturnType<typeof setTimeout> | undefined;
-    await Promise.race([
-      this.#ready,
-      new Promise<void>((resolve) => {
-        timeout = setTimeout(resolve, 5000);
-      }),
-    ]);
-    clearTimeout(timeout);
-    if (this.#closed || this.#shownAt === undefined) {
+    if (this.#shownAt === undefined) {
       return;
     }
     const remaining = this.minimumVisibleMs - (this.now() - this.#shownAt);

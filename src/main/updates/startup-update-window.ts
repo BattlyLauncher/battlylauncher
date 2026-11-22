@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createSecureWebPreferences, isTrustedRendererUrl } from '../security';
 import { startupUpdateChannels, type StartupUpdateSnapshot } from '../../shared/startup-updates';
+import type { UpdateSnapshot } from '../../shared/updates';
 import {
   runStartupUpdate,
   startupUpdateSnapshot,
@@ -27,15 +28,8 @@ export async function showStartupUpdates(
   install: () => Promise<unknown>,
   language: string,
   shown: () => void,
+  checked: UpdateSnapshot,
 ): Promise<boolean> {
-  // Keep the splash visible while discovering updates. A failed check must
-  // still allow the installed launcher to open without flashing another window.
-  let checked;
-  try {
-    checked = await service.action('check');
-  } catch {
-    return false;
-  }
   if ((checked.status !== 'available' && checked.status !== 'ready') || !checked.kind) {
     return false;
   }

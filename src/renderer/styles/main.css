@@ -14,6 +14,14 @@
   src: url('../assets/fonts/Poppins-Bold.woff2') format('woff2');
 }
 
+@font-face {
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: url('../assets/fonts/Poppins-ExtraBoldItalic.woff2') format('woff2');
+}
+
 :root {
   color-scheme: dark;
   font-family: 'Battly Emoji', 'Poppins', 'Battly Emoji Sequences', sans-serif;
@@ -722,10 +730,17 @@ a[href]:focus-visible,
 .header-edition {
   margin-left: 4px;
 }
+.titlebar [data-app-info] {
+  display: flex;
+  align-items: center;
+  column-gap: 7px;
+  line-height: 1.25;
+}
 .header-patch {
-  margin-left: 6px;
-  font-size: 0.75em;
-  font-weight: 500;
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: 0.875em;
+  font-style: italic;
+  font-weight: 800;
   white-space: nowrap;
 }
 .titlebar-actions {

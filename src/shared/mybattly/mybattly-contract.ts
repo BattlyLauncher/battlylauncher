@@ -44,6 +44,7 @@ export interface MyBattlySnapshot {
   readonly latestBackupAt: string | null;
   readonly mods: readonly LocalModInspection[];
   readonly playedSeconds: number | null;
+  readonly launcherSeconds?: number | null;
   readonly resourcePacks: readonly MyBattlyResourcePack[];
   readonly social: MyBattlySocialSummary | null;
   readonly username: string;

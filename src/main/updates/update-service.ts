@@ -290,11 +290,11 @@ export class UpdateService {
     });
     return this.snapshot();
   }
-  automatic(): Promise<void> {
+  automatic(check = true): Promise<void> {
     if (this.#automaticRun) {
       return this.#automaticRun;
     }
-    this.#automaticRun = this.#runAutomatic()
+    this.#automaticRun = this.#runAutomatic(check)
       .catch(() => {
         this.#state.message = 'No se pudo actualizar';
       })
@@ -303,7 +303,7 @@ export class UpdateService {
       });
     return this.#automaticRun;
   }
-  async #runAutomatic(): Promise<void> {
+  async #runAutomatic(check: boolean): Promise<void> {
     if (this.#busy) {
       return;
     }
@@ -311,7 +311,9 @@ export class UpdateService {
       this.#announce();
       return;
     }
-    await this.action('check');
+    if (check) {
+      await this.action('check');
+    }
     if (this.#state.status === 'available') {
       await this.action('download');
       if (this.snapshot().status === 'ready' && this.#state.kind === 'patch') {
@@ -323,6 +325,7 @@ export class UpdateService {
         }
       }
       if (
+        check &&
         this.snapshot().status === 'ready' &&
         this.#state.kind === 'installer' &&
         this.#resumeInstaller === this.#state.target

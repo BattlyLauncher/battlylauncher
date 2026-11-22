@@ -21597,6 +21597,38 @@
         "ar": "في الإعدادات > ذاكرة RAM، تأكد من صحة القيمتين ومن أن الحد الأدنى لا يتجاوز الحد الأقصى. إذا كان لبيئة اللعب إعدادات ذاكرة خاصة بها، فتحقق منها أيضًا.",
         "zh": "在设置 > 内存中，确认两个值均有效，且最小值未超过最大值。如果实例使用独立的内存设置，也请检查这些设置。"
       }
+    },
+    {
+      "source": "Fabric Loader {0} no es compatible con Minecraft {1}. Conéctate a Internet para instalar una versión compatible.",
+      "sourceLanguage": "es",
+      "translations": {
+        "es": "Fabric Loader {0} no es compatible con Minecraft {1}. Conéctate a Internet para instalar una versión compatible.",
+        "en": "Fabric Loader {0} is incompatible with Minecraft {1}. Connect to the internet to install a compatible build.",
+        "pt": "O Fabric Loader {0} não é compatível com o Minecraft {1}. Conecte-se à internet para instalar uma versão compatível.",
+        "fr": "Fabric Loader {0} est incompatible avec Minecraft {1}. Connecte-toi à Internet pour installer une version compatible.",
+        "de": "Fabric Loader {0} ist mit Minecraft {1} nicht kompatibel. Stelle eine Internetverbindung her, um eine kompatible Version zu installieren.",
+        "it": "Fabric Loader {0} non è compatibile con Minecraft {1}. Connettiti a Internet per installare una versione compatibile.",
+        "ru": "Fabric Loader {0} несовместим с Minecraft {1}. Подключитесь к Интернету, чтобы установить совместимую версию.",
+        "ja": "Fabric Loader {0} は Minecraft {1} に対応していません。インターネットに接続して対応バージョンをインストールしてください。",
+        "ar": "لا يتوافق Fabric Loader {0} مع Minecraft {1}. اتصل بالإنترنت لتثبيت إصدار متوافق.",
+        "zh": "Fabric Loader {0} 与 Minecraft {1} 不兼容。请连接互联网以安装兼容的版本。"
+      }
+    },
+    {
+      "source": "[Battly] Fabric Loader actualizado de {0} a {1} para Minecraft {2}.",
+      "sourceLanguage": "es",
+      "translations": {
+        "es": "[Battly] Fabric Loader actualizado de {0} a {1} para Minecraft {2}.",
+        "en": "[Battly] Updated Fabric Loader from {0} to {1} for Minecraft {2}.",
+        "pt": "[Battly] Fabric Loader atualizado de {0} para {1} para o Minecraft {2}.",
+        "fr": "[Battly] Fabric Loader mis à jour de {0} vers {1} pour Minecraft {2}.",
+        "de": "[Battly] Fabric Loader für Minecraft {2} von {0} auf {1} aktualisiert.",
+        "it": "[Battly] Fabric Loader aggiornato da {0} a {1} per Minecraft {2}.",
+        "ru": "[Battly] Fabric Loader обновлён с {0} до {1} для Minecraft {2}.",
+        "ja": "[Battly] Minecraft {2} 用の Fabric Loader を {0} から {1} に更新しました。",
+        "ar": "[Battly] حُدّث Fabric Loader من {0} إلى {1} للعبة Minecraft {2}.",
+        "zh": "[Battly] 已将 Minecraft {2} 的 Fabric Loader 从 {0} 更新到 {1}。"
+      }
     }
   ]
 }

@@ -1273,6 +1273,7 @@ export function mountMyBattlyPanel(options: MyBattlyPanelOptions): void {
     text(panel, '#mybattly-backups-summary', value.backupCount);
 
     text(panel, '#mybattly-stats-hours', playedTime(value.playedSeconds));
+    text(panel, '#mybattly-launcher-hours', playedTime(value.launcherSeconds ?? null));
 
     const stats = panel.querySelectorAll<HTMLElement>('.b-mybattly-stat-item .b-mybattly-ccc');
 

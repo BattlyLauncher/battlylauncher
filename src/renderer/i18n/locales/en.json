@@ -1813,7 +1813,7 @@
     "text156": "The room has closed.",
     "text157": "Battly voice did not respond. Try again when the room connection recovers.",
     "text158": "This subdomain is already in use. Choose another.",
-    "text159": "(patch {0})"
+    "text159": "patch {0}"
   },
   "launcher": {
     "ending": "Almost ready",
@@ -7338,7 +7338,9 @@
     "text1340": "This YouTube playlist is private. Set it to Unlisted to import it.",
     "text1341": "This YouTube playlist is unavailable. Check that the link opens without signing in.",
     "text1342": "Java rejected the configured memory",
-    "text1343": "Under Settings > RAM, check that both values are valid and that the minimum does not exceed the maximum. If the instance has its own RAM settings, check those too."
+    "text1343": "Under Settings > RAM, check that both values are valid and that the minimum does not exceed the maximum. If the instance has its own RAM settings, check those too.",
+    "text1344": "Fabric Loader {0} is incompatible with Minecraft {1}. Connect to the internet to install a compatible build.",
+    "text1345": "[Battly] Updated Fabric Loader from {0} to {1} for Minecraft {2}."
   },
   "startupUpdates": {
     "text1": "Preparing Battly",

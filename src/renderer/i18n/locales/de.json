@@ -589,7 +589,7 @@
     "text156": "Der Raum wurde geschlossen.",
     "text157": "Der Battly-Sprachchat antwortet nicht. Versuche es erneut, sobald die Raumverbindung wiederhergestellt ist.",
     "text158": "Diese Subdomain wird bereits verwendet. Wähle eine andere.",
-    "text159": "(Patch {0})"
+    "text159": "Patch {0}"
   },
   "launcher": {
     "loading_config": "Konfiguration laden",
@@ -714,7 +714,7 @@
     "friends": "Freunde",
     "settings": "Einstellungen",
     "home": "Zuhause",
-    "mods": "Arbeitsbereich",
+    "mods": "Mods",
     "news": "Nachrichten",
     "myBattly": "Mein Battly",
     "discord": "Discord",
@@ -7768,7 +7768,9 @@
     "text1340": "Diese YouTube-Playlist ist privat. Stelle sie zum Importieren auf Nicht gelistet.",
     "text1341": "Diese YouTube-Playlist ist nicht verfügbar. Prüfe, ob sich der Link ohne Anmeldung öffnen lässt.",
     "text1342": "Java hat die Speichereinstellung abgelehnt",
-    "text1343": "Prüfe unter Einstellungen > RAM, ob beide Werte gültig sind und der Mindestwert den Höchstwert nicht überschreitet. Prüfe auch die RAM-Einstellungen der Instanz, falls sie eigene verwendet."
+    "text1343": "Prüfe unter Einstellungen > RAM, ob beide Werte gültig sind und der Mindestwert den Höchstwert nicht überschreitet. Prüfe auch die RAM-Einstellungen der Instanz, falls sie eigene verwendet.",
+    "text1344": "Fabric Loader {0} ist mit Minecraft {1} nicht kompatibel. Stelle eine Internetverbindung her, um eine kompatible Version zu installieren.",
+    "text1345": "[Battly] Fabric Loader für Minecraft {2} von {0} auf {1} aktualisiert."
   },
   "startupUpdates": {
     "text1": "Battly wird vorbereitet",

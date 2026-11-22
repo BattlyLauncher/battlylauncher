@@ -11,8 +11,8 @@ export function renderAppTitle(root: Document = document, showEdition = true): v
   if (Number.isSafeInteger(build) && build > 0) {
     const patch = root.createElement('small');
     patch.className = 'header-patch';
-    setUiText(patch, `(parche ${build})`);
-    title.append(' ', patch);
+    setUiText(patch, `parche ${build}`);
+    title.append(patch);
   }
 }
 import { setUiText } from '../i18n/dialog-text';

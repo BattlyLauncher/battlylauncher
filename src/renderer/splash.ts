@@ -32,13 +32,10 @@ if (greeting) {
 const splash = document.querySelector<HTMLElement>('.startup-splash');
 
 async function playOriginalStartupSequence(): Promise<void> {
-  await new Promise<void>((resolve) => window.setTimeout(resolve, 100));
   splash?.classList.add('logo-visible');
-  await new Promise<void>((resolve) => window.setTimeout(resolve, 500));
-  await new Promise<void>((resolve) => window.setTimeout(resolve, 500));
+  await new Promise<void>((resolve) => window.setTimeout(resolve, 160));
   splash?.classList.add('copy-visible');
-  // Original text entrance lasts two seconds; retain the greeting throughout it.
-  await new Promise<void>((resolve) => window.setTimeout(resolve, 2000));
+  await new Promise<void>((resolve) => window.setTimeout(resolve, 540));
   if (greeting && !splash?.classList.contains('startup-ending')) {
     greeting.setAttribute('data-string-id', 'launcher.starting_launcher');
   }
@@ -63,13 +60,14 @@ if (audio) {
     start5: start5SoundUrl,
     start6: start6SoundUrl,
   };
-  const requestedSound = normalizeThemeSound(parameters.get('sound'));
-  audio.src =
-    sounds[requestedSound] ?? (/^https:\/\//.test(requestedSound) ? requestedSound : startSoundUrl);
   const requestedVolume = Number(parameters.get('volume'));
   audio.volume = Number.isFinite(requestedVolume) ? Math.max(0, Math.min(1, requestedVolume)) : 0.8;
   if (audio.volume > 0) {
-    window.setTimeout(() => void audio.play().catch(() => undefined), 600);
+    const requestedSound = normalizeThemeSound(parameters.get('sound'));
+    audio.src =
+      sounds[requestedSound] ??
+      (/^https:\/\//.test(requestedSound) ? requestedSound : startSoundUrl);
+    void audio.play().catch(() => undefined);
   }
 }
 

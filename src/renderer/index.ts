@@ -381,6 +381,8 @@ const legacyImageUrls = import.meta.glob<string>('./legacy/assets/images/**/*', 
   import: 'default',
 });
 const defaultMinecraftIconUrl = legacyImageUrls['./legacy/assets/images/icons/minecraft.png'] ?? '';
+const optiFineIconUrl =
+  legacyImageUrls['./legacy/assets/images/icons/optifine.png'] ?? defaultMinecraftIconUrl;
 
 function resolveLegacyMarkupAssets(markup: string): string {
   return markup.replace(
@@ -1602,14 +1604,18 @@ function bindNewsPanel(): void {
 
 async function selectInitialPanel(): Promise<void> {
   try {
-    const accounts = await window.battly.getAccounts();
+    const [accounts, news] = await Promise.all([
+      window.battly.getAccounts(),
+      window.battly.getNewsState().catch(() => ({ seen: false })),
+    ]);
     renderAccountCollection(accounts);
-    const news = await window.battly.getNewsState().catch(() => ({ seen: false }));
+    document.body.dataset.accounts = 'ready';
     if (!news.seen) {
       return activatePanel('news', false);
     }
     return activatePanel(rendererHasAccount ? 'home' : 'login', false);
   } catch {
+    document.body.dataset.accounts = 'error';
     await activatePanel('login', false);
   }
 }
@@ -10949,18 +10955,14 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
   if (status) {
     status.textContent = '';
   }
+  const showsDestination = project.projectType !== 'modpack';
   if (destinationSection) {
-    destinationSection.hidden = project.projectType === 'modpack';
+    destinationSection.hidden = !showsDestination;
   }
   if (destination) {
     destination.replaceChildren(new Option('Predeterminado', ''));
-    knownInstances.forEach((instance) => destination.add(new Option(instance.name, instance.id)));
-    destination.value = '';
-    destination.onchange = () => {
-      if (destinationWarning) {
-        destinationWarning.style.display = destination.value ? 'block' : 'none';
-      }
-    };
+    destination.disabled = true;
+    destination.onchange = null;
   }
   if (destinationWarning) {
     destinationWarning.style.display = 'none';
@@ -10975,8 +10977,12 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
     dialog.showModal();
   }
   let catalog: Awaited<ReturnType<typeof window.battly.getModVersionCatalog>>;
+  let instances: readonly InstanceSummary[];
   try {
-    catalog = await window.battly.getModVersionCatalog(project.id);
+    [catalog, instances] = await Promise.all([
+      window.battly.getModVersionCatalog(project.id),
+      destination && showsDestination ? window.battly.getInstances().catch(() => []) : [],
+    ]);
   } catch {
     if (revision !== modDownloadRevision || !dialog.open) {
       return;
@@ -10997,6 +11003,7 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
     return;
   }
   if (destination) {
+    instances.forEach((instance) => destination.add(new Option(instance.name, instance.id)));
     const group = document.createElement('optgroup');
     group.label = 'Servidores';
     serverDestinations
@@ -11023,6 +11030,7 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
     if (group.children.length) {
       destination.append(group);
     }
+    destination.disabled = false;
   }
   const supportedLoaders = [...new Set(catalog.flatMap((version) => [...version.loaders]))];
   if (!supportedLoaders.length) {
@@ -11365,7 +11373,9 @@ function renderLocalMods(
     const header = document.createElement('header');
     header.className = 'card-header is-flex';
     const icon = document.createElement('img');
-    icon.src = inspection?.iconDataUrl ?? defaultMinecraftIconUrl;
+    const isOptiFine =
+      inspection?.id === 'optifine' || /^(?:preview_)?optifine(?:[._ -]|$)/i.test(mod.filename);
+    icon.src = inspection?.iconDataUrl ?? (isOptiFine ? optiFineIconUrl : defaultMinecraftIconUrl);
     icon.alt = '';
     icon.className = 'local-mod-icon';
     const name = document.createElement('p');
@@ -18024,7 +18034,6 @@ async function initializeLauncher(): Promise<void> {
     renderAppInfo(),
     renderVisualPreferences(),
     window.battly.getSettings().then(renderSettings),
-    renderAccounts(),
   ]);
   mountNotifications();
   if (loaderText) {

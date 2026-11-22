@@ -226,7 +226,7 @@ export function mountNotifications(): void {
       label.append(input, document.createTextNode(labels[key]));
       preferences.append(label);
     }
-    const newest = initialized ? state.items.find((n) => !known.has(n.id)) : undefined;
+    const newest = initialized ? state.items.find((n) => !n.silent && !known.has(n.id)) : undefined;
     known = new Set(state.items.map((n) => n.id));
     initialized = true;
     if (newest && !dialog.open) {

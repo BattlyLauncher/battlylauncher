@@ -379,7 +379,7 @@ export class SocialService {
   async desktopUsage(
     token: string,
     signal?: AbortSignal,
-  ): Promise<{ playedSeconds: number; days: UsageDay[] }> {
+  ): Promise<{ playedSeconds: number; launcherSeconds: number | null; days: UsageDay[] }> {
     const result = await this.#request(
       token,
       `api/v2/users/game-stats/desktop/history?days=90&offsetMinutes=${-new Date().getTimezoneOffset()}`,
@@ -392,6 +392,11 @@ export class SocialService {
     }
     const data = objectValue(own(result, 'data'), 'usage');
     const playedSeconds = Number(own(data, 'tiempoJugado'));
+    const launcher = own(data, 'tiempoLauncher');
+    const launcherSeconds =
+      typeof launcher === 'number' && Number.isSafeInteger(launcher) && launcher >= 0
+        ? launcher
+        : null;
     const history = own(data, 'days');
     if (
       !Number.isSafeInteger(playedSeconds) ||
@@ -438,7 +443,7 @@ export class SocialService {
         }),
       };
     });
-    return { playedSeconds, days };
+    return { playedSeconds, launcherSeconds, days };
   }
 
   async playedSeconds(token: string, signal?: AbortSignal): Promise<number> {
