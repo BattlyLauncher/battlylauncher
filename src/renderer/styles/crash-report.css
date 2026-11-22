@@ -57,12 +57,6 @@ dialog.crash-report-modal {
   border: 0;
   background: none;
 }
-.crash-report-modal .crash-report-solutions > h2 {
-  margin: 0 0 12px;
-  color: #a9bbd2;
-  font-size: 12px;
-  letter-spacing: 0.03em;
-}
 .crash-report-modal .crash-report-solutions > div {
   display: grid;
   gap: 16px;
@@ -217,6 +211,7 @@ dialog.crash-report-modal {
   font-size: 12px;
   color: #b9c8dc;
 }
+.crash-report-modal .crash-report-solutions[hidden],
 .crash-report-modal [data-crash-log-content][hidden],
 .crash-report-modal [data-crash-force-launch][hidden] {
   display: none;

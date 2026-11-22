@@ -21629,6 +21629,38 @@
         "ar": "[Battly] حُدّث Fabric Loader من {0} إلى {1} للعبة Minecraft {2}.",
         "zh": "[Battly] 已将 Minecraft {2} 的 Fabric Loader 从 {0} 更新到 {1}。"
       }
+    },
+    {
+      "source": "Europa",
+      "translations": {
+        "es": "Europa",
+        "en": "Europe",
+        "pt": "Europa",
+        "fr": "Europe",
+        "de": "Europa",
+        "it": "Europa",
+        "ru": "Европа",
+        "ja": "ヨーロッパ",
+        "ar": "أوروبا",
+        "zh": "欧洲"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "El proveedor ha devuelto una dirección de túnel distinta a la de Europa",
+      "translations": {
+        "es": "El proveedor ha devuelto una dirección de túnel distinta a la de Europa",
+        "en": "The provider returned an unexpected address for the Europe tunnel",
+        "pt": "O provedor retornou um endereço inesperado para o túnel da Europa",
+        "fr": "Le fournisseur a renvoyé une adresse inattendue pour le tunnel Europe",
+        "de": "Der Anbieter hat eine unerwartete Adresse für den Europa-Tunnel zurückgegeben",
+        "it": "Il provider ha restituito un indirizzo imprevisto per il tunnel Europa",
+        "ru": "Провайдер вернул неожиданный адрес европейского туннеля",
+        "ja": "プロバイダーがヨーロッパのトンネルに予期しないアドレスを返しました",
+        "ar": "أعاد المزوّد عنوانًا غير متوقع لنفق أوروبا",
+        "zh": "提供方返回了意外的欧洲隧道地址"
+      },
+      "sourceLanguage": "es"
     }
   ]
 }

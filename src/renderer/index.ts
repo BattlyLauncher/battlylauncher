@@ -10,6 +10,7 @@ import { emptyState, thinkingSteveImage } from './ui/empty-state';
 import { bindFriendsDragScroll } from './ui/friends-drag-scroll';
 import { modBasket } from './ui/mod-basket';
 import {
+  formatLoaderName,
   formatPlayVersion,
   comparePlayOptions,
 } from '../shared/minecraft/play-version-presentation';
@@ -7116,6 +7117,9 @@ function renderInstances(instances: readonly InstanceSummary[]): void {
   );
   let openedCard: HTMLElement | null = null;
   for (const instance of visible) {
+    const versionLabel = instance.loader
+      ? `${instance.version} · ${formatLoaderName(instance.loader)}`
+      : instance.version;
     const card = document.createElement('div');
     card.className = 'card ten-radius';
     card.dataset.instanceCard = instance.id;
@@ -7178,10 +7182,7 @@ function renderInstances(instances: readonly InstanceSummary[]): void {
     const descriptionCopy = document.createElement('span');
     setUserText(descriptionCopy, instance.description, 'Sin descripción');
     const versionCopy = document.createElement('span');
-    setUserText(
-      versionCopy,
-      ` · ${instance.version}${instance.loader ? ` · ${instance.loader}` : ''}`,
-    );
+    setUserText(versionCopy, ` · ${versionLabel}`);
     description.append(descriptionCopy, versionCopy);
     content.append(description);
     const actions = document.createElement('footer');
@@ -7356,7 +7357,7 @@ function renderInstances(instances: readonly InstanceSummary[]): void {
     );
     const versionBadge = document.createElement('span');
     versionBadge.className = 'instance-version-badge';
-    versionBadge.textContent = `${instance.version}${instance.loader ? ` · ${instance.loader}` : ''}`;
+    versionBadge.textContent = versionLabel;
     cover.append(badge, versionBadge);
     const summary = document.createElement('p');
     summary.className = 'instance-grid-description';
@@ -7814,17 +7815,8 @@ function showCrashReport(report: MinecraftCrashReport): void {
   forceLaunch.disabled = false;
   renderLogLines(log, formatCrashLog(report.rawLog) || 'No hay registros disponibles.');
   issues.replaceChildren();
+  issues.closest('.crash-report-solutions')?.toggleAttribute('hidden', !report.issues.length);
   report.issues.forEach((entry) => issues.append(crashIssueElement(report, entry)));
-  if (!report.issues.length) {
-    const empty = document.createElement('article');
-    empty.className = 'crash-issue is-warning';
-    const title = document.createElement('h3');
-    title.textContent = 'No se reconoce la firma del error';
-    const text = document.createElement('p');
-    setUiText(text, 'Guarda los registros y compártelos en Discord para que podamos ayudarte.');
-    empty.append(title, text);
-    issues.append(empty);
-  }
   const logContent = dialog.querySelector<HTMLElement>('[data-crash-log-content]');
   const logToggle = dialog.querySelector<HTMLButtonElement>('[data-crash-log-toggle]');
   if (logContent) {

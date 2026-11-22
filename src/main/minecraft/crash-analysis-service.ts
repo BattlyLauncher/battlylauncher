@@ -1447,7 +1447,7 @@ export class CrashAnalysisService {
       engineVersion: dependencyEngineVersion,
       summary: detected.issues.length
         ? `Revisar primero: ${detected.issues[0].title}. ${detected.issues.length} diagnóstico(s) con evidencia local.`
-        : 'Minecraft terminó de forma inesperada, pero no hay una firma conocida en los registros.',
+        : 'Battly no ha encontrado una solución automática. Guarda los registros y compártelos en Discord para que podamos ayudarte.',
       rawLog,
     };
   }

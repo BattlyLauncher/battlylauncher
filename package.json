@@ -13,9 +13,9 @@
     "channel": "stable",
     "repository": "BattlyLauncher/battlylauncher",
     "baseTag": "v3.1.0",
-    "build": 11,
-    "patchVersion": "3.1.0-patch11",
-    "notes": "- Battly abre antes y termina en segundo plano las comprobaciones de actualizaciones que tardan en responder.\n- Corregido el arranque de Minecraft 26.2 con un Fabric Loader antiguo, también en instancias. Battly reutiliza una versión compatible si ya está instalada.\n- My Battly muestra el tiempo total de uso del launcher junto al tiempo jugado en Minecraft.\n- La lista de salas de Battly Worlds se actualiza cada minuto.\n- El número de parche ahora aparece en cursiva y alineado con el título de la ventana.\n- Puedes elegir una instancia al descargar un mod sin abrir antes el panel de Instancias.\n- Al instalar un mod aparece un solo aviso. La instalación se guarda en el historial.\n- OptiFine muestra su logo en Mis mods cuando el JAR no trae un icono. El botón de inicio que decía Workspace ahora dice Mods.\n"
+    "build": 12,
+    "patchVersion": "3.1.0-patch12",
+    "notes": "- Battly Servers ya permite elegir Europa al crear un servidor. El selector muestra la latencia de Europa y LATAM.\n- Las tarjetas y la lista de instancias muestran los nombres de los loaders con sus mayúsculas correctas, como OptiFine, Fabric y Forge.\n- El informe de fallos de Minecraft muestra el diagnóstico cuando Battly lo reconoce. Si no encuentra una solución automática, puedes guardar los registros para pedir ayuda.\n"
   },
   "engines": {
     "node": ">=22.13.0"

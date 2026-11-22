@@ -12,7 +12,13 @@ const loaderNames: Readonly<Record<string, string>> = {
   quilt: 'Quilt',
   optifine: 'OptiFine',
   labymod: 'LabyMod',
+  vanilla: 'Vanilla',
 };
+
+export function formatLoaderName(loader: string): string {
+  const key = loader.toLowerCase().replace(/[ -]/g, '');
+  return Object.hasOwn(loaderNames, key) ? loaderNames[key] : loader;
+}
 
 export function comparePlayOptions(
   left: PlayOption,

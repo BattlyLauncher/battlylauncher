@@ -14,6 +14,7 @@ import legacySpanishStrings from '../legacy/assets/langs/strings.es.json';
 import { askBattly } from '../ui/ask-modal';
 import { serverSlotText } from './server-slot-copy';
 import { serverDomainTakenMessage, serverErrorMessage } from '../../shared/servers/server-errors';
+import { serverRegionEndpoints, type ServerRegion } from '../../shared/servers/server-regions';
 
 import type {
   ServerContentEntry,
@@ -94,7 +95,11 @@ const permissionLabels: Record<ServerPermissionRole, string> = {
   viewer: 'Solo invitación',
 };
 const fallbackFriendAvatar = new URL('../legacy/assets/images/icon.png', import.meta.url).href;
-const serverRegions = [{ id: 'latam', host: 'root.battly.org' }] as const;
+const serverRegions: readonly ServerRegion[] = ['latam', 'eu'];
+
+function serverRegionLabel(region: ServerRegion): string {
+  return region === 'eu' ? translateUiText('Europa') : 'LATAM';
+}
 
 function measureRegionLatency(host: string, attempts = 3, timeoutMs = 2_000): Promise<number> {
   return new Promise((resolve) => {
@@ -274,9 +279,9 @@ async function refreshServerRegions(): Promise<void> {
   info.textContent = 'Calculando latencia…';
   const previous = select.value;
   const measured = await Promise.all(
-    serverRegions.map(async (region) => ({
-      ...region,
-      latency: await measureRegionLatency(region.host).catch(() => 9_999),
+    serverRegions.map(async (id) => ({
+      id,
+      latency: await measureRegionLatency(serverRegionEndpoints[id].apiHost).catch(() => 9_999),
     })),
   );
   measured.sort((left, right) => left.latency - right.latency);
@@ -285,8 +290,8 @@ async function refreshServerRegions(): Promise<void> {
       (region) =>
         new Option(
           region.latency === 9_999
-            ? region.id.toUpperCase()
-            : `${region.id.toUpperCase()}  –  ${region.latency} ms`,
+            ? serverRegionLabel(region.id)
+            : `${serverRegionLabel(region.id)}  –  ${region.latency} ms`,
           region.id,
           false,
           region.id === previous,
@@ -300,7 +305,7 @@ async function refreshServerRegions(): Promise<void> {
     const region = measured.find((candidate) => candidate.id === select.value) ?? measured[0];
     info.textContent =
       region && region.latency !== 9_999
-        ? `Región seleccionada: ${region.id.toUpperCase()} (${region.latency} ms de latencia)`
+        ? `Región seleccionada: ${serverRegionLabel(region.id)} (${region.latency} ms de latencia)`
         : 'No se pudo comprobar la latencia.';
     updateServerDomainPreview();
   };
@@ -446,7 +451,7 @@ function annotateLegacyServers(mount: HTMLElement): void {
     }
     if (region) {
       region.name = 'region';
-      region.replaceChildren(new Option('LATAM', 'latam', true, true));
+      region.replaceChildren(...serverRegions.map((id) => new Option(serverRegionLabel(id), id)));
     }
     const name = document.createElement('input');
     name.type = 'text';

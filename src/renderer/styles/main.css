@@ -2416,11 +2416,6 @@ body:has(.music-mini-player:not([hidden])) [data-guided-tutorial] .home-tutorial
   border-radius: 7px;
   background: #111c2c;
 }
-.crash-report-solutions > h2 {
-  margin: 0 0 10px;
-  color: #fff;
-  font-size: 15px;
-}
 .crash-report-solutions > div {
   display: grid;
   gap: 8px;

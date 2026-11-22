@@ -4230,7 +4230,7 @@
     "text1837": "Der Parser konnte eine bestimmte Konfiguration nicht lesen.",
     "text1838": "OpenGL ist nicht verfügbar",
     "text1839": "Der Grafiktreiber stellt nicht den erforderlichen OpenGL-Kontext bereit. Battly verfügt über eine automatische Wiederherstellung mit Mesa3D für Fehler, die mit Windows kompatibel sind, begrenzt auf einen Wiederholungsversuch. Wenn es immer noch fehlschlägt, überprüfen Sie den Treiber des Herstellers.",
-    "text1840": "Minecraft wurde unerwartet beendet, die Protokolle enthalten jedoch keine bekannte Signatur.",
+    "text1840": "Battly hat keine automatische Lösung gefunden. Speichere die Protokolle und teile sie auf Discord, damit wir dir helfen können.",
     "text1841": "Eine Reparatur ist bereits im Gange",
     "text1842": "Die Diagnose ist abgelaufen. Beginnen Sie erneut mit der Analyse des aktuellen Status.",
     "text1843": "Die Datei wurde nach der Diagnose geändert. Die Reparatur wurde nicht durchgeführt.",

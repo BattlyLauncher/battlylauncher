@@ -1,7 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { mkdtemp, mkdir, readFile, readdir, rm, writeFile } = require('node:fs/promises');
-const { createHash } = require('node:crypto');
+const { createHash, X509Certificate } = require('node:crypto');
 const { tmpdir } = require('node:os');
 const { join } = require('node:path');
 const { spawn } = require('node:child_process');
@@ -170,8 +170,20 @@ test('LATAM defaults use GitHub release cache and pinned CA; FRP rollback remain
     const options = battlyTunnelRuntimeOptions(root, cache);
     assert.equal(options.battlyTransport.serverAddr, 'frp.battly.org');
     assert.equal(options.battlyTransport.serverPort, 7000);
+    assert.equal(options.europeTransport.serverAddr, 'frp-eu.battlyservers.net');
+    assert.equal(options.europeTransport.serverPort, 7000);
+    assert.notEqual(options.europeTransport.caFile, options.battlyTransport.caFile);
     assert.ok(options.frpcPath.startsWith(cache));
     await assert.rejects(options.prepareFrpc(), /download failed/);
+    await assert.rejects(options.prepareFrpc('eu'), /download failed/);
+    const europeanCA = await readFile(options.europeTransport.caFile);
+    assert.equal(
+      new X509Certificate(europeanCA).fingerprint256,
+      'C1:F9:F4:5B:DD:09:8A:F6:D1:09:82:9F:72:D3:08:C9:BC:5D:06:6F:17:67:9E:DF:9B:F9:00:42:76:EE:A5:E8',
+    );
+    await writeFile(options.europeTransport.caFile, 'invalid');
+    await assert.rejects(options.prepareFrpc('eu'), /download failed/);
+    assert.deepEqual(await readFile(options.europeTransport.caFile), europeanCA);
     process.env.BATTLY_TUNNEL_TRANSPORT = 'frp';
     assert.deepEqual(battlyTunnelRuntimeOptions(root), {});
   } finally {

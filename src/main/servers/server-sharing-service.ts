@@ -14,6 +14,7 @@ import {
   type ServerSummary,
   type ServerTunnelSnapshot,
 } from '../../shared/servers/server-contract';
+import { serverRegionEndpoints, type ServerRegion } from '../../shared/servers/server-regions';
 import { pathExists, readBoundedRegularFile, writeFileAtomically } from '../files/atomic-file';
 import type { ServerStore } from './server-store';
 
@@ -83,19 +84,22 @@ async function terminateProcess(child: ChildProcess): Promise<void> {
   await waitForProcessClose(child, 1_500);
 }
 
+interface BattlyTransport {
+  readonly serverAddr: string;
+  readonly serverPort: number;
+  readonly caFile?: string;
+}
+
 export interface ServerSharingOptions {
-  readonly battlyTransport?: {
-    readonly serverAddr: string;
-    readonly serverPort: number;
-    readonly caFile?: string;
-  };
+  readonly battlyTransport?: BattlyTransport;
+  readonly europeTransport?: BattlyTransport;
   readonly fetchImplementation?: typeof fetch;
   readonly frpcPath: string;
   readonly frpcSha256: string;
   readonly frpcUrl: string;
   readonly oidcAudience?: string;
   readonly oidcClientSecret: string;
-  readonly prepareFrpc?: () => Promise<void>;
+  readonly prepareFrpc?: (region?: ServerRegion) => Promise<void>;
   readonly spawnTunnel?: SpawnTunnel;
   readonly sharingApiUrl?: string;
   readonly temporaryRoot: string;
@@ -217,6 +221,7 @@ function tunnelSnapshot(
 
 export class ServerSharingService {
   readonly #battlyTransport: ServerSharingOptions['battlyTransport'];
+  readonly #europeTransport: ServerSharingOptions['europeTransport'];
   readonly #configurationQueue = new Map<string, Promise<void>>();
   readonly #fetch: typeof fetch;
   readonly #frpcPath: string;
@@ -224,7 +229,7 @@ export class ServerSharingService {
   readonly #frpcUrl: string;
   readonly #oidcAudience: string;
   readonly #oidcClientSecret: string;
-  readonly #prepareFrpc: () => Promise<void>;
+  readonly #prepareFrpc: NonNullable<ServerSharingOptions['prepareFrpc']>;
   readonly #spawn: SpawnTunnel;
   readonly #store: ServerStore;
   readonly #sharingApiUrl: string;
@@ -236,6 +241,7 @@ export class ServerSharingService {
 
   constructor(store: ServerStore, options: ServerSharingOptions) {
     this.#battlyTransport = options.battlyTransport;
+    this.#europeTransport = options.europeTransport;
     if (this.#battlyTransport) {
       requiredString(this.#battlyTransport.serverAddr, 'Battly Tunnel host', 255);
       if (/[\s/\\]/.test(this.#battlyTransport.serverAddr)) {
@@ -259,7 +265,7 @@ export class ServerSharingService {
     );
     this.#usesConfiguredTunnelApi = Boolean(options.tunnelApiUrl);
     this.#tunnelApiUrl = httpsUrl(
-      options.tunnelApiUrl ?? 'https://root.battly.org',
+      options.tunnelApiUrl ?? `https://${serverRegionEndpoints.latam.apiHost}`,
       'tunnel API URL',
     );
     this.#fetch = options.fetchImplementation ?? fetch;
@@ -303,7 +309,7 @@ export class ServerSharingService {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         friendUsername: draft.username,
-        region: 'latam',
+        region: this.#providerRegion(server),
         role: draft.role,
         serverName: tunnel.publicAddress,
         serverVersion: server.version,
@@ -340,8 +346,15 @@ export class ServerSharingService {
     if (this.#usesConfiguredTunnelApi) {
       return;
     }
-    await this.#server(normalizeServerId(idValue));
-    const api = this.#serverTunnelApi();
+    await this.#assertProviderDomain(await this.#server(normalizeServerId(idValue)));
+  }
+
+  async #assertProviderDomain(server: ServerSummary): Promise<void> {
+    if (this.#usesConfiguredTunnelApi) {
+      return;
+    }
+    const regionId = this.#providerRegion(server);
+    const api = this.#serverTunnelApi(regionId);
     const regions = await boundedJson(
       await this.#fetch(`${api}/regions`, { signal: AbortSignal.timeout(20_000) }),
       'Battly Servers regions',
@@ -353,7 +366,7 @@ export class ServerSharingService {
       (value: unknown) =>
         value &&
         typeof value === 'object' &&
-        own(value as Record<string, unknown>, 'id') === 'latam',
+        own(value as Record<string, unknown>, 'id') === regionId,
     ) as Record<string, unknown> | undefined;
     const domain = region && own(region, 'public_dns_domain');
     if (domain !== 'battlyservers.net') {
@@ -380,9 +393,11 @@ export class ServerSharingService {
     };
     this.#tunnels.set(id, state);
     try {
-      await this.assertProviderDomain(id);
       const server = await this.#server(id);
-      const tunnelApiUrl = this.#serverTunnelApi();
+      await this.#assertProviderDomain(server);
+      const region = this.#providerRegion(server);
+      const transport = region === 'eu' ? this.#europeTransport : this.#battlyTransport;
+      const tunnelApiUrl = this.#serverTunnelApi(region);
       // Always resolve this server, never resume another server returned by /welcome.
       const configuration = parseTunnelConfiguration(
         await this.#postTunnel(tunnelApiUrl, '/create-tunnel', {
@@ -397,10 +412,17 @@ export class ServerSharingService {
       if (configuration.publicAddress.split(':')[0].toLowerCase() !== expectedAddress) {
         throw new Error('El proveedor todavía no ha asignado el dominio ' + expectedAddress);
       }
-      if (this.#battlyTransport && configuration.subdomain !== server.domain) {
+      if (transport && configuration.subdomain !== server.domain) {
         throw new Error('El proveedor ha devuelto un nombre de túnel distinto al servidor');
       }
-      await this.#prepareFrpc();
+      if (
+        region === 'eu' &&
+        (configuration.frpsDomain !== transport?.serverAddr ||
+          configuration.frpsPort !== transport.serverPort)
+      ) {
+        throw new Error('El proveedor ha devuelto una dirección de túnel distinta a la de Europa');
+      }
+      await this.#prepareFrpc(region);
       if (this.#tunnels.get(id) !== state) {
         throw new Error('Inicio del túnel cancelado');
       }
@@ -408,7 +430,7 @@ export class ServerSharingService {
       const temporaryConfig = join(this.#temporaryRoot, `frpc-${id}-${randomUUID()}.json`);
       await writeFileAtomically(
         temporaryConfig,
-        this.#frpcConfiguration(configuration, token, server.port),
+        this.#frpcConfiguration(configuration, token, server.port, transport),
       );
       if (process.platform !== 'win32') {
         await chmod(temporaryConfig, 0o600);
@@ -424,7 +446,7 @@ export class ServerSharingService {
         stdio: 'pipe',
       });
       state.process = child;
-      const componentName = this.#battlyTransport ? 'Battly Tunnel' : 'frpc';
+      const componentName = transport ? 'Battly Tunnel' : 'frpc';
       let confirmedPublicHost: string | undefined;
       await new Promise<void>((resolvePromise, reject) => {
         let output = '';
@@ -475,7 +497,7 @@ export class ServerSharingService {
           );
         const onData = (chunk: Buffer): void => {
           output = (output + chunk.toString('utf8')).slice(-8192);
-          if (this.#battlyTransport) {
+          if (transport) {
             for (const line of output.split(/\r?\n/).slice(0, -1)) {
               try {
                 const event: unknown = JSON.parse(line);
@@ -528,7 +550,7 @@ export class ServerSharingService {
       state.snapshot = tunnelSnapshot('active', {
         publicAddress: configuration.publicAddress,
         startedAt: new Date().toISOString(),
-        ...(this.#battlyTransport
+        ...(transport
           ? { publicHost: confirmedPublicHost, remotePort: configuration.remotePort }
           : {}),
       });
@@ -542,7 +564,7 @@ export class ServerSharingService {
         const lines = recentOutput.split(/\r?\n/);
         recentOutput = lines.pop() ?? '';
         for (const line of lines) {
-          if (this.#battlyTransport) {
+          if (transport) {
             try {
               const event = record(JSON.parse(line) as unknown, 'tunnel event');
               if (
@@ -615,12 +637,14 @@ export class ServerSharingService {
     }
   }
 
-  #serverTunnelApi(): string {
-    if (this.#usesConfiguredTunnelApi) {
-      return this.#tunnelApiUrl;
-    }
-    // Europe is disabled, including for servers saved with an old EU region.
-    return this.#tunnelApiUrl;
+  #providerRegion(server: ServerSummary): ServerRegion {
+    return server.region === 'eu' && this.#europeTransport && !this.#usesConfiguredTunnelApi
+      ? 'eu'
+      : 'latam';
+  }
+
+  #serverTunnelApi(region: ServerRegion): string {
+    return region === 'eu' ? `https://${serverRegionEndpoints.eu.apiHost}` : this.#tunnelApiUrl;
   }
 
   async #postTunnel(apiUrl: string, path: string, body: Record<string, unknown>): Promise<unknown> {
@@ -708,7 +732,7 @@ export class ServerSharingService {
 
   async #uploadConfigurations(id: string, token: string, onlyFile?: string): Promise<void> {
     const server = await this.#server(id);
-    const api = this.#serverTunnelApi();
+    const api = this.#serverTunnelApi(this.#providerRegion(server));
     const remote = await this.#postTunnel(api, '/servers', { token });
     const address = `${server.domain}.battlyservers.net`;
     const entry = Array.isArray(remote)
@@ -769,7 +793,7 @@ export class ServerSharingService {
     // Finish pending uploads before deleting their remote objects.
     await this.#configurationQueue.get(id)?.catch(() => undefined);
     const server = await this.#server(id);
-    const api = this.#serverTunnelApi();
+    const api = this.#serverTunnelApi(this.#providerRegion(server));
     const entries = await this.#postTunnel(api, '/servers', { token });
     if (!Array.isArray(entries)) {
       throw new Error('No se pudo comprobar el servidor remoto. No se ha borrado la copia local.');
@@ -963,13 +987,18 @@ export class ServerSharingService {
     }
   }
 
-  #frpcConfiguration(configuration: TunnelConfiguration, token: string, localPort: number): string {
-    if (this.#battlyTransport) {
+  #frpcConfiguration(
+    configuration: TunnelConfiguration,
+    token: string,
+    localPort: number,
+    transport?: BattlyTransport,
+  ): string {
+    if (transport) {
       return JSON.stringify(
         {
-          serverAddr: this.#battlyTransport.serverAddr,
-          serverPort: this.#battlyTransport.serverPort,
-          caFile: this.#battlyTransport.caFile,
+          serverAddr: transport.serverAddr,
+          serverPort: transport.serverPort,
+          caFile: transport.caFile,
           token,
           proxies: [
             {

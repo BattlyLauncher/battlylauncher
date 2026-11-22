@@ -3800,7 +3800,7 @@
     "text1837": "The parser failed to read a specific configuration file.",
     "text1838": "OpenGL is unavailable",
     "text1839": "The graphics driver does not provide the required OpenGL context. Battly can automatically retry once with Mesa3D for supported failures on Windows. If it still fails, check the manufacturer’s driver.",
-    "text1840": "Minecraft stopped unexpectedly, but the logs do not match a known failure.",
+    "text1840": "Battly couldn't find an automatic fix. Save the logs and share them on Discord so we can help.",
     "text1841": "A repair is already in progress",
     "text1842": "The diagnosis has expired. Launch again to analyze the current state.",
     "text1843": "The file changed after diagnosis. The repair was not applied.",

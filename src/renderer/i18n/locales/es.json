@@ -3800,7 +3800,7 @@
     "text1837": "El parser falló al leer una configuración concreta.",
     "text1838": "OpenGL no está disponible",
     "text1839": "El controlador gráfico no ofrece el contexto OpenGL requerido. Battly dispone de recuperación automática con Mesa3D para fallos compatibles en Windows, limitada a un reintento. Si sigue fallando, revisa el controlador del fabricante.",
-    "text1840": "Minecraft terminó de forma inesperada, pero no hay una firma conocida en los registros.",
+    "text1840": "Battly no ha encontrado una solución automática. Guarda los registros y compártelos en Discord para que podamos ayudarte.",
     "text1841": "Ya hay una reparación en curso",
     "text1842": "El diagnóstico ha caducado. Inicia de nuevo para analizar el estado actual.",
     "text1843": "El archivo cambió después del diagnóstico. No se aplicó la reparación.",
