@@ -36,11 +36,16 @@ export class RecommendedMods {
   private refreshAt = 0;
   private pending?: Promise<Recommendations>;
 
-  constructor(cachePath: string, request: typeof fetch = fetch) {
+  constructor(
+    cachePath: string,
+    request: typeof fetch = fetch,
+    endpoint = 'https://api.battlylauncher.com/api/mods/recommended',
+  ) {
     this.client = new RemoteJsonClient({
-      url: 'https://api.battlylauncher.com/api/mods/recommended',
+      url: endpoint,
       cachePath,
       fetchImplementation: request,
+      allowLoopbackHttp: true,
       timeoutMs: 1500,
       maxBytes: 16384,
       validate: validateRecommendations,

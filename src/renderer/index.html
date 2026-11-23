@@ -10,7 +10,7 @@
     </style>
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; img-src 'self' data: https: http://127.0.0.1:* http://localhost:*; media-src 'self' data: blob: battly-audio: https: http://127.0.0.1:* http://localhost:*; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self'; connect-src 'self' wss://root.battly.eu wss://root.battly.org; frame-src https://battlylauncher.com http://127.0.0.1:* http://localhost:*; object-src 'none'; base-uri 'none'; form-action 'none'"
+      content="default-src 'self'; img-src 'self' data: battly-catalog: https: http://127.0.0.1:* http://localhost:*; media-src 'self' data: blob: battly-audio: https: http://127.0.0.1:* http://localhost:*; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self'; connect-src 'self' wss://root.battly.eu wss://root.battly.org; frame-src https://battlylauncher.com http://127.0.0.1:* http://localhost:*; object-src 'none'; base-uri 'none'; form-action 'none'"
     />
     <meta
       name="viewport"
@@ -620,7 +620,7 @@
           <header class="b-mods-title-container">
             <div class="b-settings-footer-up">
               <h1>Battly <span>Mods</span></h1>
-              <small>Con la tecnología de <strong>Modrinth</strong></small>
+              <small>Con la tecnología de <span data-mod-provider-credit><strong data-catalog-credit="modrinth">Modrinth</strong></span></small>
             </div>
             <div class="b-mods-header-actions">
               <button
@@ -674,6 +674,14 @@
               </button>
             </label>
             <label>
+              <span>Catálogo</span>
+              <select data-mod-provider>
+                <option value="all" data-mod-provider-all>Todos</option>
+                <option value="modrinth">Modrinth</option>
+                <option value="curseforge">CurseForge</option>
+              </select>
+            </label>
+            <label>
               <span>Ordenar por</span>
               <select name="sort">
                 <option value="relevance">Relevancia</option>
@@ -694,7 +702,7 @@
             </label>
             <label>
               <span>Categoría</span>
-              <select name="category">
+              <select name="category" data-mod-category>
                 <option value="">Cualquiera</option>
                 <option value="optimization">Optimización</option>
                 <option value="utility">Utilidad</option>
@@ -716,11 +724,6 @@
                 <option value="datapack">DataPack</option>
               </select>
             </label>
-            <span
-              class="b-mods-results-count"
-              data-mod-results-count
-              >0 resultados</span
-            >
           </form>
           <div class="b-mods-versions-container">
             <label>
@@ -733,11 +736,13 @@
               />
             </label>
             <button
+              class="b-mods-reset-btn"
               type="button"
               data-mod-reset
             >
               Restablecer
             </button>
+            <span class="b-mods-results-count" data-mod-results-count>0 resultados</span>
           </div>
           <div
             class="mrpack-drop-hint"
@@ -2625,6 +2630,10 @@
               modpack) puede generar crashes y Battly no se hace cargo de los problemas que puedan
               haber.
             </div>
+            <label data-mod-download-world-section hidden>
+              <span>Mundo</span>
+              <select data-mod-download-world></select>
+            </label>
           </div>
           <p class="p-download-mod-text">1) Elige el Loader</p>
           <div
@@ -3691,6 +3700,19 @@
                   />
                   <p class="texto">Clients</p></label
                 >
+                <label class="label">
+                  <input type="radio" name="download-loader" value="battly-client" />
+                  <p class="texto">Battly Client</p>
+                </label>
+                <label class="label">
+                  <input
+                    type="radio"
+                    name="download-loader"
+                    value="horizon"
+                  />
+                  <p class="texto">Horizon</p>
+                  <span class="download-hot-badge horizon-beta">Beta</span>
+                </label>
               </div>
             </div>
             <div
@@ -3820,7 +3842,7 @@
                   alt=""
                 />
                 <div>
-                  <h1 id="download-battly-client-title">Battly Client 4.0</h1>
+                  <h1 id="download-battly-client-title">Battly Client</h1>
                   <p>Selecciona la versión que quieres descargar</p>
                 </div>
                 <button
@@ -4666,12 +4688,13 @@ Esperando al core…</pre>
             ></progress>
             <details class="modpack-install-details">
               <summary>Detalles técnicos</summary>
-              <textarea
-                class="textarea"
-                data-modpack-install-log
-                readonly
-                aria-label="Logs de instalación"
-              ></textarea>
+              <div class="modpack-install-log-frame">
+                <textarea
+                  data-modpack-install-log
+                  readonly
+                  aria-label="Logs de instalación"
+                ></textarea>
+              </div>
             </details>
           </div>
         </section>

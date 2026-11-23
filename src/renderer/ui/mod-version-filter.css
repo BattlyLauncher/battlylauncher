@@ -2,34 +2,72 @@
   position: relative;
   width: fit-content;
   min-width: 0;
-  max-width: min(480px, 100%);
+  max-width: min(220px, 100%);
+}
+.mod-version-picker[open] {
   z-index: 5;
 }
 .mod-version-picker summary {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
   cursor: pointer;
-  padding: 5px 9px;
+  height: var(--mods-control-height);
+  padding-block: 0;
+  padding-inline: 24px 10px;
   font-size: 12px;
-  line-height: 1.4;
-  max-width: 220px;
-  border: 1px solid #486079;
-  border-radius: 6px;
-  background: #182638;
-  color: #f3f7ff;
+  line-height: calc(var(--mods-control-height) - 2px);
+  border: 1px solid var(--mods-control-border);
+  border-radius: 8px;
+  background: var(--mods-control-bg);
+  color: var(--mods-label-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.mod-version-picker summary::-webkit-details-marker {
+  display: none;
+}
+.mod-version-picker summary::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  inset-inline-start: 11px;
+  width: 6px;
+  height: 6px;
+  border: solid currentColor;
+  border-width: 0 1.5px 1.5px 0;
+  transform: translateY(-50%) rotate(-45deg);
+}
+.mod-version-picker summary:dir(rtl)::before {
+  transform: translateY(-50%) rotate(135deg);
+}
+.mod-version-picker[open] summary::before {
+  transform: translateY(-70%) rotate(45deg);
+}
+.mod-version-picker summary:hover {
+  background: var(--mods-control-hover);
 }
 .mod-version-popover {
   box-sizing: border-box;
   position: absolute;
   top: calc(100% + 6px);
-  left: 0;
-  width: min(470px, calc(100vw - 64px));
+  inset-inline-start: 0;
+  width: min(470px, calc(100vw - 70px));
   background: #111d2b;
   padding: 12px;
-  border: 1px solid #486079;
+  border: 1px solid var(--mods-control-border);
   border-radius: 8px;
   box-shadow: 0 10px 32px #0008;
+}
+@media (max-width: 720px) {
+  .mod-version-picker {
+    position: static;
+  }
+  .mod-version-popover {
+    width: min(470px, 100%);
+    z-index: 5;
+  }
 }
 .mod-version-popover > input {
   box-sizing: border-box;

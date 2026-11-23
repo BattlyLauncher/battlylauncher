@@ -1,4 +1,5 @@
 import { normalizeDirectConnectServer, type MinecraftDirectConnectServer } from './launch-contract';
+import { horizonMinecraftVersion } from './horizon';
 export interface LauncherVersionEntry {
   readonly folderName: string | null;
   readonly name: string;
@@ -100,6 +101,17 @@ export function normalizePlayVersionLaunchRequest(value: unknown): PlayVersionLa
   }
   if (custom !== Boolean(customVersion)) {
     throw new TypeError('Invalid custom play version');
+  }
+  if (
+    loader === 'horizon' &&
+    (version !== horizonMinecraftVersion ||
+      custom ||
+      installedVersionId ||
+      instanceId ||
+      own('safeMode') === true ||
+      !['', 'latest'].includes(loaderVersion))
+  ) {
+    throw new TypeError('Invalid play version identifier');
   }
   return {
     ...(own('allowDuplicateMods') === true ? { allowDuplicateMods: true } : {}),

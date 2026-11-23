@@ -514,7 +514,7 @@
 .mybattly-panel th {
   padding: 10px 12px;
   border: 0;
-  color: #69798e;
+  color: #9dacc0;
   background: transparent;
   font-size: 9px;
   font-weight: 800;
@@ -523,7 +523,7 @@
   text-transform: uppercase;
 }
 .mybattly-panel td {
-  padding: 11px 12px;
+  padding: 9px 12px;
   border: 0;
   border-top: 1px solid rgb(255 255 255 / 6%);
   color: #dfe7f2;
@@ -532,15 +532,36 @@
   font-weight: 600;
   vertical-align: middle;
 }
-.mybattly-panel td:first-child {
-  width: 48px;
-  border-right: 0;
+.mybattly-panel [data-selection-heading],
+.mybattly-panel td:has(> input[type='checkbox']) {
+  width: 36px;
+  padding-inline: 10px;
 }
-.mybattly-panel td img {
+.b-mybattly-content-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-wrap: anywhere;
+}
+.b-mybattly-content-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 34px;
   width: 34px;
   height: 34px;
-  border-radius: 10px;
-  object-fit: cover;
+  overflow: hidden;
+  border-radius: 8px;
+  color: #93c9f2;
+  background: #1b2a3d;
+}
+.b-mybattly-content-icon:has(img) > i {
+  display: none;
+}
+.b-mybattly-content-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 .mybattly-panel tbody tr {
   transition: background 150ms ease;
@@ -548,11 +569,19 @@
 .mybattly-panel tbody tr:hover {
   background: rgb(255 255 255 / 3%);
 }
-.mybattly-panel .tag {
+.mybattly-panel .b-mybattly-table-state {
+  text-align: center;
+  width: 1%;
+  white-space: nowrap;
+}
+.mybattly-panel .b-mybattly-table-state .tag {
   display: inline-flex;
-  padding: 4px 8px;
+  align-items: center;
+  min-height: 23px;
+  padding: 3px 9px;
   border-radius: 99px;
-  font-size: 9px;
+  font-size: 11px;
+  line-height: 1.2;
   font-weight: 800;
 }
 .mybattly-panel .tag.is-success {
@@ -568,19 +597,21 @@
   color: var(--my-muted) !important;
   text-align: center !important;
 }
-.b-mybattly-table-actions {
+.mybattly-panel .b-mybattly-table-actions {
   width: 1%;
+  text-align: end;
   white-space: nowrap;
 }
 .b-mybattly-actions-td {
   display: flex;
   justify-content: flex-end;
-  gap: 7px;
+  align-items: center;
+  gap: 6px;
 }
 .b-mybattly-icon-action {
   display: inline-grid;
-  width: 31px;
-  height: 31px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   border: 1px solid rgb(255 255 255 / 8%);
   border-radius: 9px;
@@ -595,8 +626,10 @@
   color: #fff;
   background: color-mix(in srgb, var(--my-accent) 14%, transparent);
 }
-.mybattly-panel td .button {
-  min-height: 30px;
+.mybattly-panel .b-mybattly-actions-td .button {
+  height: 32px;
+  min-height: 32px;
+  margin: 0;
   padding: 0 10px;
   border: 1px solid rgb(255 255 255 / 10%);
   border-radius: 9px !important;

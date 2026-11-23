@@ -5,9 +5,20 @@ import {
 } from '../../shared/settings/game-preferences';
 import { applyWorldsPreferences } from '../social/worlds-preferences';
 import { translateUiText } from '../i18n/dialog-text';
+import {
+  defaultWorldsShortcuts,
+  formatWorldsShortcut,
+  normalizeWorldsShortcut,
+  type WorldsShortcutAction,
+  type WorldsShortcuts,
+} from '../../shared/social/worlds-shortcuts';
 
 let root: HTMLElement | undefined;
-const groups: { title: string; fields: [keyof WorldsPreferences, string, string][] }[] = [
+const mac = /Macintosh|Mac OS X/.test(navigator.userAgent);
+const groups: {
+  title: string;
+  fields: [Exclude<keyof WorldsPreferences, 'shortcuts'>, string, string][];
+}[] = [
   {
     title: 'Sala',
     fields: [
@@ -71,7 +82,7 @@ const groups: { title: string; fields: [keyof WorldsPreferences, string, string]
       [
         'overlayEnabled',
         'Mostrar overlay de voz',
-        'Muestra el panel sobre Minecraft en modo ventana. Ctrl + B abre el panel completo.',
+        'Muestra el panel sobre Minecraft en modo ventana.',
       ],
       ['overlayOpacity', 'Transparencia del overlay', 'Visibilidad del overlay, entre 25 y 100 %.'],
     ],
@@ -79,10 +90,11 @@ const groups: { title: string; fields: [keyof WorldsPreferences, string, string]
 ];
 export function setWorldsSettings(value: WorldsPreferences): void {
   applyWorldsPreferences(value);
+  updateShortcutFields(value.shortcuts);
   root
     ?.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-worlds-setting]')
     .forEach((input) => {
-      const v = value[input.dataset.worldsSetting as keyof WorldsPreferences];
+      const v = value[input.dataset.worldsSetting as Exclude<keyof WorldsPreferences, 'shortcuts'>];
       if (input instanceof HTMLInputElement && input.type === 'checkbox') {
         input.checked = v === true;
       } else {
@@ -91,7 +103,10 @@ export function setWorldsSettings(value: WorldsPreferences): void {
     });
 }
 export function readWorldsSettings(): WorldsPreferences {
-  const value: Record<string, unknown> = { ...defaultWorldsPreferences };
+  const value: Record<string, unknown> = {
+    ...defaultWorldsPreferences,
+    shortcuts: readShortcutFields(),
+  };
   root
     ?.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-worlds-setting]')
     .forEach((input) => {
@@ -103,8 +118,114 @@ export function readWorldsSettings(): WorldsPreferences {
   value.defaultPublic = value.defaultPublic === 'true';
   return normalizeWorldsPreferences(value);
 }
+
+function shortcutFields() {
+  return root?.querySelectorAll<HTMLInputElement>('[data-worlds-shortcut]') ?? [];
+}
+
+function readShortcutFields(): WorldsShortcuts {
+  const result = { ...defaultWorldsShortcuts };
+  for (const field of shortcutFields()) {
+    const action = field.dataset.worldsShortcut as WorldsShortcutAction;
+    result[action] = field.dataset.accelerator ?? result[action];
+  }
+  return result;
+}
+
+function updateShortcutFields(shortcuts: WorldsShortcuts): void {
+  for (const field of shortcutFields()) {
+    const key = shortcuts[field.dataset.worldsShortcut as WorldsShortcutAction];
+    field.dataset.accelerator = key;
+    field.value = formatWorldsShortcut(key, mac);
+  }
+}
+
+function mountShortcuts(section: HTMLElement): void {
+  const fieldset = document.createElement('fieldset');
+  const legend = document.createElement('legend');
+  legend.textContent = 'Atajos de teclado';
+  const instruction = document.createElement('p');
+  instruction.textContent = 'Selecciona un campo y pulsa la combinación que quieras usar.';
+  fieldset.append(legend, instruction);
+  const status = document.createElement('p');
+  status.setAttribute('role', 'status');
+  status.className = 'worlds-shortcut-status';
+  status.hidden = true;
+  const labels = {
+    menu: 'Abrir o contraer el panel',
+    visibility: 'Ocultar o mostrar el overlay',
+    acceptLan: 'Compartir el mundo LAN',
+    dismissLan: 'Ignorar el aviso de LAN',
+  };
+  for (const action of Object.keys(labels) as WorldsShortcutAction[]) {
+    const row = document.createElement('label');
+    row.className = 'worlds-setting-row';
+    const title = document.createElement('strong');
+    title.textContent = labels[action];
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.readOnly = true;
+    input.dataset.worldsShortcut = action;
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Tab' || event.key === 'Escape') {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.repeat || ['Control', 'Meta', 'Alt', 'Shift'].includes(event.key)) {
+        return;
+      }
+      const primary = mac ? event.metaKey : event.ctrlKey;
+      const key = event.code.startsWith('Digit')
+        ? event.code.slice(5)
+        : /^[a-z]$/i.test(event.key) || !event.code.startsWith('Key')
+          ? event.key
+          : event.code.slice(3);
+      const accelerator = [
+        ...(primary ? ['CommandOrControl'] : []),
+        ...(event.altKey ? ['Alt'] : []),
+        ...(event.shiftKey ? ['Shift'] : []),
+        key,
+      ].join('+');
+      const shortcut = (mac ? !event.ctrlKey : !event.metaKey)
+        ? normalizeWorldsShortcut(accelerator, action)
+        : undefined;
+      const current = readShortcutFields();
+      if (
+        !shortcut ||
+        Object.entries(current).some(
+          ([other, assigned]) => other !== action && assigned === shortcut,
+        )
+      ) {
+        status.textContent = shortcut
+          ? 'Ese atajo ya está asignado en Battly Worlds.'
+          : 'Usa una tecla válida. Para el panel y el overlay, añade Ctrl, ⌘ o Alt.';
+        status.hidden = false;
+        return;
+      }
+      status.hidden = true;
+      updateShortcutFields({ ...current, [action]: shortcut });
+    });
+    row.append(title, input);
+    fieldset.append(row);
+  }
+  const reset = document.createElement('button');
+  reset.type = 'button';
+  reset.textContent = 'Restablecer atajos';
+  reset.addEventListener('click', () => {
+    updateShortcutFields(defaultWorldsShortcuts);
+    status.hidden = true;
+  });
+  const actions = document.createElement('div');
+  actions.className = 'minecraft-window-actions';
+  actions.append(reset);
+  fieldset.append(actions, status);
+  section.append(fieldset);
+}
+
 export function mountWorldsSettings(section: HTMLElement): void {
   root = section;
+  mountShortcuts(section);
   for (const group of groups) {
     const fieldset = document.createElement('fieldset'),
       legend = document.createElement('legend');

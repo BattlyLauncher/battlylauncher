@@ -157,7 +157,7 @@ export function bindBattlyWorlds(
                     />${worldsIcon('invite')}
                   </div>
                   <strong>Comparte desde el overlay</strong
-                  ><span>Abre Battly Worlds con Ctrl + B, crea la sala e invita a tus amigos.</span>
+                  ><span>Abre Battly Worlds en Minecraft, crea la sala e invita a tus amigos.</span>
                 </li>
               </ol>
               <button

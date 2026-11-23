@@ -50,7 +50,7 @@ import type {
   ThemeReviewResult,
   ThemeShareResult,
 } from './themes/theme-contract';
-import type { InstanceDraft, InstanceSummary } from './minecraft/instance';
+import type { InstanceCopyRequest, InstanceDraft, InstanceSummary } from './minecraft/instance';
 import type { BattlyCustomClient } from './minecraft/custom-client-contract';
 import type {
   PlayVersionLaunchRequest,
@@ -163,10 +163,12 @@ export const desktopChannels = {
   cancelAuth: 'auth:cancel',
   getInstances: 'instances:list',
   createInstance: 'instances:create',
+  duplicateInstance: 'instances:duplicate',
   updateInstance: 'instances:update',
   archiveInstance: 'instances:archive',
   openInstanceFolder: 'instances:open-folder',
   exportBypack: 'instances:export-bypack',
+  exportMrpack: 'instances:export-mrpack',
   exportServerBypack: 'servers:export-bypack',
   revealBypack: 'instances:reveal-bypack',
   getModVersionCatalog: 'mods:version-catalog',
@@ -464,6 +466,8 @@ export interface BattlyDesktopApi {
   archiveInstance(id: string): Promise<readonly InstanceSummary[]>;
   openInstanceFolder(id: string): Promise<void>;
   exportBypack(id: string): Promise<BypackExportResult | null>;
+  exportMrpack(id: string): Promise<BypackExportResult | null>;
+  duplicateInstance(id: string, request: InstanceCopyRequest): Promise<InstanceSummary>;
   exportServerBypack(id: string): Promise<BypackExportResult | null>;
   revealBypack(path: string): Promise<void>;
   getMinecraftVersionList(): Promise<DownloadCatalogSnapshot['minecraft']>;

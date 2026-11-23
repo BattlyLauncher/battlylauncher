@@ -2,7 +2,7 @@ import { emptyState } from '../ui/empty-state';
 import { mountAutomaticWorldBackup } from '../ui/automatic-world-backup';
 import { steveLoader } from '../ui/steve-loader';
 import { clearMyBattlySelection, mountMyBattlySelection } from '../ui/mybattly-selection';
-import { renderUsageChart } from '../ui/usage-chart';
+import { openUsageHistory, renderUsageChart } from '../ui/usage-chart';
 import { driveProgressPercent, driveProgressLabel } from '../../shared/settings/drive-progress';
 import { setUiText, translateUiText } from '../i18n/dialog-text';
 import { setUserText } from '../i18n/ui-translator';
@@ -14,6 +14,8 @@ import './mybattly-panel.css';
 import myBattlyMarkup from '../legacy/panels/mybattly.html?raw';
 
 import battlyIconUrl from '../assets/icon.png?url';
+import minecraftIconUrl from '../legacy/assets/images/icons/minecraft.png?url';
+import optiFineIconUrl from '../legacy/assets/images/icons/optifine.png?url';
 
 import legacySpanishStrings from '../legacy/assets/langs/strings.es.json';
 
@@ -60,11 +62,52 @@ function cell(value = ''): HTMLTableCellElement {
   return element;
 }
 
-function actionCell(): HTMLTableCellElement {
-  const element = document.createElement('td');
+function contentNameCell(
+  name: string,
+  source: string | null | undefined,
+  fallback: string,
+): HTMLTableCellElement {
+  const element = cell();
+  const content = document.createElement('div');
+  content.className = 'b-mybattly-content-name';
+  const thumb = document.createElement('span');
+  thumb.className = 'b-mybattly-content-icon';
+  thumb.setAttribute('aria-hidden', 'true');
+  const icon = document.createElement('i');
+  icon.className = `fa-solid ${fallback}`;
+  thumb.append(icon);
+  if (source) {
+    const image = document.createElement('img');
+    image.alt = '';
+    image.addEventListener('error', () => image.remove(), { once: true });
+    image.src = source;
+    thumb.append(image);
+  }
+  const label = document.createElement('span');
+  setUserText(label, name);
+  label.title = name;
+  content.append(thumb, label);
+  element.append(content);
+  return element;
+}
 
+function contentStatusCell(enabled: boolean): HTMLTableCellElement {
+  const element = cell();
+  element.className = 'b-mybattly-table-state';
+  const tag = document.createElement('span');
+  tag.className = enabled ? 'tag is-success' : 'tag is-warning';
+  setUiText(tag, enabled ? 'Activo' : 'Inactivo');
+  element.append(tag);
+  return element;
+}
+
+function actionCell(...buttons: HTMLButtonElement[]): HTMLTableCellElement {
+  const element = cell();
   element.className = 'b-mybattly-table-actions';
-
+  const group = document.createElement('div');
+  group.className = 'b-mybattly-actions-td';
+  group.append(...buttons);
+  element.append(group);
   return element;
 }
 
@@ -790,7 +833,7 @@ export function mountMyBattlyPanel(options: MyBattlyPanelOptions): void {
 
     if (!snapshot.mods.length) {
       clearMyBattlySelection(table.closest('table')!);
-      table.append(emptyRow(5, 'No hay mods instalados'));
+      table.append(emptyRow(4, 'No hay mods instalados'));
 
       return;
     }
@@ -798,35 +841,14 @@ export function mountMyBattlyPanel(options: MyBattlyPanelOptions): void {
     snapshot.mods.forEach((mod) => {
       const row = document.createElement('tr');
 
-      const icon = cell();
-
-      const image = document.createElement('img');
-
-      image.src = mod.iconDataUrl ?? battlyIconUrl;
-
-      image.alt = '';
-
-      image.width = 30;
-
-      image.height = 30;
-
-      icon.append(image);
-
-      const status = cell();
-
-      const tag = document.createElement('span');
-
-      tag.className = mod.enabled ? 'tag is-success' : 'tag is-warning';
-
-      tag.textContent = mod.enabled ? 'Activo' : 'Inactivo';
-
-      status.append(tag);
-
-      const actions = actionCell();
-
-      const actionList = document.createElement('div');
-
-      actionList.className = 'b-mybattly-actions-td';
+      const isOptiFine =
+        /^(?:preview_)?optifine(?:[._ -]|$)/i.test(mod.filename) ||
+        /^optifine$/i.test(mod.name ?? '');
+      const name = contentNameCell(
+        mod.name || mod.filename,
+        isOptiFine ? optiFineIconUrl : mod.iconDataUrl,
+        'fa-puzzle-piece',
+      );
 
       const toggle = document.createElement('button');
 
@@ -919,15 +941,9 @@ export function mountMyBattlyPanel(options: MyBattlyPanelOptions): void {
         });
       });
 
-      actionList.append(toggle, open, archive);
-
-      actions.append(actionList);
-
-      const name = cell(mod.name || mod.filename);
-      name.title = mod.name || mod.filename;
       const version = cell(mod.version ?? 'Desconocida');
       version.title = mod.version ?? '';
-      row.append(icon, name, version, status, actions);
+      row.append(name, version, contentStatusCell(mod.enabled), actionCell(toggle, open, archive));
 
       table.append(row);
     });
@@ -968,7 +984,7 @@ export function mountMyBattlyPanel(options: MyBattlyPanelOptions): void {
 
     if (!snapshot.worlds.length) {
       clearMyBattlySelection(table.closest('table')!);
-      table.append(emptyRow(4, 'No hay mundos guardados'));
+      table.append(emptyRow(2, 'No hay mundos guardados'));
 
       return;
     }
@@ -976,26 +992,7 @@ export function mountMyBattlyPanel(options: MyBattlyPanelOptions): void {
     snapshot.worlds.forEach((world) => {
       const row = document.createElement('tr');
 
-      const icon = cell();
-
-      if (world.iconDataUrl) {
-        const image = document.createElement('img');
-
-        image.src = world.iconDataUrl;
-
-        image.alt = '';
-
-        image.width = 30;
-
-        image.height = 30;
-
-        icon.append(image);
-      } else {
-        icon.innerHTML = '<i class="fa-solid fa-earth" aria-hidden="true"></i>';
-      }
-
-      const actions = actionCell();
-
+      const name = contentNameCell(world.name, world.iconDataUrl ?? minecraftIconUrl, 'fa-earth');
       const backup = document.createElement('button');
 
       backup.type = 'button';
@@ -1044,9 +1041,7 @@ export function mountMyBattlyPanel(options: MyBattlyPanelOptions): void {
         });
       });
 
-      actions.append(backup, archive);
-
-      row.append(icon, cell(world.name), cell('Mundo de Minecraft'), actions);
+      row.append(name, actionCell(backup, archive));
 
       table.append(row);
     });
@@ -1077,7 +1072,7 @@ export function mountMyBattlyPanel(options: MyBattlyPanelOptions): void {
 
     if (!snapshot.resourcePacks.length) {
       clearMyBattlySelection(table.closest('table')!);
-      table.append(emptyRow(5, 'No hay packs de recursos instalados'));
+      table.append(emptyRow(3, 'No hay packs de recursos instalados'));
 
       return;
     }
@@ -1085,35 +1080,7 @@ export function mountMyBattlyPanel(options: MyBattlyPanelOptions): void {
     snapshot.resourcePacks.forEach((pack) => {
       const row = document.createElement('tr');
 
-      const icon = cell();
-
-      if (pack.iconDataUrl) {
-        const image = document.createElement('img');
-
-        image.src = pack.iconDataUrl;
-
-        image.alt = '';
-
-        image.width = 30;
-
-        image.height = 30;
-
-        icon.append(image);
-      } else {
-        icon.innerHTML = '<i class="fa-solid fa-image" aria-hidden="true"></i>';
-      }
-
-      const status = cell();
-
-      const tag = document.createElement('span');
-
-      tag.className = pack.enabled ? 'tag is-success' : 'tag is-warning';
-
-      tag.textContent = pack.enabled ? 'Activo' : 'Inactivo';
-
-      status.append(tag);
-
-      const actions = actionCell();
+      const name = contentNameCell(pack.name, pack.iconDataUrl, 'fa-image');
 
       const toggle = document.createElement('button');
 
@@ -1180,9 +1147,7 @@ export function mountMyBattlyPanel(options: MyBattlyPanelOptions): void {
         });
       });
 
-      actions.append(toggle, archive);
-
-      row.append(icon, cell(pack.name), cell('Archivo local'), status, actions);
+      row.append(name, contentStatusCell(pack.enabled), actionCell(toggle, archive));
 
       table.append(row);
     });
@@ -1244,13 +1209,10 @@ export function mountMyBattlyPanel(options: MyBattlyPanelOptions): void {
 
   const render = (value: MyBattlySnapshot): void => {
     snapshot = value;
-    let usage = panel.querySelector<HTMLElement>('.b-mybattly-usage');
-    if (!usage) {
-      usage = document.createElement('section');
-      usage.className = 'b-mybattly-usage';
-      panel.querySelector('.b-mybattly-main-panel-stats')?.append(usage);
+    const usage = panel.querySelector<HTMLElement>('.b-mybattly-usage');
+    if (usage) {
+      renderUsageChart(usage, value.usageHistory ?? []);
     }
-    renderUsageChart(usage, value.usageHistory ?? []);
 
     const enabled = value.mods.filter((mod) => mod.enabled).length;
 
@@ -1428,6 +1390,15 @@ export function mountMyBattlyPanel(options: MyBattlyPanelOptions): void {
       panel.removeAttribute('aria-busy');
     }
   };
+
+  panel.querySelector<HTMLButtonElement>('[data-mybattly-activity]')?.addEventListener('click', () => {
+    const history = snapshot?.usageHistory ?? [];
+    if (history.length) {
+      openUsageHistory(history);
+    } else {
+      panel.querySelector<HTMLElement>('#b-mybattly-usage-title')?.focus();
+    }
+  });
 
   panel.querySelector<HTMLButtonElement>('#back-mybattly-btn')?.addEventListener('click', () => {
     void options.navigate('home');

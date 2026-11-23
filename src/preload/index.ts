@@ -67,7 +67,7 @@ import type {
   ThemeReviewResult,
   ThemeShareResult,
 } from '../shared/themes/theme-contract';
-import type { InstanceDraft, InstanceSummary } from '../shared/minecraft/instance';
+import type { InstanceCopyRequest, InstanceDraft, InstanceSummary } from '../shared/minecraft/instance';
 import type { BattlyCustomClient } from '../shared/minecraft/custom-client-contract';
 import type { LabyModVersion } from '../shared/minecraft/labymod-contract';
 import type { BattlyClientUpdateNotice } from '../shared/minecraft/battly-client-contract';
@@ -301,8 +301,15 @@ const desktopApi: BattlyDesktopApi = Object.freeze({
   startAuth: (request: AuthRequest) =>
     invokeDesktop(desktopChannels.startAuth, request) as Promise<AuthOutcome>,
   cancelAuth: () => invokeDesktop(desktopChannels.cancelAuth) as Promise<boolean>,
-  getInstances: () =>
-    invokeDesktop(desktopChannels.getInstances) as Promise<readonly InstanceSummary[]>,
+  getInstances: async () => {
+    const result = (await invokeDesktop(desktopChannels.getInstances)) as
+      | readonly InstanceSummary[]
+      | { code: 'BATTLY_PRIVATE_DATA_UNREADABLE' };
+    if ('code' in result) {
+      throw new Error(result.code);
+    }
+    return result;
+  },
   createInstance: (draft: InstanceDraft) =>
     invokeDesktop(desktopChannels.createInstance, draft) as Promise<readonly InstanceSummary[]>,
   updateInstance: (id: string, draft: InstanceDraft) =>
@@ -315,6 +322,10 @@ const desktopApi: BattlyDesktopApi = Object.freeze({
     invokeDesktop(desktopChannels.exportServerBypack, id) as Promise<BypackExportResult | null>,
   exportBypack: (id: string) =>
     invokeDesktop(desktopChannels.exportBypack, id) as Promise<BypackExportResult | null>,
+  exportMrpack: (id: string) =>
+    invokeDesktop(desktopChannels.exportMrpack, id) as Promise<BypackExportResult | null>,
+  duplicateInstance: (id: string, request: InstanceCopyRequest) =>
+    invokeDesktop(desktopChannels.duplicateInstance, id, request) as Promise<InstanceSummary>,
   revealBypack: (path: string) =>
     invokeDesktop(desktopChannels.revealBypack, path) as Promise<void>,
   getMinecraftVersionList: () =>

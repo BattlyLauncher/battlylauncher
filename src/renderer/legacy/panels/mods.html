@@ -10,7 +10,7 @@
       </h1>
       <span style="font-size: 12px; color: #fff"
         >Con la tecnología de
-        <span style="color: #1bd96a; font-weight: 700">Modrinth</span>
+        <span data-mod-provider-credit><strong data-catalog-credit="modrinth">Modrinth</strong></span>
       </span>
     </div>
     <div class="friends-header-actions">
@@ -68,6 +68,22 @@
         placeholder=""
       />
       <button id="searchBtn"><i class="fa fa-search"></i></button>
+    </div>
+    <div class="b-mods-sort-container">
+      <label for="mod-provider">Catálogo</label>
+      <select
+        id="mod-provider"
+        data-mod-provider
+      >
+        <option
+          value="all"
+          data-mod-provider-all
+        >
+          Todos
+        </option>
+        <option value="modrinth">Modrinth</option>
+        <option value="curseforge">CurseForge</option>
+      </select>
     </div>
     <div class="b-mods-sort-container">
       <label
@@ -153,11 +169,19 @@
         ></option>
       </select>
     </div>
-    <span
-      class="b-mods-results-count"
-      id="results-count"
-      >0 - 0</span
-    >
+    <div class="b-mods-sort-container">
+      <label for="mod-category">Categoría</label>
+      <select id="mod-category" data-mod-category>
+        <option value="">Cualquiera</option>
+        <option value="optimization">Optimización</option>
+        <option value="utility">Utilidad</option>
+        <option value="technology">Tecnología</option>
+        <option value="magic">Magia</option>
+        <option value="adventure">Aventura</option>
+        <option value="decoration">Decoración</option>
+        <option value="worldgen">Generación de mundo</option>
+      </select>
+    </div>
   </div>
 
   <div class="b-mods-versions-container">
@@ -167,6 +191,7 @@
       id="resetBtn"
       data-string-id="mods.reset"
     ></button>
+    <span class="b-mods-results-count" id="results-count">0 - 0</span>
   </div>
 
   <div class="b-mods-mod-list-container">

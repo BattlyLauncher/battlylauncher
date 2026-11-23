@@ -24,7 +24,7 @@ export class ModInstaller {
   readonly #downloader: VerifiedDownloader;
   readonly #rootDirectory: string;
 
-  constructor(client: ModrinthClient, rootDirectory: string) {
+  constructor(client: ModrinthClient, rootDirectory: string, fetchImplementation = fetch) {
     if (!isAbsolute(rootDirectory)) {
       throw new TypeError('Mod installation root must be absolute');
     }
@@ -32,6 +32,7 @@ export class ModInstaller {
     this.#rootDirectory = resolve(rootDirectory);
     this.#downloader = new VerifiedDownloader({
       archiveDirectory: join(this.#rootDirectory, '.replaced-mods'),
+      fetchImplementation,
     });
   }
 
@@ -80,7 +81,12 @@ export class ModInstaller {
         throw new Error(`Modrinth version has no downloadable file: ${version.id}`);
       }
       onFile?.(file.filename);
-      const directoryName = root ? targetDirectory[request.projectType] : 'mods';
+      const directoryName =
+        root && request.projectType === 'datapack' && request.destinationWorld
+          ? join('saves', request.destinationWorld, 'datapacks')
+          : root
+            ? targetDirectory[request.projectType]
+            : 'mods';
       await this.#download(file, join(this.#rootDirectory, directoryName), signal, (current) =>
         onProgress?.(completed + current, total),
       );
@@ -106,6 +112,17 @@ export class ModInstaller {
     const root = roots[0];
     if (!root) {
       throw new Error('No compatible Modrinth version was found');
+    }
+    if (
+      request.projectType === 'datapack' &&
+      (root.projectId !== request.projectId ||
+        !root.loaders.includes('datapack') ||
+        !root.gameVersions.includes(request.gameVersion) ||
+        !(root.files.find((file) => file.primary) ?? root.files[0])?.filename
+          .toLowerCase()
+          .endsWith('.zip'))
+    ) {
+      throw new Error('No hay versiones compatibles');
     }
     if (request.destinationServerId && root.projectId !== request.projectId) {
       throw new Error('La versión no pertenece al mod seleccionado');

@@ -12,6 +12,8 @@ import type { JsonValue } from '../../shared/storage/legacy-storage';
 import { writeFileAtomically } from '../files/atomic-file';
 import { readProfileValuesFile } from '../storage/profile-values-file';
 import { enqueueProfileWrite } from '../storage/profile-write-queue';
+import { horizonMinecraftVersion, horizonPlayVersionId } from '../../shared/minecraft/horizon';
+import { installedHorizon } from './horizon-service';
 
 const identifier = /^[a-zA-Z0-9][a-zA-Z0-9._+ -]{0,127}$/;
 const selectableLoaders = new Set([
@@ -279,11 +281,24 @@ export class PlayVersionService {
   }
 
   async snapshot(catalog: readonly LauncherVersionEntry[]): Promise<PlayVersionSnapshot> {
-    const [entries, values] = await Promise.all([
+    const [entries, values, horizon] = await Promise.all([
       readdir(this.#versionsRoot, { withFileTypes: true }).catch(() => []),
       readProfileValuesFile(this.#profilePath),
+      installedHorizon(join(this.#versionsRoot, '..')),
     ]);
     const installed: InstalledPlayVersion[] = [];
+    if (horizon) {
+      installed.push({
+        compatibleLoaders: [],
+        custom: false,
+        id: horizonPlayVersionId,
+        installedAt: (await stat(horizon).catch(() => null))?.mtimeMs ?? 0,
+        loader: 'horizon',
+        loaderVersion: '',
+        requiredJavaVersion: null,
+        version: horizonMinecraftVersion,
+      });
+    }
     for (const entry of entries) {
       if (!entry.isDirectory() || entry.isSymbolicLink() || !identifier.test(entry.name)) {
         continue;
@@ -413,7 +428,8 @@ export class PlayVersionService {
                 distinctInstalled
                   .filter(
                     (candidate) =>
-                      candidate.version === entry.version && candidate.loader !== 'vanilla',
+                      candidate.version === entry.version &&
+                      !['vanilla', 'horizon'].includes(candidate.loader),
                   )
                   .map((candidate) => candidate.loader),
               ),

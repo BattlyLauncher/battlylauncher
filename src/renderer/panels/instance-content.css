@@ -27,8 +27,8 @@
   background: #030711c9;
   backdrop-filter: blur(5px);
 }
-.instance-content-dialog header,
-.instance-content-dialog footer,
+.instance-content-dialog > header,
+.instance-content-dialog > footer,
 .instance-content-toolbar,
 .instance-content-dialog nav,
 .instance-content-actions {
@@ -38,15 +38,15 @@
   flex-wrap: wrap;
   flex-shrink: 0;
 }
-.instance-content-dialog header,
-.instance-content-dialog footer {
+.instance-content-dialog > header,
+.instance-content-dialog > footer {
   justify-content: space-between;
 }
-.instance-content-dialog header > div {
+.instance-content-dialog > header > div {
   min-width: 0;
   flex: 1;
 }
-.instance-content-dialog h2 {
+.instance-content-dialog > header h2 {
   font-weight: 700;
   color: #f5f8ff;
   font-size: 24px;
@@ -56,19 +56,19 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.instance-content-dialog p,
-.instance-content-dialog footer,
-.instance-content-dialog small {
+.instance-content-dialog p:not(:where([data-guided-tutorial] *)),
+.instance-content-dialog > footer,
+.instance-content-dialog small:not(:where([data-guided-tutorial] *)) {
   color: #b8c8dc;
   font-size: 12px;
   margin: 0;
 }
-.instance-content-dialog header p {
+.instance-content-dialog > header p {
   color: #79caff;
   letter-spacing: 1.4px;
   font-size: 10px;
 }
-.instance-content-dialog button,
+.instance-content-dialog button:not(:where([data-guided-tutorial] *)),
 .instance-content-dialog input {
   border: 1px solid #38516c;
   border-radius: 10px;
@@ -79,7 +79,7 @@
   font-size: 12px;
   min-height: 38px;
 }
-.instance-content-dialog button {
+.instance-content-dialog button:not(:where([data-guided-tutorial] *)) {
   cursor: pointer;
   transition:
     background 0.18s,
@@ -89,24 +89,24 @@
   align-items: center;
   justify-content: center;
 }
-.instance-content-dialog button[hidden] {
+.instance-content-dialog button:not(:where([data-guided-tutorial] *))[hidden] {
   display: none;
 }
-.instance-content-dialog button:hover:not(:disabled) {
+.instance-content-dialog button:not(:where([data-guided-tutorial] *)):hover:not(:disabled) {
   background: #2f4a68;
   transform: translateY(-1px);
 }
-.instance-content-dialog button:disabled {
+.instance-content-dialog button:not(:where([data-guided-tutorial] *)):disabled {
   opacity: 0.55;
   cursor: wait;
 }
-.instance-content-dialog button[aria-pressed='true'],
+.instance-content-dialog button:not(:where([data-guided-tutorial] *))[aria-pressed='true'],
 .instance-content-dialog [data-import] {
   background: #226c9f;
   border-color: #499acf;
   color: #fff;
 }
-.instance-content-dialog :focus-visible {
+.instance-content-dialog :focus-visible:not(:where([data-guided-tutorial] *)) {
   outline: 2px solid #8bceff;
   outline-offset: 2px;
 }
@@ -227,12 +227,12 @@
 .instance-content-actions {
   flex-shrink: 0;
 }
-.instance-content-dialog footer {
+.instance-content-dialog > footer {
   border-top: 1px solid #293c52;
   padding-top: 12px;
   font-size: 10px;
 }
-.instance-content-dialog footer span {
+.instance-content-dialog > footer span {
   flex: 1;
   min-width: 140px;
 }
@@ -274,7 +274,7 @@
     padding: 8px 5px;
     font-size: 10px;
   }
-  .instance-content-dialog h2 {
+  .instance-content-dialog > header h2 {
     font-size: 20px;
   }
   .instance-content-help {
@@ -288,7 +288,7 @@
 }
 @media (max-height: 550px) {
   .instance-content-help,
-  .instance-content-dialog footer {
+  .instance-content-dialog > footer {
     display: none;
   }
   .instance-content-dialog {
@@ -302,7 +302,7 @@
   .instance-content-dialog[open] {
     animation: none;
   }
-  .instance-content-dialog button {
+  .instance-content-dialog button:not(:where([data-guided-tutorial] *)) {
     transition: none;
   }
 }

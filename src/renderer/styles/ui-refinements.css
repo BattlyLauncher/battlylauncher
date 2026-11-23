@@ -1177,8 +1177,8 @@ body [data-play-safe] span {
 }
 .instances-container.grid-view > .card .card-footer {
   display: grid !important;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 7px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
 }
 .instances-container.grid-view > .card .card-footer .button:first-child {
   grid-column: 1 / -1;
@@ -1193,6 +1193,9 @@ body [data-play-safe] span {
 }
 .instances-container.grid-view > .card .card-footer .button:not(:first-child) {
   width: 100%;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
 }
 
 .launch-log-actions {

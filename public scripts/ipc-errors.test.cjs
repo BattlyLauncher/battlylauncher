@@ -47,6 +47,8 @@ async function bridge(entry) {
     Error,
     TypeError,
     AbortSignal,
+    navigator: { userAgent: 'Battly preload test' },
+    window: { addEventListener() {} },
   };
   vm.runInNewContext(outputFiles[0].text, context, { filename: entry });
   return { exposed, calls };

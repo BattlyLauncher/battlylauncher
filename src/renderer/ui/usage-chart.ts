@@ -3,9 +3,12 @@ import { setUiText, translateUiText } from '../i18n/dialog-text';
 import { uiLocale } from '../i18n/locale';
 
 function duration(seconds: number): string {
-  return seconds < 60
-    ? `${Math.floor(seconds)} s`
-    : `${Math.floor(seconds / 3600)} h ${Math.floor((seconds % 3600) / 60)} min`;
+  if (seconds < 60) {
+    return `${Math.floor(seconds)} s`;
+  }
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return hours ? `${hours} h ${minutes} min` : `${minutes} min`;
 }
 function dateLabel(date: string): string {
   return new Date(`${date}T12:00:00`).toLocaleDateString(uiLocale(), {
@@ -47,14 +50,14 @@ function graph(
             x="0"
             y="${184 - r * 145}"
             fill="var(--usage-muted, #9db2cc)"
-            font-size="10"
+            font-size="13"
             >${maximum * r < 60 ? Math.round(maximum * r) + 's' : Math.round((maximum * r) / 60) + 'm'}</text
           >`,
     )
     .join('');
   const lines = (['game', 'launcher'] as const)
     .map((key, index) => {
-      const color = index ? 'var(--usage-secondary)' : 'var(--theme-color, #7048c4)';
+      const color = index ? 'var(--usage-secondary)' : 'var(--usage-primary)';
       if (!hourly && values.length === 1) {
         const value = values[0];
         return /* HTML */ `<rect
@@ -84,7 +87,7 @@ function graph(
           .join('');
       }
       return (
-        /* HTML */ `<path d="${path(key)} L${x(Math.max(0, values.length - 1))},180 L${x(0)},180 Z" fill="${color}" fill-opacity=".08"/><path d="${path(key)}" fill="none" stroke="${color}" stroke-width="2.5"/>` +
+        /* HTML */ `<path d="${path(key)} L${x(Math.max(0, values.length - 1))},180 L${x(0)},180 Z" fill="${color}" fill-opacity=".08"/><path d="${path(key)}" fill="none" stroke="${color}" stroke-width="3" ${index ? 'stroke-dasharray="8 5"' : ''}/>` +
         values
           .map(
             (v, i) =>
@@ -106,7 +109,7 @@ function graph(
         y="205"
         text-anchor="middle"
         fill="var(--usage-muted, #9db2cc)"
-        font-size="11"
+        font-size="14"
         >${v.label}</text
       >`;
     })
@@ -123,30 +126,51 @@ function graph(
 
 export function renderUsageChart(host: HTMLElement, history: readonly UsageDay[]): void {
   host.replaceChildren();
-  const title = document.createElement('h3');
+  const title = document.createElement('h2');
+  title.id = 'b-mybattly-usage-title';
+  title.tabIndex = -1;
   setUiText(title, 'Actividad en PC');
-  host.append(title);
-  const summary = document.createElement('p');
+  const header = document.createElement('header');
+  header.className = 'b-usage-card-header';
+  header.append(title);
+  host.append(header);
   if (!history.length) {
+    const summary = document.createElement('p');
     setUiText(summary, 'No hay historial de actividad disponible.');
     host.append(summary);
     return;
   }
   const recent = periodDays(history, 7);
-  host.append(graph(recent.map((d) => ({ ...d, label: dateLabel(d.date) }))));
-  const legend = document.createElement('p');
-  legend.className = 'b-usage-legend';
-  legend.innerHTML = '<span>● Minecraft</span><span>● Battly Launcher</span>';
-  host.append(legend);
+  const range = document.createElement('span');
+  range.className = 'b-usage-card-range';
+  range.textContent = `7 ${translateUiText('días')}`;
+  title.after(range);
   const button = document.createElement('button');
   button.type = 'button';
-  button.className = 'button is-info is-small is-outlined';
+  button.className = 'b-mybattly-primary-action';
   setUiText(button, 'Ver actividad');
   button.onclick = () => openUsageHistory(history);
-  host.append(button);
+  header.append(button);
+
+  const body = document.createElement('div');
+  body.className = 'b-usage-card-body';
+  const totals = document.createElement('dl');
+  totals.className = 'b-usage-card-totals';
+  for (const [key, label] of [['game', 'Minecraft'], ['launcher', 'Battly Launcher']] as const) {
+    const item = document.createElement('div');
+    const name = document.createElement('dt');
+    name.textContent = label;
+    const total = document.createElement('dd');
+    total.textContent = duration(recent.reduce((sum, entry) => sum + entry[key], 0));
+    item.append(name, total);
+    totals.append(item);
+  }
+  body.append(totals, graph(recent.map((d) => ({ ...d, label: dateLabel(d.date) }))));
+  host.append(body);
 }
 
 export function openUsageHistory(history: readonly UsageDay[]): void {
+  const opener = document.activeElement;
   document.querySelector('.b-usage-dialog')?.remove();
   const dialog = document.createElement('dialog');
   dialog.className = 'b-usage-dialog';
@@ -178,6 +202,21 @@ export function openUsageHistory(history: readonly UsageDay[]): void {
   const legend = document.createElement('p');
   legend.className = 'b-usage-legend';
   legend.innerHTML = '<span>● Minecraft</span><span>● Battly Launcher</span>';
+  const dailyData = document.createElement('details');
+  dailyData.className = 'b-usage-daily-data';
+  const dataToggle = document.createElement('summary');
+  setUiText(dataToggle, 'Ver detalles');
+  const dataTable = document.createElement('table');
+  dataTable.setAttribute('aria-label', translateUiText('Uso diario'));
+  const dataHeading = dataTable.createTHead().insertRow();
+  for (const label of [translateUiText('Día'), 'Minecraft', 'Battly Launcher']) {
+    const cell = document.createElement('th');
+    cell.scope = 'col';
+    cell.textContent = label;
+    dataHeading.append(cell);
+  }
+  const dataRows = dataTable.createTBody();
+  dailyData.append(dataToggle, dataTable);
   const showDay = () => {
     const selected = periodDays(history, Number(period.value)).find((d) => d.date === day.value);
     if (!selected) {
@@ -195,6 +234,16 @@ export function openUsageHistory(history: readonly UsageDay[]): void {
     summary.className = 'b-usage-total';
     summary.textContent = `Minecraft: ${duration(rows.reduce((s, d) => s + d.game, 0))} · Battly Launcher: ${duration(rows.reduce((s, d) => s + d.launcher, 0))}`;
     daily.replaceChildren(graph(rows.map((d) => ({ ...d, label: dateLabel(d.date) }))));
+    dataRows.replaceChildren();
+    for (const row of [...rows].reverse()) {
+      const line = dataRows.insertRow();
+      const date = document.createElement('th');
+      date.scope = 'row';
+      date.textContent = dateLabel(row.date);
+      line.append(date);
+      line.insertCell().textContent = duration(row.game);
+      line.insertCell().textContent = duration(row.launcher);
+    }
     day.replaceChildren();
     [...rows].reverse().forEach((d) => day.add(new Option(dateLabel(d.date), d.date)));
     hourly.replaceChildren();
@@ -207,9 +256,14 @@ export function openUsageHistory(history: readonly UsageDay[]): void {
   setUiText(dailyTitle, 'Uso diario');
   const hourTitle = document.createElement('h3');
   setUiText(hourTitle, 'Uso por horas');
-  body.append(filters, summary, legend, dailyTitle, daily, hourTitle, detail, hourly);
+  body.append(filters, summary, legend, dailyTitle, daily, dailyData, hourTitle, detail, hourly);
   dialog.append(header, body);
-  dialog.onclose = () => dialog.remove();
+  dialog.onclose = () => {
+    dialog.remove();
+    if (opener instanceof HTMLElement && opener.isConnected) {
+      opener.focus({ preventScroll: true });
+    }
+  };
   document.body.append(dialog);
   redraw();
   dialog.showModal();

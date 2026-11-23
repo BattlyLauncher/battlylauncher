@@ -24,6 +24,7 @@ import {
 import { pathToFileURL } from 'node:url';
 import type { WorldsEvent, WorldsSnapshot } from '../../shared/social/battly-worlds-contract';
 import { desktopChannels } from '../../shared/desktop-api';
+import { worldsShortcutConflict, type WorldsShortcuts } from '../../shared/social/worlds-shortcuts';
 
 export interface WorldsDesktopPresentation {
   /** Resolves against the current account language at notification time. */
@@ -48,10 +49,6 @@ export class WorldsDesktop {
       this.#mouseTimer = undefined;
       clearInterval(this.#boundsTimer);
       this.#boundsTimer = undefined;
-      if (this.#hideShortcut) {
-        globalShortcut.unregister('CommandOrControl+H');
-        this.#hideShortcut = false;
-      }
       this.#syncLanKeys();
       this.#overlay?.destroy();
       this.#overlay = undefined;
@@ -68,13 +65,57 @@ export class WorldsDesktop {
   }
 
   #settings = { ...defaultWorldsPreferences };
+  checkShortcuts(value: WorldsShortcuts): void {
+    // Registering a probe through the Wayland portal can open its shortcut setup dialog.
+    if (
+      process.platform === 'linux' &&
+      (process.env.XDG_SESSION_TYPE === 'wayland' || process.env.WAYLAND_DISPLAY)
+    ) {
+      return;
+    }
+    const previous = new Set(Object.values(this.#settings.shortcuts));
+    const checked: string[] = [];
+    try {
+      for (const key of Object.values(value)) {
+        if (previous.has(key)) {
+          continue;
+        }
+        if (!globalShortcut.register(key, () => {})) {
+          throw new Error(worldsShortcutConflict);
+        }
+        checked.push(key);
+      }
+    } finally {
+      for (const key of checked) {
+        globalShortcut.unregister(key);
+      }
+    }
+  }
   async applySettings(value: WorldsPreferences): Promise<void> {
+    const changed = Object.keys(value.shortcuts).some(
+      (key) =>
+        value.shortcuts[key as keyof WorldsShortcuts] !==
+        this.#settings.shortcuts[key as keyof WorldsShortcuts],
+    );
+    const active = this.#shortcutsActive;
+    if (changed) {
+      this.#setShortcut(false);
+      for (const key of this.#lanKeys) {
+        globalShortcut.unregister(key);
+      }
+      this.#lanKeys.clear();
+    }
     this.#settings = value;
     if (!value.autoLanDetection) {
       clearTimeout(this.#lanTimer);
       this.#lanPrompt = false;
       this.#syncLanKeys();
       this.#overlay?.webContents.send('worlds:lan-prompt', false);
+    }
+    if (changed) {
+      this.#setShortcut(active);
+      this.#syncLanKeys();
+      this.#overlay?.webContents.send('worlds:shortcuts', value.shortcuts);
     }
     await this.configure({
       ...this.#preferences,
@@ -105,8 +146,9 @@ export class WorldsDesktop {
   #gameVersion = '';
   #intent = false;
   #compactHeight = 64;
-  #shortcut = false;
-  #hideShortcut = false;
+  #shortcutsActive = false;
+  #shortcut: string | undefined;
+  #hideShortcut: string | undefined;
   #hiddenByUser = false;
   #frame:
     | {
@@ -387,7 +429,7 @@ export class WorldsDesktop {
           message:
             error instanceof Error
               ? error.message
-              : 'No se pudo compartir el mundo. Abre Ctrl + B para reintentarlo.',
+              : 'No se pudo compartir el mundo. Abre Battly Worlds para reintentarlo.',
         });
       }
     }
@@ -402,11 +444,12 @@ export class WorldsDesktop {
       !!this.#frame?.visible &&
       !this.#blocksOverlay() &&
       !this.#hiddenByUser;
-    for (const key of ['Y', 'N']) {
+    const { acceptLan, dismissLan } = this.#settings.shortcuts;
+    for (const key of [acceptLan, dismissLan]) {
       if (enabled && !this.#lanKeys.has(key)) {
         if (
           globalShortcut.register(key, () => {
-            void this.respondLan(key === 'Y');
+            void this.respondLan(key === acceptLan);
           })
         ) {
           this.#lanKeys.add(key);
@@ -658,42 +701,52 @@ export class WorldsDesktop {
     if (this.#nativeClient()) {
       active = false;
     }
+    this.#shortcutsActive = active;
+    const { menu, visibility } = this.#settings.shortcuts;
     if (active && !this.#shortcut) {
-      this.#shortcut = globalShortcut.register('CommandOrControl+B', () => {
-        if (this.#companion) {
-          if (this.#overlay?.isVisible()) {
-            this.expand(false);
-          } else {
-            this.openGamePanel(false);
+      if (
+        globalShortcut.register(menu, () => {
+          if (this.#companion) {
+            if (this.#overlay?.isVisible()) {
+              this.expand(false);
+            } else {
+              this.openGamePanel(false);
+            }
+            return;
           }
-          return;
-        }
-        if (this.#blocksOverlay()) {
-          this.#explainFullscreen();
-          return;
-        }
-        const wasHidden = this.#hiddenByUser;
-        this.#hiddenByUser = false;
-        this.#intent = true;
-        this.#syncLanKeys();
-        this.expand(this.#lanPrompt ? false : wasHidden || !this.#expanded);
-      });
+          if (this.#blocksOverlay()) {
+            this.#explainFullscreen();
+            return;
+          }
+          const wasHidden = this.#hiddenByUser;
+          this.#hiddenByUser = false;
+          this.#intent = true;
+          this.#syncLanKeys();
+          this.expand(this.#lanPrompt ? false : wasHidden || !this.#expanded);
+        })
+      ) {
+        this.#shortcut = menu;
+      }
     } else if (!active && this.#shortcut) {
-      globalShortcut.unregister('CommandOrControl+B');
-      this.#shortcut = false;
+      globalShortcut.unregister(this.#shortcut);
+      this.#shortcut = undefined;
     }
     if (active && !this.#hideShortcut) {
-      this.#hideShortcut = globalShortcut.register('CommandOrControl+H', () => {
-        if (!this.#eligible()) {
-          return;
-        }
-        this.#hiddenByUser = !this.#hiddenByUser;
-        this.#syncLanKeys();
-        this.#place();
-      });
+      if (
+        globalShortcut.register(visibility, () => {
+          if (!this.#eligible()) {
+            return;
+          }
+          this.#hiddenByUser = !this.#hiddenByUser;
+          this.#syncLanKeys();
+          this.#place();
+        })
+      ) {
+        this.#hideShortcut = visibility;
+      }
     } else if (!active && this.#hideShortcut) {
-      globalShortcut.unregister('CommandOrControl+H');
-      this.#hideShortcut = false;
+      globalShortcut.unregister(this.#hideShortcut);
+      this.#hideShortcut = undefined;
     }
   }
   #blocksOverlay(): boolean {
@@ -984,6 +1037,7 @@ export class WorldsDesktop {
       overlay.webContents.send('worlds:game-version', this.#gameVersion);
       overlay.webContents.send('worlds:lan-prompt', this.#lanPrompt);
       overlay.webContents.send('worlds:overlay-preferences', this.#preferences);
+      overlay.webContents.send('worlds:shortcuts', this.#settings.shortcuts);
       if (this.#voiceStatus) {
         overlay.webContents.send(desktopChannels.worldsEvent, this.#voiceStatus);
       }

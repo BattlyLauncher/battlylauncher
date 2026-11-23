@@ -12,6 +12,7 @@ const loaderNames: Readonly<Record<string, string>> = {
   quilt: 'Quilt',
   optifine: 'OptiFine',
   labymod: 'LabyMod',
+  horizon: 'Horizon',
   vanilla: 'Vanilla',
 };
 
@@ -42,8 +43,17 @@ export function comparePlayOptions(
 
 export function formatPlayVersion(version = ''): string {
   version = version.trim();
+  if (/^battly client 3\.0(?:\.0)?$/i.test(version)) {
+    return 'Battly Client 3.0';
+  }
+  const battly = /^battly-(\d[\w.+-]*)$/i.exec(version);
+  if (battly) {
+    return `Battly Client ${battly[1]}`;
+  }
   const displayLoader =
-    /^(legacy[ -]?fabric|fabric|forge|neoforge|quilt|optifine|labymod)(?=\s)/i.exec(version);
+    /^(legacy[ -]?fabric|fabric|forge|neoforge|quilt|optifine|labymod|horizon)(?=\s)/i.exec(
+      version,
+    );
   if (displayLoader) {
     const name = loaderNames[displayLoader[1].toLowerCase().replace(/[ -]/g, '')];
     const label = name + version.slice(displayLoader[0].length);

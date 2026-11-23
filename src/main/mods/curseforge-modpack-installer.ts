@@ -11,7 +11,7 @@ import { writeFileAtomically } from '../files/atomic-file';
 
 const maximumArchiveBytes = 512 * 1024 * 1024;
 const maximumExtractedBytes = 1024 * 1024 * 1024;
-const maximumEntries = 10_000;
+const maximumEntries = 50_000;
 const maximumFiles = 10_000;
 const maximumDownloadBytes = 512 * 1024 * 1024;
 
@@ -367,38 +367,42 @@ export class CurseForgeModpackInstaller {
       let lastReported = 0;
       const totalOverrides = Math.max(1, overrideEntries.length);
       const reportEvery = Math.max(1, Math.ceil(totalOverrides / 100));
-      const queue = [...overrideEntries];
-      const workers = Array.from({ length: Math.min(8, Math.max(1, queue.length)) }, async () => {
-        while (queue.length) {
-          if (signal?.aborted) {
-            throw signal.reason;
+      let nextOverride = 0;
+      const workers = Array.from({ length: Math.min(8, overrideEntries.length) }, async () => {
+        try {
+          while (nextOverride < overrideEntries.length) {
+            signal?.throwIfAborted();
+            const entry = overrideEntries[nextOverride++];
+            const relativePath = entry.entryName.slice(overridePrefix.length);
+            const destination = safeDestination(staging, relativePath);
+            await mkdir(dirname(destination), { recursive: true });
+            await writeFile(destination, entry.getData());
+            extracted += 1;
+            if (
+              extracted === totalOverrides ||
+              extracted === 1 ||
+              extracted - lastReported >= reportEvery
+            ) {
+              lastReported = extracted;
+              onProgress?.({
+                phase: 'extracting',
+                current: extracted,
+                total: totalOverrides,
+                item: relativePath,
+                message: `Extrayendo archivos (${extracted}/${totalOverrides})`,
+              });
+            }
           }
-          const entry = queue.shift();
-          if (!entry) {
-            return;
-          }
-          const relativePath = entry.entryName.slice(overridePrefix.length);
-          const destination = safeDestination(staging, relativePath);
-          await mkdir(dirname(destination), { recursive: true });
-          await writeFile(destination, entry.getData());
-          extracted += 1;
-          if (
-            extracted === totalOverrides ||
-            extracted === 1 ||
-            extracted - lastReported >= reportEvery
-          ) {
-            lastReported = extracted;
-            onProgress?.({
-              phase: 'extracting',
-              current: extracted,
-              total: totalOverrides,
-              item: relativePath,
-              message: `Extrayendo archivos (${extracted}/${totalOverrides})`,
-            });
-          }
+        } catch (error) {
+          nextOverride = overrideEntries.length;
+          throw error;
         }
       });
-      await Promise.all(workers);
+      const result = (await Promise.allSettled(workers)).find((worker) => worker.status === 'rejected');
+      if (result) {
+        throw result.reason;
+      }
+      signal?.throwIfAborted();
       await this.#downloadFiles(pack.files, staging, signal, onProgress);
       await writeFileAtomically(
         join(staging, 'instance.json'),
@@ -547,8 +551,8 @@ export class CurseForgeModpackInstaller {
         headers: { accept: 'application/json' },
         redirect: 'error',
         signal: signal
-          ? AbortSignal.any([signal, AbortSignal.timeout(20_000)])
-          : AbortSignal.timeout(20_000),
+          ? AbortSignal.any([signal, AbortSignal.timeout(75_000)])
+          : AbortSignal.timeout(75_000),
       },
     );
     if (!response.ok) {

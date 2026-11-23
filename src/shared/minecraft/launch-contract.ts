@@ -24,6 +24,7 @@ export type MinecraftLaunchEvent =
       readonly item: string;
       readonly total: number;
       readonly type: 'progress';
+      readonly unit?: 'bytes' | 'files' | 'percent';
     }
   | {
       readonly current: number;
@@ -175,7 +176,10 @@ export function isMinecraftLaunchEvent(value: unknown): value is MinecraftLaunch
       typeof event.total === 'number' &&
       Number.isFinite(event.total) &&
       typeof event.item === 'string' &&
-      event.item.length <= 128
+      event.item.length <= 128 &&
+      (event.unit === undefined ||
+        (type === 'progress' &&
+          (event.unit === 'bytes' || event.unit === 'files' || event.unit === 'percent')))
     );
   }
   if (type === 'speed') {

@@ -4,6 +4,9 @@ const { mkdtemp, mkdir, writeFile, rm } = require('node:fs/promises');
 const { tmpdir } = require('node:os');
 const { join } = require('node:path');
 const { resolveMinecraftJava } = require('../dist/main/minecraft/minecraft-java-selection');
+const { prepareLaunchJava } = require('../dist/main/minecraft/prepare-launch-java');
+const javaExecutable = require('../dist/main/minecraft/java-executable');
+const { worldsPlayRequest } = require('../dist/shared/social/worlds-version');
 const {
   mergeLabyLwjglClasspath,
 } = require('../dist/main/minecraft/minecraft-launcher-core-adapter');
@@ -45,6 +48,48 @@ test('LabyMod 3 selects Java 8 despite a saved Java 21 requirement; LabyMod 4 ke
     assert.equal(ordinary.major, 17);
   } finally {
     await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('joining a LabyMod world switches away from an incompatible global Java path', async (t) => {
+  const root = await mkdtemp(join(tmpdir(), 'battly-laby-worlds-java-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const executable = process.platform === 'win32' ? 'javaw.exe' : 'java';
+  const base = join(root, 'versions', '1.8.9');
+  await mkdir(base, { recursive: true });
+  await writeFile(join(base, '1.8.9.json'), JSON.stringify({ javaVersion: { majorVersion: 8 } }));
+  t.mock.method(javaExecutable, 'inspectJavaRuntime', async (path) => ({
+    major: path.includes('java-21') ? 21 : 8,
+    bits: 64,
+    architecture: 'x64',
+  }));
+
+  for (const [id, configuredMajor, expectedMajor] of [
+    ['LabyMod-1.8', 8, 21],
+    ['LabyMod-3-1.8.9', 21, 8],
+  ]) {
+    const request = worldsPlayRequest(id, [{ id, custom: true, version: '1.8.9', loader: 'vanilla' }], '127.0.0.1:25565');
+    assert.deepEqual(request.directConnect, { host: '127.0.0.1', port: 25565 });
+    const managed = join(root, 'runtime', `java-${expectedMajor}`, 'bin');
+    await mkdir(managed, { recursive: true });
+    await writeFile(join(managed, executable), 'fixture');
+    const options = {
+      root,
+      engine: 'minecraft-launcher-core',
+      version: { id: request.version, customId: request.installedVersionId },
+      javaPath: join(root, 'configured', `java-${configuredMajor}`, executable),
+      javaArguments: [],
+    };
+    const preparation = {
+      contentRoot: root,
+      requiredJavaVersion: request.requiredJavaVersion,
+      install: async () => assert.fail('The compatible runtime already exists'),
+    };
+    assert.equal((await prepareLaunchJava(options, preparation, () => {})).javaPath, join(managed, executable));
+    await assert.rejects(
+      prepareLaunchJava(options, { ...preparation, explicitInstancePath: true }, () => {}),
+      /Java/,
+    );
   }
 });
 

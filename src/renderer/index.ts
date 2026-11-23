@@ -1,4 +1,5 @@
 import { musicOverlayEnabled } from '../shared/music/music-features';
+import { horizonArchive, horizonMinecraftVersion } from '../shared/minecraft/horizon';
 import { bindMusicOverlayWindow } from './music/music-overlay-window';
 import { filterInstanceLibrary } from './minecraft/instance-library-filters';
 import { CoalescedRefresh } from '../shared/coalesced-refresh';
@@ -57,6 +58,7 @@ import {
   readDisplaySettings,
 } from './ui/display-settings';
 import { mountWorldsSettings, setWorldsSettings, readWorldsSettings } from './ui/worlds-settings';
+import { worldsShortcutConflict } from '../shared/social/worlds-shortcuts';
 import { bindErrorReporter } from './ui/error-reporter';
 import { mountProfileEditor } from './ui/profile-editor';
 import { mountSettingsSubsections } from './ui/settings-subsections';
@@ -158,7 +160,7 @@ import DOMPurify from 'dompurify';
 import { Marked } from 'marked';
 import { mountMyBattlyPanel } from './panels/mybattly-panel';
 import { openInstanceContent } from './panels/instance-content';
-import { openBypackFlow } from './panels/bypack-panel';
+import { chooseInstanceExport, openInstanceCopy } from './panels/instance-actions';
 import { openBypackImportFlow } from './panels/bypack-import';
 import { mountOnboardingPanel } from './panels/onboarding-panel';
 import { loadServersPanel, mountServersPanel } from './panels/servers-panel';
@@ -339,6 +341,10 @@ import type {
   ModSearchRequest,
 } from '../shared/mods/mod-contract';
 import type { ModpackInstallProgress } from '../shared/mods/modpack-install-contract';
+import { curseForgeProjectId } from '../shared/mods/mod-contract';
+import { catalogImageUrl } from './ui/catalog-image';
+import modrinthMark from './assets/modrinth-mark.svg';
+import curseforgeMark from './assets/curseforge-mark.svg';
 import { modpackInstallPercent } from '../shared/mods/modpack-install-contract';
 import {
   buildGeneratedMusicCollections,
@@ -5110,13 +5116,16 @@ function bindSettings(): void {
           showToast('Ajustes guardados', 'Los cambios se aplicaron correctamente.', 'success');
           await activatePanel('home');
         })
-        .catch(() => {
+        .catch((error: unknown) => {
+          const message = error instanceof Error && error.message === worldsShortcutConflict
+            ? worldsShortcutConflict
+            : 'Revisa los valores e inténtalo de nuevo.';
           if (status) {
             status.textContent = 'No se pudieron guardar los ajustes';
           }
           showToast(
             'No se pudieron guardar los ajustes',
-            'Revisa los valores e inténtalo de nuevo.',
+            message,
             'error',
           );
         });
@@ -6578,9 +6587,13 @@ const playLoaderDefinitions = [
     'OptiFine',
     'Mejora el rendimiento y permite usar shaders y texturas HD.',
   ],
+  ['horizon', 'minecraft.png', 'Horizon', 'Minecraft en Rust.'],
 ] as const;
 
 function playIcon(version: string, loader = ''): string {
+  if (loader === 'horizon') {
+    return new URL('./assets/horizon.png', import.meta.url).href;
+  }
   const lower = version.toLowerCase().replace(/[\s_-]+/g, '');
   const icons: readonly (readonly [string, string])[] = [
     ['labymod', 'labymod.webp'],
@@ -6606,8 +6619,10 @@ function playIcon(version: string, loader = ''): string {
   ];
   const loaderFile = playLoaderDefinitions.find(([id]) => id === loader)?.[1];
   const file =
-    icons.find(([needle]) => lower.includes(needle))?.[1] ?? loaderFile ?? 'minecraft.png';
-  return new URL(`./legacy/assets/images/icons/${file}`, import.meta.url).href;
+    icons.find(([needle]) => lower.includes(needle))?.[1] ??
+    (/^battly-\d/i.test(version) ? 'battly.png' : loaderFile) ??
+    'minecraft.png';
+  return legacyImageUrls[`./legacy/assets/images/icons/${file}`] ?? defaultMinecraftIconUrl;
 }
 
 function formatPlayDate(value: string): string {
@@ -6732,8 +6747,8 @@ function selectPlayLoader(
     start.style.display = 'flex';
   }
   if (safe) {
-    safe.disabled = false;
-    safe.style.display = 'flex';
+    safe.disabled = loader === 'horizon';
+    safe.style.display = loader === 'horizon' ? 'none' : 'flex';
   }
   if (shortcut) {
     shortcut.disabled = false;
@@ -6767,10 +6782,13 @@ function renderPlayLoaders(requestedVersion: string): void {
   selectedPlayRequest = null;
   const selectedOption = versionSelect?.selectedOptions[0];
   const isCustom = selectedOption?.dataset.custom === 'true';
+  const standaloneLoader = selectedOption?.dataset.standaloneLoader;
   const installedVersions =
-    playVersionSnapshot?.installed.filter((entry) =>
-      isCustom ? entry.custom && entry.id === version : !entry.custom && entry.version === version,
-    ) ?? [];
+    playVersionSnapshot?.installed.filter((entry) => {
+      if (isCustom) {return entry.custom && entry.id === version;}
+      if (standaloneLoader) {return entry.id === version && entry.loader === standaloneLoader;}
+      return !entry.custom && entry.loader !== 'horizon' && entry.version === version;
+    }) ?? [];
   const installed =
     installedVersions.find((entry) => entry.loader === 'vanilla') ?? installedVersions[0];
   container.hidden = !installed || isCustom;
@@ -6798,7 +6816,7 @@ function renderPlayLoaders(requestedVersion: string): void {
     return;
   }
   const available = new Set(installedVersions.map((entry) => entry.loader));
-  for (const [id, iconFile, titleText, descriptionText] of playLoaderDefinitions) {
+  for (const [id, , titleText, descriptionText] of playLoaderDefinitions) {
     const button = document.createElement('div');
     button.className = 'loader-option';
     button.dataset.playLoader = id;
@@ -6810,12 +6828,12 @@ function renderPlayLoaders(requestedVersion: string): void {
     button.setAttribute('aria-label', titleText);
     button.style.display = available.has(id) ? 'flex' : 'none';
     const icon = document.createElement('img');
-    icon.src = new URL(`./legacy/assets/images/icons/${iconFile}`, import.meta.url).href;
+    icon.src = playIcon('', id);
     icon.alt = '';
     const copy = document.createElement('span');
     copy.className = 'button-span';
     const title = document.createElement('h1');
-    title.textContent = titleText;
+    title.textContent = id === 'horizon' ? 'Horizon · Beta' : titleText;
     const description = document.createElement('h2');
     description.textContent = descriptionText;
     copy.append(title, description);
@@ -6880,6 +6898,10 @@ function renderPlayLoaders(requestedVersion: string): void {
       }
     });
     container.append(button);
+    if (id === standaloneLoader) {choose();}
+  }
+  if (standaloneLoader) {
+    return;
   }
   if (status) {
     status.textContent = `Iniciarás la versión: ${formatPlayVersion(installed.id)}`;
@@ -6904,22 +6926,28 @@ function renderPlaySelector(snapshot: PlayVersionSnapshot): void {
   const compare = (a: InstalledPlayVersion, b: InstalledPlayVersion): number =>
     comparePlayOptions(a, b, sort, direction);
   const customEntries = snapshot.installed.filter((entry) => entry.custom).sort(compare);
+  const horizonEntries = snapshot.installed.filter(
+    (entry) => !entry.custom && entry.loader === 'horizon',
+  );
+  const regularEntries = snapshot.installed.filter(
+    (entry) => !entry.custom && entry.loader !== 'horizon',
+  );
   const minecraftVersions = [
-    ...new Set(snapshot.installed.filter((entry) => !entry.custom).map((entry) => entry.version)),
+    ...new Set(regularEntries.map((entry) => entry.version)),
   ].sort((left, right) => right.localeCompare(left, undefined, { numeric: true }));
-  const choices: { id: string; version: string; installedAt?: number; custom: boolean }[] =
+  const choices: { id: string; version: string; installedAt?: number; custom: boolean; loader?: string }[] =
     minecraftVersions.map((id) => ({
       id,
       version: id,
       custom: false,
       installedAt: Math.max(
         0,
-        ...snapshot.installed
-          .filter((entry) => !entry.custom && entry.version === id)
+        ...regularEntries
+          .filter((entry) => entry.version === id)
           .map((entry) => entry.installedAt ?? 0),
       ),
     }));
-  choices.push(...customEntries);
+  choices.push(...customEntries, ...horizonEntries);
   choices.sort((a, b) => comparePlayOptions(a, b, sort, direction));
   for (const entry of choices) {
     const option = document.createElement('option');
@@ -6928,11 +6956,15 @@ function renderPlaySelector(snapshot: PlayVersionSnapshot): void {
       option.dataset.custom = 'true';
     }
     option.title = entry.id;
-    option.textContent = formatPlayVersion(entry.id);
+    if (entry.loader === 'horizon' && !entry.custom) {
+      option.dataset.standaloneLoader = entry.loader;
+      option.textContent = playVersionLabel(entry.version, entry.loader, '');
+    } else {
+      option.textContent = formatPlayVersion(entry.id);
+    }
     version.append(option);
   }
-  const versions = [...minecraftVersions, ...customEntries.map((entry) => entry.id)];
-  if (versions.includes(selectedVersion)) {
+  if (choices.some((entry) => entry.id === selectedVersion)) {
     version.value = selectedVersion;
   }
   renderPlayLoaders(version.value);
@@ -7239,12 +7271,34 @@ function renderInstances(instances: readonly InstanceSummary[]): void {
     const exportPack = document.createElement('button');
     exportPack.type = 'button';
     exportPack.className = 'card-footer-item button instance-action';
-    exportPack.title = 'Exportar a .bypack';
+    exportPack.title = translateUiText('Exportar instancia');
     exportPack.dataset.instanceExport = '';
-    exportPack.setAttribute('aria-label', `Exportar ${instance.name} a .bypack`);
+    exportPack.setAttribute('aria-label', `${exportPack.title} · ${instance.name}`);
     exportPack.innerHTML =
-      '<i class="fa-solid fa-file-export" aria-hidden="true"></i><span class="btn-text">Exportar .bypack</span>';
-    exportPack.addEventListener('click', () => void openBypackFlow(instance));
+      '<i class="fa-solid fa-file-export" aria-hidden="true"></i><span class="btn-text"></span>';
+    exportPack.querySelector('.btn-text')!.textContent = translateUiText('Exportar');
+    exportPack.addEventListener('click', () => chooseInstanceExport(instance));
+    const duplicate = document.createElement('button');
+    duplicate.type = 'button';
+    duplicate.className = exportPack.className;
+    duplicate.title = translateUiText('Duplicar instancia');
+    duplicate.dataset.instanceDuplicate = '';
+    duplicate.setAttribute('aria-label', `${duplicate.title} · ${instance.name}`);
+    duplicate.innerHTML =
+      '<i class="fa-solid fa-copy" aria-hidden="true"></i><span class="btn-text"></span>';
+    duplicate.querySelector('.btn-text')!.textContent = translateUiText('Duplicar');
+    duplicate.addEventListener('click', () => {
+      openInstanceCopy(instance, (copy) => {
+        const current = knownInstances.some((entry) => entry.id === copy.id)
+          ? knownInstances
+          : [...knownInstances, copy];
+        renderInstances(current);
+        const status = document.querySelector<HTMLElement>('[data-instances-status]');
+        if (status) {
+          status.textContent = translateUiText('Instancia duplicada.');
+        }
+      });
+    });
     const shortcut = document.createElement('button');
     shortcut.type = 'button';
     shortcut.className = 'card-footer-item button instance-action';
@@ -7285,7 +7339,7 @@ function renderInstances(instances: readonly InstanceSummary[]): void {
           shortcut.disabled = false;
         });
     });
-    actions.append(open, openFolder, exportPack, shortcut, archive);
+    actions.append(open, openFolder, duplicate, exportPack, shortcut, archive);
     header.addEventListener('click', () => {
       const opening = content.style.display === 'none';
       if (opening && openedCard && openedCard !== card) {
@@ -7872,6 +7926,7 @@ function readableLaunchPhase(value: string): string {
     files: 'Comprobando archivos',
     'files-check': 'Comprobando archivos',
     fixture: 'Validando adaptador',
+    'horizon-prepare': 'Preparando Horizon',
     libraries: 'Descargando librerías',
     'libraries-check': 'Comprobando librerías',
     labymod: 'Instalando LabyMod',
@@ -7890,9 +7945,30 @@ function readableLaunchPhase(value: string): string {
   return labels[value.toLowerCase()] ?? 'Preparando Minecraft';
 }
 
-// A phase has no measurable global weight. Show its actual download ratio.
-function launchProgressForPhase(_phase: string, current = 0, total = 1): number {
-  return total > 0 ? Math.max(0, Math.min(100, (current / total) * 100)) : 0;
+function renderLaunchMeter(
+  progress: HTMLProgressElement | null,
+  percent: HTMLElement | null,
+  value: number | null,
+): void {
+  if (progress) {
+    progress.max = 100;
+    if (value === null) {progress.removeAttribute('value');}
+    else {progress.value = value;}
+  }
+  if (percent) {
+    percent.textContent = value === null ? '' : `${value}%`;
+  }
+}
+
+function launchProgressPercent(current: number, total: number): number | null {
+  return total > 0 ? Math.floor(Math.max(0, Math.min(100, (current / total) * 100))) : null;
+}
+
+function launchCounterPhase(event: 'progress' | 'check'): string {
+  if (event === 'check' && !/check|^files$|^version-json$/i.test(currentLaunchPhase)) {
+    return 'checking';
+  }
+  return currentLaunchPhase;
 }
 
 function renderInstanceLaunchEvent(event: MinecraftLaunchEvent): void {
@@ -7934,44 +8010,24 @@ function renderInstanceLaunchEvent(event: MinecraftLaunchEvent): void {
     if (phase) {
       setUiText(phase, readableLaunchPhase(event.phase));
     }
-    const checkingOrInstalling = isInstallOnlyPhase(event.phase);
-    const milestone = event.phase.toLowerCase() === 'ready' ? 100 : 0;
-    if (progress) {
-      progress.max = 100;
-      if (checkingOrInstalling) {
-        progress.removeAttribute('value');
-      } else {
-        progress.value = milestone;
-      }
-    }
-    if (percent) {
-      percent.textContent = checkingOrInstalling ? 'Comprobando' : `${milestone.toFixed(2)}%`;
-    }
-    if (speed) {
-      speed.hidden = checkingOrInstalling;
-    }
-    if (eta) {
-      eta.hidden = checkingOrInstalling;
-    }
+    renderLaunchMeter(progress, percent, event.phase.toLowerCase() === 'ready' ? 100 : null);
+    instanceLaunchTelemetry.sample = null;
+    if (speed) {speed.hidden = true;}
+    if (eta) {eta.hidden = true;}
   }
   if (event.type === 'progress' || event.type === 'check') {
-    const overall = launchProgressForPhase(currentLaunchPhase, event.current, event.total);
-    const installing = event.type === 'check' || isInstallOnlyPhase(currentLaunchPhase);
-    if (progress) {
-      progress.max = 100;
-      if (installing) {
-        progress.removeAttribute('value');
-      } else {
-        progress.value = overall;
-      }
-    }
-    if (percent) {
-      percent.textContent = installing ? 'Comprobando' : `${overall.toFixed(2)}%`;
-    }
+    const overall = launchProgressPercent(event.current, event.total);
+    const readable = readableLaunchPhase(launchCounterPhase(event.type));
+    renderLaunchMeter(progress, percent, overall);
+    if (message) {setUiText(message, readable);}
+    if (phase) {setUiText(phase, readable);}
     if (file) {
       file.textContent = `Archivo: ${event.item.split(/[\\/]/).at(-1) ?? event.item}`;
     }
-    const looksLikeBytes = event.total >= 1024;
+    const looksLikeBytes =
+      event.type === 'progress' &&
+      (event.unit === 'bytes' ||
+        (event.unit === undefined && !isInstallOnlyPhase(currentLaunchPhase) && event.total >= 1024));
     if (files) {
       files.textContent = looksLikeBytes
         ? `Archivos: ${instanceLaunchTelemetry.filesCompleted}/${Math.max(instanceLaunchTelemetry.filesStarted, instanceLaunchTelemetry.filesCompleted) || '—'}`
@@ -7983,12 +8039,12 @@ function renderInstanceLaunchEvent(event: MinecraftLaunchEvent): void {
         : `Progreso: ${event.current} / ${event.total}`;
     }
     if (speed) {
-      speed.hidden = installing || !looksLikeBytes;
+      speed.hidden = !looksLikeBytes;
     }
     if (eta) {
-      eta.hidden = installing || !looksLikeBytes;
+      eta.hidden = !looksLikeBytes;
     }
-    if (looksLikeBytes && !installing) {
+    if (looksLikeBytes && overall !== null) {
       const sampled = sampleTransfer(instanceLaunchTelemetry.sample, event, performance.now());
       instanceLaunchTelemetry.sample = sampled.state;
       if (sampled.sample) {
@@ -8000,9 +8056,6 @@ function renderInstanceLaunchEvent(event: MinecraftLaunchEvent): void {
           eta.textContent = `ETA: ${formatLaunchEta(sampled.sample.etaSeconds)}`;
         }
       }
-    }
-    if (phase) {
-      setUiText(phase, readableLaunchPhase(event.type === 'check' ? 'checking' : 'downloading'));
     }
   }
   if (event.type === 'speed') {
@@ -8035,12 +8088,6 @@ function renderInstanceLaunchEvent(event: MinecraftLaunchEvent): void {
     }
     if (files) {
       files.textContent = `Archivos: ${instanceLaunchTelemetry.filesCompleted}/${Math.max(instanceLaunchTelemetry.filesStarted, instanceLaunchTelemetry.filesCompleted)}`;
-    }
-    if (phase) {
-      setUiText(
-        phase,
-        readableLaunchPhase(event.type === 'file-complete' ? 'ready' : 'downloading'),
-      );
     }
   }
   if (event.type === 'client-ready') {
@@ -8214,56 +8261,41 @@ function renderLaunchEvent(event: MinecraftLaunchEvent): void {
     const readable = readableLaunchPhase(event.phase);
     if (phase) {
       phase.textContent = readable;
+      phase.removeAttribute('title');
     }
-    const milestone = event.phase.toLowerCase() === 'ready' ? 100 : 0;
-    if (milestone !== undefined && progress) {
-      progress.max = 100;
-      if (milestone === 0) {
-        progress.removeAttribute('value');
-      } else {
-        progress.value = milestone;
-      }
-      if (percent) {
-        percent.textContent = milestone === 0 ? 'Comprobando' : `${milestone}%`;
-      }
+    if (files) {
+      files.textContent = readable;
+      files.removeAttribute('title');
     }
+    lastLaunchProgressLog = '';
+    renderLaunchMeter(progress, percent, event.phase.toLowerCase() === 'ready' ? 100 : null);
     appendLaunchLog(`[fase] ${readable}`);
   }
-  if ((event.type === 'progress' || event.type === 'check') && progress) {
-    const progressPercent = Math.round((event.current / Math.max(1, event.total)) * 100);
-    const overall = launchProgressForPhase(currentLaunchPhase, event.current, event.total);
-    progress.max = 100;
-    if (event.type === 'check' || isInstallOnlyPhase(currentLaunchPhase)) {
-      progress.removeAttribute('value');
-      if (percent) {
-        percent.textContent = 'Comprobando';
-      }
-    } else {
-      progress.value = overall;
-      if (percent) {
-        percent.textContent = `${Math.round(overall)}%`;
-      }
-    }
+  if (event.type === 'progress' || event.type === 'check') {
+    const progressPercent = launchProgressPercent(event.current, event.total);
+    renderLaunchMeter(progress, percent, progressPercent);
+    const readable =
+      currentLaunchPhase === 'labymod' ? event.item : readableLaunchPhase(launchCounterPhase(event.type));
     if (phase) {
-      phase.textContent =
-        currentLaunchPhase === 'labymod' ? event.item : readableLaunchPhase(currentLaunchPhase);
+      phase.textContent = readable;
       phase.title = event.item;
     }
     if (files) {
-      files.textContent = `${event.type === 'check' ? 'Comprobando' : 'Descargando'} ${event.item}…`;
+      files.textContent = readable;
+      files.title = event.item;
     }
-    const unit = event.total >= 1_048_576 ? 'MB' : 'archivos';
-    const current =
-      unit === 'MB' ? `${(event.current / 1_048_576).toFixed(1)} MB` : String(event.current);
-    const total =
-      unit === 'MB' ? `${(event.total / 1_048_576).toFixed(1)} MB` : String(event.total);
-    const progressLog = `${event.item}|${progressPercent}`;
-    if (
-      progressLog !== lastLaunchProgressLog &&
-      (progressPercent % 5 === 0 || progressPercent === 100)
-    ) {
+    const unit = event.type === 'progress' ? event.unit : 'files';
+    const bytes = unit === 'bytes' || (unit === undefined && event.total >= 1_048_576);
+    const current = bytes ? formatLaunchBytes(event.current) : String(event.current);
+    const total = bytes ? formatLaunchBytes(event.total) : String(event.total);
+    const progressLog = `${event.item}|${Math.floor((progressPercent ?? 0) / 5)}`;
+    if (progressPercent !== null && progressLog !== lastLaunchProgressLog) {
       lastLaunchProgressLog = progressLog;
-      appendLaunchLog(`[progreso] ${event.item}: ${current} / ${total} (${progressPercent}%)`);
+      appendLaunchLog(
+        unit === 'percent'
+          ? `[progreso] ${event.item}: ${progressPercent}%`
+          : `[progreso] ${event.item}: ${current} / ${total} (${progressPercent}%)`,
+      );
     }
   }
   if (event.type === 'log') {
@@ -8582,12 +8614,7 @@ function startPlayVersion(
   if (files) {
     files.textContent = 'Comprobando archivos...';
   }
-  if (progress) {
-    progress.removeAttribute('value');
-  }
-  if (percent) {
-    percent.textContent = 'Comprobando';
-  }
+  renderLaunchMeter(progress, percent, null);
   launchLogLines = [];
   launchLogDecoder = new Log4jLogDecoder();
   lastLaunchProgressLog = '';
@@ -8785,7 +8812,6 @@ function bindLegacyDownloadPanel(): void {
   let selectedLoaderVersion: string | null = null;
   let selectedRequiredJava = '';
   let selectedLabyMod = false;
-  let selectedBattlyClient = false;
   let battlyBuildsRevision = 0;
   let versionsRevision = 0;
   let buildsRevision = 0;
@@ -8952,7 +8978,8 @@ function bindLegacyDownloadPanel(): void {
     loadingMinHeight = undefined;
   };
   let downloadCatalog: DownloadCatalogSnapshot | null = null;
-  const downloadArchitecture = window.battly.getAppInfo().then((info) => info.architecture);
+  const downloadAppInfo = window.battly.getAppInfo();
+  const downloadArchitecture = downloadAppInfo.then((info) => info.architecture);
   let is32BitDownload = false;
   let architectureNoticeOpen = false;
   const markIncompatible = (
@@ -8998,6 +9025,11 @@ function bindLegacyDownloadPanel(): void {
   }, 1500);
   const matchesSearch = (value: string, input: HTMLInputElement | null): boolean =>
     value.toLowerCase().includes(input?.value.trim().toLowerCase() ?? '');
+
+  const setClientCardIcon = (label: HTMLLabelElement, client: string): void => {
+    label.dataset.downloadClientCard = '';
+    label.style.setProperty('--download-card-logo', `url(${JSON.stringify(playIcon(client))})`);
+  };
 
   const markHot = (label: HTMLElement, ...ids: string[]): void => {
     if (label.classList.contains('download-incompatible')) {
@@ -9058,9 +9090,6 @@ function bindLegacyDownloadPanel(): void {
         { duration: 500, easing: 'ease' },
       );
     }
-    if (next === 'versions') {
-      search?.focus({ preventScroll: true });
-    }
     if (next === 'battlyClient') {
       battlyClientChannel?.focus({ preventScroll: true });
     }
@@ -9099,7 +9128,6 @@ function bindLegacyDownloadPanel(): void {
     selectedLoaderVersion = null;
     selectedRequiredJava = '';
     selectedLabyMod = false;
-    selectedBattlyClient = false;
     ++battlyBuildsRevision;
     if (search) {
       search.value = '';
@@ -9152,27 +9180,9 @@ function bindLegacyDownloadPanel(): void {
       if (!current()) {
         return;
       }
-      const battlyLabel = document.createElement('label');
-      battlyLabel.className = 'label';
-      const battlyInput = document.createElement('input');
-      battlyInput.type = 'radio';
-      battlyInput.name = 'download-version';
-      battlyInput.value = 'battly-client-4-entry';
-      const battlyText = document.createElement('p');
-      battlyText.className = 'texto';
-      battlyText.textContent = 'Battly Client 4.0';
-      battlyLabel.hidden = !matchesSearch(battlyText.textContent, search);
-      battlyInput.addEventListener('change', () => {
-        selectedBattlyClient = true;
-        selectedLabyMod = false;
-        selectedVersion = '';
-        showPage('battlyClient');
-        void renderBattlyClientBuilds();
-      });
-      battlyLabel.append(battlyInput, battlyText);
-      versions?.append(battlyLabel);
       const labyLabel = document.createElement('label');
       labyLabel.className = 'label';
+      setClientCardIcon(labyLabel, 'labymod');
       const labyInput = document.createElement('input');
       labyInput.type = 'radio';
       labyInput.name = 'download-version';
@@ -9183,7 +9193,6 @@ function bindLegacyDownloadPanel(): void {
       labyLabel.hidden = !matchesSearch(labyText.textContent, search);
       labyInput.addEventListener('change', () => {
         selectedLabyMod = true;
-        selectedBattlyClient = false;
         selectedVersion = '';
         selectedRequiredJava = '21';
         if (create) {
@@ -9233,6 +9242,7 @@ function bindLegacyDownloadPanel(): void {
       for (const client of clients) {
         const label = document.createElement('label');
         label.className = 'label';
+        setClientCardIcon(label, client.id);
         const input = document.createElement('input');
         input.type = 'radio';
         input.name = 'download-version';
@@ -9243,7 +9253,6 @@ function bindLegacyDownloadPanel(): void {
         label.hidden = !matchesSearch(`${client.name} ${client.id}`, search);
         input.addEventListener('change', () => {
           selectedLabyMod = false;
-          selectedBattlyClient = false;
           selectedVersion = client.id;
           selectedRequiredJava = client.requiredJavaVersion ?? '';
           if (create) {
@@ -9273,11 +9282,14 @@ function bindLegacyDownloadPanel(): void {
     ].includes(selectedLoader)
       ? (selectedLoader as MinecraftLoaderKind)
       : null;
-    const loaderValues = officialLoader
-      ? await loaderCatalog
-          .gameVersions(officialLoader)
-          .then((snapshot) => snapshot.versions.map((entry) => entry.version))
-      : [...new Set(loaderEntries.map((entry) => entry.realVersion))];
+    const loaderValues =
+      selectedLoader === 'horizon'
+        ? [horizonMinecraftVersion]
+        : officialLoader
+          ? await loaderCatalog
+              .gameVersions(officialLoader)
+              .then((snapshot) => snapshot.versions.map((entry) => entry.version))
+          : [...new Set(loaderEntries.map((entry) => entry.realVersion))];
     if (!current()) {
       return;
     }
@@ -9300,6 +9312,15 @@ function bindLegacyDownloadPanel(): void {
       input.name = 'download-version';
       input.value = value;
       markIncompatible(input, label, value);
+      if (selectedLoader === 'horizon') {
+        const { platform, architecture } = await downloadAppInfo;
+        if (!current()) {return;}
+        if (!horizonArchive(platform, architecture ?? '')) {
+          input.disabled = true;
+          label.classList.add('download-incompatible');
+          label.title = 'Horizon no está disponible para esta plataforma.';
+        }
+      }
       const text = document.createElement('p');
       text.className = 'texto';
       text.textContent = value;
@@ -9394,9 +9415,7 @@ function bindLegacyDownloadPanel(): void {
               setUiText(
                 buildText,
                 selectedLoader === 'optifine'
-                  ? /pre\d/i.test(build)
-                    ? `HD ${build.replaceAll('_', ' ')} · Vista previa`
-                    : `HD ${build.replaceAll('_', ' ')}`
+                  ? `HD ${build.replaceAll('_', ' ')}`
                   : build,
               );
               buildLabel.hidden = !matchesSearch(build, loaderVersionSearch);
@@ -9431,11 +9450,11 @@ function bindLegacyDownloadPanel(): void {
   document.querySelectorAll<HTMLInputElement>('input[name="download-loader"]').forEach((input) => {
     input.addEventListener('change', () => {
       selectedLoader = input.value;
-      selectedBattlyClient = false;
       selectedLabyMod = false;
       ++battlyBuildsRevision;
       selectedVersion = '';
       selectedLoaderVersion = null;
+      selectedRequiredJava = '';
       if (optiForge) {
         optiForge.checked = false;
       }
@@ -9444,6 +9463,11 @@ function bindLegacyDownloadPanel(): void {
       }
       if (!selectedLoader) {
         showPage('vanilla');
+        return;
+      }
+      if (selectedLoader === 'battly-client') {
+        showPage('battlyClient');
+        void renderBattlyClientBuilds();
         return;
       }
       void renderVersions().catch(() => {
@@ -9499,7 +9523,6 @@ function bindLegacyDownloadPanel(): void {
     selectedVersion = '';
     selectedLoaderVersion = null;
     selectedLabyMod = false;
-    selectedBattlyClient = false;
     ++battlyBuildsRevision;
     pages[previous]?.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((input) => {
       input.checked = false;
@@ -9517,7 +9540,16 @@ function bindLegacyDownloadPanel(): void {
     }
     create.disabled = true;
     create.textContent = 'Preparando…';
-    const label = `${selectedVersion}${selectedLoader && selectedLoader !== 'clients' ? ` ${selectedLoader}` : ''}`;
+    const selectedClientName = versions?.querySelector<HTMLInputElement>('input:checked')
+      ?.closest('label')?.querySelector('.texto')?.textContent;
+    const label =
+      selectedLoader === 'horizon'
+        ? `Horizon ${selectedVersion}`
+        : selectedLoader === 'battly-client'
+          ? 'Battly Client'
+          : selectedLoader === 'clients'
+            ? selectedClientName || selectedVersion
+            : `${selectedVersion}${selectedLoader ? ` ${selectedLoader}` : ''}`;
     const launchDialog = document.querySelector<HTMLDialogElement>('[data-launch-dialog]');
     launchDialog?.classList.add('is-installing');
     if (launchDialog && !launchDialog.open) {
@@ -9562,13 +9594,8 @@ function bindLegacyDownloadPanel(): void {
     if (launchFiles) {
       launchFiles.textContent = 'Comprobando archivos...';
     }
-    if (launchProgress) {
-      launchProgress.value = 0;
-    }
-    if (launchPercent) {
-      launchPercent.textContent = '0%';
-    }
-    const operation = selectedBattlyClient
+    renderLaunchMeter(launchProgress, launchPercent, null);
+    const operation = selectedLoader === 'battly-client'
       ? window.battly.installBattlyClient(selectedVersion).then((installed) => {
           startPlayVersion(
             {
@@ -9628,7 +9655,9 @@ function bindLegacyDownloadPanel(): void {
                   custom: false,
                   customVersion: '',
                   loader: selectedLoader || 'vanilla',
-                  loaderVersion: selectedLoaderVersion ?? (selectedLoader ? 'latest' : ''),
+                  loaderVersion:
+                    selectedLoaderVersion ??
+                    (selectedLoader && selectedLoader !== 'horizon' ? 'latest' : ''),
                   installOptiForge: selectedLoader === 'forge' && optiForge?.checked === true,
                   requiredJavaVersion: selectedRequiredJava,
                   safeMode: false,
@@ -9856,9 +9885,14 @@ function bindInstances(): void {
           status.textContent = '';
         }
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (status) {
-          status.textContent = 'No se pudieron cargar las instancias';
+          setUiText(
+            status,
+            error instanceof Error && error.message === 'BATTLY_PRIVATE_DATA_UNREADABLE'
+              ? 'Battly no puede leer las instancias con la clave de este perfil. Las carpetas se conservan. Para recuperarlas, restaura una copia del perfil original de Battly.'
+              : 'No se pudieron cargar las instancias',
+          );
         }
         instanceList?.replaceChildren();
       })
@@ -10432,19 +10466,57 @@ let modsSearchGeneration = 0;
 let modsNetworkOnline = navigator.onLine;
 const modsPageSize = 40;
 
+function isCurseForgeCatalog(): boolean {
+  return document.querySelector<HTMLSelectElement>('[data-mod-provider]')?.value === 'curseforge';
+}
+
+function syncModCatalogFilters(): void {
+  const curseForge = isCurseForgeCatalog();
+  const type = document.querySelector<HTMLSelectElement>('[data-mod-project-type]')?.value;
+  const category = document.querySelector<HTMLSelectElement>('[data-mod-category]');
+  if (category) {
+    category.disabled = Boolean(type && type !== 'mod');
+  }
+  const sort = document.querySelector<HTMLSelectElement>('[data-mod-sort]');
+  const follows = sort?.querySelector<HTMLOptionElement>('option[value="follows"]');
+  if (sort && follows) {
+    follows.disabled = curseForge;
+    if (curseForge && sort.value === 'follows') {
+      sort.value = 'relevance';
+    }
+  }
+  const credit = document.querySelector<HTMLElement>('[data-mod-provider-credit]');
+  if (credit) {
+    const provider = document.querySelector<HTMLSelectElement>('[data-mod-provider]')?.value;
+    const names = provider === 'all' ? ['Modrinth', 'CurseForge'] : [curseForge ? 'CurseForge' : 'Modrinth'];
+    const parts = new Intl.ListFormat(document.documentElement.lang || 'es').formatToParts(names);
+    credit.replaceChildren(...parts.map(({ type, value }) => {
+      if (type === 'literal') {
+        return document.createTextNode(value);
+      }
+      const name = document.createElement('strong');
+      name.dataset.catalogCredit = value.toLowerCase();
+      name.textContent = value;
+      return name;
+    }));
+  }
+}
+
 function modSearchRequest(): ModSearchRequest {
   const value = (selector: string): string =>
     document.querySelector<HTMLInputElement | HTMLSelectElement>(selector)?.value ?? '';
   const projectType = value('[data-mod-project-type]');
   const loader = value('[data-mod-loader]');
+  const provider = value('[data-mod-provider]');
   const gameVersions = [...document.querySelectorAll<HTMLInputElement>('[data-mod-game-version]')]
     .filter((checkbox) => checkbox.checked)
     .map((checkbox) => checkbox.value);
   return {
+    provider: provider === 'modrinth' || provider === 'curseforge' ? provider : 'all',
     query: value('[data-mod-query]'),
     sort: value('[data-mod-sort]') as ModSearchRequest['sort'],
     loader: loader || null,
-    category: null,
+    category: !projectType || projectType === 'mod' ? value('[data-mod-category]') || null : null,
     projectType: (projectType || null) as ModProjectType | null,
     gameVersions,
     offset: modsOffset,
@@ -10489,7 +10561,7 @@ function installModProject(
   } else {
     const installingIcon = document.querySelector<HTMLImageElement>('[data-mod-installing-icon]');
     if (installingIcon) {
-      installingIcon.src = project.iconUrl ?? battlyIconUrl;
+      installingIcon.src = catalogImageUrl(project.iconUrl ?? '') || battlyIconUrl;
       installingIcon.onerror = () => {
         installingIcon.onerror = null;
         installingIcon.src = battlyIconUrl;
@@ -10514,6 +10586,9 @@ function installModProject(
       setStatus('');
       button.textContent = 'Instalado';
       if (installingModpack) {
+        if (activeModProject?.id === project.id) {
+          document.querySelector<HTMLDialogElement>('[data-mod-detail-dialog]')?.close();
+        }
         finishModpackInstallModal(`${project.title} instalado`, true);
         if (result.instance) {
           void offerOpenInstalledModpack(result.instance);
@@ -10540,7 +10615,7 @@ function installModProject(
     .catch((error: unknown) => {
       const message =
         error instanceof Error ? error.message : `No se pudo instalar ${project.title}`;
-      setStatus(userErrorMessage(message));
+      setStatus(translateUiText(userErrorMessage(message)));
       if (installingModpack) {
         finishModpackInstallModal(message, false);
       }
@@ -10568,7 +10643,7 @@ function modInstallRequest(project: ModProjectSummary): ModInstallRequest | null
     ? {
         projectId: project.id,
         gameVersion,
-        loader: loader ?? 'minecraft',
+        loader: project.projectType === 'datapack' ? 'datapack' : loader ?? 'minecraft',
         projectType: project.projectType,
       }
     : null;
@@ -10584,10 +10659,19 @@ function renderModMarkdown(target: HTMLElement, markdown: string): void {
   const rendered = modMarkdown.parse(markdown);
   const sanitized = DOMPurify.sanitize(typeof rendered === 'string' ? rendered : '', {
     USE_PROFILES: { html: true },
-    FORBID_TAGS: ['form', 'iframe', 'object', 'embed', 'style'],
-    FORBID_ATTR: ['style'],
+    FORBID_TAGS: ['form', 'iframe', 'object', 'embed', 'style', 'video', 'audio', 'source', 'track', 'input', 'link'],
+    FORBID_ATTR: ['style', 'srcset', 'poster', 'background', 'ping'],
+    RETURN_DOM_FRAGMENT: true,
   });
-  target.innerHTML = sanitized;
+  sanitized.querySelectorAll<HTMLImageElement>('img').forEach((image) => {
+    const src = catalogImageUrl(image.getAttribute('src') ?? '');
+    if (src) {
+      image.src = src;
+    } else {
+      image.remove();
+    }
+  });
+  target.replaceChildren(sanitized);
   target.querySelectorAll('table').forEach((table) => {
     const scroll = document.createElement('div');
     scroll.className = 'mod-markdown-table-scroll';
@@ -10680,7 +10764,7 @@ function renderModDetail(detail: ModProjectDetail): void {
   for (const image of detail.gallery) {
     const card = document.createElement('figure');
     const picture = document.createElement('img');
-    picture.src = image.url;
+    picture.src = catalogImageUrl(image.url) || battlyIconUrl;
     picture.alt = image.title ?? image.description ?? '';
     picture.loading = 'lazy';
     picture.referrerPolicy = 'no-referrer';
@@ -10721,7 +10805,7 @@ function renderModDetail(detail: ModProjectDetail): void {
     const row = document.createElement('div');
     row.className = 'mod-detail-creator';
     const avatar = document.createElement('img');
-    avatar.src = creator.avatarUrl ?? battlyIconUrl;
+    avatar.src = catalogImageUrl(creator.avatarUrl ?? '') || battlyIconUrl;
     avatar.alt = '';
     const copy = document.createElement('span');
     const name = document.createElement('strong');
@@ -10766,7 +10850,7 @@ function renderModDetail(detail: ModProjectDetail): void {
       if (!activeModProject) {
         return;
       }
-      if (activeModProject.projectType === 'modpack') {
+      if (activeModProject.projectType === 'modpack' || activeModProject.projectType === 'datapack') {
         void openModDownloadDialog(activeModProject);
         return;
       }
@@ -10829,7 +10913,14 @@ function openModDetail(project: ModProjectSummary): void {
     .forEach((element) => element.replaceChildren());
   const install = dialog?.querySelector<HTMLButtonElement>('[data-mod-detail-install]');
   dialog?.querySelector('[data-basket-detail]')?.remove();
-  const detailBasket = modBasket.button(project);
+  const curseForge = Boolean(curseForgeProjectId(project.id));
+  const detailBasket = curseForge ? null : modBasket.button(project);
+  const external = dialog?.querySelector<HTMLButtonElement>('[data-mod-detail-info]');
+  if (external) {
+    const label = translateUiText(curseForge ? 'Abrir en CurseForge' : 'Abrir en Modrinth');
+    external.title = label;
+    external.setAttribute('aria-label', label);
+  }
   if (detailBasket) {
     detailBasket.dataset.basketDetail = '';
     install?.after(detailBasket);
@@ -10838,7 +10929,7 @@ function openModDetail(project: ModProjectSummary): void {
     install.disabled = true;
   }
   if (icon) {
-    icon.src = project.iconUrl ?? battlyIconUrl;
+    icon.src = catalogImageUrl(project.iconUrl ?? '') || battlyIconUrl;
   }
   const set = (selector: string, value: string): void => {
     const element = document.querySelector<HTMLElement>(selector);
@@ -10924,6 +11015,7 @@ function openModDetail(project: ModProjectSummary): void {
 let modDownloadRevision = 0;
 async function openModDownloadDialog(project: ModProjectSummary): Promise<void> {
   const revision = ++modDownloadRevision;
+  const curseForge = Boolean(curseForgeProjectId(project.id));
   const dialog = document.querySelector<HTMLDialogElement>('[data-mod-download-dialog]');
   const loaders = document.querySelector<HTMLElement>('[data-mod-download-loaders]');
   const game = document.querySelector<HTMLSelectElement>('[data-mod-download-game]');
@@ -10935,6 +11027,8 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
     '[data-mod-download-destination-section]',
   );
   const destination = document.querySelector<HTMLSelectElement>('[data-mod-download-destination]');
+  const worldsSection = document.querySelector<HTMLElement>('[data-mod-download-world-section]');
+  const world = document.querySelector<HTMLSelectElement>('[data-mod-download-world]');
   const destinationWarning = document.querySelector<HTMLElement>(
     '[data-mod-download-destination-warning]',
   );
@@ -10948,6 +11042,11 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
     status.textContent = '';
   }
   const showsDestination = project.projectType !== 'modpack';
+  const needsWorld = project.projectType === 'datapack';
+  if (worldsSection) {
+    worldsSection.hidden = !needsWorld;
+  }
+  world?.replaceChildren();
   if (destinationSection) {
     destinationSection.hidden = !showsDestination;
   }
@@ -10970,10 +11069,12 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
   }
   let catalog: Awaited<ReturnType<typeof window.battly.getModVersionCatalog>>;
   let instances: readonly InstanceSummary[];
+  let worlds: Awaited<ReturnType<typeof window.battly.getBackupWorlds>>;
   try {
-    [catalog, instances] = await Promise.all([
+    [catalog, instances, worlds] = await Promise.all([
       window.battly.getModVersionCatalog(project.id),
       destination && showsDestination ? window.battly.getInstances().catch(() => []) : [],
+      needsWorld ? window.battly.getBackupWorlds().catch(() => []) : [],
     ]);
   } catch {
     if (revision !== modDownloadRevision || !dialog.open) {
@@ -10982,7 +11083,9 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
     game.replaceChildren(new Option('No se pudo cargar el catálogo', ''));
     versions.replaceChildren(new Option('Vuelve a abrir para reintentar', ''));
     if (status) {
-      status.textContent = 'Error al consultar Modrinth. No se ha comprobado la compatibilidad.';
+      status.textContent = curseForge
+        ? translateUiText('No se pudo consultar el catálogo de CurseForge. Inténtalo de nuevo.')
+        : 'Error al consultar Modrinth. No se ha comprobado la compatibilidad.';
     }
     return;
   }
@@ -10990,7 +11093,7 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
     return;
   }
   const serverDestinations =
-    project.projectType === 'mod' ? await window.battly.getServers().catch(() => []) : [];
+    project.projectType === 'mod' && !curseForge ? await window.battly.getServers().catch(() => []) : [];
   if (revision !== modDownloadRevision || !dialog.open) {
     return;
   }
@@ -11023,6 +11126,11 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
       destination.append(group);
     }
     destination.disabled = false;
+  }
+  if (project.projectType === 'datapack') {
+    catalog = catalog.filter((entry) => entry.loaders.includes('datapack')).map((entry) => ({
+      ...entry, loaders: ['datapack'],
+    }));
   }
   const supportedLoaders = [...new Set(catalog.flatMap((version) => [...version.loaders]))];
   if (!supportedLoaders.length) {
@@ -11114,13 +11222,34 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
       });
   };
   if (destination) {
+    const updateWorlds = (): void => {
+      if (!needsWorld || !world) {
+        return;
+      }
+      const available = worlds.filter((entry) => (entry.instanceId ?? '') === destination.value);
+      world.replaceChildren(new Option(
+        translateUiText(available.length ? 'Elige un mundo' : 'No hay mundos en esta instalación.'),
+        '',
+      ));
+      available.forEach((entry) => world.add(new Option(entry.name, entry.name)));
+      if (available.length === 1) {
+        world.value = available[0].name;
+      }
+      confirm.disabled = true;
+    };
+    updateWorlds();
     destination.onchange = () => {
       const server = serverDestinations.find((entry) => `server:${entry.id}` === destination.value);
-      game.disabled = Boolean(server);
+      const instance = curseForge || needsWorld
+        ? instances.find((entry) => entry.id === destination.value)
+        : undefined;
+      const targetLoader = server?.software.kind ??
+        (project.projectType === 'mod' ? instance?.loader?.toLowerCase() : selectedLoader());
+      game.disabled = Boolean(server || instance);
       loaders.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
-        input.disabled = Boolean(server);
-        if (server) {
-          input.checked = input.value === server.software.kind;
+        input.disabled = Boolean(server || instance);
+        if (server || instance) {
+          input.checked = input.value === targetLoader;
         }
       });
       if (destinationWarning) {
@@ -11130,8 +11259,9 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
           : 'Comprueba que la versión y el loader coinciden con la instancia.';
       }
       buildGameOptions();
-      if (server) {
-        game.value = server.software.gameVersion ?? server.version;
+      updateWorlds();
+      if (server || instance) {
+        game.value = server ? server.software.gameVersion ?? server.version : instance?.version ?? '';
         loadVersions();
       }
     };
@@ -11141,9 +11271,11 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
   loaders.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
     input.onchange = buildGameOptions;
   });
-  versions.onchange = () => {
-    confirm.disabled = !versions.value;
-  };
+  const updateConfirm = () => { confirm.disabled = !versions.value || (needsWorld && !world?.value); };
+  versions.onchange = updateConfirm;
+  if (world) {
+    world.onchange = updateConfirm;
+  }
 }
 
 function renderModProjects(projects: readonly ModProjectSummary[]): void {
@@ -11158,8 +11290,12 @@ function renderModProjects(projects: readonly ModProjectSummary[]): void {
     card.setAttribute('role', 'button');
     card.setAttribute('aria-label', `Ver detalles de ${project.title}`);
     const icon = document.createElement('img');
-    icon.src = project.iconUrl ?? battlyIconUrl;
+    icon.src = catalogImageUrl(project.iconUrl ?? '') || battlyIconUrl;
     icon.alt = project.title;
+    icon.onerror = () => {
+      icon.onerror = null;
+      icon.src = battlyIconUrl;
+    };
     icon.loading = 'lazy';
     icon.referrerPolicy = 'no-referrer';
     const copy = document.createElement('div');
@@ -11194,8 +11330,14 @@ function renderModProjects(projects: readonly ModProjectSummary[]): void {
       setUiText(recommendation, 'Recomendado por Battly');
       title.append(recommendation);
     }
-    card.append(icon, copy);
-    const basketButton = modBasket.button(project);
+    const providerLogo = document.createElement('img');
+    providerLogo.className = 'b-mod-provider-logo';
+    const fromCurseForge = Boolean(curseForgeProjectId(project.id));
+    providerLogo.src = fromCurseForge ? curseforgeMark : modrinthMark;
+    providerLogo.alt = fromCurseForge ? 'CurseForge' : 'Modrinth';
+    providerLogo.title = providerLogo.alt;
+    card.append(icon, copy, providerLogo);
+    const basketButton = curseForgeProjectId(project.id) ? null : modBasket.button(project);
     if (basketButton) {
       card.append(basketButton);
     }
@@ -11227,6 +11369,7 @@ function resetModsControls(): void {
   set('[data-mod-query]', '');
   set('[data-mod-sort]', 'relevance');
   set('[data-mod-loader]', '');
+  set('[data-mod-category]', '');
   set('[data-mod-project-type]', '');
   document.querySelectorAll<HTMLInputElement>('[data-mod-game-version]').forEach((checkbox) => {
     checkbox.checked = false;
@@ -11279,12 +11422,17 @@ function renderModsMessageState(
 
 function searchMods(): void {
   const generation = ++modsSearchGeneration;
+  syncModCatalogFilters();
+  const request = modSearchRequest();
+  const curseForge = request.provider === 'curseforge';
   const status = document.querySelector<HTMLElement>('[data-mod-status]');
   if (status) {
-    status.textContent = 'Buscando en Modrinth…';
+    status.textContent = translateUiText(
+      request.provider === 'all' ? 'Buscando contenido…' : curseForge ? 'Buscando en CurseForge…' : 'Buscando en Modrinth…',
+    );
   }
   void window.battly
-    .searchMods(modSearchRequest())
+    .searchMods(request)
     .then((result) => {
       if (generation !== modsSearchGeneration) {
         return;
@@ -11317,17 +11465,17 @@ function searchMods(): void {
         status.textContent = '';
       }
     })
-    .catch(() => {
+    .catch((error: unknown) => {
       if (generation !== modsSearchGeneration) {
         return;
       }
       const offline = !modsNetworkOnline;
       const message = offline
         ? 'Sin conexión. Tus mods locales siguen disponibles desde «Mis mods».'
-        : 'Modrinth no respondió. Reintenta dentro de unos segundos.';
+        : translateUiText(userErrorMessage(error, 'No se pudo cargar el catálogo de mods.'));
       renderModsMessageState(
         offline ? 'offline' : 'error',
-        offline ? 'Estás sin conexión' : 'No se pudo cargar Modrinth',
+        offline ? 'Estás sin conexión' : 'No se pudo cargar el catálogo de mods.',
         message,
       );
       if (status) {
@@ -12081,8 +12229,8 @@ function openModpackInstallModal(name: string, project?: ModProjectSummary): voi
   setInstallArtwork(
     dialog,
     name,
-    project?.featuredGallery || project?.gallery?.[0] || instanceLoaderBanner(null),
-    project?.iconUrl,
+    catalogImageUrl(project?.featuredGallery || project?.gallery?.[0] || '') || instanceLoaderBanner(null),
+    catalogImageUrl(project?.iconUrl ?? ''),
   );
   dialog?.removeAttribute('data-failed');
   const heading = document.querySelector<HTMLElement>('#modpack-install-title');
@@ -12591,7 +12739,7 @@ function bindMods(): void {
     });
   document
     .querySelectorAll<HTMLSelectElement>(
-      '[data-mod-sort], [data-mod-loader], [data-mod-project-type]',
+      '[data-mod-sort], [data-mod-loader], [data-mod-project-type], [data-mod-provider], [data-mod-category]',
     )
     .forEach((select) =>
       select.addEventListener('change', () => {
@@ -12678,7 +12826,11 @@ function bindMods(): void {
       const destinationInstanceId = document.querySelector<HTMLSelectElement>(
         '[data-mod-download-destination]',
       )?.value;
-      if (!gameVersion || !loader || !versionId) {
+      const destinationWorld = activeModProject.projectType === 'datapack'
+        ? document.querySelector<HTMLSelectElement>('[data-mod-download-world]')?.value
+        : undefined;
+      if (!gameVersion || !loader || !versionId ||
+          (activeModProject.projectType === 'datapack' && !destinationWorld)) {
         return;
       }
       const button = event.currentTarget as HTMLButtonElement;
@@ -12688,6 +12840,7 @@ function bindMods(): void {
         gameVersion,
         loader,
         versionId,
+        ...(destinationWorld ? { destinationWorld } : {}),
         ...(destinationInstanceId?.startsWith('server:')
           ? { destinationServerId: destinationInstanceId.slice(7) }
           : destinationInstanceId

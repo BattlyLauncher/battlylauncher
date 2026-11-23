@@ -70,8 +70,58 @@
 }
 .bypack-dialog footer {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   justify-content: flex-end;
   margin-top: 20px;
+}
+.instance-action-dialog h2 {
+  margin-bottom: 4px;
+}
+.instance-action-dialog form,
+.instance-action-dialog form > label {
+  display: grid;
+  gap: 8px;
+}
+.instance-action-dialog form,
+.instance-export-options {
+  margin-top: 16px;
+}
+.instance-action-dialog fieldset {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 205px), 1fr));
+  gap: 12px;
+  padding: 14px;
+  margin-top: 8px;
+  border: 1px solid #35516e;
+  border-radius: 8px;
+}
+.instance-action-dialog legend {
+  padding-inline: 6px;
+}
+.instance-action-dialog fieldset label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.instance-action-dialog input[type='checkbox'] {
+  accent-color: var(--theme-color, #247ac2);
+}
+.instance-action-dialog .instance-action-primary {
+  background: var(--theme-color, #247ac2);
+}
+.instance-export-options {
+  display: grid;
+  gap: 10px;
+}
+.instance-export-options button {
+  text-align: start;
+}
+.instance-export-options small {
+  display: block;
+  margin-top: 4px;
+  color: #b4c1d1;
 }
 .bypack-dialog button,
 [data-bypack-import] {

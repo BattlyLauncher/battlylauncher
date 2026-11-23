@@ -135,12 +135,16 @@ async function startDev() {
   }
   const env = { ...process.env, BATTLY_DEV: '1' };
   delete env.ELECTRON_RUN_AS_NODE;
-  const child = spawn(executable, ['.', ...process.argv.slice(2)], {
-    cwd: root,
-    env,
-    stdio: 'inherit',
-    windowsHide: true,
-  });
+  const child = spawn(
+    executable,
+    [path.join(__dirname, 'dev-entry.cjs'), ...process.argv.slice(2)],
+    {
+      cwd: root,
+      env,
+      stdio: 'inherit',
+      windowsHide: true,
+    },
+  );
   const interrupt = () => {
     if (child.exitCode === null) child.kill();
   };

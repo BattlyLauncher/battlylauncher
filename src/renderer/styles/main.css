@@ -656,20 +656,6 @@ a[href]:focus-visible,
 .modpack-install-modal h3 {
   color: #fff !important;
 }
-.modpack-install-modal textarea {
-  height: 100px;
-  overflow-y: auto;
-  resize: none;
-  border: 1px solid #1e2a47 !important;
-  border-radius: 15px !important;
-  color: #fff !important;
-  background: #1e2a47 !important;
-  font:
-    500 13px/1.4 'Battly Emoji',
-    Poppins,
-    'Battly Emoji Sequences',
-    sans-serif !important;
-}
 .modpack-install-progress-copy {
   display: flex;
   gap: 16px;
@@ -2211,8 +2197,7 @@ body:not([data-panel='mybattly']) [data-guided-tutorial='mybattly'] {
   background: transparent;
 }
 
-body:has(.music-mini-player:not([hidden])) .guided-tutorial-prompt,
-body:has(.music-mini-player:not([hidden])) [data-guided-tutorial] .home-tutorial-card {
+body:has(.music-mini-player:not([hidden])) .guided-tutorial-prompt {
   bottom: 154px;
 }
 .home-tutorial {
@@ -2228,19 +2213,19 @@ body:has(.music-mini-player:not([hidden])) [data-guided-tutorial] .home-tutorial
   inset: 0;
   background: transparent;
 }
+.home-tutorial:has(.home-tutorial-focus[hidden]) .home-tutorial-backdrop {
+  background: rgb(0 0 0 / 57%);
+}
 .home-tutorial-focus {
-  position: fixed;
+  position: absolute;
   z-index: 201;
-  border: 3px solid #3e9be3;
+  box-sizing: border-box;
+  border: 2px solid #6cb7f5;
   border-radius: 10px;
   pointer-events: none;
   box-shadow:
-    0 0 0 5px rgb(62 155 227 / 20%),
+    0 0 0 3px rgb(62 155 227 / 20%),
     0 0 0 9999px rgb(0 0 0 / 68%);
-  transition:
-    inset 180ms ease,
-    width 180ms ease,
-    height 180ms ease;
 }
 .home-tutorial-focus[hidden] {
   display: none;
@@ -2248,15 +2233,22 @@ body:has(.music-mini-player:not([hidden])) [data-guided-tutorial] .home-tutorial
 .home-tutorial-card {
   position: absolute;
   z-index: 202;
-  right: 28px;
-  bottom: 80px;
-  width: min(410px, calc(100vw - 56px));
+  box-sizing: border-box;
+  width: min(410px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
   padding: 20px;
-  border: 1px solid rgb(62 155 227 / 45%);
+  border: 1px solid #34475d;
   border-radius: 12px;
   color: #fff;
-  background: #101a29;
+  background: #101927;
+  font-family: 'Battly Emoji', Poppins, 'Battly Emoji Sequences', sans-serif;
+  line-height: 1.4;
   box-shadow: 0 20px 70px rgb(0 0 0 / 65%);
+}
+.home-tutorial:has(.home-tutorial-focus[hidden]) .home-tutorial-card {
+  inset-inline-end: 16px;
+  bottom: 16px;
 }
 .home-tutorial-card > span {
   color: #79bff3;
@@ -2286,15 +2278,13 @@ body:has(.music-mini-player:not([hidden])) [data-guided-tutorial] .home-tutorial
   object-fit: contain;
 }
 .home-tutorial-card .tutorial-guide {
-  min-height: 28px;
-  padding-right: 70px;
+  min-height: 42px;
+  gap: 10px;
 }
 .home-tutorial-card .tutorial-nivix {
-  position: absolute;
-  top: -42px;
-  right: -38px;
-  transform: rotate(20deg);
-  pointer-events: none;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
 }
 .guided-tutorial-prompt > .tutorial-nivix,
 .home-tutorial-prompt > .tutorial-nivix {
@@ -2313,6 +2303,9 @@ body:has(.music-mini-player:not([hidden])) [data-guided-tutorial] .home-tutorial
 .home-tutorial-card h2 {
   margin: 5px 0 8px;
   font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 .home-tutorial-card p {
   min-height: 48px;
@@ -2332,9 +2325,15 @@ body:has(.music-mini-player:not([hidden])) [data-guided-tutorial] .home-tutorial
   border: 1px solid #3e8ed0;
   border-radius: 7px;
   color: #fff;
+  font: inherit;
   font-size: 11px;
+  font-weight: 600;
   background: transparent;
   cursor: pointer;
+}
+.home-tutorial-card button:focus-visible {
+  outline: 2px solid #8acbff;
+  outline-offset: 2px;
 }
 .home-tutorial-card button:last-child {
   background: #2c82c4;
@@ -5192,45 +5191,6 @@ body[data-window='music'] .music-mini-player button {
   flex: 0 0 35px;
   transform: none;
   margin: 0;
-}
-#panel-mods table {
-  table-layout: fixed;
-  width: 100%;
-  min-width: 600px;
-}
-#panel-mods th:first-child,
-#panel-mods td:first-child {
-  width: 58px;
-}
-#panel-mods td:first-child img {
-  display: block;
-  width: 30px;
-  height: 30px;
-  max-width: none;
-  object-fit: contain;
-  border-radius: 4px;
-}
-#panel-mods th:last-child,
-#panel-mods td:last-child {
-  width: 140px;
-}
-#panel-mods td {
-  overflow-wrap: anywhere;
-  vertical-align: middle;
-}
-#panel-mods td:nth-child(2),
-#panel-mods td:nth-child(3) {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-#panel-mods .b-mybattly-actions-td {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 8px;
-}
-#panel-mods .b-mybattly-icon-action {
-  flex: 0 0 32px;
 }
 
 /* Account discovery and replayable tours. */

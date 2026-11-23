@@ -45,6 +45,10 @@ export function inferMinecraftJavaMajor(version: string): ManagedJavaMajor {
   return 8;
 }
 
+export function isLabyModVersion(versionId: string): boolean {
+  return /^labymod(?:-|$)/i.test(versionId);
+}
+
 function forcedClientJavaMajor(versionId: string): ManagedJavaMajor | null {
   if (
     /^battly(?:-client)?[- ](?:26\.3|1\.8\.9|1\.12\.2|1\.16\.5|1\.20\.1|1\.21\.11)$/i.test(
@@ -53,7 +57,7 @@ function forcedClientJavaMajor(versionId: string): ManagedJavaMajor | null {
   ) {
     return 25;
   }
-  if (!/^labymod(?:-|$)/i.test(versionId)) {
+  if (!isLabyModVersion(versionId)) {
     return null;
   }
   const embeddedVersions: string[] = versionId.match(/\d+(?:\.\d+){1,2}/g) ?? [];

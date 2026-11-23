@@ -23,7 +23,7 @@
   border: 1px solid color-mix(in srgb, var(--theme-color, #6f4bc3) 65%, white) !important;
   border-radius: 8px;
   background: var(--theme-color, #6f4bc3) !important;
-  color: var(--theme-on-accent, #fff) !important;
+  color: #fff !important;
   flex: none;
   font-size: 13px !important;
 }

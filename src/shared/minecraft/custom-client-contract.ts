@@ -60,7 +60,7 @@ export function validateBattlyCustomClients(value: unknown): readonly BattlyCust
       const rawJava = own(source, 'requiredJavaVersion');
       clients.push({
         id,
-        name,
+        name: id.toLowerCase() === 'battlyclient' ? 'Battly Client 3.0' : name,
         folderName,
         downloadUrl: url.toString(),
         requiredJavaVersion:

@@ -1,5 +1,20 @@
 export type InstanceJavaMode = 'automatic' | 'custom-path' | 'global';
 
+export const instanceCopyParts = [
+  'mods',
+  'settings',
+  'worlds',
+  'resourcepacks',
+  'shaderpacks',
+  'screenshots',
+  'servers',
+] as const;
+
+export interface InstanceCopyRequest {
+  readonly name: string;
+  readonly parts: readonly (typeof instanceCopyParts)[number][];
+}
+
 export interface InstanceLaunchProfile {
   readonly javaPath: string;
   readonly javaVersion: InstanceJavaMode;

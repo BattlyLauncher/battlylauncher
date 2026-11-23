@@ -15,7 +15,12 @@ export class ModrinthModpackInstaller {
   readonly #mrpack: MrpackInstaller;
   readonly #temporaryRoot: string;
 
-  constructor(client: ModrinthClient, mrpack: MrpackInstaller, temporaryRoot: string) {
+  constructor(
+    client: ModrinthClient,
+    mrpack: MrpackInstaller,
+    temporaryRoot: string,
+    private readonly fetchCatalog = fetch,
+  ) {
     if (!isAbsolute(temporaryRoot)) {
       throw new TypeError('Modpack temporary root must be absolute');
     }
@@ -49,7 +54,7 @@ export class ModrinthModpackInstaller {
       `${Date.now()}-${randomBytes(6).toString('hex')}.mrpack`,
     );
     try {
-      await new VerifiedDownloader().download(
+      await new VerifiedDownloader({ fetchImplementation: this.fetchCatalog }).download(
         { url: file.url, expectedSize: file.size, expectedSha512: file.sha512 },
         temporary,
         signal,
@@ -65,7 +70,7 @@ export class ModrinthModpackInstaller {
       let iconDataUrl: string | undefined;
       if (project?.iconUrl) {
         try {
-          const iconResponse = await fetch(project.iconUrl, {
+          const iconResponse = await this.fetchCatalog(project.iconUrl, {
             redirect: 'follow',
             signal: signal
               ? AbortSignal.any([signal, AbortSignal.timeout(15_000)])

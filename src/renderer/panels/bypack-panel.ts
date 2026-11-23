@@ -2,6 +2,7 @@ import type { InstanceSummary } from '../../shared/minecraft/instance';
 import { modpackInstallPercent } from '../../shared/mods/modpack-install-contract';
 import './bypack-panel.css';
 import { openBypackImportFlow } from './bypack-import';
+import { translateUiText } from '../i18n/dialog-text';
 
 let active: HTMLDialogElement | undefined;
 const size = (bytes: number): string => {
@@ -13,6 +14,7 @@ export async function openBypackFlow(
   instance?: InstanceSummary,
   onImported?: (instance: InstanceSummary) => void,
   exporter = (id: string) => window.battly.exportBypack(id),
+  format: 'bypack' | 'mrpack' = 'bypack',
 ): Promise<void> {
   if (!instance) {
     return openBypackImportFlow(undefined, onImported);
@@ -27,7 +29,7 @@ export async function openBypackFlow(
   dialog.className = 'bypack-dialog';
   dialog.setAttribute('aria-labelledby', 'bypack-title');
   dialog.innerHTML = /* HTML */ `<header>
-      <span>BATTLY PACK</span>
+      <span>${format === 'bypack' ? 'BATTLY PACK' : 'Modrinth'}</span>
       <h2 id="bypack-title"></h2>
     </header>
     <p data-description></p>
@@ -53,7 +55,11 @@ export async function openBypackFlow(
   const heading = dialog.querySelector('h2')!;
   heading.textContent = instance ? `Exportar ${instance.name}` : 'Importar instancia .bypack';
   dialog.querySelector('[data-description]')!.textContent = instance
-    ? 'Incluye mods, configs, resourcepacks y shaders. Excluye loader, assets, mundos, carpetas que empiezan por punto, copias, capturas y logs. El contenido identificado se descargará de sus proveedores al importar.'
+    ? format === 'mrpack'
+      ? translateUiText(
+          'Incluye mods, configuración y paquetes de recursos. Los mundos y los ajustes personales se quedan en la instancia.',
+        )
+      : 'Incluye mods, configs, resourcepacks y shaders. Excluye loader, assets, mundos, carpetas que empiezan por punto, copias, capturas y logs. El contenido identificado se descargará de sus proveedores al importar.'
     : 'Se creará una instancia nueva con sus configs y archivos. Los mods referenciados se descargarán en su versión exacta y se comprobará su integridad.';
   const status = dialog.querySelector<HTMLElement>('[data-status]')!;
   const item = dialog.querySelector<HTMLElement>('[data-item]')!;
@@ -99,17 +105,28 @@ export async function openBypackFlow(
         dialog.close();
         return;
       }
-      heading.textContent = 'Paquete .bypack exportado';
-      status.textContent = 'Listo para compartir e importar en Battly.';
+      heading.textContent =
+        format === 'bypack'
+          ? 'Paquete .bypack exportado'
+          : translateUiText('Paquete .mrpack exportado');
+      status.textContent =
+        format === 'bypack'
+          ? 'Listo para compartir e importar en Battly.'
+          : translateUiText('Listo para importar en Prism Launcher, Modrinth App o Battly.');
       const summary = dialog.querySelector('[data-summary]')!;
       for (const [label, value] of [
-        ['Tamaño del .bypack', size(result.archiveBytes)],
+        [
+          format === 'bypack' ? 'Tamaño del .bypack' : translateUiText('Tamaño del .mrpack'),
+          size(result.archiveBytes),
+        ],
         ['Contenido original incluido', size(result.sourceBytes)],
         ['Descargas fuera del ZIP', size(result.referencedBytes)],
-        [
-          'Archivos de Modrinth / CurseForge',
-          `${result.modrinthFiles} / ${result.curseforgeFiles}`,
-        ],
+        format === 'bypack'
+          ? [
+              'Archivos de Modrinth / CurseForge',
+              `${result.modrinthFiles} / ${result.curseforgeFiles}`,
+            ]
+          : ['Modrinth', String(result.modrinthFiles)],
         ['Archivos comprimidos', String(result.embeddedFiles)],
       ]) {
         const term = document.createElement('dt');
@@ -142,7 +159,9 @@ export async function openBypackFlow(
     heading.textContent = instance ? 'No se pudo exportar' : 'No se pudo importar';
     status.textContent =
       error instanceof Error
-        ? error.message.replace(/^Error invoking remote method '[^']+':\s*/, '')
+        ? translateUiText(
+            error.message.replace(/^Error invoking remote method '[^']+':\s*(?:\w*Error:\s*)?/, ''),
+          )
         : 'La operación no pudo completarse.';
     progress.hidden = true;
   } finally {

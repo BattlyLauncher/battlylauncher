@@ -1,7 +1,13 @@
 export type ModProjectType = 'datapack' | 'mod' | 'modpack' | 'resourcepack' | 'shader';
 export type ModSearchSort = 'downloads' | 'follows' | 'relevance' | 'updated';
+export type ModCatalogProvider = 'all' | 'modrinth' | 'curseforge';
+
+export function curseForgeProjectId(projectId: string): string | undefined {
+  return /^curseforge-([1-9][0-9]{0,9})$/.exec(projectId)?.[1];
+}
 
 export interface ModSearchRequest {
+  readonly provider?: ModCatalogProvider;
   readonly query: string;
   readonly sort: ModSearchSort;
   readonly loader: string | null;
@@ -44,6 +50,7 @@ export interface ModInstallRequest {
   readonly versionId?: string;
   readonly destinationInstanceId?: string;
   readonly destinationServerId?: string;
+  readonly destinationWorld?: string;
 }
 
 export interface ModProjectDependencySummary {
@@ -246,11 +253,15 @@ export function normalizeModSearchRequest(value: unknown): ModSearchRequest {
     'offset',
     'limit',
   ];
+  if (Object.hasOwn(source, 'provider')) {
+    allowed.push('provider');
+  }
   const hasOnlyQuery = Object.keys(source).length === 1 && Object.hasOwn(source, 'query');
   if (!hasOnlyQuery) {
     exactKeys(source, allowed);
   }
   const query = own(source, 'query');
+  const provider = own(source, 'provider');
   const sort = own(source, 'sort') ?? 'relevance';
   const loader = own(source, 'loader') ?? null;
   const category = own(source, 'category') ?? null;
@@ -260,6 +271,14 @@ export function normalizeModSearchRequest(value: unknown): ModSearchRequest {
   const limit = own(source, 'limit') ?? 20;
   if (typeof query !== 'string' || query.length > 200) {
     throw new TypeError('Invalid mods query');
+  }
+  if (
+    provider !== undefined &&
+    provider !== 'all' &&
+    provider !== 'modrinth' &&
+    provider !== 'curseforge'
+  ) {
+    throw new TypeError('Mods request contains unsupported fields');
   }
   if (!sorts.has(sort as ModSearchSort)) {
     throw new TypeError('Invalid mods sort');
@@ -286,6 +305,7 @@ export function normalizeModSearchRequest(value: unknown): ModSearchRequest {
     throw new TypeError('Invalid mods limit');
   }
   return {
+    ...(provider ? { provider } : {}),
     query: query.trim(),
     sort: sort as ModSearchSort,
     loader: loader as string | null,
@@ -311,6 +331,7 @@ export function normalizeModInstallRequest(value: unknown): ModInstallRequest {
           'versionId',
           'destinationInstanceId',
           'destinationServerId',
+          'destinationWorld',
         ].includes(key),
     )
   ) {
@@ -332,6 +353,20 @@ export function normalizeModInstallRequest(value: unknown): ModInstallRequest {
     own(source, 'destinationServerId') === undefined
       ? undefined
       : boundedIdentifier(own(source, 'destinationServerId'), 'destination server id');
+  const world = own(source, 'destinationWorld');
+  if (
+    world !== undefined &&
+    (projectType !== 'datapack' ||
+      destinationServerId ||
+      typeof world !== 'string' ||
+      !world ||
+      world.length > 255 ||
+      /^[. ]|[. ]$/.test(world) ||
+      /[<>:"/\\|?*]/.test(world) ||
+      [...world].some((character) => character.charCodeAt(0) < 32))
+  ) {
+    throw new TypeError('Invalid Minecraft world');
+  }
   if (destinationServerId && (destinationInstanceId || projectType !== 'mod')) {
     throw new TypeError('Invalid server mod destination');
   }
@@ -346,5 +381,6 @@ export function normalizeModInstallRequest(value: unknown): ModInstallRequest {
     versionId,
     destinationInstanceId,
     destinationServerId,
+    ...(typeof world === 'string' ? { destinationWorld: world } : {}),
   };
 }

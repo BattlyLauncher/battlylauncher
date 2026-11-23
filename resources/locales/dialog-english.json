@@ -902,8 +902,6 @@
   "{0} te ha enviado una solicitud de amistad.": "{0} sent you a friend request.",
   "Última modificación: {0}": "Last modified: {0}",
   "Instalado: {0} · {1}. Solo se muestran las opciones verificadas para esta versión.": "Installed: {0} · {1}. Only verified options for this version are shown.",
-  "Europa": "Europe",
-  "El proveedor ha devuelto una dirección de túnel distinta a la de Europa": "The provider returned an unexpected address for the Europe tunnel",
   "Región seleccionada: {0} ({1} ms de latencia)": "Selected region: {0} ({1} ms latency)",
   "Unido el: {0}": "Joined: {0}",
   "No se pudieron instalar los archivos: {0}": "Could not install files: {0}",
@@ -1849,5 +1847,7 @@
   "Esta reparación ya no se puede deshacer en esta sesión.": "This repair can no longer be undone in this session.",
   "La reparación se ha deshecho.": "The repair was undone.",
   "La RAM cambió después de reparar. No se sobrescribirá.": "RAM settings changed after the repair. They will not be overwritten.",
-  "Los argumentos cambiaron después de reparar. No se sobrescribirán.": "The arguments changed after the repair. They will not be overwritten."
+  "Los argumentos cambiaron después de reparar. No se sobrescribirán.": "The arguments changed after the repair. They will not be overwritten.",
+  "Europa": "Europe",
+  "El proveedor ha devuelto una dirección de túnel distinta a la de Europa": "The provider returned an unexpected address for the Europe tunnel"
 }

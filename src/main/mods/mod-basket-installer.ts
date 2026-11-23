@@ -66,6 +66,7 @@ export class ModBasketInstaller {
     private readonly loaderVersion?: string,
     private readonly loaderRoot?: string,
     private readonly platformMetadata?: readonly LocalModInspection[],
+    private readonly fetchCatalog: typeof fetch = fetch,
   ) {}
   private rootSources = new Map<string, string[]>();
   async resolve(
@@ -169,6 +170,7 @@ export class ModBasketInstaller {
           staging = await mkdtemp(join(this.root, '.battly-mod-basket-'));
         }
         const downloader = new VerifiedDownloader({
+          fetchImplementation: this.fetchCatalog,
           validateUrl: (url) => {
             if (
               url.protocol !== 'https:' ||

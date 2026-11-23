@@ -169,17 +169,22 @@ async function discardStaging(path: string): Promise<void> {
 export class MrpackInstaller {
   readonly #createId: () => string;
   readonly #instancesRoot: string;
-  readonly #downloader = new VerifiedDownloader({ validateUrl: validateMrpackDownloadUrl });
+  readonly #downloader: VerifiedDownloader;
 
   constructor(
     instancesRoot: string,
     createId: () => string = () => randomUUID().replaceAll('-', '').slice(0, 12),
+    fetchImplementation = fetch,
   ) {
     if (!isAbsolute(instancesRoot)) {
       throw new TypeError('Instances root must be absolute');
     }
     this.#instancesRoot = resolve(instancesRoot);
     this.#createId = createId;
+    this.#downloader = new VerifiedDownloader({
+      validateUrl: validateMrpackDownloadUrl,
+      fetchImplementation,
+    });
   }
 
   async install(

@@ -14,7 +14,7 @@ import {
   type BypackManifest,
   type BypackPreview,
 } from '../../shared/minecraft/bypack';
-import type { InstanceSummary } from '../../shared/minecraft/instance';
+import type { InstanceDraft, InstanceSummary } from '../../shared/minecraft/instance';
 import type { ModpackInstallProgressSink } from '../../shared/mods/modpack-install-contract';
 import { pathExists, readBoundedRegularFile, writeExclusiveAndSync } from '../files/atomic-file';
 import { VerifiedDownloader } from '../mods/verified-download';
@@ -25,6 +25,7 @@ import {
   createReadStream,
   openBypackZip,
   writeBypackZip,
+  writePackZip,
   zipEntryStream,
   zipManifest,
 } from './bypack-archive';
@@ -34,6 +35,46 @@ import {
   type BypackSourceOptions,
   type CurseForgeReference,
 } from './bypack-sources';
+
+const modrinthRoots = new Set([
+  'mods',
+  'config',
+  'defaultconfigs',
+  'kubejs',
+  'scripts',
+  'resourcepacks',
+  'shaderpacks',
+  'texturepacks',
+  'datapacks',
+]);
+
+function modrinthDependencies(instance: InstanceDraft): Record<string, string> {
+  const loader = instance.loader?.toLowerCase();
+  const dependencies = { minecraft: instance.version };
+  if (!loader || loader === 'vanilla') {
+    return dependencies;
+  }
+  const dependency = Object.entries({
+    forge: 'forge',
+    neoforge: 'neoforge',
+    fabric: 'fabric-loader',
+    quilt: 'quilt-loader',
+  }).find(([key]) => key === loader)?.[1];
+  const version = instance.loaderVersion;
+  if (!dependency || !version || /^(latest|recommended|auto|automatic)$/i.test(version)) {
+    throw new Error(
+      'Para exportar a .mrpack, elige Vanilla o una versión concreta de Forge, NeoForge, Fabric o Quilt.',
+    );
+  }
+  const prefix = `${instance.version}-`;
+  return {
+    ...dependencies,
+    [dependency]:
+      (loader === 'forge' || loader === 'neoforge') && version.startsWith(prefix)
+        ? version.slice(prefix.length)
+        : version,
+  };
+}
 
 function inside(root: string, path: string): boolean {
   const fromRoot = relative(root, path);
@@ -115,15 +156,38 @@ export class BypackService {
     progress?: ModpackInstallProgressSink,
     author?: string,
   ): Promise<BypackExportResult> {
-    if (!isAbsolute(destination) || !destination.toLowerCase().endsWith('.bypack')) {
-      throw new Error('Destino .bypack inválido');
+    return this.#export(id, destination, 'bypack', progress, author);
+  }
+
+  async exportMrpack(
+    id: string,
+    destination: string,
+    progress?: ModpackInstallProgressSink,
+  ): Promise<BypackExportResult> {
+    return this.#export(id, destination, 'mrpack', progress);
+  }
+
+  async #export(
+    id: string,
+    destination: string,
+    format: 'bypack' | 'mrpack',
+    progress?: ModpackInstallProgressSink,
+    author?: string,
+  ): Promise<BypackExportResult> {
+    if (!isAbsolute(destination) || !destination.toLowerCase().endsWith(`.${format}`)) {
+      throw new Error('El destino del paquete no es válido.');
     }
     const root = await this.store.directoryPathInternal(id);
     this.options.assertEditable?.(root);
     const canonicalRoot = await realpath(root);
+    const destinationParent = await realpath(dirname(destination));
+    if (destinationParent === canonicalRoot || inside(canonicalRoot, destinationParent)) {
+      throw new Error('Guarda el paquete fuera de la carpeta de la instancia.');
+    }
     const metadata = await this.store.readInternal(id);
-    const iconDataUrl = await readIconDataUrl(root);
+    const iconDataUrl = format === 'bypack' ? await readIconDataUrl(root) : null;
     const instance = portableInstance({ ...metadata, ...(iconDataUrl ? { iconDataUrl } : {}) });
+    const dependencies = format === 'mrpack' ? modrinthDependencies(instance) : undefined;
     const staging = await mkdtemp(join(tmpdir(), 'battly-bypack-'));
     const pending = join(dirname(destination), `.bypack-${randomUUID()}.tmp`);
     let pendingCreated = false;
@@ -136,6 +200,7 @@ export class BypackService {
           const path = prefix ? `${prefix}/${entry.name}` : entry.name;
           if (
             excludeFromBypack(path, entry.isDirectory()) ||
+            (dependencies && !modrinthRoots.has(path.split('/')[0].toLowerCase())) ||
             (this.options.includePath && !this.options.includePath(path, entry.isDirectory()))
           ) {
             continue;
@@ -184,26 +249,30 @@ export class BypackService {
       };
       await snapshot(root);
       this.options.assertEditable?.(root);
-      const references = curseForgeReferences(metadata.curseforge);
-      try {
-        references.push(
-          ...curseForgeReferences(
-            JSON.parse(
-              (
-                await readBoundedRegularFile(join(root, 'minecraftinstance.json'), 8 * 1024 ** 2)
-              ).toString('utf8'),
-            ) as unknown,
-          ),
-        );
-      } catch {
-        /* Optional CurseForge provenance. */
+      const references = dependencies ? [] : curseForgeReferences(metadata.curseforge);
+      if (!dependencies) {
+        try {
+          references.push(
+            ...curseForgeReferences(
+              JSON.parse(
+                (
+                  await readBoundedRegularFile(join(root, 'minecraftinstance.json'), 8 * 1024 ** 2)
+                ).toString('utf8'),
+              ) as unknown,
+            ),
+          );
+        } catch {
+          /* Optional CurseForge provenance. */
+        }
       }
       progress?.({
         phase: 'reading',
         current: 0,
         total: 1,
         item: instance.name,
-        message: 'Identificando versiones exactas en Modrinth y CurseForge…',
+        message: dependencies
+          ? 'Identificando versiones exactas en Modrinth…'
+          : 'Identificando versiones exactas en Modrinth y CurseForge…',
       });
       const candidates = files.filter(
         (file) =>
@@ -221,6 +290,7 @@ export class BypackService {
             item: instance.name,
             message: message.slice(0, 512),
           }),
+        Boolean(dependencies),
       );
       const manifest: BypackManifest = parseBypack({
         format: 'battly-bypack',
@@ -240,10 +310,45 @@ export class BypackService {
         current: 0,
         total: 1,
         item: basename(destination),
-        message: 'Comprimiendo .bypack al nivel máximo de ZIP…',
+        message: dependencies
+          ? 'Comprimiendo el paquete .mrpack…'
+          : 'Comprimiendo .bypack al nivel máximo de ZIP…',
       });
       pendingCreated = true;
-      await writeBypackZip(pending, manifest, (path) => join(staging, path));
+      if (dependencies) {
+        await writePackZip(
+          pending,
+          'modrinth.index.json',
+          {
+            formatVersion: 1,
+            game: 'minecraft',
+            versionId: createHash('sha256')
+              .update(JSON.stringify(manifest))
+              .digest('hex')
+              .slice(0, 24),
+            name: instance.name,
+            summary: instance.description,
+            dependencies,
+            files: files.flatMap((file) => {
+              const remote = matches.get(file.path);
+              return remote
+                ? [
+                    {
+                      path: file.path,
+                      hashes: { sha1: file.sha1, sha512: file.sha512 },
+                      downloads: [remote.url],
+                      fileSize: file.size,
+                    },
+                  ]
+                : [];
+            }),
+          },
+          files.filter((file) => !matches.has(file.path)).map((file) => file.path),
+          (path) => join(staging, path),
+        );
+      } else {
+        await writeBypackZip(pending, manifest, (path) => join(staging, path));
+      }
       const archiveBytes = (await lstat(pending)).size;
       await rename(pending, destination);
       pendingCreated = false;
@@ -253,7 +358,7 @@ export class BypackService {
         current: 1,
         total: 1,
         item: instance.name,
-        message: 'Paquete .bypack exportado',
+        message: dependencies ? 'Paquete .mrpack exportado' : 'Paquete .bypack exportado',
       });
       return {
         path: destination,

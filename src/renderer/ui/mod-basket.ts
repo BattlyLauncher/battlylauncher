@@ -1,4 +1,5 @@
 import { userErrorMessage } from './user-error';
+import { catalogImageUrl } from './catalog-image';
 import type { ModProjectSummary } from '../../shared/mods/mod-contract';
 import type { ModBasketRequest, ModBasketProgress } from '../../shared/mods/mod-basket';
 import { setUiText, translateUiText as t } from '../i18n/dialog-text';
@@ -361,7 +362,7 @@ class ModBasket {
       icon.innerHTML = '<i class="fa-solid fa-cube" aria-hidden="true"></i>';
       if (item.iconUrl) {
         const image = document.createElement('img');
-        image.src = item.iconUrl;
+        image.src = catalogImageUrl(item.iconUrl);
         image.alt = '';
         image.loading = 'lazy';
         image.referrerPolicy = 'no-referrer';

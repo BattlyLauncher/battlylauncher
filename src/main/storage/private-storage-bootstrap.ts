@@ -186,6 +186,7 @@ export async function migratePrivateMetadata(
     }
     throw error;
   }
+  let unreadable = 0;
   for (const entry of entries) {
     if (!entry.isDirectory() || entry.isSymbolicLink()) {
       continue;
@@ -201,7 +202,7 @@ export async function migratePrivateMetadata(
         if (error instanceof PrivateDataDecryptionError) {
           // One unreadable instance must not prevent the launcher from opening.
           // Keep the metadata intact; InstanceStore can still load other instances.
-          console.warn('[storage] Unreadable content metadata retained:', entry.name, name);
+          unreadable += 1;
           continue;
         }
         if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
@@ -209,5 +210,8 @@ export async function migratePrivateMetadata(
         }
       }
     }
+  }
+  if (unreadable > 0) {
+    console.warn('[storage] Encrypted metadata retained:', names.join(', '), unreadable);
   }
 }

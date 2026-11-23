@@ -1,19 +1,14 @@
 @import '../styles/panels/mybattly.css';
 
-.b-mybattly-usage {
-  margin-top: 20px;
-  border-top: 1px solid #304158;
-  padding-top: 16px;
-  color: #c8d5e6;
-}
-.b-mybattly-usage h3,
 .b-usage-dialog h3 {
   font-size: 15px;
   margin: 0 0 10px;
   color: #f3f6fc;
 }
 .b-mybattly-usage p {
-  font-size: 12px;
+  margin: 0;
+  color: var(--usage-muted);
+  font-size: 13px;
 }
 .b-usage-graph {
   width: 100%;
@@ -31,7 +26,7 @@
   flex-wrap: wrap;
 }
 .b-usage-legend span:first-child {
-  color: var(--theme-color);
+  color: var(--usage-primary);
 }
 .b-usage-legend span:last-child {
   color: var(--usage-secondary);
@@ -694,30 +689,103 @@ dialog.world-backups-modal {
     grid-template-columns: 1fr 145px;
   }
 }
-/* Activity follows the selected theme, with compact charts and a fixed dialog header. */
 .b-mybattly-usage,
 .b-usage-dialog {
-  --usage-secondary: color-mix(in srgb, var(--theme-color, #7048c4) 30%, #f6c36f);
+  --usage-primary: color-mix(in srgb, var(--theme-color, #7048c4) 45%, #8bd9ff);
+  --usage-secondary: #ffd186;
   --usage-grid: color-mix(in srgb, var(--theme-color, #7048c4) 15%, #304158);
-  --usage-muted: #a8b8ca;
+  --usage-muted: #bfcede;
 }
 .b-mybattly-usage {
-  padding: 18px;
+  display: grid;
+  gap: 16px;
+  margin: 18px 0 0;
+  padding: clamp(16px, 2vw, 24px);
   border: 1px solid var(--usage-grid);
-  border-radius: 12px;
+  border-radius: 20px;
   background: color-mix(in srgb, var(--theme-color, #7048c4) 5%, #111b28);
 }
-.b-mybattly-usage .b-usage-graph {
-  margin: 12px 0;
-  max-height: 140px;
+.b-usage-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
 }
-.b-mybattly-usage button {
-  background: var(--theme-color) !important;
-  color: white !important;
-  border-color: var(--theme-color) !important;
-  border-radius: 9px;
-  padding: 9px 14px;
-  height: auto;
+.b-usage-card-header h2 {
+  margin: 0;
+  color: #f4f7fc;
+  font-size: 20px;
+  font-weight: 700;
+}
+.b-usage-card-range {
+  padding: 4px 9px;
+  border: 1px solid var(--usage-grid);
+  border-radius: 999px;
+  color: var(--usage-muted);
+  font-size: 12px;
+}
+.b-usage-card-header button {
+  margin-inline-start: auto;
+}
+.b-usage-card-body {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.85fr) minmax(0, 3fr);
+  align-items: stretch;
+  gap: 14px;
+}
+.b-usage-card-totals {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+.b-usage-card-totals div {
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 10px 13px;
+  border: 1px solid var(--usage-grid);
+  border-radius: 11px;
+  background: #0c1522;
+}
+.b-usage-card-totals dt {
+  color: var(--usage-primary);
+  font-size: 12px;
+  font-weight: 600;
+}
+.b-usage-card-totals div:last-child dt {
+  color: var(--usage-secondary);
+}
+.b-usage-card-totals dd {
+  margin: 0;
+  color: #f4f7fc;
+  font-size: clamp(17px, 2vw, 24px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.b-mybattly-usage .b-usage-graph {
+  display: grid;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid var(--usage-grid);
+  border-radius: 11px;
+  background: #0c1522;
+}
+.b-mybattly-usage .b-usage-graph svg {
+  max-height: 205px;
+}
+.b-mybattly-usage :focus-visible,
+.b-usage-dialog :focus-visible,
+.mybattly-panel [data-mybattly-activity]:focus-visible {
+  outline: 2px solid #9bd8ff;
+  outline-offset: 3px;
+}
+@media (max-width: 780px) {
+  .b-usage-card-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .b-usage-card-totals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 .b-usage-dialog[open] {
   display: flex;
@@ -746,6 +814,9 @@ dialog.world-backups-modal {
   scrollbar-width: thin;
   scrollbar-color: var(--usage-grid) transparent;
 }
+.b-usage-dialog section > * {
+  flex-shrink: 0;
+}
 .b-usage-dialog h3 {
   font-size: 16px;
   margin: 8px 0 0;
@@ -770,9 +841,28 @@ dialog.world-backups-modal {
   padding: 14px;
   box-sizing: border-box;
 }
-.b-usage-dialog .b-usage-filters select:focus-visible {
-  outline: 2px solid var(--theme-color);
-  outline-offset: 2px;
+.b-usage-daily-data {
+  border: 1px solid var(--usage-grid);
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.b-usage-daily-data summary {
+  cursor: pointer;
+  color: #e0edfa;
+  font-size: 13px;
+  font-weight: 600;
+}
+.b-usage-daily-data table {
+  width: 100%;
+  margin-top: 8px;
+  border-collapse: collapse;
+  color: #dce8f6;
+  font-size: 12px;
+}
+.b-usage-daily-data :is(th, td) {
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--usage-grid);
+  text-align: start;
 }
 @media (max-width: 600px) {
   .b-usage-dialog {
@@ -788,14 +878,6 @@ dialog.world-backups-modal {
   .b-usage-filters select {
     flex: 1;
   }
-}
-.b-usage-dialog .b-usage-legend span:first-child,
-.b-mybattly-usage .b-usage-legend span:first-child {
-  color: var(--theme-color) !important;
-}
-.b-usage-dialog .b-usage-legend span:last-child,
-.b-mybattly-usage .b-usage-legend span:last-child {
-  color: var(--usage-secondary) !important;
 }
 .b-usage-dialog h2 {
   color: #f4f7fc !important;

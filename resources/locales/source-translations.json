@@ -21661,6 +21661,1574 @@
         "zh": "提供方返回了意外的欧洲隧道地址"
       },
       "sourceLanguage": "es"
+    },
+    {
+      "source": "Horizon ya está abierto.",
+      "translations": {
+        "es": "Horizon ya está abierto.",
+        "en": "Horizon is already open.",
+        "pt": "O Horizon já está aberto.",
+        "fr": "Horizon est déjà ouvert.",
+        "de": "Horizon ist bereits geöffnet.",
+        "it": "Horizon è già aperto.",
+        "ru": "Horizon уже открыт.",
+        "ja": "Horizon はすでに開いています。",
+        "ar": "Horizon مفتوح بالفعل.",
+        "zh": "Horizon 已打开。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Horizon requiere una cuenta de Microsoft con Minecraft: Java Edition.",
+      "translations": {
+        "es": "Horizon requiere una cuenta de Microsoft con Minecraft: Java Edition.",
+        "en": "Horizon requires a Microsoft account that owns Minecraft: Java Edition.",
+        "pt": "O Horizon requer uma conta Microsoft que possua Minecraft: Java Edition.",
+        "fr": "Horizon nécessite un compte Microsoft possédant Minecraft: Java Edition.",
+        "de": "Horizon benötigt ein Microsoft-Konto mit Minecraft: Java Edition.",
+        "it": "Horizon richiede un account Microsoft che possieda Minecraft: Java Edition.",
+        "ru": "Для Horizon нужна учётная запись Microsoft, которой принадлежит Minecraft: Java Edition.",
+        "ja": "Horizon を使うには、Minecraft: Java Edition を所有する Microsoft アカウントが必要です。",
+        "ar": "يتطلب Horizon حساب Microsoft يملك Minecraft: Java Edition.",
+        "zh": "Horizon 需要拥有 Minecraft: Java Edition 的 Microsoft 账户。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "La sesión de Microsoft ha caducado. Vuelve a iniciar sesión para jugar a Horizon.",
+      "translations": {
+        "es": "La sesión de Microsoft ha caducado. Vuelve a iniciar sesión para jugar a Horizon.",
+        "en": "Your Microsoft session expired. Sign in again to play Horizon.",
+        "pt": "A sessão Microsoft expirou. Inicie sessão novamente para jogar Horizon.",
+        "fr": "Votre session Microsoft a expiré. Reconnectez-vous pour jouer à Horizon.",
+        "de": "Deine Microsoft-Sitzung ist abgelaufen. Melde dich erneut an, um Horizon zu spielen.",
+        "it": "La sessione Microsoft è scaduta. Accedi di nuovo per giocare a Horizon.",
+        "ru": "Сеанс Microsoft истёк. Войдите снова, чтобы играть в Horizon.",
+        "ja": "Microsoft のセッションの有効期限が切れました。Horizon をプレイするには再ログインしてください。",
+        "ar": "انتهت صلاحية جلسة Microsoft. سجّل الدخول مرة أخرى للعب Horizon.",
+        "zh": "Microsoft 会话已过期。请重新登录以游玩 Horizon。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No se pudo comprobar la licencia de Minecraft para Horizon.",
+      "translations": {
+        "es": "No se pudo comprobar la licencia de Minecraft para Horizon.",
+        "en": "Could not verify the Minecraft license for Horizon.",
+        "pt": "Não foi possível verificar a licença do Minecraft para o Horizon.",
+        "fr": "Impossible de vérifier la licence Minecraft pour Horizon.",
+        "de": "Die Minecraft-Lizenz für Horizon konnte nicht überprüft werden.",
+        "it": "Impossibile verificare la licenza di Minecraft per Horizon.",
+        "ru": "Не удалось проверить лицензию Minecraft для Horizon.",
+        "ja": "Horizon の Minecraft ライセンスを確認できませんでした。",
+        "ar": "تعذر التحقق من ترخيص Minecraft لاستخدام Horizon.",
+        "zh": "无法验证 Horizon 所需的 Minecraft 许可证。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No se pudo comprobar el perfil de Minecraft para Horizon.",
+      "translations": {
+        "es": "No se pudo comprobar el perfil de Minecraft para Horizon.",
+        "en": "Could not verify the Minecraft profile for Horizon.",
+        "pt": "Não foi possível verificar o perfil do Minecraft para o Horizon.",
+        "fr": "Impossible de vérifier le profil Minecraft pour Horizon.",
+        "de": "Das Minecraft-Profil für Horizon konnte nicht überprüft werden.",
+        "it": "Impossibile verificare il profilo di Minecraft per Horizon.",
+        "ru": "Не удалось проверить профиль Minecraft для Horizon.",
+        "ja": "Horizon の Minecraft プロフィールを確認できませんでした。",
+        "ar": "تعذر التحقق من ملف Minecraft الشخصي لاستخدام Horizon.",
+        "zh": "无法验证 Horizon 所需的 Minecraft 档案。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "La firma de la compilación de Horizon no es válida.",
+      "translations": {
+        "es": "La firma de la compilación de Horizon no es válida.",
+        "en": "The Horizon build signature is invalid.",
+        "pt": "A assinatura da versão do Horizon é inválida.",
+        "fr": "La signature de cette version de Horizon est invalide.",
+        "de": "Die Signatur dieses Horizon-Builds ist ungültig.",
+        "it": "La firma della build di Horizon non è valida.",
+        "ru": "Подпись сборки Horizon недействительна.",
+        "ja": "Horizon ビルドの署名が無効です。",
+        "ar": "توقيع إصدار Horizon غير صالح.",
+        "zh": "Horizon 构建的签名无效。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No se encontró el SHA-256 de Horizon.",
+      "translations": {
+        "es": "No se encontró el SHA-256 de Horizon.",
+        "en": "Could not find the SHA-256 checksum for Horizon.",
+        "pt": "Não foi possível encontrar a soma SHA-256 do Horizon.",
+        "fr": "La somme SHA-256 de Horizon est introuvable.",
+        "de": "Die SHA-256-Prüfsumme von Horizon wurde nicht gefunden.",
+        "it": "Checksum SHA-256 di Horizon non trovato.",
+        "ru": "Не найдена контрольная сумма SHA-256 для Horizon.",
+        "ja": "Horizon の SHA-256 チェックサムが見つかりませんでした。",
+        "ar": "تعذر العثور على المجموع الاختباري SHA-256 الخاص بـ Horizon.",
+        "zh": "找不到 Horizon 的 SHA-256 校验和。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "La descarga de Horizon supera el tamaño esperado.",
+      "translations": {
+        "es": "La descarga de Horizon supera el tamaño esperado.",
+        "en": "The Horizon download exceeds the expected size.",
+        "pt": "A transferência do Horizon ultrapassa o tamanho esperado.",
+        "fr": "Le téléchargement de Horizon dépasse la taille prévue.",
+        "de": "Der Horizon-Download überschreitet die erwartete Größe.",
+        "it": "Il download di Horizon supera la dimensione prevista.",
+        "ru": "Загрузка Horizon превышает ожидаемый размер.",
+        "ja": "Horizon のダウンロードが想定サイズを超えています。",
+        "ar": "يتجاوز تنزيل Horizon الحجم المتوقع.",
+        "zh": "Horizon 下载文件超过预期大小。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "La descarga de Horizon no coincide con su suma de verificación.",
+      "translations": {
+        "es": "La descarga de Horizon no coincide con su suma de verificación.",
+        "en": "The Horizon download does not match its checksum.",
+        "pt": "A transferência do Horizon não corresponde à soma de verificação.",
+        "fr": "Le téléchargement de Horizon ne correspond pas à sa somme de contrôle.",
+        "de": "Der Horizon-Download stimmt nicht mit der Prüfsumme überein.",
+        "it": "Il download di Horizon non corrisponde al suo checksum.",
+        "ru": "Контрольная сумма загруженного Horizon не совпадает.",
+        "ja": "Horizon のダウンロードがチェックサムと一致しません。",
+        "ar": "لا يتطابق تنزيل Horizon مع مجموعه الاختباري.",
+        "zh": "Horizon 下载文件与校验和不符。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "El paquete de Horizon no tiene un formato válido.",
+      "translations": {
+        "es": "El paquete de Horizon no tiene un formato válido.",
+        "en": "The Horizon package format is invalid.",
+        "pt": "O formato do pacote do Horizon é inválido.",
+        "fr": "Le format du paquet Horizon est invalide.",
+        "de": "Das Format des Horizon-Pakets ist ungültig.",
+        "it": "Il formato del pacchetto di Horizon non è valido.",
+        "ru": "Недопустимый формат пакета Horizon.",
+        "ja": "Horizon パッケージの形式が無効です。",
+        "ar": "تنسيق حزمة Horizon غير صالح.",
+        "zh": "Horizon 软件包格式无效。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Horizon no está disponible para esta plataforma.",
+      "translations": {
+        "es": "Horizon no está disponible para esta plataforma.",
+        "en": "Horizon is unavailable on this platform.",
+        "pt": "O Horizon não está disponível nesta plataforma.",
+        "fr": "Horizon n’est pas disponible sur cette plateforme.",
+        "de": "Horizon ist für diese Plattform nicht verfügbar.",
+        "it": "Horizon non è disponibile su questa piattaforma.",
+        "ru": "Horizon недоступен на этой платформе.",
+        "ja": "このプラットフォームでは Horizon を利用できません。",
+        "ar": "Horizon غير متاح على هذه المنصة.",
+        "zh": "Horizon 不支持此平台。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No se encontró una compilación de Horizon para esta plataforma.",
+      "translations": {
+        "es": "No se encontró una compilación de Horizon para esta plataforma.",
+        "en": "No Horizon build was found for this platform.",
+        "pt": "Não foi encontrada uma versão do Horizon para esta plataforma.",
+        "fr": "Aucune version de Horizon n’a été trouvée pour cette plateforme.",
+        "de": "Für diese Plattform wurde kein Horizon-Build gefunden.",
+        "it": "Nessuna build di Horizon trovata per questa piattaforma.",
+        "ru": "Не найдена сборка Horizon для этой платформы.",
+        "ja": "このプラットフォーム用の Horizon ビルドが見つかりませんでした。",
+        "ar": "لم يُعثر على إصدار Horizon لهذه المنصة.",
+        "zh": "未找到适用于此平台的 Horizon 构建。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Esta compilación de Horizon usa una interfaz de inicio incompatible.",
+      "translations": {
+        "es": "Esta compilación de Horizon usa una interfaz de inicio incompatible.",
+        "en": "This Horizon build uses an incompatible launch API.",
+        "pt": "Esta versão do Horizon usa uma API de arranque incompatível.",
+        "fr": "Cette version de Horizon utilise une API de lancement incompatible.",
+        "de": "Dieser Horizon-Build verwendet eine inkompatible Start-API.",
+        "it": "Questa build di Horizon usa un’API di avvio incompatibile.",
+        "ru": "Эта сборка Horizon использует несовместимый API запуска.",
+        "ja": "この Horizon ビルドは互換性のない起動 API を使用しています。",
+        "ar": "يستخدم إصدار Horizon هذا واجهة تشغيل غير متوافقة.",
+        "zh": "此 Horizon 构建使用了不兼容的启动 API。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Esta compilación de Horizon requiere otra versión de Minecraft o Java.",
+      "translations": {
+        "es": "Esta compilación de Horizon requiere otra versión de Minecraft o Java.",
+        "en": "This Horizon build requires a different version of Minecraft or Java.",
+        "pt": "Esta versão do Horizon requer outra versão do Minecraft ou do Java.",
+        "fr": "Cette version de Horizon nécessite une autre version de Minecraft ou de Java.",
+        "de": "Dieser Horizon-Build benötigt eine andere Version von Minecraft oder Java.",
+        "it": "Questa build di Horizon richiede una versione diversa di Minecraft o Java.",
+        "ru": "Для этой сборки Horizon нужна другая версия Minecraft или Java.",
+        "ja": "この Horizon ビルドには別のバージョンの Minecraft または Java が必要です。",
+        "ar": "يتطلب إصدار Horizon هذا نسخة مختلفة من Minecraft أو Java.",
+        "zh": "此 Horizon 构建需要其他版本的 Minecraft 或 Java。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Horizon recibió una referencia de Minecraft no válida.",
+      "translations": {
+        "es": "Horizon recibió una referencia de Minecraft no válida.",
+        "en": "Horizon received an invalid Minecraft file reference.",
+        "pt": "O Horizon recebeu uma referência inválida de um ficheiro do Minecraft.",
+        "fr": "Horizon a reçu une référence de fichier Minecraft invalide.",
+        "de": "Horizon hat einen ungültigen Verweis auf eine Minecraft-Datei erhalten.",
+        "it": "Horizon ha ricevuto un riferimento non valido a un file di Minecraft.",
+        "ru": "Horizon получил недопустимую ссылку на файл Minecraft.",
+        "ja": "Horizon が無効な Minecraft ファイル参照を受け取りました。",
+        "ar": "تلقى Horizon مرجعًا غير صالح لملف Minecraft.",
+        "zh": "Horizon 收到了无效的 Minecraft 文件引用。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Minecraft 26.3 no está disponible en el catálogo oficial.",
+      "translations": {
+        "es": "Minecraft 26.3 no está disponible en el catálogo oficial.",
+        "en": "Minecraft 26.3 is unavailable in the official catalog.",
+        "pt": "O Minecraft 26.3 não está disponível no catálogo oficial.",
+        "fr": "Minecraft 26.3 n’est pas disponible dans le catalogue officiel.",
+        "de": "Minecraft 26.3 ist im offiziellen Katalog nicht verfügbar.",
+        "it": "Minecraft 26.3 non è disponibile nel catalogo ufficiale.",
+        "ru": "Minecraft 26.3 отсутствует в официальном каталоге.",
+        "ja": "公式カタログに Minecraft 26.3 がありません。",
+        "ar": "Minecraft 26.3 غير متاح في الفهرس الرسمي.",
+        "zh": "官方目录中没有 Minecraft 26.3。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Manifiesto de Minecraft no válido.",
+      "translations": {
+        "es": "Manifiesto de Minecraft no válido.",
+        "en": "Invalid Minecraft manifest.",
+        "pt": "Manifesto do Minecraft inválido.",
+        "fr": "Manifeste Minecraft invalide.",
+        "de": "Minecraft-Manifest ungültig.",
+        "it": "Manifesto di Minecraft non valido.",
+        "ru": "Недействительный манифест Minecraft.",
+        "ja": "Minecraft のマニフェストが無効です。",
+        "ar": "بيان Minecraft غير صالح.",
+        "zh": "Minecraft 清单无效。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Índice de recursos de Minecraft no válido.",
+      "translations": {
+        "es": "Índice de recursos de Minecraft no válido.",
+        "en": "Invalid Minecraft asset index.",
+        "pt": "Índice de recursos do Minecraft inválido.",
+        "fr": "Index des ressources Minecraft invalide.",
+        "de": "Ungültiger Minecraft-Ressourcenindex.",
+        "it": "Indice delle risorse di Minecraft non valido.",
+        "ru": "Недействительный индекс ресурсов Minecraft.",
+        "ja": "Minecraft のリソースインデックスが無効です。",
+        "ar": "فهرس موارد Minecraft غير صالح.",
+        "zh": "Minecraft 资源索引无效。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Minecraft en Rust.",
+      "translations": {
+        "es": "Minecraft en Rust.",
+        "en": "Minecraft in Rust.",
+        "pt": "Minecraft em Rust.",
+        "fr": "Minecraft en Rust.",
+        "de": "Minecraft, in Rust neu geschrieben.",
+        "it": "Minecraft riscritto in Rust.",
+        "ru": "Minecraft на Rust.",
+        "ja": "Rust 製の Minecraft。",
+        "ar": "Minecraft بلغة Rust.",
+        "zh": "用 Rust 编写的 Minecraft。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Horizon · Beta",
+      "translations": {
+        "es": "Horizon · Beta",
+        "en": "Horizon · Beta",
+        "pt": "Horizon · Beta",
+        "fr": "Horizon · Bêta",
+        "de": "Horizon · Beta",
+        "it": "Horizon · Beta",
+        "ru": "Horizon · бета",
+        "ja": "Horizon · ベータ",
+        "ar": "Horizon · تجريبي",
+        "zh": "Horizon · 测试版"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Horizon no pudo preparar los recursos.",
+      "translations": {
+        "es": "Horizon no pudo preparar los recursos.",
+        "en": "Horizon could not prepare the resources.",
+        "pt": "O Horizon não conseguiu preparar os recursos.",
+        "fr": "Horizon n’a pas pu préparer les ressources.",
+        "de": "Horizon konnte die Ressourcen nicht vorbereiten.",
+        "it": "Horizon non è riuscito a preparare le risorse.",
+        "ru": "Horizon не удалось подготовить ресурсы.",
+        "ja": "Horizon がリソースを準備できませんでした。",
+        "ar": "تعذر على Horizon تجهيز الموارد.",
+        "zh": "Horizon 无法准备资源。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Entrada de Horizon no admitida.",
+      "translations": {
+        "es": "Entrada de Horizon no admitida.",
+        "en": "Unsupported entry in the Horizon archive.",
+        "pt": "Entrada não suportada no arquivo do Horizon.",
+        "fr": "Entrée non prise en charge dans l’archive Horizon.",
+        "de": "Nicht unterstützter Eintrag im Horizon-Archiv.",
+        "it": "Voce non supportata nell’archivio di Horizon.",
+        "ru": "Неподдерживаемая запись в архиве Horizon.",
+        "ja": "Horizon アーカイブに未対応の項目があります。",
+        "ar": "عنصر غير مدعوم في أرشيف Horizon.",
+        "zh": "Horizon 压缩包中存在不支持的条目。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Horizon: error de descarga HTTP {0}.",
+      "translations": {
+        "es": "Horizon: error de descarga HTTP {0}.",
+        "en": "Horizon download failed with HTTP {0}.",
+        "pt": "A transferência do Horizon falhou com HTTP {0}.",
+        "fr": "Le téléchargement de Horizon a échoué avec HTTP {0}.",
+        "de": "Der Horizon-Download ist mit HTTP {0} fehlgeschlagen.",
+        "it": "Il download di Horizon non è riuscito (HTTP {0}).",
+        "ru": "Не удалось загрузить Horizon (HTTP {0}).",
+        "ja": "Horizon のダウンロードに失敗しました (HTTP {0})。",
+        "ar": "فشل تنزيل Horizon بسبب HTTP {0}.",
+        "zh": "Horizon 下载失败（HTTP {0}）。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Crea la sala e invita a tus amigos desde el panel de Battly Worlds en Minecraft.",
+      "translations": {
+        "es": "Crea la sala e invita a tus amigos desde el panel de Battly Worlds en Minecraft.",
+        "en": "Create the room and invite your friends from the Battly Worlds panel in Minecraft.",
+        "pt": "Cria a sala e convida os teus amigos no painel de Battly Worlds no Minecraft.",
+        "fr": "Crée un salon et invite tes amis depuis le panneau Battly Worlds dans Minecraft.",
+        "de": "Erstelle einen Raum und lade deine Freunde über das Battly Worlds-Menü in Minecraft ein.",
+        "it": "Crea una stanza e invita i tuoi amici dal pannello Battly Worlds in Minecraft.",
+        "ru": "Создай комнату и пригласи друзей через панель Battly Worlds в Minecraft.",
+        "ja": "Minecraft 内の Battly Worlds パネルでルームを作成し、フレンドを招待します。",
+        "ar": "أنشئ الغرفة وادعُ أصدقاءك من لوحة Battly Worlds في Minecraft.",
+        "zh": "在 Minecraft 的 Battly Worlds 面板中创建房间并邀请好友。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Algún atajo de Battly Worlds ya está en uso.",
+      "translations": {
+        "es": "Algún atajo de Battly Worlds ya está en uso.",
+        "en": "A Battly Worlds shortcut is already in use.",
+        "pt": "Um atalho de Battly Worlds já está em uso.",
+        "fr": "Un raccourci Battly Worlds est déjà utilisé.",
+        "de": "Ein Battly Worlds-Tastenkürzel wird bereits verwendet.",
+        "it": "Una scorciatoia di Battly Worlds è già in uso.",
+        "ru": "Одно из сочетаний клавиш Battly Worlds уже используется.",
+        "ja": "Battly Worlds のショートカットがすでに使用されています。",
+        "ar": "أحد اختصارات Battly Worlds قيد الاستخدام بالفعل.",
+        "zh": "Battly Worlds 的某个快捷键已被占用。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No se pudo compartir el mundo. Abre Battly Worlds para reintentarlo.",
+      "translations": {
+        "es": "No se pudo compartir el mundo. Abre Battly Worlds para reintentarlo.",
+        "en": "Could not share the world. Open Battly Worlds to try again.",
+        "pt": "Não foi possível partilhar o mundo. Abre Battly Worlds para tentar novamente.",
+        "fr": "Impossible de partager le monde. Ouvre Battly Worlds pour réessayer.",
+        "de": "Die Welt konnte nicht geteilt werden. Öffne Battly Worlds und versuche es erneut.",
+        "it": "Impossibile condividere il mondo. Apri Battly Worlds per riprovare.",
+        "ru": "Не удалось поделиться миром. Открой Battly Worlds и попробуй снова.",
+        "ja": "ワールドを共有できませんでした。Battly Worlds を開いて再試行してください。",
+        "ar": "تعذرت مشاركة العالم. افتح Battly Worlds للمحاولة مجددًا.",
+        "zh": "无法分享世界。打开 Battly Worlds 后重试。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Atajos de teclado",
+      "translations": {
+        "es": "Atajos de teclado",
+        "en": "Keyboard shortcuts",
+        "pt": "Atalhos de teclado",
+        "fr": "Raccourcis clavier",
+        "de": "Tastenkürzel",
+        "it": "Scorciatoie da tastiera",
+        "ru": "Сочетания клавиш",
+        "ja": "キーボードショートカット",
+        "ar": "اختصارات لوحة المفاتيح",
+        "zh": "键盘快捷键"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Selecciona un campo y pulsa la combinación que quieras usar.",
+      "translations": {
+        "es": "Selecciona un campo y pulsa la combinación que quieras usar.",
+        "en": "Select a field and press the shortcut you want to use.",
+        "pt": "Seleciona um campo e prime a combinação que queres usar.",
+        "fr": "Sélectionne un champ et appuie sur les touches souhaitées.",
+        "de": "Wähle ein Feld aus und drücke die gewünschte Tastenkombination.",
+        "it": "Seleziona un campo e premi la combinazione che vuoi usare.",
+        "ru": "Выбери поле и нажми нужное сочетание клавиш.",
+        "ja": "欄を選び、使いたいキーの組み合わせを押してください。",
+        "ar": "اختر حقلًا واضغط مجموعة المفاتيح التي تريد استخدامها.",
+        "zh": "选中一个字段，然后按下要使用的组合键。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Ese atajo ya está asignado en Battly Worlds.",
+      "translations": {
+        "es": "Ese atajo ya está asignado en Battly Worlds.",
+        "en": "That shortcut is already assigned in Battly Worlds.",
+        "pt": "Esse atalho já está atribuído em Battly Worlds.",
+        "fr": "Ce raccourci est déjà attribué dans Battly Worlds.",
+        "de": "Dieses Tastenkürzel ist in Battly Worlds bereits belegt.",
+        "it": "Questa scorciatoia è già assegnata in Battly Worlds.",
+        "ru": "Это сочетание клавиш уже назначено в Battly Worlds.",
+        "ja": "このショートカットは Battly Worlds ですでに割り当てられています。",
+        "ar": "هذا الاختصار معيّن بالفعل في Battly Worlds.",
+        "zh": "该快捷键已在 Battly Worlds 中分配。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Usa una tecla válida. Para el panel y el overlay, añade Ctrl, ⌘ o Alt.",
+      "translations": {
+        "es": "Usa una tecla válida. Para el panel y el overlay, añade Ctrl, ⌘ o Alt.",
+        "en": "Use a valid key. For the panel and overlay, include Ctrl, ⌘ or Alt.",
+        "pt": "Usa uma tecla válida. Para o painel e o overlay, junta Ctrl, ⌘ ou Alt.",
+        "fr": "Utilise une touche valide. Pour le panneau et la superposition, ajoute Ctrl, ⌘ ou Alt.",
+        "de": "Verwende eine gültige Taste. Für das Menü und das Overlay muss Strg, ⌘ oder Alt dabei sein.",
+        "it": "Usa un tasto valido. Per pannello e overlay, aggiungi Ctrl, ⌘ o Alt.",
+        "ru": "Нажми допустимую клавишу. Для панели и оверлея добавь Ctrl, ⌘ или Alt.",
+        "ja": "有効なキーを使ってください。パネルとオーバーレイには Ctrl、⌘、Alt のいずれかも使います。",
+        "ar": "استخدم مفتاحًا صالحًا. للوحة والتراكب، أضف Ctrl أو ⌘ أو Alt.",
+        "zh": "请使用有效按键。设置面板和叠加层快捷键时，请加上 Ctrl、⌘ 或 Alt。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Restablecer atajos",
+      "translations": {
+        "es": "Restablecer atajos",
+        "en": "Reset shortcuts",
+        "pt": "Repor atalhos",
+        "fr": "Réinitialiser les raccourcis",
+        "de": "Tastenkürzel zurücksetzen",
+        "it": "Ripristina scorciatoie",
+        "ru": "Сбросить сочетания клавиш",
+        "ja": "ショートカットをリセット",
+        "ar": "إعادة ضبط الاختصارات",
+        "zh": "重置快捷键"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Abrir o contraer el panel",
+      "translations": {
+        "es": "Abrir o contraer el panel",
+        "en": "Open or collapse the panel",
+        "pt": "Abrir ou recolher o painel",
+        "fr": "Ouvrir ou réduire le panneau",
+        "de": "Menü öffnen oder einklappen",
+        "it": "Apri o comprimi il pannello",
+        "ru": "Открыть или свернуть панель",
+        "ja": "パネルを開く／折りたたむ",
+        "ar": "فتح اللوحة أو طيّها",
+        "zh": "打开或折叠面板"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Ocultar o mostrar el overlay",
+      "translations": {
+        "es": "Ocultar o mostrar el overlay",
+        "en": "Hide or show the overlay",
+        "pt": "Ocultar ou mostrar o overlay",
+        "fr": "Masquer ou afficher la superposition",
+        "de": "Overlay aus- oder einblenden",
+        "it": "Nascondi o mostra l’overlay",
+        "ru": "Скрыть или показать оверлей",
+        "ja": "オーバーレイを表示／非表示",
+        "ar": "إخفاء التراكب أو إظهاره",
+        "zh": "隐藏或显示叠加层"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Compartir el mundo LAN",
+      "translations": {
+        "es": "Compartir el mundo LAN",
+        "en": "Share the LAN world",
+        "pt": "Partilhar o mundo LAN",
+        "fr": "Partager le monde en réseau local",
+        "de": "LAN-Welt teilen",
+        "it": "Condividi il mondo LAN",
+        "ru": "Поделиться миром по локальной сети",
+        "ja": "LAN ワールドを共有",
+        "ar": "مشاركة عالم الشبكة المحلية",
+        "zh": "分享局域网世界"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Ignorar el aviso de LAN",
+      "translations": {
+        "es": "Ignorar el aviso de LAN",
+        "en": "Dismiss the LAN prompt",
+        "pt": "Ignorar o aviso de LAN",
+        "fr": "Ignorer le message de réseau local",
+        "de": "LAN-Hinweis schließen",
+        "it": "Ignora l’avviso LAN",
+        "ru": "Закрыть предложение об игре по локальной сети",
+        "ja": "LAN の案内を閉じる",
+        "ar": "تجاهل تنبيه الشبكة المحلية",
+        "zh": "关闭局域网提示"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Muestra el panel sobre Minecraft en modo ventana.",
+      "translations": {
+        "es": "Muestra el panel sobre Minecraft en modo ventana.",
+        "en": "Show the panel over Minecraft in windowed mode.",
+        "pt": "Mostra o painel sobre o Minecraft em modo de janela.",
+        "fr": "Affiche le panneau par-dessus Minecraft en mode fenêtré.",
+        "de": "Zeigt das Menü im Fenstermodus über Minecraft an.",
+        "it": "Mostra il pannello sopra Minecraft in modalità finestra.",
+        "ru": "Показывает панель поверх Minecraft в оконном режиме.",
+        "ja": "ウィンドウモードで Minecraft の上にパネルを表示します。",
+        "ar": "تظهر اللوحة فوق Minecraft في وضع النافذة.",
+        "zh": "在窗口模式下将面板显示在 Minecraft 上方。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Abre Battly Worlds en Minecraft, crea la sala e invita a tus amigos.",
+      "translations": {
+        "es": "Abre Battly Worlds en Minecraft, crea la sala e invita a tus amigos.",
+        "en": "Open Battly Worlds in Minecraft, create a room and invite your friends.",
+        "pt": "Abre Battly Worlds no Minecraft, cria a sala e convida os teus amigos.",
+        "fr": "Ouvre Battly Worlds dans Minecraft, crée un salon et invite tes amis.",
+        "de": "Öffne Battly Worlds in Minecraft, erstelle einen Raum und lade deine Freunde ein.",
+        "it": "Apri Battly Worlds in Minecraft, crea una stanza e invita i tuoi amici.",
+        "ru": "Открой Battly Worlds в Minecraft, создай комнату и пригласи друзей.",
+        "ja": "Minecraft で Battly Worlds を開き、ルームを作成してフレンドを招待します。",
+        "ar": "افتح Battly Worlds في Minecraft، ثم أنشئ غرفة وادعُ أصدقاءك.",
+        "zh": "在 Minecraft 中打开 Battly Worlds，创建房间并邀请好友。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Para jugar a Horizon, usa un nombre de Minecraft de 1 a 16 caracteres: letras, números o guion bajo.",
+      "translations": {
+        "es": "Para jugar a Horizon, usa un nombre de Minecraft de 1 a 16 caracteres: letras, números o guion bajo.",
+        "en": "To play Horizon, use a Minecraft name with 1 to 16 characters: letters, numbers, or underscores.",
+        "pt": "Para jogar Horizon, usa um nome de Minecraft de 1 a 16 caracteres: letras, números ou traços baixos.",
+        "fr": "Pour jouer à Horizon, utilise un nom Minecraft de 1 à 16 caractères : lettres, chiffres ou tirets bas.",
+        "de": "Verwende für Horizon einen Minecraft-Namen mit 1 bis 16 Zeichen: Buchstaben, Ziffern oder Unterstriche.",
+        "it": "Per giocare a Horizon, usa un nome Minecraft da 1 a 16 caratteri: lettere, numeri o trattini bassi.",
+        "ru": "Чтобы играть в Horizon, используй имя Minecraft длиной от 1 до 16 символов: латинские буквы, цифры или знаки подчёркивания.",
+        "ja": "Horizon をプレイするには、英字、数字、アンダースコアで構成された 1〜16 文字の Minecraft 名を使ってください。",
+        "ar": "للعب Horizon، استخدم اسم Minecraft يتكوّن من 1 إلى 16 محرفًا من الحروف الإنجليزية أو الأرقام أو الشرطة السفلية.",
+        "zh": "要游玩 Horizon，请使用由 1 到 16 个英文字母、数字或下划线组成的 Minecraft 名称。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Vuelve a iniciar sesión en Battly para jugar a Horizon.",
+      "translations": {
+        "es": "Vuelve a iniciar sesión en Battly para jugar a Horizon.",
+        "en": "Sign in to Battly again to play Horizon.",
+        "pt": "Volta a iniciar sessão no Battly para jogar Horizon.",
+        "fr": "Reconnecte-toi à Battly pour jouer à Horizon.",
+        "de": "Melde dich erneut bei Battly an, um Horizon zu spielen.",
+        "it": "Accedi di nuovo a Battly per giocare a Horizon.",
+        "ru": "Войди в Battly снова, чтобы играть в Horizon.",
+        "ja": "Horizon をプレイするには、Battly にもう一度ログインしてください。",
+        "ar": "سجّل الدخول إلى Battly مجددًا للعب Horizon.",
+        "zh": "请重新登录 Battly 以游玩 Horizon。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Preparando Horizon",
+      "translations": {
+        "es": "Preparando Horizon",
+        "en": "Preparing Horizon",
+        "pt": "A preparar o Horizon",
+        "fr": "Préparation de Horizon",
+        "de": "Horizon wird vorbereitet",
+        "it": "Preparazione di Horizon",
+        "ru": "Подготовка Horizon",
+        "ja": "Horizon を準備中",
+        "ar": "جارٍ تجهيز Horizon",
+        "zh": "正在准备 Horizon"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Battly no puede leer las instancias con la clave de este perfil. Las carpetas se conservan. Para recuperarlas, restaura una copia del perfil original de Battly.",
+      "translations": {
+        "es": "Battly no puede leer las instancias con la clave de este perfil. Las carpetas se conservan. Para recuperarlas, restaura una copia del perfil original de Battly.",
+        "en": "Battly cannot read your instances with this profile’s key. The folders are intact. Restore a backup of the original Battly profile to recover access.",
+        "pt": "O Battly não consegue ler as instâncias com a chave deste perfil. As pastas estão intactas. Restaura uma cópia de segurança do perfil original do Battly para recuperar o acesso.",
+        "fr": "Battly ne peut pas lire les instances avec la clé de ce profil. Les dossiers sont intacts. Restaure une sauvegarde du profil Battly d’origine pour y accéder de nouveau.",
+        "de": "Battly kann die Instanzen mit dem Schlüssel dieses Profils nicht lesen. Die Ordner sind intakt. Stelle eine Sicherung des ursprünglichen Battly-Profils wieder her, um erneut darauf zuzugreifen.",
+        "it": "Battly non riesce a leggere le istanze con la chiave di questo profilo. Le cartelle sono intatte. Ripristina un backup del profilo Battly originale per accedere di nuovo alle istanze.",
+        "ru": "Battly не может прочитать сборки с ключом этого профиля. Папки сохранены. Восстанови резервную копию исходного профиля Battly, чтобы снова получить доступ.",
+        "ja": "このプロファイルのキーでは Battly のインスタンスを読み込めません。フォルダーは保持されています。元の Battly プロファイルのバックアップを復元すると、再びアクセスできます。",
+        "ar": "لا يستطيع Battly قراءة مثيلات اللعبة باستخدام مفتاح هذا الملف الشخصي. المجلدات سليمة. استعد نسخة احتياطية من ملف Battly الشخصي الأصلي لاستعادة الوصول.",
+        "zh": "Battly 无法用当前配置文件的密钥读取实例。实例文件夹仍然完好。请恢复原 Battly 配置文件的备份以重新访问这些实例。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Exportar instancia",
+      "translations": {
+        "es": "Exportar instancia",
+        "en": "Export instance",
+        "pt": "Exportar instância",
+        "fr": "Exporter l’instance",
+        "de": "Instanz exportieren",
+        "it": "Esporta istanza",
+        "ru": "Экспортировать сборку",
+        "ja": "インスタンスをエクスポート",
+        "ar": "تصدير النسخة",
+        "zh": "导出实例"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Duplicar instancia",
+      "translations": {
+        "es": "Duplicar instancia",
+        "en": "Duplicate instance",
+        "pt": "Duplicar instância",
+        "fr": "Dupliquer l’instance",
+        "de": "Instanz duplizieren",
+        "it": "Duplica istanza",
+        "ru": "Дублировать сборку",
+        "ja": "インスタンスを複製",
+        "ar": "تكرار النسخة",
+        "zh": "复制实例"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Para importar en Battly.",
+      "translations": {
+        "es": "Para importar en Battly.",
+        "en": "Import into Battly.",
+        "pt": "Para importar no Battly.",
+        "fr": "À importer dans Battly.",
+        "de": "Zum Importieren in Battly.",
+        "it": "Da importare in Battly.",
+        "ru": "Для импорта в Battly.",
+        "ja": "Battly にインポートできます。",
+        "ar": "للاستيراد في Battly.",
+        "zh": "可导入 Battly。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Para importar en Prism Launcher, Modrinth App o Battly.",
+      "translations": {
+        "es": "Para importar en Prism Launcher, Modrinth App o Battly.",
+        "en": "Import into Prism Launcher, Modrinth App or Battly.",
+        "pt": "Para importar no Prism Launcher, Modrinth App ou Battly.",
+        "fr": "À importer dans Prism Launcher, Modrinth App ou Battly.",
+        "de": "Zum Importieren in Prism Launcher, Modrinth App oder Battly.",
+        "it": "Da importare in Prism Launcher, Modrinth App o Battly.",
+        "ru": "Для импорта в Prism Launcher, Modrinth App или Battly.",
+        "ja": "Prism Launcher、Modrinth App、Battly にインポートできます。",
+        "ar": "للاستيراد في Prism Launcher أو Modrinth App أو Battly.",
+        "zh": "可导入 Prism Launcher、Modrinth App 或 Battly。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Copia",
+      "translations": {
+        "es": "Copia",
+        "en": "Copy",
+        "pt": "Cópia",
+        "fr": "Copie",
+        "de": "Kopie",
+        "it": "Copia",
+        "ru": "Копия",
+        "ja": "コピー",
+        "ar": "نسخة",
+        "zh": "副本"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Shaders",
+      "translations": {
+        "es": "Shaders",
+        "en": "Shaders",
+        "pt": "Shaders",
+        "fr": "Shaders",
+        "de": "Shader",
+        "it": "Shader",
+        "ru": "Шейдеры",
+        "ja": "シェーダー",
+        "ar": "حزم التظليل",
+        "zh": "光影包"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Capturas",
+      "translations": {
+        "es": "Capturas",
+        "en": "Screenshots",
+        "pt": "Capturas de tela",
+        "fr": "Captures d’écran",
+        "de": "Screenshots",
+        "it": "Screenshot",
+        "ru": "Снимки экрана",
+        "ja": "スクリーンショット",
+        "ar": "لقطات الشاشة",
+        "zh": "截图"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Servidores guardados",
+      "translations": {
+        "es": "Servidores guardados",
+        "en": "Saved servers",
+        "pt": "Servidores salvos",
+        "fr": "Serveurs enregistrés",
+        "de": "Gespeicherte Server",
+        "it": "Server salvati",
+        "ru": "Сохранённые серверы",
+        "ja": "保存済みサーバー",
+        "ar": "الخوادم المحفوظة",
+        "zh": "已保存的服务器"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Duplicar",
+      "translations": {
+        "es": "Duplicar",
+        "en": "Duplicate",
+        "pt": "Duplicar",
+        "fr": "Dupliquer",
+        "de": "Duplizieren",
+        "it": "Duplica",
+        "ru": "Дублировать",
+        "ja": "複製",
+        "ar": "تكرار",
+        "zh": "复制"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Copiando la instancia…",
+      "translations": {
+        "es": "Copiando la instancia…",
+        "en": "Copying the instance…",
+        "pt": "Copiando a instância…",
+        "fr": "Copie de l’instance…",
+        "de": "Instanz wird kopiert…",
+        "it": "Copia dell’istanza…",
+        "ru": "Копирование сборки…",
+        "ja": "インスタンスをコピーしています…",
+        "ar": "جارٍ نسخ النسخة…",
+        "zh": "正在复制实例…"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Instancia duplicada.",
+      "translations": {
+        "es": "Instancia duplicada.",
+        "en": "Instance duplicated.",
+        "pt": "Instância duplicada.",
+        "fr": "Instance dupliquée.",
+        "de": "Instanz dupliziert.",
+        "it": "Istanza duplicata.",
+        "ru": "Сборка скопирована.",
+        "ja": "インスタンスを複製しました。",
+        "ar": "تم تكرار النسخة.",
+        "zh": "已复制实例。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Paquete .mrpack exportado",
+      "translations": {
+        "es": "Paquete .mrpack exportado",
+        "en": "Exported .mrpack",
+        "pt": "Pacote .mrpack exportado",
+        "fr": "Pack .mrpack exporté",
+        "de": "Paket .mrpack exportiert",
+        "it": "Pacchetto .mrpack esportato",
+        "ru": "Пакет .mrpack экспортирован",
+        "ja": "パックを .mrpack 形式でエクスポートしました",
+        "ar": "تم تصدير حزمة .mrpack",
+        "zh": "已导出 .mrpack 整合包"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Guarda el paquete fuera de la carpeta de la instancia.",
+      "translations": {
+        "es": "Guarda el paquete fuera de la carpeta de la instancia.",
+        "en": "Save the pack outside the instance folder.",
+        "pt": "Salve o pacote fora da pasta da instância.",
+        "fr": "Enregistrez le pack en dehors du dossier de l’instance.",
+        "de": "Speichere das Paket außerhalb des Instanzordners.",
+        "it": "Salva il pacchetto fuori dalla cartella dell’istanza.",
+        "ru": "Сохраните пакет за пределами папки сборки.",
+        "ja": "パックをインスタンスフォルダーの外に保存してください。",
+        "ar": "احفظ الحزمة خارج مجلد النسخة.",
+        "zh": "请将整合包保存到实例文件夹之外。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Cierra Minecraft antes de duplicar esta instancia.",
+      "translations": {
+        "es": "Cierra Minecraft antes de duplicar esta instancia.",
+        "en": "Close Minecraft before duplicating this instance.",
+        "pt": "Feche o Minecraft antes de duplicar esta instância.",
+        "fr": "Fermez Minecraft avant de dupliquer cette instance.",
+        "de": "Schließe Minecraft, bevor du diese Instanz duplizierst.",
+        "it": "Chiudi Minecraft prima di duplicare questa istanza.",
+        "ru": "Закройте Minecraft перед копированием этой сборки.",
+        "ja": "このインスタンスを複製する前に Minecraft を閉じてください。",
+        "ar": "أغلق Minecraft قبل تكرار هذه النسخة.",
+        "zh": "复制此实例前请关闭 Minecraft。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Comprimiendo el paquete .mrpack…",
+      "translations": {
+        "es": "Comprimiendo el paquete .mrpack…",
+        "en": "Compressing the .mrpack…",
+        "pt": "Compactando o pacote .mrpack…",
+        "fr": "Compression du pack .mrpack…",
+        "de": "Paket .mrpack wird komprimiert…",
+        "it": "Compressione del pacchetto .mrpack…",
+        "ru": "Сжатие пакета .mrpack…",
+        "ja": ".mrpack を圧縮しています…",
+        "ar": "جارٍ ضغط حزمة .mrpack…",
+        "zh": "正在压缩 .mrpack 整合包…"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Identificando versiones exactas en Modrinth…",
+      "translations": {
+        "es": "Identificando versiones exactas en Modrinth…",
+        "en": "Finding exact versions on Modrinth…",
+        "pt": "Identificando versões exatas no Modrinth…",
+        "fr": "Recherche des versions exactes sur Modrinth…",
+        "de": "Genaue Versionen auf Modrinth werden gesucht…",
+        "it": "Ricerca delle versioni esatte su Modrinth…",
+        "ru": "Поиск точных версий на Modrinth…",
+        "ja": "Modrinth で一致するバージョンを検索しています…",
+        "ar": "جارٍ البحث عن الإصدارات المطابقة على Modrinth…",
+        "zh": "正在 Modrinth 上查找匹配的版本…"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Exportar instancia a .mrpack",
+      "translations": {
+        "es": "Exportar instancia a .mrpack",
+        "en": "Export instance as .mrpack",
+        "pt": "Exportar instância como .mrpack",
+        "fr": "Exporter l’instance au format .mrpack",
+        "de": "Instanz als .mrpack exportieren",
+        "it": "Esporta istanza in .mrpack",
+        "ru": "Экспортировать сборку в .mrpack",
+        "ja": "インスタンスを .mrpack にエクスポート",
+        "ar": "تصدير النسخة بصيغة .mrpack",
+        "zh": "将实例导出为 .mrpack"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Para exportar a .mrpack, elige Vanilla o una versión concreta de Forge, NeoForge, Fabric o Quilt.",
+      "translations": {
+        "es": "Para exportar a .mrpack, elige Vanilla o una versión concreta de Forge, NeoForge, Fabric o Quilt.",
+        "en": "To export as .mrpack, choose Vanilla or a specific version of Forge, NeoForge, Fabric or Quilt.",
+        "pt": "Para exportar como .mrpack, escolha Vanilla ou uma versão específica do Forge, NeoForge, Fabric ou Quilt.",
+        "fr": "Pour exporter au format .mrpack, choisissez Vanilla ou une version précise de Forge, NeoForge, Fabric ou Quilt.",
+        "de": "Wähle für den .mrpack-Export Vanilla oder eine konkrete Version von Forge, NeoForge, Fabric oder Quilt.",
+        "it": "Per esportare in .mrpack, scegli Vanilla o una versione specifica di Forge, NeoForge, Fabric o Quilt.",
+        "ru": "Для экспорта в .mrpack выберите Vanilla или конкретную версию Forge, NeoForge, Fabric или Quilt.",
+        "ja": ".mrpack にエクスポートするには、Vanilla または Forge、NeoForge、Fabric、Quilt の特定のバージョンを選んでください。",
+        "ar": "للتصدير بصيغة .mrpack، اختر Vanilla أو إصدارًا محددًا من Forge أو NeoForge أو Fabric أو Quilt.",
+        "zh": "要导出为 .mrpack，请选择 Vanilla 或指定版本的 Forge、NeoForge、Fabric 或 Quilt。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "El destino del paquete no es válido.",
+      "translations": {
+        "es": "El destino del paquete no es válido.",
+        "en": "The pack destination is invalid.",
+        "pt": "O destino do pacote é inválido.",
+        "fr": "La destination du pack est invalide.",
+        "de": "Der Speicherort des Pakets ist ungültig.",
+        "it": "La destinazione del pacchetto non è valida.",
+        "ru": "Недопустимое место сохранения пакета.",
+        "ja": "パックの保存先が無効です。",
+        "ar": "وجهة الحزمة غير صالحة.",
+        "zh": "整合包的保存位置无效。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "La selección contiene un enlace o un archivo fuera de la instancia.",
+      "translations": {
+        "es": "La selección contiene un enlace o un archivo fuera de la instancia.",
+        "en": "The selection contains a link or a file outside the instance.",
+        "pt": "A seleção contém um link ou um arquivo fora da instância.",
+        "fr": "La sélection contient un lien ou un fichier en dehors de l’instance.",
+        "de": "Die Auswahl enthält einen Link oder eine Datei außerhalb der Instanz.",
+        "it": "La selezione contiene un collegamento o un file esterno all’istanza.",
+        "ru": "В выбранных данных есть ссылка или файл за пределами сборки.",
+        "ja": "選択内容にリンクまたはインスタンス外のファイルが含まれています。",
+        "ar": "يحتوي التحديد على رابط أو ملف خارج النسخة.",
+        "zh": "所选内容包含链接或实例外的文件。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "La selección contiene un archivo especial que no se puede copiar.",
+      "translations": {
+        "es": "La selección contiene un archivo especial que no se puede copiar.",
+        "en": "The selection contains a special file that cannot be copied.",
+        "pt": "A seleção contém um arquivo especial que não pode ser copiado.",
+        "fr": "La sélection contient un fichier spécial qui ne peut pas être copié.",
+        "de": "Die Auswahl enthält eine spezielle Datei, die nicht kopiert werden kann.",
+        "it": "La selezione contiene un file speciale che non può essere copiato.",
+        "ru": "В выбранных данных есть специальный файл, который нельзя скопировать.",
+        "ja": "選択内容にコピーできない特殊ファイルが含まれています。",
+        "ar": "يحتوي التحديد على ملف خاص لا يمكن نسخه.",
+        "zh": "所选内容包含无法复制的特殊文件。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Selección de copia inválida.",
+      "translations": {
+        "es": "Selección de copia inválida.",
+        "en": "Invalid copy selection.",
+        "pt": "Seleção de cópia inválida.",
+        "fr": "Sélection de copie invalide.",
+        "de": "Ungültige Kopierauswahl.",
+        "it": "Selezione di copia non valida.",
+        "ru": "Недопустимый выбор для копирования.",
+        "ja": "コピー対象の選択が無効です。",
+        "ar": "تحديد النسخ غير صالح.",
+        "zh": "复制选项无效。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Incluye mods, configuración y paquetes de recursos. Los mundos y los ajustes personales se quedan en la instancia.",
+      "translations": {
+        "es": "Incluye mods, configuración y paquetes de recursos. Los mundos y los ajustes personales se quedan en la instancia.",
+        "en": "Includes mods, configuration and resource packs. Worlds and personal settings stay in the instance.",
+        "pt": "Inclui mods, configurações e pacotes de recursos. Os mundos e as preferências pessoais permanecem na instância.",
+        "fr": "Inclut les mods, la configuration et les packs de ressources. Les mondes et les réglages personnels restent dans l’instance.",
+        "de": "Enthält Mods, Konfiguration und Ressourcenpakete. Welten und persönliche Einstellungen bleiben in der Instanz.",
+        "it": "Include mod, configurazione e pacchetti di risorse. Mondi e impostazioni personali rimangono nell’istanza.",
+        "ru": "Включает моды, настройки и наборы ресурсов. Миры и личные настройки остаются в сборке.",
+        "ja": "Mod、設定、リソースパックを含みます。ワールドと個人設定はインスタンスに残ります。",
+        "ar": "يتضمن التعديلات والإعدادات وحزم الموارد. تبقى العوالم والإعدادات الشخصية في النسخة.",
+        "zh": "包含模组、配置和资源包。世界和个人设置保留在实例中。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Listo para importar en Prism Launcher, Modrinth App o Battly.",
+      "translations": {
+        "es": "Listo para importar en Prism Launcher, Modrinth App o Battly.",
+        "en": "Ready to import into Prism Launcher, Modrinth App or Battly.",
+        "pt": "Pronto para importar no Prism Launcher, Modrinth App ou Battly.",
+        "fr": "Prêt à importer dans Prism Launcher, Modrinth App ou Battly.",
+        "de": "Bereit zum Import in Prism Launcher, Modrinth App oder Battly.",
+        "it": "Pronto per l’importazione in Prism Launcher, Modrinth App o Battly.",
+        "ru": "Готово к импорту в Prism Launcher, Modrinth App или Battly.",
+        "ja": "Prism Launcher、Modrinth App、Battly にインポートできます。",
+        "ar": "جاهز للاستيراد في Prism Launcher أو Modrinth App أو Battly.",
+        "zh": "可导入 Prism Launcher、Modrinth App 或 Battly。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Tamaño del .mrpack",
+      "translations": {
+        "es": "Tamaño del .mrpack",
+        "en": ".mrpack size",
+        "pt": "Tamanho do .mrpack",
+        "fr": "Taille du .mrpack",
+        "de": "Größe der .mrpack-Datei",
+        "it": "Dimensione del .mrpack",
+        "ru": "Размер .mrpack",
+        "ja": ".mrpack のサイズ",
+        "ar": "حجم ملف .mrpack",
+        "zh": ".mrpack 大小"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Ajustes del juego y configuración de mods",
+      "translations": {
+        "es": "Ajustes del juego y configuración de mods",
+        "en": "Game and mod settings",
+        "pt": "Configurações do jogo e dos mods",
+        "fr": "Réglages du jeu et des mods",
+        "de": "Spiel- und Mod-Einstellungen",
+        "it": "Impostazioni di gioco e delle mod",
+        "ru": "Настройки игры и модов",
+        "ja": "ゲームと Mod の設定",
+        "ar": "إعدادات اللعبة والتعديلات",
+        "zh": "游戏及模组设置"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Qué quieres copiar",
+      "translations": {
+        "es": "Qué quieres copiar",
+        "en": "What to copy",
+        "pt": "O que copiar",
+        "fr": "Éléments à copier",
+        "de": "Was soll kopiert werden?",
+        "it": "Cosa copiare",
+        "ru": "Что скопировать",
+        "ja": "コピーする項目",
+        "ar": "ما الذي تريد نسخه؟",
+        "zh": "选择要复制的内容"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No se pudo duplicar la instancia.",
+      "translations": {
+        "es": "No se pudo duplicar la instancia.",
+        "en": "Could not duplicate the instance.",
+        "pt": "Não foi possível duplicar a instância.",
+        "fr": "Impossible de dupliquer l’instance.",
+        "de": "Die Instanz konnte nicht dupliziert werden.",
+        "it": "Impossibile duplicare l’istanza.",
+        "ru": "Не удалось скопировать сборку.",
+        "ja": "インスタンスを複製できませんでした。",
+        "ar": "تعذر تكرار النسخة.",
+        "zh": "无法复制实例。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "ByPack (.bypack)",
+      "translations": {
+        "es": "ByPack (.bypack)",
+        "en": "ByPack (.bypack)",
+        "pt": "ByPack (.bypack)",
+        "fr": "ByPack (.bypack)",
+        "de": "ByPack (.bypack)",
+        "it": "ByPack (.bypack)",
+        "ru": "ByPack (.bypack)",
+        "ja": "ByPack (.bypack)",
+        "ar": "ByPack (.bypack)",
+        "zh": "ByPack (.bypack)"
+      },
+      "sourceLanguage": "en"
+    },
+    {
+      "source": "Modrinth (.mrpack)",
+      "translations": {
+        "es": "Modrinth (.mrpack)",
+        "en": "Modrinth (.mrpack)",
+        "pt": "Modrinth (.mrpack)",
+        "fr": "Modrinth (.mrpack)",
+        "de": "Modrinth (.mrpack)",
+        "it": "Modrinth (.mrpack)",
+        "ru": "Modrinth (.mrpack)",
+        "ja": "Modrinth (.mrpack)",
+        "ar": "Modrinth (.mrpack)",
+        "zh": "Modrinth (.mrpack)"
+      },
+      "sourceLanguage": "en"
+    },
+    {
+      "source": "Catálogo",
+      "translations": {
+        "es": "Catálogo",
+        "en": "Catalog",
+        "pt": "Catálogo",
+        "fr": "Catalogue",
+        "de": "Katalog",
+        "it": "Catalogo",
+        "ru": "Каталог",
+        "ja": "カタログ",
+        "ar": "الكتالوج",
+        "zh": "目录"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "El mod debe coincidir con la versión y el loader de la instancia.",
+      "translations": {
+        "es": "El mod debe coincidir con la versión y el loader de la instancia.",
+        "en": "The mod must match the instance’s version and loader.",
+        "pt": "O mod deve ser compatível com a versão e o carregador da instância.",
+        "fr": "Le mod doit correspondre à la version et au chargeur de l’instance.",
+        "de": "Der Mod muss zur Version und zum Loader der Instanz passen.",
+        "it": "Il mod deve corrispondere alla versione e al loader dell’istanza.",
+        "ru": "Мод должен соответствовать версии и загрузчику сборки.",
+        "ja": "Mod はインスタンスのバージョンとローダーに対応している必要があります。",
+        "ar": "يجب أن يتوافق التعديل مع إصدار النسخة ومحمّلها.",
+        "zh": "模组必须与实例的版本和加载器匹配。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No se pudo consultar el catálogo de CurseForge. Inténtalo de nuevo.",
+      "translations": {
+        "es": "No se pudo consultar el catálogo de CurseForge. Inténtalo de nuevo.",
+        "en": "Could not load the CurseForge catalog. Try again.",
+        "pt": "Não foi possível carregar o catálogo do CurseForge. Tente novamente.",
+        "fr": "Impossible de charger le catalogue CurseForge. Réessayez.",
+        "de": "Der CurseForge-Katalog konnte nicht geladen werden. Versuche es erneut.",
+        "it": "Impossibile caricare il catalogo CurseForge. Riprova.",
+        "ru": "Не удалось загрузить каталог CurseForge. Попробуйте снова.",
+        "ja": "CurseForge のカタログを読み込めませんでした。もう一度お試しください。",
+        "ar": "تعذر تحميل كتالوج CurseForge. حاول مجددًا.",
+        "zh": "无法加载 CurseForge 目录，请重试。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No se pudo verificar el archivo de CurseForge.",
+      "translations": {
+        "es": "No se pudo verificar el archivo de CurseForge.",
+        "en": "Could not verify the CurseForge file.",
+        "pt": "Não foi possível verificar o arquivo do CurseForge.",
+        "fr": "Impossible de vérifier le fichier CurseForge.",
+        "de": "Die CurseForge-Datei konnte nicht überprüft werden.",
+        "it": "Impossibile verificare il file di CurseForge.",
+        "ru": "Не удалось проверить файл CurseForge.",
+        "ja": "CurseForge のファイルを検証できませんでした。",
+        "ar": "تعذر التحقق من ملف CurseForge.",
+        "zh": "无法验证 CurseForge 文件。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No hay una versión de CurseForge compatible con esta instalación.",
+      "translations": {
+        "es": "No hay una versión de CurseForge compatible con esta instalación.",
+        "en": "No CurseForge version is compatible with this installation.",
+        "pt": "Nenhuma versão do CurseForge é compatível com esta instalação.",
+        "fr": "Aucune version de CurseForge n’est compatible avec cette installation.",
+        "de": "Keine CurseForge-Version ist mit dieser Installation kompatibel.",
+        "it": "Nessuna versione di CurseForge è compatibile con questa installazione.",
+        "ru": "В CurseForge нет версии, совместимой с этой установкой.",
+        "ja": "このインストールに対応するバージョンは CurseForge にありません。",
+        "ar": "لا يوجد إصدار من CurseForge متوافق مع هذا التثبيت.",
+        "zh": "CurseForge 上没有与此安装兼容的版本。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "El mod supera el límite de dependencias de CurseForge.",
+      "translations": {
+        "es": "El mod supera el límite de dependencias de CurseForge.",
+        "en": "The mod exceeds the CurseForge dependency limit.",
+        "pt": "O mod excede o limite de dependências do CurseForge.",
+        "fr": "Le mod dépasse la limite de dépendances de CurseForge.",
+        "de": "Der Mod überschreitet das Limit für CurseForge-Abhängigkeiten.",
+        "it": "Il mod supera il limite di dipendenze di CurseForge.",
+        "ru": "Мод превышает лимит зависимостей CurseForge.",
+        "ja": "この Mod は CurseForge の依存関係の上限を超えています。",
+        "ar": "يتجاوز التعديل الحد الأقصى لتبعيات CurseForge.",
+        "zh": "此模组超出了 CurseForge 的依赖数量上限。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "El autor restringe la descarga desde otros launchers. Abre la página de CurseForge para descargar el archivo.",
+      "translations": {
+        "es": "El autor restringe la descarga desde otros launchers. Abre la página de CurseForge para descargar el archivo.",
+        "en": "The author restricts downloads in third-party launchers. Open the CurseForge page to download the file.",
+        "pt": "O autor restringe downloads por outros launchers. Abra a página do CurseForge para baixar o arquivo.",
+        "fr": "L’auteur limite les téléchargements depuis les lanceurs tiers. Ouvrez la page CurseForge pour télécharger le fichier.",
+        "de": "Der Autor schränkt Downloads über Drittanbieter-Launcher ein. Öffne die CurseForge-Seite, um die Datei herunterzuladen.",
+        "it": "L’autore limita i download dai launcher di terze parti. Apri la pagina di CurseForge per scaricare il file.",
+        "ru": "Автор ограничил загрузку через сторонние лаунчеры. Скачайте файл со страницы CurseForge.",
+        "ja": "作者は他のランチャーからのダウンロードを制限しています。CurseForge のページを開いてファイルをダウンロードしてください。",
+        "ar": "يقيّد المؤلف التنزيل من برامج التشغيل الأخرى. افتح صفحة CurseForge لتنزيل الملف.",
+        "zh": "作者限制了第三方启动器下载。请打开 CurseForge 页面下载文件。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Dos dependencias de CurseForge tienen el mismo nombre de archivo.",
+      "translations": {
+        "es": "Dos dependencias de CurseForge tienen el mismo nombre de archivo.",
+        "en": "Two CurseForge dependencies have the same filename.",
+        "pt": "Duas dependências do CurseForge têm o mesmo nome de arquivo.",
+        "fr": "Deux dépendances CurseForge ont le même nom de fichier.",
+        "de": "Zwei CurseForge-Abhängigkeiten haben denselben Dateinamen.",
+        "it": "Due dipendenze di CurseForge hanno lo stesso nome di file.",
+        "ru": "У двух зависимостей CurseForge одинаковое имя файла.",
+        "ja": "2 つの CurseForge 依存ファイルの名前が同じです。",
+        "ar": "توجد تبعيتان من CurseForge لهما اسم الملف نفسه.",
+        "zh": "两个 CurseForge 依赖项的文件名相同。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "La ruta de instalación del mod no es válida.",
+      "translations": {
+        "es": "La ruta de instalación del mod no es válida.",
+        "en": "The mod installation path is invalid.",
+        "pt": "O caminho de instalação do mod é inválido.",
+        "fr": "Le chemin d’installation du mod n’est pas valide.",
+        "de": "Der Installationspfad des Mods ist ungültig.",
+        "it": "Il percorso di installazione del mod non è valido.",
+        "ru": "Недопустимый путь установки мода.",
+        "ja": "Mod のインストール先が無効です。",
+        "ar": "مسار تثبيت التعديل غير صالح.",
+        "zh": "模组的安装路径无效。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Elige primero una versión de Minecraft.",
+      "translations": {
+        "es": "Elige primero una versión de Minecraft.",
+        "en": "Choose a Minecraft version first.",
+        "pt": "Escolha primeiro uma versão do Minecraft.",
+        "fr": "Choisissez d’abord une version de Minecraft.",
+        "de": "Wähle zuerst eine Minecraft-Version.",
+        "it": "Scegli prima una versione di Minecraft.",
+        "ru": "Сначала выберите версию Minecraft.",
+        "ja": "先に Minecraft のバージョンを選択してください。",
+        "ar": "اختر إصدار Minecraft أولًا.",
+        "zh": "请先选择 Minecraft 版本。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Abrir en CurseForge",
+      "translations": {
+        "es": "Abrir en CurseForge",
+        "en": "Open on CurseForge",
+        "pt": "Abrir no CurseForge",
+        "fr": "Ouvrir sur CurseForge",
+        "de": "Auf CurseForge öffnen",
+        "it": "Apri su CurseForge",
+        "ru": "Открыть на CurseForge",
+        "ja": "CurseForge で開く",
+        "ar": "فتح على CurseForge",
+        "zh": "在 CurseForge 上打开"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Abrir en Modrinth",
+      "translations": {
+        "es": "Abrir en Modrinth",
+        "en": "Open on Modrinth",
+        "pt": "Abrir no Modrinth",
+        "fr": "Ouvrir sur Modrinth",
+        "de": "Auf Modrinth öffnen",
+        "it": "Apri su Modrinth",
+        "ru": "Открыть на Modrinth",
+        "ja": "Modrinth で開く",
+        "ar": "فتح على Modrinth",
+        "zh": "在 Modrinth 上打开"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Buscando en CurseForge…",
+      "translations": {
+        "es": "Buscando en CurseForge…",
+        "en": "Searching CurseForge…",
+        "pt": "Buscando no CurseForge…",
+        "fr": "Recherche sur CurseForge…",
+        "de": "Suche auf CurseForge…",
+        "it": "Ricerca su CurseForge…",
+        "ru": "Поиск на CurseForge…",
+        "ja": "CurseForge を検索しています…",
+        "ar": "جارٍ البحث في CurseForge…",
+        "zh": "正在搜索 CurseForge…"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No se pudo cargar CurseForge",
+      "translations": {
+        "es": "No se pudo cargar CurseForge",
+        "en": "Could not load CurseForge",
+        "pt": "Não foi possível carregar o CurseForge",
+        "fr": "Impossible de charger CurseForge",
+        "de": "CurseForge konnte nicht geladen werden",
+        "it": "Impossibile caricare CurseForge",
+        "ru": "Не удалось загрузить CurseForge",
+        "ja": "CurseForge を読み込めませんでした",
+        "ar": "تعذر تحميل CurseForge",
+        "zh": "无法加载 CurseForge"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "CurseForge",
+      "translations": {
+        "es": "CurseForge",
+        "en": "CurseForge",
+        "pt": "CurseForge",
+        "fr": "CurseForge",
+        "de": "CurseForge",
+        "it": "CurseForge",
+        "ru": "CurseForge",
+        "ja": "CurseForge",
+        "ar": "CurseForge",
+        "zh": "CurseForge"
+      },
+      "sourceLanguage": "en"
+    },
+    {
+      "source": "Modrinth",
+      "translations": {
+        "es": "Modrinth",
+        "en": "Modrinth",
+        "pt": "Modrinth",
+        "fr": "Modrinth",
+        "de": "Modrinth",
+        "it": "Modrinth",
+        "ru": "Modrinth",
+        "ja": "Modrinth",
+        "ar": "Modrinth",
+        "zh": "Modrinth"
+      },
+      "sourceLanguage": "en"
+    },
+    {
+      "source": "Selecciona el mundo donde quieres instalar el DataPack.",
+      "translations": {
+        "es": "Selecciona el mundo donde quieres instalar el DataPack.",
+        "en": "Select the world where you want to install the datapack.",
+        "pt": "Selecione o mundo em que deseja instalar o pacote de dados.",
+        "fr": "Sélectionnez le monde où installer le pack de données.",
+        "de": "Wähle die Welt aus, in der das Datenpaket installiert werden soll.",
+        "it": "Seleziona il mondo in cui installare il pacchetto dati.",
+        "ru": "Выберите мир для установки набора данных.",
+        "ja": "データパックをインストールするワールドを選択してください。",
+        "ar": "اختر العالم الذي تريد تثبيت حزمة البيانات فيه.",
+        "zh": "请选择要安装数据包的世界。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "El mundo seleccionado no está disponible.",
+      "translations": {
+        "es": "El mundo seleccionado no está disponible.",
+        "en": "The selected world is unavailable.",
+        "pt": "O mundo selecionado não está disponível.",
+        "fr": "Le monde sélectionné est indisponible.",
+        "de": "Die ausgewählte Welt ist nicht verfügbar.",
+        "it": "Il mondo selezionato non è disponibile.",
+        "ru": "Выбранный мир недоступен.",
+        "ja": "選択したワールドは利用できません。",
+        "ar": "العالم المحدد غير متاح.",
+        "zh": "所选世界不可用。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Descargando ModPack…",
+      "translations": {
+        "es": "Descargando ModPack…",
+        "en": "Downloading modpack…",
+        "pt": "Baixando o modpack…",
+        "fr": "Téléchargement du modpack…",
+        "de": "Modpack wird heruntergeladen…",
+        "it": "Download del modpack…",
+        "ru": "Загрузка сборки…",
+        "ja": "モッドパックをダウンロード中…",
+        "ar": "جارٍ تنزيل حزمة التعديلات…",
+        "zh": "正在下载整合包…"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Elige un mundo",
+      "translations": {
+        "es": "Elige un mundo",
+        "en": "Choose a world",
+        "pt": "Escolha um mundo",
+        "fr": "Choisir un monde",
+        "de": "Welt auswählen",
+        "it": "Scegli un mondo",
+        "ru": "Выберите мир",
+        "ja": "ワールドを選択",
+        "ar": "اختر عالمًا",
+        "zh": "选择世界"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No hay mundos en esta instalación.",
+      "translations": {
+        "es": "No hay mundos en esta instalación.",
+        "en": "There are no worlds in this installation.",
+        "pt": "Não há mundos nesta instalação.",
+        "fr": "Cette installation ne contient aucun monde.",
+        "de": "In dieser Installation gibt es keine Welten.",
+        "it": "Non ci sono mondi in questa installazione.",
+        "ru": "В этой установке нет миров.",
+        "ja": "このインストールにはワールドがありません。",
+        "ar": "لا توجد عوالم في هذا التثبيت.",
+        "zh": "此安装中没有世界。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Buscando contenido…",
+      "translations": {
+        "es": "Buscando contenido…",
+        "en": "Searching the catalog…",
+        "pt": "Buscando no catálogo…",
+        "fr": "Recherche dans le catalogue…",
+        "de": "Katalog wird durchsucht…",
+        "it": "Ricerca nel catalogo…",
+        "ru": "Поиск в каталоге…",
+        "ja": "カタログを検索中…",
+        "ar": "جارٍ البحث في الكتالوج…",
+        "zh": "正在搜索目录…"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "No se pudo cargar el catálogo de mods.",
+      "translations": {
+        "es": "No se pudo cargar el catálogo de mods.",
+        "en": "Could not load the mod catalog.",
+        "pt": "Não foi possível carregar o catálogo de mods.",
+        "fr": "Impossible de charger le catalogue de mods.",
+        "de": "Der Mod-Katalog konnte nicht geladen werden.",
+        "it": "Impossibile caricare il catalogo delle mod.",
+        "ru": "Не удалось загрузить каталог модов.",
+        "ja": "Mod カタログを読み込めませんでした。",
+        "ar": "تعذر تحميل كتالوج التعديلات.",
+        "zh": "无法加载模组目录。"
+      },
+      "sourceLanguage": "es"
+    },
+    {
+      "source": "Modrinth · CurseForge",
+      "translations": {
+        "es": "Modrinth · CurseForge",
+        "en": "Modrinth · CurseForge",
+        "pt": "Modrinth · CurseForge",
+        "fr": "Modrinth · CurseForge",
+        "de": "Modrinth · CurseForge",
+        "it": "Modrinth · CurseForge",
+        "ru": "Modrinth · CurseForge",
+        "ja": "Modrinth · CurseForge",
+        "ar": "Modrinth · CurseForge",
+        "zh": "Modrinth · CurseForge"
+      },
+      "sourceLanguage": "en"
+    },
+    {
+      "source": "Invalid Battly catalog API",
+      "translations": {
+        "es": "No se pudo cargar el catálogo de mods.",
+        "en": "Invalid Battly catalog API",
+        "pt": "Não foi possível carregar o catálogo de mods.",
+        "fr": "Impossible de charger le catalogue de mods.",
+        "de": "Der Mod-Katalog konnte nicht geladen werden.",
+        "it": "Impossibile caricare il catalogo delle mod.",
+        "ru": "Не удалось загрузить каталог модов.",
+        "ja": "Mod カタログを読み込めませんでした。",
+        "ar": "تعذر تحميل كتالوج التعديلات.",
+        "zh": "无法加载模组目录。"
+      },
+      "sourceLanguage": "en"
+    },
+    {
+      "source": "Invalid catalog download URL",
+      "translations": {
+        "es": "No se pudo verificar el archivo de CurseForge.",
+        "en": "Invalid catalog download URL",
+        "pt": "Não foi possível verificar o arquivo do CurseForge.",
+        "fr": "Impossible de vérifier le fichier CurseForge.",
+        "de": "Die CurseForge-Datei konnte nicht überprüft werden.",
+        "it": "Impossibile verificare il file di CurseForge.",
+        "ru": "Не удалось проверить файл CurseForge.",
+        "ja": "CurseForge のファイルを検証できませんでした。",
+        "ar": "تعذر التحقق من ملف CurseForge.",
+        "zh": "无法验证 CurseForge 文件。"
+      },
+      "sourceLanguage": "en"
+    },
+    {
+      "source": "Invalid Minecraft world",
+      "translations": {
+        "es": "El mundo seleccionado no está disponible.",
+        "en": "Invalid Minecraft world",
+        "pt": "O mundo selecionado não está disponível.",
+        "fr": "Le monde sélectionné est indisponible.",
+        "de": "Die ausgewählte Welt ist nicht verfügbar.",
+        "it": "Il mondo selezionato non è disponibile.",
+        "ru": "Выбранный мир недоступен.",
+        "ja": "選択したワールドは利用できません。",
+        "ar": "العالم المحدد غير متاح.",
+        "zh": "所选世界不可用。"
+      },
+      "sourceLanguage": "en"
     }
   ]
 }

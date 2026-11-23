@@ -59,7 +59,7 @@ function migrateLegacy(sourceTree, target, dictionary) {
 }
 function overlay(sourceTree, target, dictionary) {
   for (const [key, value] of Object.entries(sourceTree)) {
-    if (key === 'interface') continue;
+    if (key === 'interface' || key === 'modalFallback') continue;
     if (typeof value === 'string' && dictionary.has(value.trim()))
       target[key] = dictionary.get(value.trim());
     else if (value && typeof value === 'object') {
@@ -136,6 +136,13 @@ for (const [index, language] of source.languages.entries()) {
         language === 'es' ? es : en,
       ]),
     );
+  } else {
+    data.modalFallback ??= {};
+    for (const [index, text] of Object.keys(englishDialogs).entries()) {
+      const key = `text${index}`;
+      const translated = complete[language]?.[text];
+      if (translated !== undefined) data.modalFallback[key] ??= translated;
+    }
   }
   if (language === 'en') {
     const reviewed = new Map(

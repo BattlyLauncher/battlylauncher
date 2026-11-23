@@ -1,7 +1,7 @@
 {
   "name": "BattlyLauncher",
   "productName": "Battly Launcher",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "El mejor Launcher Personalizado para Minecraft Premium y No premium",
   "author": "TECNO BROS Studios <contacto@tecnobros.es>",
   "license": "SEE LICENSE IN LICENSE.MD",
@@ -9,13 +9,10 @@
   "main": "bootstrap/entry.cjs",
   "battlyBuild": 1,
   "battlyUpdate": {
-    "type": "patch",
+    "type": "full",
     "channel": "stable",
     "repository": "BattlyLauncher/battlylauncher",
-    "baseTag": "v3.1.0",
-    "build": 12,
-    "patchVersion": "3.1.0-patch12",
-    "notes": "- Battly Servers ya permite elegir Europa al crear un servidor. El selector muestra la latencia de Europa y LATAM.\n- Las tarjetas y la lista de instancias muestran los nombres de los loaders con sus mayúsculas correctas, como OptiFine, Fabric y Forge.\n- El informe de fallos de Minecraft muestra el diagnóstico cuando Battly lo reconoce. Si no encuentra una solución automática, puedes guardar los registros para pedir ayuda.\n"
+    "notes": "Battly 3.1.1 reúne los parches publicados desde que salió la 3.1. El instalador ya trae esas mejoras y puede actualizar una 3.1.0 directamente.\n\n### Mods e instancias\n- Busca mods, modpacks, packs de recursos, shaders y datapacks de Modrinth y CurseForge en el mismo catálogo. Puedes filtrar por proveedor, versión o loader y consultar archivos, cambios y dependencias.\n- Duplica una instancia eligiendo qué copiar. Exporta a ByPack o a .mrpack para usar la instancia en otros lanzadores compatibles.\n- Mejoras en la lectura de instancias antiguas y el traslado de los datos de Battly. La biblioteca de My Battly muestra mejor las miniaturas, los estados y las acciones.\n- Los modpacks grandes pueden instalarse cuando hay espacio suficiente. Las descripciones, galerías e iconos cargan a través del catálogo de Battly.\n\n### Minecraft y Battly Worlds\n- Horizon 26.3 está disponible como beta. Battly Client tiene su propia entrada en Descargas.\n- Ajustes de Java para Fabric 26.2 y para LabyMod al entrar en una sala de Battly Worlds. LabyMod 4 en 1.8.9 puede elegir Java 21 aunque el ajuste global sea Java 8.\n- Puedes personalizar los atajos de Battly Worlds en Ajustes. También se han corregido diagnósticos de memoria, el progreso de instalación y varios fallos de inicio con OptiFine y Forge.\n- Battly Servers permite elegir Europa o LATAM al crear un servidor.\n\n### Launcher y actividad\n- El launcher abre antes y deja varias comprobaciones en segundo plano. Las actualizaciones cuentan con la CDN de Battly como respaldo.\n- My Battly muestra el tiempo de uso del launcher y de Minecraft. La actividad tiene un acceso directo y puedes consultar las cifras diarias en una tabla.\n- Battly Music ajusta el uso de memoria y avisa cuando una playlist de YouTube es privada o no está disponible.\n"
   },
   "engines": {
     "node": ">=22.13.0"
@@ -247,11 +244,12 @@
     "i18n:export": "node \"public scripts/export-language-packs.cjs\"",
     "postinstall": "install-electron",
     "clean": "rimraf dist",
-    "dev": "npm run build && node \"public scripts/dev-runtime.cjs\"",
+    "dev": "npm run build:local && node \"public scripts/dev-runtime.cjs\"",
     "start": "electron .",
-    "build": "npm run check:public && npm run i18n:verify && npm run clean && npm run build:electron && npm run build:renderer",
+    "build": "npm run build:local && npm run build:bootstrap",
+    "build:local": "npm run check:public && npm run i18n:verify && npm run clean && npm run build:electron && npm run build:renderer",
     "prepare:terracotta": "node \"public scripts/fetch-terracotta-release.cjs\"",
-    "build:electron": "tsc -p tsconfig.electron.json && npm run build:core-worker-http && node \"public scripts/copy-native-locales.cjs\" && npm run build:preload && npm run build:bootstrap",
+    "build:electron": "tsc -p tsconfig.electron.json && npm run build:core-worker-http && node \"public scripts/copy-native-locales.cjs\" && npm run build:preload",
     "build:core-worker-http": "npm ci --prefix \"public scripts/core-worker-http\" --ignore-scripts --no-audit --no-fund && node \"public scripts/build-core-worker-http.cjs\"",
     "build:bootstrap": "node \"public scripts/build-patches.cjs\" config",
     "patches:keygen": "node \"public scripts/build-patches.cjs\" keygen",

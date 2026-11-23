@@ -291,13 +291,19 @@
   color: #f1f5f9;
 }
 #b-settings-panel-launcher .worlds-setting-row select,
-#b-settings-panel-launcher .worlds-setting-row input[type='number'] {
+#b-settings-panel-launcher .worlds-setting-row input[type='number'],
+#b-settings-panel-launcher .worlds-setting-row [data-worlds-shortcut] {
   background: #101923;
   color: #f1f5f9;
   border: 1px solid #354960;
   border-radius: 9px;
   min-height: 36px;
   padding: 6px 10px;
+}
+
+#b-settings-panel-launcher .worlds-setting-row [data-worlds-shortcut] {
+  width: clamp(100px, 27vw, 190px);
+  text-align: center;
 }
 .worlds-setting-row small {
   color: var(--text-muted, #aebccc);

@@ -1664,12 +1664,24 @@ dialog[data-music-settings-dialog] form > button {
 }
 
 /* Keep wheel, touch and keyboard scrolling without a visible scroll track. */
-[data-download-dialog] [data-download-loader-versions],
+[data-download-dialog]
+  :is(
+    [data-download-versions],
+    [data-download-loader-versions],
+    [data-download-labymod-versions],
+    [data-download-battly-client-versions]
+  ),
 .home-panel [data-home-news-list] {
   scrollbar-width: none !important;
   scrollbar-gutter: auto;
 }
-[data-download-dialog] [data-download-loader-versions]::-webkit-scrollbar,
+[data-download-dialog]
+  :is(
+    [data-download-versions],
+    [data-download-loader-versions],
+    [data-download-labymod-versions],
+    [data-download-battly-client-versions]
+  )::-webkit-scrollbar,
 .home-panel [data-home-news-list]::-webkit-scrollbar {
   display: none;
   width: 0;
@@ -1829,6 +1841,88 @@ dialog[data-music-settings-dialog] form > button {
   flex-shrink: 0;
 }
 
+:is([data-download-loaders] .label, [data-download-client-card]) input[type='radio'] {
+  position: absolute;
+  opacity: 0;
+}
+
+:is([data-download-loaders] .label, [data-download-client-card]):has(input:focus-visible) {
+  outline: 2px solid #91a7ff;
+  outline-offset: -2px;
+}
+
+:is([data-download-loaders] .label, [data-download-client-card])::after {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 60px;
+  border-radius: 0 10px 10px 0;
+  background: var(--download-card-logo) right center / auto 100% no-repeat;
+  mask-image: linear-gradient(to right, transparent, #000 85%);
+  opacity: 0.7;
+  pointer-events: none;
+  content: '';
+}
+
+:is([data-download-loaders] .label, [data-download-client-card])
+  > :is(.texto, .download-hot-badge, .download-architecture-badge) {
+  position: relative;
+  z-index: 1;
+}
+
+[data-download-versions] [data-download-client-card] {
+  padding-inline: 16px 43px;
+}
+
+[data-download-dialog] [data-download-versions] [data-download-client-card] .texto {
+  font-size: 14px !important;
+}
+
+[data-download-client-card]::after {
+  width: 49px;
+  background-size: auto 88%;
+}
+
+[data-download-loaders] .label:has(input[value='']) {
+  --download-card-logo: url('../legacy/assets/images/icons/minecraft.png');
+}
+
+[data-download-loaders] .label:has(input[value='forge']) {
+  --download-card-logo: url('../legacy/assets/images/icons/forge.png');
+}
+
+[data-download-loaders] .label:has(input[value='fabric']) {
+  --download-card-logo: url('../legacy/assets/images/icons/fabric.png');
+}
+
+[data-download-loaders] .label:has(input[value='quilt']) {
+  --download-card-logo: url('../legacy/assets/images/icons/quilt.png');
+}
+
+[data-download-loaders] .label:has(input[value='optifine']) {
+  --download-card-logo: url('../legacy/assets/images/icons/optifine.png');
+}
+
+[data-download-loaders] .label:has(input[value='neoforge']) {
+  --download-card-logo: url('../legacy/assets/images/icons/neoforge.png');
+}
+
+[data-download-loaders] .label:has(input[value='legacyfabric']) {
+  --download-card-logo: url('../legacy/assets/images/icons/legacyfabric.png');
+}
+
+[data-download-loaders] .label:has(input[value='clients']) {
+  --download-card-logo: url('../legacy/assets/images/icons/clients.png');
+}
+
+[data-download-loaders] .label:has(input[value='battly-client']) {
+  --download-card-logo: url('../legacy/assets/images/icons/battly.png');
+}
+
+[data-download-loaders] .label:has(input[value='horizon']) {
+  --download-card-logo: url('../assets/horizon.png');
+  gap: 6px;
+}
+
 .download-modal-panel .download-hot-badge {
   display: inline-flex;
   align-items: center;
@@ -1846,6 +1940,12 @@ dialog[data-music-settings-dialog] form > button {
 .download-modal-panel .download-hot-badge i {
   margin: 0;
   font-size: 11px;
+}
+
+.download-modal-panel .horizon-beta {
+  margin-left: 0;
+  background: #293350;
+  color: #cbd6ff;
 }
 
 .local-mods-list .local-mod-row.card {

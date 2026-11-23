@@ -114,6 +114,7 @@ export class BypackSources {
     files: readonly BypackCandidate[],
     references: readonly CurseForgeReference[] = [],
     progress?: (message: string, current: number, total: number) => void,
+    modrinthOnly = false,
   ): Promise<{
     readonly matches: ReadonlyMap<string, BypackRemote>;
     readonly warnings: readonly string[];
@@ -180,7 +181,7 @@ export class BypackSources {
       files.length,
     );
     const remaining = files.filter((file) => !matches.has(file.path));
-    if (!remaining.length) {
+    if (modrinthOnly || !remaining.length) {
       return { matches, warnings };
     }
     const matchCurseForge = (raw: unknown): void => {

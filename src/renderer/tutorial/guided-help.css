@@ -30,7 +30,7 @@
   flex: 1;
 }
 .nivix-help > header span {
-  color: #ad95ef;
+  color: #79bff3;
   font-size: 12px;
   font-weight: 600;
 }
@@ -84,12 +84,12 @@
   line-height: 1.4;
 }
 .nivix-help-questions button > span:last-child {
-  color: #b69bf8;
+  color: #79bff3;
   font-size: 18px;
 }
 .nivix-help-questions button:hover {
-  border-color: #9170d6;
-  background: #252c46;
+  border-color: #3e8ed0;
+  background: #22374e;
 }
 .nivix-help button:focus-visible {
   outline: 2px solid #8acbff;
@@ -101,10 +101,10 @@
 .nivix-help [data-help-full] {
   width: 100%;
   padding: 12px;
-  border: 1px solid #675098;
+  border: 1px solid #3e8ed0;
   border-radius: 10px;
-  color: #f5eeff;
-  background: #33274d;
+  color: #fff;
+  background: #286da5;
   font-size: 13px;
 }
 .home-tutorial-card footer {

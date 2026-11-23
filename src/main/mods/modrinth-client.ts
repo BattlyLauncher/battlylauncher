@@ -8,6 +8,7 @@ import type {
 
 const maxResponseBytes = 32 * 1024 * 1024;
 const clientModLoaders = new Set([
+  'datapack',
   'fabric',
   'forge',
   'legacy-fabric',
@@ -385,8 +386,8 @@ export class ModrinthClient {
     if (request.category) {
       facets.push([`categories:${request.category}`]);
     }
-    for (const version of request.gameVersions) {
-      facets.push([`versions:${version}`]);
+    if (request.gameVersions.length) {
+      facets.push(request.gameVersions.map((version) => `versions:${version}`));
     }
     if (request.projectType) {
       facets.push([`project_type:${request.projectType}`]);
@@ -411,7 +412,13 @@ export class ModrinthClient {
       throw new TypeError('Invalid Modrinth search hits');
     }
     return {
-      projects: hits.map(projectSummary),
+      projects: hits.map((raw) => {
+        const summary = projectSummary(raw);
+        // v2 reports hybrid data packs as mods even when the search facet selected data packs.
+        return request.projectType === 'datapack'
+          ? { ...summary, projectType: 'datapack' as const }
+          : summary;
+      }),
       offset: integer(own(result, 'offset'), 'offset', 10_000),
       limit: integer(own(result, 'limit'), 'limit', 100),
       total: integer(own(result, 'total_hits'), 'total hits'),

@@ -94,6 +94,7 @@ test('real patch builder matches saved installer, signs all targets and rejects 
     build: 3,
   };
   put('package.json', JSON.stringify(pkg));
+  assert.match(run(['config'], false).stderr, /requires BATTLY_PATCH_BASE_CONFIG_FILE/);
   env.BATTLY_PATCH_BASE_CONFIG_FILE = path.join(temp, 'baseline.json');
   run(['config']);
   put('dist/main/index.js', 'changed launcher code');

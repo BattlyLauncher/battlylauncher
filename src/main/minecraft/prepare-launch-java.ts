@@ -4,7 +4,7 @@ import type { ManagedJavaMajor } from '../../shared/settings/java-runtime-contra
 import type { MinecraftLaunchEventSink, MinecraftLaunchOptions } from './launcher-adapter';
 import { inspectJavaRuntime } from './java-executable';
 import { systemArchitecture } from '../settings/system-architecture';
-import { ensureMinecraftJava, resolveMinecraftJava } from './minecraft-java-selection';
+import { ensureMinecraftJava, isLabyModVersion, resolveMinecraftJava } from './minecraft-java-selection';
 import type { ManagedJavaRuntimeService } from '../settings/managed-java-runtime-service';
 import { networkAvailable, OfflineError } from '../network/connectivity';
 
@@ -165,8 +165,11 @@ export async function prepareLaunchJava(
     emit({ type: 'log', stream: 'game', message: `[Battly] ${message}` });
   log(`${options.version.id} requiere Java ${required.major}`);
   if (options.javaPath) {
-    const explicit =
-      preparation.explicitInstancePath || !managedPath(preparation.contentRoot, options.javaPath);
+    const managed = managedPath(preparation.contentRoot, options.javaPath);
+    // A global preference may come from another Minecraft profile. LabyMod 3 and 4
+    // can need different JVMs for the same game version, including from Worlds.
+    const labyMod = isLabyModVersion(options.version.customId ?? options.version.id);
+    const explicit = preparation.explicitInstancePath || (!managed && !labyMod);
     if (explicit) {
       const runtime = await inspectJavaRuntime(options.javaPath);
       const selectedMajor = runtime.major;
@@ -190,7 +193,9 @@ export async function prepareLaunchJava(
     try {
       const runtime = await inspectJavaRuntime(options.javaPath);
       const selectedMajor = runtime.major;
-      if (selectedMajor === required.major) {
+      const compatibleGlobalPath = labyMod && !managed && selectedMajor >= required.major &&
+        (!required.maximumMajor || selectedMajor <= required.maximumMajor);
+      if (selectedMajor === required.major || compatibleGlobalPath) {
         log(`Java ${selectedMajor} comprobado: ${options.javaPath}`);
         return withJavaMemoryLimit(
           withWindowsJava25Stacks(options, selectedMajor),

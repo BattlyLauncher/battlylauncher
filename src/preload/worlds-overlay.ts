@@ -4,12 +4,21 @@ import { contextBridge, ipcRenderer } from 'electron';
 import { createIpcInvoker } from '../shared/ipc-errors';
 import { desktopChannels } from '../shared/desktop-api';
 import type { WorldsOverlayApi } from '../shared/social/worlds-overlay-api';
+import {
+  defaultWorldsShortcuts,
+  normalizeWorldsShortcuts,
+} from '../shared/social/worlds-shortcuts';
+import { bindWorldsShortcutHints } from './worlds-shortcut-hints';
 import type {
   WorldsEvent,
   WorldsPublicRoom,
   WorldsSnapshot,
 } from '../shared/social/battly-worlds-contract';
 const invokeDesktop = createIpcInvoker(ipcRenderer.invoke.bind(ipcRenderer));
+const applyShortcuts = bindWorldsShortcutHints(defaultWorldsShortcuts);
+ipcRenderer.on('worlds:shortcuts', (_event, value: unknown) =>
+  applyShortcuts(normalizeWorldsShortcuts(value)),
+);
 const api: WorldsOverlayApi = {
   writeClipboardText: (value) =>
     invokeDesktop(desktopChannels.writeClipboardText, value) as Promise<boolean>,

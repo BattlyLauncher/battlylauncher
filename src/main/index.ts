@@ -10,6 +10,14 @@ import { ModBasketInstaller } from './mods/mod-basket-installer';
 import { normalizeModBasketRequest } from '../shared/mods/mod-basket';
 import { ClientBridge, type ClientOwner } from './client/client-bridge';
 import { BattlyClientService } from './minecraft/battly-client-service';
+import {
+  horizonGameDirectory,
+  horizonSession,
+  prepareHorizon,
+  startHorizon,
+} from './minecraft/horizon-service';
+import { ensureMinecraftJava, resolveMinecraftJava } from './minecraft/minecraft-java-selection';
+import { minecraftServerAddress } from '../shared/minecraft/server-address';
 import { BattlyClientUpdates } from './minecraft/battly-client-updates';
 import type {
   BattlyClientBuild,
@@ -218,7 +226,7 @@ import {
   initializePrivateStorage,
   migratePrivateMetadata,
 } from './storage/private-storage-bootstrap';
-import { registerPrivateMetadataRoot } from './storage/protected-data';
+import { PrivateDataDecryptionError, registerPrivateMetadataRoot } from './storage/protected-data';
 import { offerPrivateStorageRecovery } from './storage/private-storage-recovery-dialog';
 import { RendererPreferences } from './storage/renderer-preferences';
 import { migrate301Profile } from './storage/legacy-301-migration';
@@ -259,7 +267,7 @@ import { normalizeWorldsAction } from '../shared/social/battly-worlds-contract';
 import { InstanceArtworkCache } from './minecraft/instance-artwork-cache';
 import { basename, dirname, extname, isAbsolute, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { copyFile, lstat, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { copyFile, lstat, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { spawn as spawnChild } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 
@@ -338,6 +346,7 @@ import {
   normalizeLocalModFilename,
   normalizeModInstallRequest,
   normalizeModSearchRequest,
+  curseForgeProjectId,
 } from '../shared/mods/mod-contract';
 import type {
   ModpackInstallProgress,
@@ -428,6 +437,9 @@ import { RecommendedMods } from './mods/recommended-mods';
 import { ModrinthModpackInstaller } from './mods/modrinth-modpack-installer';
 import { MrpackInstaller } from './mods/mrpack-installer';
 import { CurseForgeModpackInstaller } from './mods/curseforge-modpack-installer';
+import { CurseForgeCatalog } from './mods/curseforge-catalog';
+import { authenticatedCatalogFetch, battlyCatalogBase } from './mods/battly-catalog-transport';
+import { searchCombinedCatalog } from './mods/combined-catalog';
 import { readProfileValuesFile } from './storage/profile-values-file';
 import {
   emptyMusicPlaybackState,
@@ -545,7 +557,7 @@ let cancelSelectedLaunch = (): boolean => false;
 const activeLaunchDirectories = new Map<symbol, { path: string; safeMode: boolean }>();
 const runningMinecraftGames = new Map<
   symbol,
-  { pid: number; version: string; server: string | null; lan: boolean }
+  { pid: number; version: string; server: string | null; lan: boolean; nativeHorizon: boolean }
 >();
 let worldsLaunchId: symbol | undefined;
 
@@ -568,7 +580,7 @@ function refreshPlayingServer(): void {
 
 function bindWorldsGame(id: symbol): void {
   const game = runningMinecraftGames.get(id);
-  if (!game) {
+  if (!game || game.nativeHorizon) {
     return;
   }
   worldsLaunchId = id;
@@ -734,7 +746,7 @@ function runPendingLabyUpdates(): void {
   });
 }
 
-function trackMinecraftGame(id: symbol, event: MinecraftLaunchEvent, version: string): void {
+function trackMinecraftGame(id: symbol, event: MinecraftLaunchEvent, version: string, nativeHorizon = false): void {
   discordPresence.launch(id, event, version);
   if (event.type === 'process' || (event.type === 'state' && event.state === 'preparing')) {
     if (!analyticsGames.has(id)) {
@@ -753,8 +765,9 @@ function trackMinecraftGame(id: symbol, event: MinecraftLaunchEvent, version: st
   const measured = analyticsGames.get(id);
   const measuredVersion =
     version.match(/(?:1\.\d+(?:\.\d+)?|\d{2}\.\d+)(?:-[a-z0-9.-]+)?/i)?.[0] || 'unknown';
-  const measuredLoader =
-    /neoforge|forge|fabric|quilt|optifine|labymod/i.exec(version)?.[0].toLowerCase() || 'vanilla';
+  const measuredLoader = nativeHorizon
+    ? 'horizon'
+    : /neoforge|forge|fabric|quilt|optifine|labymod/i.exec(version)?.[0].toLowerCase() || 'vanilla';
   if (measured && event.type === 'client-ready' && !measured.running) {
     measured.running = Date.now();
     void sampleDesktopUsage().catch(() => undefined);
@@ -787,7 +800,7 @@ function trackMinecraftGame(id: symbol, event: MinecraftLaunchEvent, version: st
     void sampleDesktopUsage().catch(() => undefined);
   }
   if (event.type === 'process') {
-    runningMinecraftGames.set(id, { pid: event.pid, version, server: null, lan: false });
+    runningMinecraftGames.set(id, { pid: event.pid, version, server: null, lan: false, nativeHorizon });
     // Opening another game must not move an existing Worlds room/voice overlay.
     if (!worldsLaunchId || !hasActiveWorldsRoom()) {
       bindWorldsGame(id);
@@ -810,7 +823,7 @@ function trackMinecraftGame(id: symbol, event: MinecraftLaunchEvent, version: st
         )
         .catch(() => undefined)
         .then(() => {
-          const remaining = [...runningMinecraftGames.keys()].at(-1);
+          const remaining = [...runningMinecraftGames].reverse().find(([, game]) => !game.nativeHorizon)?.[0];
           if (!worldsLaunchId && remaining) {
             bindWorldsGame(remaining);
           }
@@ -873,6 +886,7 @@ let spotifyImportService: SpotifyImportService | undefined;
 let ytDlpResolver: YtDlpResolver | undefined;
 let musicAudioCache: MusicAudioCache | undefined;
 protocol.registerSchemesAsPrivileged([
+  { scheme: 'battly-catalog', privileges: { standard: true, secure: true, stream: true } },
   {
     scheme: 'battly-audio',
     privileges: {
@@ -913,6 +927,7 @@ const progressChannels = new Set<string>([
   desktopChannels.importMrpack,
   desktopChannels.importDroppedMrpack,
   desktopChannels.exportBypack,
+  desktopChannels.exportMrpack,
   desktopChannels.exportServerBypack,
   desktopChannels.confirmBypack,
   desktopChannels.syncGoogleDrive,
@@ -1996,15 +2011,14 @@ function resolveThemeService(): ThemeService {
 
 function resolveModrinthClient(): ModrinthClient {
   modrinthClient ??= new ModrinthClient({
-    ...(process.env.BATTLY_MODRINTH_API_URL
-      ? { baseUrl: process.env.BATTLY_MODRINTH_API_URL }
-      : {}),
+    baseUrl: new URL('modrinth/', battlyCatalogBase()).href,
+    fetchImplementation: catalogFetch,
   });
   return modrinthClient;
 }
 
 function resolveModInstaller(): ModInstaller {
-  modInstaller ??= new ModInstaller(resolveModrinthClient(), contentRootPath());
+  modInstaller ??= new ModInstaller(resolveModrinthClient(), contentRootPath(), catalogFetch);
   return modInstaller;
 }
 
@@ -2017,7 +2031,7 @@ function resolveLocalModStore(): LocalModStore {
 }
 
 function resolveMrpackInstaller(): MrpackInstaller {
-  mrpackInstaller ??= new MrpackInstaller(instancesPath());
+  mrpackInstaller ??= new MrpackInstaller(instancesPath(), undefined, catalogFetch);
   return mrpackInstaller;
 }
 
@@ -2042,9 +2056,8 @@ function resolveBypackService(): BypackService {
 
 function resolveCurseForgeModpackInstaller(): CurseForgeModpackInstaller {
   curseForgeModpackInstaller ??= new CurseForgeModpackInstaller(instancesPath(), {
-    ...(process.env.BATTLY_CURSEFORGE_API_URL
-      ? { apiBaseUrl: process.env.BATTLY_CURSEFORGE_API_URL }
-      : {}),
+    apiBaseUrl: new URL('curseforge/', battlyCatalogBase()).href,
+    fetchImplementation: catalogFetch,
   });
   return curseForgeModpackInstaller;
 }
@@ -2054,6 +2067,7 @@ function resolveModrinthModpackInstaller(): ModrinthModpackInstaller {
     resolveModrinthClient(),
     resolveMrpackInstaller(),
     join(app.getPath('temp'), 'BattlyRemake', 'modpacks'),
+    catalogFetch,
   );
   return modrinthModpackInstaller;
 }
@@ -2715,6 +2729,9 @@ async function selectedBattlyToken(): Promise<string> {
   return (await selectedBattlyIdentity()).token;
 }
 
+const catalogFetch = authenticatedCatalogFetch(selectedBattlyToken);
+const catalogImageFetch = authenticatedCatalogFetch(selectedBattlyToken, true);
+
 async function selectedBattlyIdentity(
   activeOnly = false,
   accountUuid?: unknown,
@@ -3329,6 +3346,7 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
         runtime: { ...draft.runtime, launchBoostEnabled: false, startupSoundEnabled: false },
       };
     }
+    resolveWorldsDesktop().checkShortcuts(draft.runtime.worlds.shortcuts);
     const snapshot = await resolveSettingsStore().save(draft);
     translateNative = await nativeTranslator(snapshot.visual.language);
     if (musicControlTarget && !musicControlTarget.isDestroyed()) {
@@ -4409,16 +4427,36 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
       normalizeSkinId(id),
     );
   });
+  let curseForgeCatalog: CurseForgeCatalog | undefined;
+  const resolveCurseForgeCatalog = () =>
+    (curseForgeCatalog ??= new CurseForgeCatalog(
+      new URL('curseforge/', battlyCatalogBase()).href, catalogFetch,
+    ));
   ipcMain.handle(desktopChannels.searchMods, async (event, request: unknown) => {
     assertTrustedSender(event.senderFrame?.url);
+    const normalized = normalizeModSearchRequest(request);
+    await selectedBattlyToken();
+    if (normalized.provider === 'curseforge') {
+      return resolveCurseForgeCatalog().search(normalized);
+    }
     recommendedMods ??= new RecommendedMods(
       join(app.getPath('userData'), 'cache', 'recommended-mods.json'),
+      catalogFetch,
+      new URL('recommended', battlyCatalogBase()).href,
     );
     const [result, recommendations] = await Promise.all([
-      resolveModrinthClient().search(normalizeModSearchRequest(request)),
+      normalized.provider === 'all'
+        ? searchCombinedCatalog(
+          normalized, (query) => resolveModrinthClient().search(query),
+          (query) => resolveCurseForgeCatalog().search(query),
+        )
+        : resolveModrinthClient().search(normalized),
       recommendedMods.load(),
     ]);
-    const ids = new Set(recommendations.modrinth);
+    const ids = new Set([
+      ...recommendations.modrinth,
+      ...recommendations.curseforge.map((id) => `curseforge-${id}`),
+    ]);
     return {
       ...result,
       projects: result.projects.map((project) => ({
@@ -4435,6 +4473,10 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
       gameVersion: '1.20.1',
       loader: 'minecraft',
     });
+    const curseForgeId = curseForgeProjectId(normalized.projectId);
+    if (curseForgeId) {
+      return resolveCurseForgeCatalog().versions(curseForgeId);
+    }
     return (
       await resolveModrinthClient()
         .projectVersions(normalized.projectId, '', '')
@@ -4451,6 +4493,10 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
   ipcMain.handle(desktopChannels.getModProjectDetails, async (event, request: unknown) => {
     assertTrustedSender(event.senderFrame?.url);
     const normalized = normalizeModInstallRequest(request);
+    const curseForgeId = curseForgeProjectId(normalized.projectId);
+    if (curseForgeId) {
+      return resolveCurseForgeCatalog().detail(curseForgeId, normalized);
+    }
     const [project, versions] = await Promise.all([
       resolveModrinthClient()
         .project(normalized.projectId)
@@ -4572,6 +4618,8 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
         directory,
         targetLoaderVersion,
         contentRootPath(),
+        undefined,
+        catalogFetch,
       ).install(
         request,
         remoteOperationContext.getStore(),
@@ -4592,17 +4640,77 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
   trackedHandle(desktopChannels.installMod, async (event, request: unknown) => {
     assertTrustedSender(event.senderFrame?.url);
     const normalized = normalizeModInstallRequest(request);
+    await selectedBattlyToken();
+    if (normalized.projectType === 'datapack') {
+      const root = normalized.destinationInstanceId
+        ? await resolveInstanceStore().directoryPathInternal(normalized.destinationInstanceId)
+        : contentRootPath();
+      if (!normalized.destinationWorld) {
+        throw new Error('Selecciona el mundo donde quieres instalar el DataPack.');
+      }
+      const saves = join(root, 'saves');
+      const world = join(saves, normalized.destinationWorld);
+      const packs = join(world, 'datapacks');
+      const packDirectory = await lstat(packs).catch(() => null);
+      const safe = await Promise.all([saves, world].map((dir) => lstat(dir).catch(() => null)));
+      const level = await lstat(join(world, 'level.dat')).catch(() => null);
+      if (safe.some((dir) => !dir?.isDirectory()) || !level?.isFile() ||
+          (packDirectory && !packDirectory.isDirectory()) || otherDirectoryLaunches(Symbol(), root).length) {
+        throw new Error('El mundo seleccionado no está disponible.');
+      }
+    }
+    if (curseForgeProjectId(normalized.projectId) && normalized.projectType === 'modpack') {
+      const progress = modpackProgressTo(event.sender);
+      const signal = remoteOperationContext.getStore();
+      const staging = await mkdtemp(join(app.getPath('temp'), 'battly-curseforge-pack-'));
+      const path = join(staging, 'package.zip');
+      try {
+        await resolveCurseForgeCatalog().downloadPack(normalized, path, signal, (current, total) => {
+          progress({ phase: 'downloading-archive', current, total, item: 'CurseForge', message: 'Descargando ModPack…' });
+        });
+        const instance = await resolveCurseForgeModpackInstaller().install(path, signal, progress);
+        return { installed: [instance.name], instance };
+      } finally {
+        await rm(staging, { recursive: true, force: true });
+      }
+    }
+    if (curseForgeProjectId(normalized.projectId)) {
+      let root = contentRootPath();
+      if (normalized.destinationInstanceId) {
+        const store = resolveInstanceStore();
+        const metadata = normalizeInstanceDraft(await store.readInternal(normalized.destinationInstanceId));
+        if (
+          metadata.version !== normalized.gameVersion ||
+          (normalized.projectType === 'mod' && metadata.loader?.toLowerCase() !== normalized.loader)
+        ) {
+          throw new Error('El mod debe coincidir con la versión y el loader de la instancia.');
+        }
+        root = await store.directoryPathInternal(normalized.destinationInstanceId);
+      }
+      const assertIdle = (): void => {
+        if (otherDirectoryLaunches(Symbol(), root).length) {
+          throw new Error('Cierra Minecraft antes de modificar el contenido de esta instancia');
+        }
+      };
+      assertIdle();
+      return resolveCurseForgeCatalog().install(
+        normalized,
+        root,
+        remoteOperationContext.getStore(),
+        (current, total) => {
+          taskbarProgress.update(current, total);
+          socialRealtimeService.publishRemote({ type: 'mod-progress', current, total });
+        },
+        assertIdle,
+      );
+    }
     if (normalized.projectType === 'modpack') {
       const instance = await resolveModrinthModpackInstaller().install(
         normalized,
         remoteOperationContext.getStore(),
         modpackProgressTo(event.sender),
       );
-      const installedInstance = await resolveInstanceArtworkCache().enrich(
-        instance,
-        normalized.projectId,
-      );
-      return { installed: [instance.name], instance: installedInstance };
+      return { installed: [instance.name], instance };
     }
     if (normalized.destinationServerId) {
       const id = normalizeServerId(normalized.destinationServerId);
@@ -4626,7 +4734,7 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
           throw new Error('El mod debe coincidir con la versión y el loader del servidor');
         }
         const directory = await resolveServerStore().directoryPathInternal(id);
-        return await new ModInstaller(resolveModrinthClient(), directory).install(
+        return await new ModInstaller(resolveModrinthClient(), directory, catalogFetch).install(
           normalized,
           remoteOperationContext.getStore(),
           (current, total) => {
@@ -4642,7 +4750,7 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
       const instanceDirectory = await resolveInstanceStore().directoryPathInternal(
         normalized.destinationInstanceId,
       );
-      return new ModInstaller(resolveModrinthClient(), instanceDirectory).install(
+      return new ModInstaller(resolveModrinthClient(), instanceDirectory, catalogFetch).install(
         normalized,
         remoteOperationContext.getStore(),
         (current, total) => {
@@ -4671,6 +4779,11 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
         loader: 'minecraft',
       });
       const typePath = normalized.projectType === 'modpack' ? 'modpack' : normalized.projectType;
+      const curseForgeId = curseForgeProjectId(normalized.projectId);
+      if (curseForgeId) {
+        await confirmExternalLink(await resolveCurseForgeCatalog().projectUrl(curseForgeId));
+        return;
+      }
       await confirmExternalLink(
         `https://modrinth.com/${encodeURIComponent(typePath)}/${encodeURIComponent(normalized.projectId)}`,
       );
@@ -5461,7 +5574,7 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
     resolveWorldsService().configure((await resolveSettingsStore().snapshot()).runtime.worlds);
     if (action.type === 'host' || action.type === 'invite') {
       if (!worldsDesktop?.trusted(event) || !worldsDesktop.gameRunning()) {
-        throw new Error('Crea la sala e invita a tus amigos desde Minecraft, con Ctrl + B.');
+        throw new Error('Crea la sala e invita a tus amigos desde el panel de Battly Worlds en Minecraft.');
       }
       if (action.type === 'host') {
         return resolveWorldsService().act(await selectedBattlyIdentity(), {
@@ -5669,6 +5782,7 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
               runtime: { ...draft.runtime, launchBoostEnabled: false, startupSoundEnabled: false },
             };
           }
+          resolveWorldsDesktop().checkShortcuts(draft.runtime.worlds.shortcuts);
           const saved = await resolveSettingsStore().save(draft);
           if (mainWindow && !mainWindow.isDestroyed()) {
             mainWindow.webContents.send(desktopChannels.visualPreferencesChanged, saved.visual);
@@ -5921,8 +6035,17 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
   });
   ipcMain.handle(desktopChannels.getInstances, async (event) => {
     assertTrustedSender(event.senderFrame?.url);
-    const instances = await resolveInstanceStore().list();
-    return remoteOperationContext.getStore()
+    const remote = remoteOperationContext.getStore();
+    const instances = await resolveInstanceStore().list().catch((error: unknown) => {
+      if (!remote && error instanceof PrivateDataDecryptionError) {
+        return null;
+      }
+      throw error;
+    });
+    if (instances === null) {
+      return { code: 'BATTLY_PRIVATE_DATA_UNREADABLE' };
+    }
+    return remote
       ? instances.map((instance) => {
           const result = { ...instance };
           delete result.iconDataUrl;
@@ -6191,10 +6314,16 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
           request = { ...request, requiredJavaVersion: javaVersion };
         }
       }
-      const gameDirectory = request.custom
-        ? customClientProfileDirectory(root, request.customVersion)
-        : root;
+      const gameDirectory =
+        request.loader === 'horizon'
+          ? horizonGameDirectory(root)
+          : request.custom
+            ? customClientProfileDirectory(root, request.customVersion)
+            : root;
       const otherLaunches = otherDirectoryLaunches(launchId, gameDirectory);
+      if (request.loader === 'horizon' && otherLaunches.length) {
+        return { ok: false, code: 'busy', state: 'running', message: 'Horizon ya está abierto.' };
+      }
       if (
         otherLaunches.some(([, launch]) => launch.safeMode) ||
         (request.safeMode && otherLaunches.length)
@@ -6230,6 +6359,7 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
             request.installedVersionId ||
               request.customVersion ||
               `${request.loader || 'Vanilla'} ${request.version}${request.loaderVersion && request.loaderVersion !== 'latest' ? ` (${request.loaderVersion})` : ''}`,
+            request.loader === 'horizon',
           );
         }
         const terminal =
@@ -6361,6 +6491,70 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
         return { ok: false, code: 'no-account', message: 'Selecciona una cuenta antes de jugar' };
       }
       try {
+        if (request.loader === 'horizon') {
+          const controller = new AbortController();
+          const cancel = () => {
+            if (controller.signal.aborted) {return false;}
+            controller.abort();
+            return true;
+          };
+          cancelSelectedLaunch = cancel;
+          emit({ type: 'state', state: 'preparing' });
+          try {
+            await accessMonitor?.check();
+            accessMonitor?.assertAllowed();
+            const session = await horizonSession(account, controller.signal);
+            const folder = await prepareHorizon(
+              root,
+              async () => {
+                const { path } = await ensureMinecraftJava(
+                  () => resolveMinecraftJava(root, request.version, '25'),
+                  (major) => installLaunchJava(resolveManagedJavaRuntimeService(), major, emit),
+                );
+                return dirname(dirname(path!));
+              },
+              emit,
+              controller.signal,
+            );
+            if (request.installOnly) {
+              emit({ type: 'phase', phase: 'ready' });
+              emit({ type: 'state', state: 'exited' });
+              await finalizeLaunch({ code: 0, signal: null });
+              return { ok: true };
+            }
+            const { runtime } = await resolveSettingsStore().snapshot();
+            const server = request.directConnect
+              ? minecraftServerAddress(request.directConnect)
+              : undefined;
+            controller.signal.throwIfAborted();
+            await startHorizon(
+              folder,
+              gameDirectory,
+              session,
+              {
+                width: runtime.windowWidth,
+                height: runtime.windowHeight,
+                fullscreen: runtime.windowFullscreen,
+              },
+              server,
+              emit,
+              (exit) => {
+                emit({ type: 'exit', ...exit });
+                void finalizeLaunch(exit).finally(() => emit({ type: 'state', state: 'exited' }));
+              },
+            );
+            handedOff = true;
+            await resolvePlayVersionService().recordLaunch(request);
+            return { ok: true };
+          } catch (error) {
+            if (!controller.signal.aborted) {throw error;}
+            emit({ type: 'state', state: 'exited' });
+            await finalizeLaunch({ code: null, signal: null });
+            return { ok: false, code: 'cancelled', message: '' };
+          } finally {
+            if (cancelSelectedLaunch === cancel) {cancelSelectedLaunch = () => false;}
+          }
+        }
         const [profileValues, loadedConfig] = await Promise.all([
           readProfileValuesFile(remakeStorePath()),
           resolveConfigClient().load({ preferCache: true }),
@@ -6575,6 +6769,17 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
         })
       : resolveInstanceArtworkCache().list(instances);
   });
+  trackedHandle(desktopChannels.duplicateInstance, (event, id: unknown, request: unknown) => {
+    assertTrustedSender(event.senderFrame?.url);
+    if (typeof id !== 'string') {
+      throw new Error('Instancia inválida');
+    }
+    return resolveInstanceStore().duplicate(id, request, (directory) => {
+      if (otherDirectoryLaunches(Symbol(), directory).length) {
+        throw new Error('Cierra Minecraft antes de duplicar esta instancia.');
+      }
+    });
+  });
   ipcMain.handle(desktopChannels.updateInstance, async (event, id: unknown, value: unknown) => {
     assertTrustedSender(event.senderFrame?.url);
     if (typeof id !== 'string') {
@@ -6644,10 +6849,10 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
         target.send(desktopChannels.bypackProgress, value);
       }
     };
-  const exportedBypacks = new Set<string>();
+  const exportedPacks = new Set<string>();
   ipcMain.handle(desktopChannels.revealBypack, (event, path: unknown) => {
     assertTrustedSender(event.senderFrame?.url);
-    if (typeof path !== 'string' || !exportedBypacks.has(path)) {
+    if (typeof path !== 'string' || !exportedPacks.has(path)) {
       throw new Error('El paquete no se ha exportado en esta sesión');
     }
     shell.showItemInFolder(path);
@@ -6710,10 +6915,14 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
       bypackProgress(event.sender),
       author,
     );
-    exportedBypacks.add(result.path);
+    exportedPacks.add(result.path);
     return result;
   });
-  trackedHandle(desktopChannels.exportBypack, async (event, id: unknown) => {
+  const exportInstancePack = async (
+    event: Electron.IpcMainInvokeEvent,
+    id: unknown,
+    format: 'bypack' | 'mrpack',
+  ) => {
     assertTrustedSender(event.senderFrame?.url);
     if (typeof id !== 'string') {
       throw new Error('Instancia inválida');
@@ -6727,28 +6936,36 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
       .replace(/[<>:"/\\|?*]/g, '_')
       .slice(0, 100);
     const selected = await dialog.showSaveDialog(owner, {
-      title: 'Exportar instancia a .bypack',
-      defaultPath: join(app.getPath('downloads'), `${name}.bypack`),
-      filters: [{ name: 'Battly Pack', extensions: ['bypack'] }],
+      title: format === 'bypack' ? 'Exportar instancia a .bypack' : 'Exportar instancia a .mrpack',
+      defaultPath: join(app.getPath('downloads'), `${name}.${format}`),
+      filters: [{ name: format === 'bypack' ? 'Battly Pack' : 'Modrinth Pack', extensions: [format] }],
     });
     if (selected.canceled || !selected.filePath) {
       return null;
     }
-    const accounts = await resolveAccountStore()
-      .store.list()
-      .catch(() => null);
-    const author = accounts?.accounts.find(
-      (account) => account.uuid === accounts.selectedAccountUuid,
-    )?.name;
-    const result = await resolveBypackService().export(
-      id,
-      selected.filePath,
-      bypackProgress(event.sender),
-      author,
-    );
-    exportedBypacks.add(result.path);
+    const service = resolveBypackService();
+    const progress = bypackProgress(event.sender);
+    let result;
+    if (format === 'mrpack') {
+      result = await service.exportMrpack(id, selected.filePath, progress);
+    } else {
+      const accounts = await resolveAccountStore()
+        .store.list()
+        .catch(() => null);
+      const author = accounts?.accounts.find(
+        (account) => account.uuid === accounts.selectedAccountUuid,
+      )?.name;
+      result = await service.export(id, selected.filePath, progress, author);
+    }
+    exportedPacks.add(result.path);
     return result;
-  });
+  };
+  trackedHandle(desktopChannels.exportBypack, (event, id: unknown) =>
+    exportInstancePack(event, id, 'bypack'),
+  );
+  trackedHandle(desktopChannels.exportMrpack, (event, id: unknown) =>
+    exportInstancePack(event, id, 'mrpack'),
+  );
   trackedHandle(desktopChannels.importBypack, async (event, source: unknown) => {
     assertTrustedSender(event.senderFrame?.url);
     const owner = BrowserWindow.fromWebContents(event.sender);
@@ -7767,6 +7984,19 @@ if (singleInstanceLock) {
         return new Response(null, { status: 404 });
       }
       return cachedAudioResponse(file, request);
+    });
+    protocol.handle('battly-catalog', async (request) => {
+      const url = new URL(request.url);
+      const source = url.searchParams.get('url');
+      if (url.hostname !== 'image' || url.pathname !== '/' || !source || source.length > 4096 ||
+          !source.startsWith('https://') || request.method !== 'GET') {
+        return new Response(null, { status: 400 });
+      }
+      try {
+        return await catalogImageFetch(source, { signal: request.signal });
+      } catch {
+        return new Response(null, { status: 403 });
+      }
     });
     void registerBypackAssociation({
       executablePath: process.env.PORTABLE_EXECUTABLE_FILE || process.execPath,

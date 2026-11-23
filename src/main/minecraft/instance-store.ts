@@ -1,13 +1,15 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { PrivateDataDecryptionError } from '../storage/protected-data';
 import { setTimeout as delay } from 'node:timers/promises';
-import { lstat, mkdir, readdir, rename, rm } from 'node:fs/promises';
-import { isAbsolute, join, resolve } from 'node:path';
+import { copyFile, lstat, mkdir, readdir, realpath, rename, rm } from 'node:fs/promises';
+import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 import {
+  instanceCopyParts,
   instanceIdPattern,
   normalizeInstanceDraft,
   normalizeInstanceSummary,
+  type InstanceCopyRequest,
   type InstanceSummary,
 } from '../../shared/minecraft/instance';
 import { pathExists, readBoundedRegularFile, writeFileAtomically } from '../files/atomic-file';
@@ -16,6 +18,50 @@ const maximumInstances = 500;
 const maximumMetadataBytes = 1024 * 1024;
 const maximumIconBytes = 1024 * 1024;
 type InstanceDirectory = { root: string; name: string; id: string };
+
+const copyEntries: Record<InstanceCopyRequest['parts'][number], readonly string[]> = {
+  mods: ['mods'],
+  settings: [
+    'config',
+    'defaultconfigs',
+    'kubejs',
+    'scripts',
+    'options.txt',
+    'optionsof.txt',
+    'optionsshaders.txt',
+  ],
+  worlds: ['saves'],
+  resourcepacks: ['resourcepacks', 'texturepacks'],
+  shaderpacks: ['shaderpacks'],
+  screenshots: ['screenshots'],
+  servers: ['servers.dat'],
+};
+
+async function copyInstanceEntry(source: string, target: string, root: string): Promise<void> {
+  const info = await lstat(source);
+  const path = relative(root, await realpath(source));
+  if (
+    info.isSymbolicLink() ||
+    !path ||
+    isAbsolute(path) ||
+    path === '..' ||
+    path.startsWith(`..${sep}`)
+  ) {
+    throw new Error('La selección contiene un enlace o un archivo fuera de la instancia.');
+  }
+  if (info.isDirectory()) {
+    await mkdir(target);
+    for (const entry of await readdir(source)) {
+      if (entry.toLowerCase() !== 'session.lock') {
+        await copyInstanceEntry(join(source, entry), join(target, entry), root);
+      }
+    }
+  } else if (info.isFile()) {
+    await copyFile(source, target);
+  } else {
+    throw new Error('La selección contiene un archivo especial que no se puede copiar.');
+  }
+}
 
 function iconBytes(dataUrl: string | null | undefined): Buffer | null {
   if (!dataUrl) {
@@ -209,39 +255,91 @@ export class InstanceStore {
 
   create(value: unknown): Promise<InstanceSummary> {
     const draft = normalizeInstanceDraft(value);
+    return this.#enqueue(() => this.#create(draft));
+  }
+
+  duplicate(
+    id: string,
+    value: unknown,
+    assertEditable: (directory: string) => void,
+  ): Promise<InstanceSummary> {
+    const request = value as Partial<InstanceCopyRequest> | undefined;
+    if (
+      !request ||
+      typeof request.name !== 'string' ||
+      !Array.isArray(request.parts) ||
+      request.parts.length > instanceCopyParts.length ||
+      request.parts.some((part: unknown) => !instanceCopyParts.some((allowed) => allowed === part))
+    ) {
+      throw new TypeError('Selección de copia inválida.');
+    }
+    const { name } = request;
+    const parts: InstanceCopyRequest['parts'] = request.parts;
     return this.#enqueue(async () => {
-      await mkdir(this.#root, { recursive: true });
-      await assertRealDirectory(this.#root);
-      const id = this.#createId();
-      if (!instanceIdPattern.test(id)) {
-        throw new TypeError('Instance id factory returned an invalid id');
-      }
-      const target = join(this.#root, id);
-      const staging = join(this.#root, `.creating-${id}`);
-      if (
-        (await pathExists(staging)) ||
-        (await Promise.all(this.#roots.map((root) => pathExists(join(root, id))))).some(Boolean) ||
-        (await this.#directories()).some((entry) => entry.id === id)
-      ) {
-        throw new Error('Instance id already exists');
-      }
-      await mkdir(staging);
-      try {
-        await writeFileAtomically(
-          join(staging, 'instance.json'),
-          `${JSON.stringify(metadataDraft(draft), null, 2)}\n`,
-        );
-        const icon = iconBytes(draft.iconDataUrl);
-        if (icon) {
-          await writeFileAtomically(join(staging, 'icon.png'), icon);
-        }
-        await rename(staging, target);
-      } catch (error) {
-        await rm(staging, { recursive: true, force: true });
-        throw error;
-      }
-      return { id, ...draft };
+      const source = await this.#instanceDirectory(id);
+      assertEditable(source);
+      const root = await realpath(source);
+      const entries = new Set(parts.flatMap((part) => copyEntries[part]));
+      const metadata = await readMetadata(join(source, 'instance.json'));
+      const iconDataUrl = await readIconDataUrl(source);
+      const draft = normalizeInstanceDraft({
+        ...metadata,
+        name,
+        iconDataUrl,
+        launchProfile: parts.includes('settings') ? metadata.launchProfile : undefined,
+      });
+      return this.#create(
+        draft,
+        async (staging) => {
+          for (const entry of await readdir(source)) {
+            if (entries.has(entry.toLowerCase())) {
+              await copyInstanceEntry(join(source, entry), join(staging, entry), root);
+            }
+          }
+          assertEditable(source);
+        },
+        entries.has('mods') ? { modrinth: metadata.modrinth, curseforge: metadata.curseforge } : {},
+      );
     });
+  }
+
+  async #create(
+    draft: ReturnType<typeof normalizeInstanceDraft>,
+    populate?: (directory: string) => Promise<void>,
+    packMetadata: Record<string, unknown> = {},
+  ): Promise<InstanceSummary> {
+    await mkdir(this.#root, { recursive: true });
+    await assertRealDirectory(this.#root);
+    const id = this.#createId();
+    if (!instanceIdPattern.test(id)) {
+      throw new TypeError('Instance id factory returned an invalid id');
+    }
+    const target = join(this.#root, id);
+    const staging = join(this.#root, `.creating-${id}`);
+    if (
+      (await pathExists(staging)) ||
+      (await Promise.all(this.#roots.map((root) => pathExists(join(root, id))))).some(Boolean) ||
+      (await this.#directories()).some((entry) => entry.id === id)
+    ) {
+      throw new Error('Instance id already exists');
+    }
+    await mkdir(staging);
+    try {
+      await writeFileAtomically(
+        join(staging, 'instance.json'),
+        `${JSON.stringify({ ...packMetadata, ...metadataDraft(draft) }, null, 2)}\n`,
+      );
+      const icon = iconBytes(draft.iconDataUrl);
+      if (icon) {
+        await writeFileAtomically(join(staging, 'icon.png'), icon);
+      }
+      await populate?.(staging);
+      await rename(staging, target);
+    } catch (error) {
+      await rm(staging, { recursive: true, force: true });
+      throw error;
+    }
+    return { id, ...draft };
   }
 
   update(id: string, value: unknown): Promise<InstanceSummary> {

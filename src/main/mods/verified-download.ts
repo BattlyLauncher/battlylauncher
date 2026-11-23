@@ -12,19 +12,21 @@ async function exists(path: string): Promise<boolean> {
   }
 }
 
-async function sha512(path: string): Promise<string> {
-  const digest = createHash('sha512');
+async function fileDigest(path: string, algorithm: 'sha1' | 'sha512'): Promise<string> {
+  const digest = createHash(algorithm);
   for await (const chunk of createReadStream(path)) {
     digest.update(chunk as Buffer);
   }
   return digest.digest('hex');
 }
 
-export interface VerifiedDownload {
-  readonly expectedSha512: string;
+export type VerifiedDownload = {
   readonly expectedSize: number;
   readonly url: string;
-}
+} & (
+  | { readonly expectedSha512: string; readonly expectedSha1?: never }
+  | { readonly expectedSha512?: never; readonly expectedSha1: string }
+);
 
 export interface VerifiedDownloaderOptions {
   readonly validateUrl?: (url: URL) => void;
@@ -83,7 +85,12 @@ export class VerifiedDownloader {
     onProgress?: (current: number, total: number) => void,
   ): Promise<void> {
     await mkdir(dirname(destination), { recursive: true });
-    if ((await exists(destination)) && (await sha512(destination)) === descriptor.expectedSha512) {
+    const algorithm = descriptor.expectedSha512 === undefined ? 'sha1' : 'sha512';
+    const expectedHash = descriptor.expectedSha512 ?? descriptor.expectedSha1;
+    if (
+      (await exists(destination)) &&
+      (await fileDigest(destination, algorithm)) === expectedHash
+    ) {
       onProgress?.(descriptor.expectedSize, descriptor.expectedSize);
       return;
     }
@@ -106,7 +113,7 @@ export class VerifiedDownloader {
     }
     try {
       const handle = await open(temporary, 'wx');
-      const digest = createHash('sha512');
+      const digest = createHash(algorithm);
       let bytes = 0;
       onProgress?.(0, descriptor.expectedSize);
       try {
@@ -129,7 +136,7 @@ export class VerifiedDownloader {
       } finally {
         await handle.close();
       }
-      if (bytes !== descriptor.expectedSize || digest.digest('hex') !== descriptor.expectedSha512) {
+      if (bytes !== descriptor.expectedSize || digest.digest('hex') !== expectedHash) {
         throw new Error('Verified download hash mismatch');
       }
       let archivedPath: string | undefined;

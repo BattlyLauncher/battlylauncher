@@ -33,12 +33,6 @@
   margin-bottom: 0.65rem;
 }
 
-.modpack-install-modal [data-modpack-install-log] {
-  max-width: 100%;
-  overflow-x: auto;
-  white-space: pre;
-}
-
 .modpack-install-modal progress::-webkit-progress-value {
   transition: width 220ms ease-out;
 }
@@ -60,17 +54,38 @@
   display: none;
 }
 .modpack-install-details {
-  margin-top: 20px;
+  min-width: 0;
+  margin-top: 12px;
   color: #b9c7da;
 }
 .modpack-install-details summary {
   cursor: pointer;
-  padding: 8px 0;
+  padding: 5px 0;
 }
-[data-modpack-install-log] {
-  white-space: pre-wrap !important;
+.modpack-install-log-frame {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid #34485e;
+  border-radius: 9px;
+  background: #0d1521;
+}
+.modpack-install-modal [data-modpack-install-log] {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: clamp(80px, 19vh, 144px);
+  margin: 0;
+  padding: 2px 6px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #dce7f6;
+  resize: none;
+  white-space: pre-wrap;
   overflow-wrap: anywhere;
-  overflow-x: hidden !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
   font:
     12px/1.6 'Battly Emoji',
     'Battly Emoji Sequences',
@@ -233,6 +248,9 @@
   text-align: end;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+.launching-modal [data-launch-percent]:empty {
+  display: none;
 }
 .launching-modal .launching-download-panel [data-launch-download-status] {
   display: block;

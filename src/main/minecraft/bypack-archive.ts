@@ -39,23 +39,35 @@ export async function writeBypackZip(
   manifest: BypackManifest,
   filePath: (path: string) => string,
 ): Promise<void> {
+  return writePackZip(
+    path,
+    'bypack.json',
+    manifest,
+    manifest.files.filter((file) => !file.remote).map((file) => file.path),
+    filePath,
+  );
+}
+
+export async function writePackZip(
+  path: string,
+  manifestName: string,
+  manifest: object,
+  embeddedPaths: readonly string[],
+  filePath: (path: string) => string,
+): Promise<void> {
+  const json = Buffer.from(JSON.stringify(manifest));
+  if (json.length > bypackLimits.manifestBytes) {
+    throw new Error('Manifiesto demasiado grande');
+  }
   const zip = new yazl.ZipFile();
   const output = zip.outputStream as Readable;
   zip.on('error', (error: Error) => output.destroy(error));
   const done = pipeline(output, createWriteStream(path, { flags: 'wx' }));
   // Install the rejection handler before scheduling compression.
   void done.catch(() => undefined);
-  const json = Buffer.from(JSON.stringify(manifest));
-  if (json.length > bypackLimits.manifestBytes) {
-    output.destroy(new Error('Manifiesto demasiado grande'));
-    await done;
-    return;
-  }
-  zip.addBuffer(json, 'bypack.json', { compressionLevel: 9 });
-  for (const file of manifest.files) {
-    if (!file.remote) {
-      zip.addFile(filePath(file.path), `overrides/${file.path}`, { compressionLevel: 9 });
-    }
+  zip.addBuffer(json, manifestName, { compressionLevel: 9 });
+  for (const file of embeddedPaths) {
+    zip.addFile(filePath(file), `overrides/${file}`, { compressionLevel: 9 });
   }
   zip.end();
   await done;

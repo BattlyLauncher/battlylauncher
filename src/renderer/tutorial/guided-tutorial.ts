@@ -1,6 +1,6 @@
 import { privateStorage } from '../private-storage';
 import { translateUiText } from '../i18n/dialog-text';
-import { positionTutorialCard } from '../home/home-tutorial-layout';
+import { positionTutorialCard, type TutorialRectangle } from '../home/home-tutorial-layout';
 import nivixUrl from '../assets/nivix.png';
 import { mountGuidedHelp } from './guided-help';
 import { guidedHelpTopics, type GuidedHelpTopic } from './guided-help-topics';
@@ -54,6 +54,39 @@ function persistCompletion(storageKey: string): void {
 }
 
 let activeGuidedTutorial: (() => Promise<void>) | null = null;
+
+function visibleTarget(
+  target: HTMLElement,
+  viewport: { width: number; height: number },
+): TutorialRectangle | null {
+  const rect = target.getBoundingClientRect();
+  let left = Math.max(0, rect.left);
+  let top = Math.max(0, rect.top);
+  let right = Math.min(viewport.width, rect.right);
+  let bottom = Math.min(viewport.height, rect.bottom);
+  for (let parent = target.parentElement; parent; parent = parent.parentElement) {
+    if (parent === document.body || parent === document.documentElement) {break;}
+    const style = getComputedStyle(parent);
+    if (style.overflowX === 'visible' && style.overflowY === 'visible') {continue;}
+    const bounds = parent.getBoundingClientRect();
+    const scaleX = parent.offsetWidth ? bounds.width / parent.offsetWidth : 1;
+    const scaleY = parent.offsetHeight ? bounds.height / parent.offsetHeight : 1;
+    if (style.overflowX !== 'visible') {
+      const clipLeft = bounds.left + parent.clientLeft * scaleX;
+      left = Math.max(left, clipLeft);
+      right = Math.min(right, clipLeft + parent.clientWidth * scaleX);
+    }
+    if (style.overflowY !== 'visible') {
+      const clipTop = bounds.top + parent.clientTop * scaleY;
+      top = Math.max(top, clipTop);
+      bottom = Math.min(bottom, clipTop + parent.clientHeight * scaleY);
+    }
+    if (parent.matches('dialog:modal')) {break;}
+  }
+  return right - left >= 1 && bottom - top >= 1
+    ? { left, top, right, bottom, width: right - left, height: bottom - top }
+    : null;
+}
 
 export function mountGuidedTutorial(options: GuidedTutorialOptions): GuidedTutorial {
   const prompt = document.createElement('aside');
@@ -192,8 +225,12 @@ export function mountGuidedTutorial(options: GuidedTutorialOptions): GuidedTutor
   let leaveStep: GuidedTutorialStep['onLeave'];
   let highlighted: HTMLElement | null = null;
   let previousFocus: HTMLElement | null = null;
+  let highlightFrame = 0;
+  let lastPosition = '';
 
   const clearHighlight = (): void => {
+    cancelAnimationFrame(highlightFrame);
+    lastPosition = '';
     highlighted?.classList.remove('home-tutorial-highlight');
     highlighted = null;
     if (focus) {
@@ -222,21 +259,27 @@ export function mountGuidedTutorial(options: GuidedTutorialOptions): GuidedTutor
     if (!dialog) {
       return;
     }
-    const rect = highlighted?.getBoundingClientRect();
-    if (!rect || rect.width < 1 || rect.height < 1) {
+    const viewport = { width: window.innerWidth, height: window.innerHeight };
+    const rect = highlighted?.isConnected ? visibleTarget(highlighted, viewport) : null;
+    if (!rect) {
       if (focus) {
         focus.hidden = true;
       }
+      lastPosition = '';
       dialog.style.removeProperty('left');
       dialog.style.removeProperty('top');
-      dialog.style.removeProperty('right');
-      dialog.style.removeProperty('bottom');
       return;
     }
-    const left = Math.max(8, rect.left - 8),
-      top = Math.max(8, rect.top - 8);
-    const right = Math.min(window.innerWidth - 8, rect.right + 8),
-      bottom = Math.min(window.innerHeight - 8, rect.bottom + 8);
+    const left = Math.max(2, rect.left - 6);
+    const top = Math.max(2, rect.top - 6);
+    const right = Math.min(viewport.width - 2, rect.right + 6);
+    const bottom = Math.min(viewport.height - 2, rect.bottom + 6);
+    const card = { width: dialog.offsetWidth, height: dialog.offsetHeight };
+    const signature = [
+      left, top, right, bottom, card.width, card.height, viewport.width, viewport.height,
+    ].join('/');
+    if (signature === lastPosition) {return;}
+    lastPosition = signature;
     if (focus) {
       focus.hidden = false;
       Object.assign(focus.style, {
@@ -248,15 +291,18 @@ export function mountGuidedTutorial(options: GuidedTutorialOptions): GuidedTutor
     }
     const position = positionTutorialCard(
       { left, top, right, bottom, width: right - left, height: bottom - top },
-      { width: Math.min(410, window.innerWidth - 32), height: dialog.offsetHeight || 190 },
-      { width: window.innerWidth, height: window.innerHeight },
+      card,
+      viewport,
     );
     Object.assign(dialog.style, {
-      right: 'auto',
-      bottom: 'auto',
       left: position.left + 'px',
       top: position.top + 'px',
     });
+  };
+  const followHighlight = (): void => {
+    if (!active || !highlighted) {return;}
+    positionHighlight();
+    highlightFrame = requestAnimationFrame(followHighlight);
   };
   let finishing: Promise<void> | null = null;
   const finishOnce = async (): Promise<void> => {
@@ -370,9 +416,12 @@ export function mountGuidedTutorial(options: GuidedTutorialOptions): GuidedTutor
         }
         showAboveDialog();
         await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-        positionHighlight();
-        next?.focus({ preventScroll: true });
-        busy = false;
+        if (active && current === revision) {
+          positionHighlight();
+          if (highlighted) {highlightFrame = requestAnimationFrame(followHighlight);}
+          next?.focus({ preventScroll: true });
+          busy = false;
+        }
       }
     }
   };
@@ -489,8 +538,6 @@ export function mountGuidedTutorial(options: GuidedTutorialOptions): GuidedTutor
       }
     }
   });
-  window.addEventListener('resize', positionHighlight);
-  window.addEventListener('scroll', positionHighlight, true);
   return {
     start: begin,
     help: openHelp,

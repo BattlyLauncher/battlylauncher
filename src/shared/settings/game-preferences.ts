@@ -1,3 +1,9 @@
+import {
+  defaultWorldsShortcuts,
+  normalizeWorldsShortcuts,
+  type WorldsShortcuts,
+} from '../social/worlds-shortcuts';
+
 export interface DisplayPreferences {
   width: number;
   height: number;
@@ -56,6 +62,7 @@ export interface WorldsPreferences {
   voiceSounds: boolean;
   overlayEnabled: boolean;
   overlayOpacity: number;
+  shortcuts: WorldsShortcuts;
 }
 export const defaultWorldsPreferences: WorldsPreferences = {
   defaultPublic: false,
@@ -71,12 +78,15 @@ export const defaultWorldsPreferences: WorldsPreferences = {
   voiceSounds: true,
   overlayEnabled: true,
   overlayOpacity: 92,
+  shortcuts: defaultWorldsShortcuts,
 };
 export function normalizeWorldsPreferences(value: unknown): WorldsPreferences {
   const v = value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
   const result = { ...defaultWorldsPreferences };
   for (const key of Object.keys(result) as (keyof WorldsPreferences)[]) {
-    if (key === 'durationHours' || key === 'overlayOpacity') {
+    if (key === 'shortcuts') {
+      result.shortcuts = normalizeWorldsShortcuts(v.shortcuts);
+    } else if (key === 'durationHours' || key === 'overlayOpacity') {
       const n = Number(v[key]);
       if (Number.isFinite(n)) {
         result[key] = Math.round(
