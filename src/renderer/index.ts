@@ -37,6 +37,7 @@ import { PlaySelectorCache } from './minecraft/play-selector-cache';
 import { uiLocale } from './i18n/locale';
 import { OgIntro, mountOgSetting, releaseStartupUi } from './ui/og-intro';
 import { mountHistoryReplay, needsReleaseWelcome, ReleaseWelcome } from './ui/release-welcome';
+import { showPatchNotes } from './ui/patch-notes';
 import { resolveLauncherPanel } from '../shared/accounts/launcher-access';
 import './styles/release-welcome.css';
 import ogIntroUrl from './assets/videos/og/video_background.mp4?url';
@@ -18191,9 +18192,14 @@ async function initializeLauncher(): Promise<void> {
     loader.classList.add('inert');
     loader.setAttribute('aria-busy', 'false');
   }
-  const releaseWelcome = needsReleaseWelcome() ? new ReleaseWelcome(() => undefined) : undefined;
+  const showStartupPatchNotes = () => {
+    void window.battly.getUpdates()
+      .then((snapshot) => showPatchNotes(snapshot.installedPatchNotes))
+      .catch(() => undefined);
+  };
+  const releaseWelcome = needsReleaseWelcome() ? new ReleaseWelcome(showStartupPatchNotes) : undefined;
   if (!releaseWelcome && rendererHasAccount && currentSettingsSnapshot?.runtime.ogIntroEnabled) {
-    ogIntro = new OgIntro(ogIntroUrl, ogLoopUrl);
+    ogIntro = new OgIntro(ogIntroUrl, ogLoopUrl, showStartupPatchNotes);
   } else {
     releaseStartupUi();
   }
@@ -18210,6 +18216,9 @@ async function initializeLauncher(): Promise<void> {
   }
   releaseWelcome?.start();
   ogIntro?.start();
+  if (!releaseWelcome && !ogIntro) {
+    showStartupPatchNotes();
+  }
   window.battly.onHomeUpdated(renderHomeSnapshot);
   // News and presence can time out independently; they must never hold the window closed.
   void renderHome();

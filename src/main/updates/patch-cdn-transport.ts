@@ -1,7 +1,7 @@
 /** Network adapter for the immutable patch verifier shipped with Battly 3.1. */
 const API = 'https://api.github.com';
 const REPOSITORY = '/repos/BattlyLauncher/battlylauncher/';
-const CDN = 'https://cdn.battlylauncher.com/public/updates/patches/';
+export const PATCH_CDN = 'https://cdn.battlylauncher.com/public/updates/patches/';
 interface AssetLocation {
   resource: string;
   publicUrl?: string;
@@ -190,7 +190,7 @@ export function createCdnPatchFetch({
     ]);
     let response: Response | undefined;
     try {
-      response = await fetcher(new URL(resource, CDN).href, {
+      response = await fetcher(new URL(resource, PATCH_CDN).href, {
         redirect: 'error',
         signal,
         headers: { Accept: limit ? 'application/json' : 'application/octet-stream' },

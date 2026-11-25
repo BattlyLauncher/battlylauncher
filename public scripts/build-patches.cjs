@@ -225,6 +225,9 @@ if (args[0] === 'keygen') {
   if (config.githubRepository) {
     const assets = path.join(path.resolve(out), 'github-assets');
     fs.mkdirSync(assets, { recursive: true });
+    if (args.includes('--export-release-notes')) {
+      fs.writeFileSync(path.join(assets, 'release-notes.md'), manifest.notes, 'utf8');
+    }
     for (const f of manifest.files)
       fs.copyFileSync(
         path.join(destination, 'blobs', f.sha256),

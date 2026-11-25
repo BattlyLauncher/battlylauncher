@@ -17,7 +17,11 @@ export class OgIntro {
   private revealed = false;
   private loopStarted = false;
 
-  constructor(introUrl: string, loopUrl: string) {
+  constructor(
+    introUrl: string,
+    loopUrl: string,
+    private readonly onReveal?: () => void,
+  ) {
     this.layer.id = 'og-background';
     this.layer.setAttribute('aria-hidden', 'true');
     for (const video of [this.intro, this.loop]) {
@@ -144,6 +148,7 @@ export class OgIntro {
     if (document.hidden) {
       this.loop.pause();
     }
+    this.onReveal?.();
   }
 
   stop(): void {

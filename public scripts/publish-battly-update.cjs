@@ -281,8 +281,10 @@ function publicationPlan(pkg, directory) {
       throw Error('Invalid installer baseline');
     return config;
   });
+  let notes = update.notes;
   if (update.type === 'patch') {
     const expected = new Set(configs.map((c) => `patch-base-${c.platform}-${c.arch}.json`));
+    let signedNotes;
     for (const config of configs) {
       const name = `patch-${config.runtimeId}-${update.channel}-${config.platform}-${config.arch}.json`;
       const m = verifyEnvelope(JSON.parse(fs.readFileSync(path.join(root, name), 'utf8')), config);
@@ -293,6 +295,9 @@ function publicationPlan(pkg, directory) {
         m.build !== update.build
       )
         throw Error('Patch publication metadata mismatch');
+      if (signedNotes !== undefined && signedNotes !== m.notes)
+        throw Error('Signed patch release notes differ between platforms');
+      signedNotes = m.notes;
       expected.add(name);
       for (const file of m.files) {
         const blob = `${file.sha256}.blob`,
@@ -302,6 +307,12 @@ function publicationPlan(pkg, directory) {
         expected.add(blob);
       }
     }
+    notes = signedNotes;
+    if (files.includes('release-notes.md')) {
+      if (fs.readFileSync(path.join(root, 'release-notes.md'), 'utf8') !== signedNotes)
+        throw Error('Release notes do not match the signed patch');
+      expected.add('release-notes.md');
+    }
     if (files.some((name) => !expected.has(name)))
       throw Error('Unexpected patch asset (installers and updater manifests are forbidden)');
   } else {
@@ -309,6 +320,7 @@ function publicationPlan(pkg, directory) {
   }
   return {
     ...update,
+    notes,
     prerelease: update.type === 'patch' || update.channel === 'beta',
     files: files.map((name) => ({
       name,

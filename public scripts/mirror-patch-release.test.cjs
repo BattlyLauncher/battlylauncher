@@ -6,11 +6,17 @@ function fixture(status = 200) {
   const body = Buffer.from('signed patch data'),
     hash = crypto.createHash('sha256').update(body).digest('hex');
   const names = [`${hash}.blob`, `patch-${'a'.repeat(64)}-stable-win32-x64.json`];
+  const payload = Buffer.from(JSON.stringify({ build: 6, notes: '## Crítico\nActualización' }));
+  const manifest = Buffer.from(JSON.stringify({ payload: payload.toString('base64') }));
+  const bodies = new Map([
+    [names[0], body],
+    [names[1], manifest],
+  ]);
   const assets = names.map((name, i) => ({
     id: i + 10,
     name,
-    size: body.length,
-    digest: `sha256:${hash}`,
+    size: bodies.get(name).length,
+    digest: `sha256:${crypto.createHash('sha256').update(bodies.get(name)).digest('hex')}`,
     state: 'uploaded',
     browser_download_url: `https://github.com/BattlyLauncher/battlylauncher/releases/download/battly-patch-3.1.0-patch6/${name}`,
   }));
@@ -31,10 +37,12 @@ function fixture(status = 200) {
       });
     }
     assert.equal(options.headers, undefined);
-    return new Response(body, { status });
+    return new Response(bodies.get(url.split('/').at(-1)) ?? manifest, { status });
   };
   return {
     assets,
+    bodies,
+    payload,
     writes,
     options: {
       token: 'fixture',
@@ -51,6 +59,11 @@ test('mirror publishes verified files first and discovery last, without leaking 
   assert.match(f.writes.at(-1).key, /releases-1.json$/);
   assert.equal(JSON.parse(f.writes.at(-1).bytes)[0].id, 5);
   assert.equal(f.writes[0].options.CacheControl, 'public, max-age=31536000, immutable');
+  const slot = `6-${crypto.createHash('sha256').update(f.payload).digest('hex')}`;
+  assert.deepEqual(
+    f.writes.find((write) => write.key.endsWith(`/manifests/by-slot/${slot}.json`)).bytes,
+    f.bodies.get(f.assets[1].name),
+  );
 });
 test('corrupt files never publish a discovery index', async () => {
   const f = fixture();
@@ -82,4 +95,25 @@ test('real release baseline descriptors are included without being mistaken for 
   assert.equal(result.assets, 3);
   assert(f.writes.some((w) => w.key.endsWith('/manifests/12.json')));
   assert.equal(JSON.parse(f.writes.at(-1).bytes)[0].assets.length, 2);
+});
+
+test('the release notes asset is mirrored without adding it to patch discovery', async () => {
+  const f = fixture();
+  const tag = 'battly-patch-3.1.0-patch6';
+  const name = 'release-notes.md';
+  const notes = Buffer.from('## Crítico\n\nActualización');
+  f.bodies.set(name, notes);
+  f.assets.push({
+    ...f.assets[1],
+    id: 13,
+    name,
+    size: notes.length,
+    digest: `sha256:${crypto.createHash('sha256').update(notes).digest('hex')}`,
+    browser_download_url: `https://github.com/BattlyLauncher/battlylauncher/releases/download/${tag}/${name}`,
+  });
+  await mirrorRelease(tag, f.options);
+  const copy = f.writes.find((write) => write.key.endsWith(`/release-notes/${tag}.md`));
+  assert.deepEqual(copy.bytes, notes);
+  assert.equal(copy.options.ContentType, 'text/markdown; charset=utf-8');
+  assert(JSON.parse(f.writes.at(-1).bytes)[0].assets.every((asset) => asset.name !== name));
 });

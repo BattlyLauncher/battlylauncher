@@ -583,5 +583,30 @@
     "file": "src/main/storage/private-data-recovery.ts",
     "text": "This file cannot be reset automatically",
     "reason": "Internal recovery safety guard; logged on failure, with a translated storage dialog shown to the user"
+  },
+  {
+    "file": "src/main/index.ts",
+    "text": "[Battly/Mojang] Updated official version metadata for {0}",
+    "reason": "Raw launch log; original diagnostics are preserved"
+  },
+  {
+    "file": "src/main/minecraft/official-version-metadata.ts",
+    "text": "Invalid official Minecraft metadata URL",
+    "reason": "Technical error in the version metadata download"
+  },
+  {
+    "file": "src/main/minecraft/official-version-metadata.ts",
+    "text": "Official Minecraft metadata failed integrity verification",
+    "reason": "Technical error in the version metadata download"
+  },
+  {
+    "file": "src/main/minecraft/official-version-metadata.ts",
+    "text": "Invalid official Minecraft version manifest",
+    "reason": "Technical error in the version metadata download"
+  },
+  {
+    "file": "src/main/minecraft/official-version-metadata.ts",
+    "text": "Official Minecraft metadata returned HTTP {0}",
+    "reason": "Technical error in the version metadata download"
   }
 ]

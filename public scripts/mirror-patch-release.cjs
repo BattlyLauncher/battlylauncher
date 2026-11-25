@@ -27,6 +27,7 @@ async function bounded(response, limit) {
 async function mirrorRelease(tag, { token, put, fetcher = fetch }) {
   if (!/^battly-patch-\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?-patch\d+$/.test(tag))
     throw Error('Expected a published patch tag');
+  const build = Number(/-patch(\d+)$/.exec(tag)[1]);
   const api = async (suffix) =>
     JSON.parse(
       (
@@ -76,7 +77,11 @@ async function mirrorRelease(tag, { token, put, fetcher = fetch }) {
   }
   const write = async (resource, bytes, mutable = false) =>
     put(PREFIX + resource, bytes, {
-      ContentType: resource.endsWith('.json') ? 'application/json' : 'application/octet-stream',
+      ContentType: resource.endsWith('.json')
+        ? 'application/json'
+        : resource.endsWith('.md')
+          ? 'text/markdown; charset=utf-8'
+          : 'application/octet-stream',
       CacheControl: mutable
         ? 'public, max-age=30, must-revalidate'
         : 'public, max-age=31536000, immutable',
@@ -103,8 +108,9 @@ async function mirrorRelease(tag, { token, put, fetcher = fetch }) {
           asset.name,
         );
       const baseline = /^patch-base-(win32|linux|darwin)-(x64|ia32|arm64)\.json$/.test(asset.name);
-      if (!blob && !manifest && !baseline) throw Error('Unexpected patch asset');
-      const limit = blob ? 64 * 1024 * 1024 : 2_100_000;
+      const notes = asset.name === 'release-notes.md';
+      if (!blob && !manifest && !baseline && !notes) throw Error('Unexpected patch asset');
+      const limit = blob ? 64 * 1024 * 1024 : notes ? 16_000 : 2_100_000;
       if (
         !Number.isSafeInteger(asset.size) ||
         asset.size < 0 ||
@@ -126,7 +132,18 @@ async function mirrorRelease(tag, { token, put, fetcher = fetch }) {
         throw Error('Patch asset integrity failure');
       total += bytes.length;
       if (total > 1024 * 1024 * 1024) throw Error('Patch mirror exceeds total size limit');
-      await write(blob ? `blobs/${blob[1]}` : `manifests/${asset.id}.json`, bytes);
+      if (notes) {
+        await write(`release-notes/${tag}.md`, bytes);
+      } else {
+        await write(blob ? `blobs/${blob[1]}` : `manifests/${asset.id}.json`, bytes);
+      }
+      if (manifest) {
+        const envelope = JSON.parse(bytes.toString('utf8'));
+        const payload = Buffer.from(envelope.payload, 'base64');
+        if (JSON.parse(payload.toString('utf8')).build !== build)
+          throw Error('Patch build does not match tag');
+        await write(`manifests/by-slot/${build}-${sha256(payload)}.json`, bytes);
+      }
     }
   }
   await Promise.all(Array.from({ length: 4 }, uploadAssets));

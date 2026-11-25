@@ -92,18 +92,20 @@ test('real patch builder matches saved installer, signs all targets and rejects 
     patchVersion: '3.1.0-patch3',
     baseTag: 'v3.1.0',
     build: 3,
+    notes: '## Crítico\n\nCorrección de seguridad.',
   };
   put('package.json', JSON.stringify(pkg));
   assert.match(run(['config'], false).stderr, /requires BATTLY_PATCH_BASE_CONFIG_FILE/);
   env.BATTLY_PATCH_BASE_CONFIG_FILE = path.join(temp, 'baseline.json');
   run(['config']);
   put('dist/main/index.js', 'changed launcher code');
-  run(['release', '--out', path.join(temp, 'out')]);
+  run(['release', '--out', path.join(temp, 'out'), '--export-release-notes']);
   const config = JSON.parse(fs.readFileSync(path.join(temp, 'baseline.json'))),
     asset = `patch-${config.runtimeId}-stable-win32-x64.json`,
     envelope = JSON.parse(fs.readFileSync(path.join(temp, 'out/github-assets', asset)));
   const m = require('../bootstrap/patch-runtime.cjs').verifyEnvelope(envelope, config);
   assert.equal(m.patchVersion, '3.1.0-patch3');
+  assert.equal(fs.readFileSync(path.join(temp, 'out/github-assets/release-notes.md'), 'utf8'), m.notes);
   assert.equal(m.files.length, 3);
   assert(fs.existsSync(path.join(temp, 'out/github-assets', m.files[0].sha256 + '.blob')));
   put('package-lock.json', '{"changed":true}');

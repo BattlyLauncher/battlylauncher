@@ -240,6 +240,7 @@ import { previewMinecraftWindow } from './settings/window-size-preview';
 import { MesaRuntimeService } from './minecraft/mesa-runtime-service';
 import { sanitizeDiagnosticValue } from './diagnostics/redaction';
 import { UpdateService, patchRuntime } from './updates/update-service';
+import { readInstalledPatchNotes } from './updates/installed-patch-notes';
 import { installPatchCdn } from './updates/patch-cdn-runtime';
 import { createUpdateNotifier } from './updates/update-notice';
 import { focusStartupUpdate, showStartupUpdates } from './updates/startup-update-window';
@@ -386,6 +387,7 @@ import { normalizeBackupId, normalizeContentName } from '../shared/mybattly/myba
 import { WorldBackupService } from './mybattly/world-backup-service';
 import { MinecraftCoreInstaller } from './minecraft/minecraft-core-installer';
 import { MinecraftCoreRuntime } from './minecraft/minecraft-core-runtime';
+import { OfficialVersionMetadata } from './minecraft/official-version-metadata';
 import { prepareLaunchJava, installLaunchJava } from './minecraft/prepare-launch-java';
 import { ensureAuthlibInjector } from './minecraft/authlib-injector-service';
 import { CustomClientInstaller } from './minecraft/custom-client-installer';
@@ -2090,6 +2092,8 @@ function resolveConfigClient(): ReturnType<typeof createBattlyConfigClient> {
   return configClient;
 }
 
+const officialVersionMetadata = new OfficialVersionMetadata();
+
 function resolveLauncherService(
   descriptor: ReturnType<typeof minecraftCorePackageFromLauncherConfig>,
 ): LauncherService {
@@ -2141,7 +2145,16 @@ function resolveLauncherService(
             resolveClientBridge(),
           ),
       ),
-      (options, emit) => memory.prepare(options, emit),
+      async (options, emit) => {
+        if (await officialVersionMetadata.refresh(options.root, options.version.id)) {
+          emit({
+            type: 'log',
+            stream: 'game',
+            message: `[Battly/Mojang] Updated official version metadata for ${options.version.id}`,
+          });
+        }
+        return memory.prepare(options, emit);
+      },
     );
     launcherDescriptorKey = key;
   }
@@ -2956,9 +2969,14 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
     install: (): Promise<unknown> => requestUpdateAction('install'),
   });
   app.once('will-quit', updateNotifier.close);
-  ipcMain.handle(desktopChannels.getUpdates, (event) => {
+  const installedPatchNotes = readInstalledPatchNotes(
+    join(__dirname, '..', '..'),
+    app.getVersion(),
+    updates.snapshot().build,
+  );
+  ipcMain.handle(desktopChannels.getUpdates, async (event) => {
     assertTrustedSender(event.senderFrame?.url);
-    return updates.snapshot();
+    return { ...updates.snapshot(), installedPatchNotes: await installedPatchNotes };
   });
   ipcMain.handle(desktopChannels.notices, (event) => {
     assertTrustedSender(event.senderFrame?.url);

@@ -130,7 +130,12 @@ jobs:
           fi
       - name: Generate signed patch assets
         if: needs.plan.outputs.type == 'patch'
-        run: npm run patches:release -- --out artifacts/patch-ci
+        run: |
+          args=(--out artifacts/patch-ci)
+          if [[ "$BATTLY_PATCH_PLATFORM/$BATTLY_PATCH_ARCH" == win32/x64 ]]; then
+            args+=(--export-release-notes)
+          fi
+          npm run patches:release -- "${args[@]}"
       - name: Authenticate Windows signing identity
         if: needs.plan.outputs.type == 'full' && matrix.platform == 'win32'
         uses: azure/login@v3

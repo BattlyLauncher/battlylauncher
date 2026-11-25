@@ -23229,6 +23229,22 @@
         "zh": "所选世界不可用。"
       },
       "sourceLanguage": "en"
+    },
+    {
+      "source": "Gracias por seguir jugando con Battly.",
+      "translations": {
+        "es": "Gracias por seguir jugando con Battly.",
+        "en": "Thanks for sticking with Battly.",
+        "pt": "Valeu por continuar jogando com o Battly.",
+        "fr": "Merci de continuer à jouer avec Battly.",
+        "de": "Danke, dass du weiter mit Battly spielst.",
+        "it": "Grazie per continuare a giocare con Battly.",
+        "ru": "Спасибо, что продолжаете играть с Battly.",
+        "ja": "いつも Battly で遊んでくれてありがとう。",
+        "ar": "شكرًا لمواصلة اللعب مع Battly.",
+        "zh": "感谢你一直使用 Battly 玩游戏。"
+      },
+      "sourceLanguage": "es"
     }
   ]
 }

@@ -5,9 +5,51 @@ const test = require('node:test'),
   os = require('node:os'),
   crypto = require('node:crypto');
 const { installPatchCdn } = require('../dist/main/updates/patch-cdn-runtime');
+const { readInstalledPatchNotes } = require('../dist/main/updates/installed-patch-notes');
 const { hash } = require('../bootstrap/patch-runtime.cjs');
 const { patchStorageRoot } = require('../bootstrap/runtime-config.cjs');
 const SYMBOL = Symbol.for('battly.patch.runtime');
+
+test('installed patch notes use the exact CDN manifest only when the local copy fails', async (t) => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'battly-patch-notes-'));
+  t.after(() => fs.rmSync(temp, { recursive: true, force: true }));
+  const patch = {
+    build: 6,
+    channel: 'stable',
+    patchVersion: '3.1.0-patch6',
+    notes: '## Crítico\n\nUn arreglo',
+  };
+  const payload = Buffer.from(JSON.stringify(patch));
+  const envelope = JSON.stringify({ payload: payload.toString('base64') });
+  const slot = `6-${hash(payload)}`;
+  const root = path.join(temp, 'builds', slot);
+  fs.mkdirSync(root, { recursive: true });
+  let requests = 0;
+  const fetcher = async (url) => {
+    requests++;
+    assert.equal(
+      url,
+      `https://cdn.battlylauncher.com/public/updates/patches/manifests/by-slot/${slot}.json`,
+    );
+    return new Response(envelope);
+  };
+  const recovered = await readInstalledPatchNotes(root, '3.1.0', 6, fetcher);
+  assert.equal(recovered.notes, patch.notes);
+  assert.equal(requests, 1);
+  fs.writeFileSync(path.join(root, 'manifest.json'), envelope);
+  assert.deepEqual(await readInstalledPatchNotes(root, '3.1.0', 6, fetcher), recovered);
+  assert.equal(requests, 1);
+  fs.writeFileSync(path.join(root, 'manifest.json'), 'corrupt');
+  const changed = { ...patch, notes: 'Unexpected text' };
+  assert.equal(
+    await readInstalledPatchNotes(root, '3.1.0', 6, async () =>
+      Response.json({
+        payload: Buffer.from(JSON.stringify(changed)).toString('base64'),
+      }),
+    ),
+    undefined,
+  );
+});
 function fixture(t) {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'battly-cdn-adoption-'));
   const installedRoot = path.join(temp, 'installed'),
