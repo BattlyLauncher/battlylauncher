@@ -38,6 +38,9 @@
   line-height: 1.7;
   margin: 14px 0 24px;
 }
+.drive-original-modal p[role='status']:empty {
+  margin: 0;
+}
 .drive-original-modal footer {
   padding-top: 18px;
   border-top: 1px solid #304358;

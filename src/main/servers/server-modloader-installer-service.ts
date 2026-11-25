@@ -113,17 +113,21 @@ export class ServerModloaderInstallerService {
     this.#runInstaller = options.runInstaller ?? runModloaderInstallerProcess;
   }
 
-  async preflight(id: string, kind: 'forge' | 'neoforge' | 'spigot'): Promise<void> {
+  async preflight(
+    id: string,
+    kind: 'forge' | 'neoforge' | 'spigot',
+    build?: string,
+  ): Promise<void> {
     const server = (await this.store.list()).find((entry) => entry.id === id);
     if (!server) {
       throw new Error('Servidor no encontrado');
     }
     if (kind !== 'spigot') {
-      await this.#catalog.resolve(kind, server.version);
+      await this.#catalog.resolve(kind, server.version, build);
     }
   }
 
-  install(idValue: unknown, kindValue: unknown): Promise<void> {
+  install(idValue: unknown, kindValue: unknown, build?: string): Promise<void> {
     const id = normalizeServerId(idValue);
     const kind = normalizeServerSoftwareKind(kindValue);
     if (kind !== 'forge' && kind !== 'neoforge' && kind !== 'spigot') {
@@ -133,7 +137,7 @@ export class ServerModloaderInstallerService {
     if (existing) {
       return existing;
     }
-    const operation = this.#install(id, kind).finally(() => this.#operations.delete(id));
+    const operation = this.#install(id, kind, build).finally(() => this.#operations.delete(id));
     this.#operations.set(id, operation);
     return operation;
   }
@@ -141,6 +145,7 @@ export class ServerModloaderInstallerService {
   async #install(
     id: string,
     kind: Extract<ServerSoftwareKind, 'forge' | 'neoforge' | 'spigot'>,
+    build?: string,
   ): Promise<void> {
     const [directory, server] = await Promise.all([
       this.store.directoryPathInternal(id),
@@ -177,7 +182,7 @@ export class ServerModloaderInstallerService {
         });
         return;
       }
-      const artifact = await this.#catalog.resolve(kind, server.version);
+      const artifact = await this.#catalog.resolve(kind, server.version, build);
       await this.#download(installer, artifact.url, artifact.sha1);
       await this.#runInstaller(java, ['-jar', installer, '--installServer'], {
         cwd: stagedServer,

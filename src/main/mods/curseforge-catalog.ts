@@ -162,7 +162,12 @@ function projectSummary(raw: unknown): ModProjectSummary[] {
   ];
 }
 
-function compatibleFile(value: unknown, id: string, request: ModInstallRequest) {
+function compatibleFile(
+  value: unknown,
+  id: string,
+  request: ModInstallRequest,
+  serverPack = false,
+) {
   const file = record(value);
   const tags = list(file.gameVersions);
   const filename = text(file.fileName, 260);
@@ -174,7 +179,7 @@ function compatibleFile(value: unknown, id: string, request: ModInstallRequest) 
     file.gameId !== 432 ||
     !fileId ||
     file.isAvailable === false ||
-    file.isServerPack === true ||
+    (file.isServerPack === true) !== serverPack ||
     filename.length > 255 ||
     // eslint-disable-next-line no-control-regex -- Downloaded filenames cannot contain C0 controls.
     !/^[^<>:"/\\|?*\u0000-\u001f]+\.(jar|zip)$/i.test(filename) ||
@@ -419,7 +424,8 @@ export class CurseForgeCatalog {
     destination: string,
     signal?: AbortSignal,
     onProgress?: (current: number, total: number) => void,
-  ): Promise<void> {
+    preferServerPack = false,
+  ): Promise<string> {
     const id = curseForgeProjectId(request.projectId);
     const version = request.versionId;
     if (!id || !version || !/^[1-9]\d{0,9}$/.test(version) || request.projectType !== 'modpack') {
@@ -434,16 +440,36 @@ export class CurseForgeCatalog {
     if (typeFor(project) !== 'modpack' || !file || String(file.fileId) !== version) {
       throw new Error(incompatibleFile);
     }
-    const download = this.#downloadMetadata(project, file.file);
+    let selected = file;
+    const serverId = preferServerPack ? integer(file.file.serverPackFileId) : 0;
+    if (serverId) {
+      const serverFile = compatibleFile(
+        (await this.#get('mod/' + id + '/file/' + serverId, {}, signal)).data,
+        id,
+        request,
+        true,
+      );
+      if (
+        !serverFile ||
+        serverFile.fileId !== serverId ||
+        (serverFile.file.parentProjectFileId != null &&
+          serverFile.file.parentProjectFileId !== file.fileId)
+      ) {
+        throw new Error(incompatibleFile);
+      }
+      selected = serverFile;
+    }
+    const download = this.#downloadMetadata(project, selected.file);
     await new VerifiedDownloader({
       validateUrl: validateCdn,
       fetchImplementation: this.fetcher,
     }).download(
-      { url: download.url, expectedSha1: download.sha1, expectedSize: file.size },
+      { url: download.url, expectedSha1: download.sha1, expectedSize: selected.size },
       destination,
       signal,
       onProgress,
     );
+    return selected.filename;
   }
 
   #downloadMetadata(project: Record<string, unknown>, file: Record<string, unknown>) {

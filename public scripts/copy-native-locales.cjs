@@ -15,3 +15,7 @@ fs.copyFileSync(
   path.resolve(__dirname, '../resources/compatibility/batmod-startup.class'),
   path.join(compatibilityOutput, 'batmod-startup.class'),
 );
+fs.copyFileSync(
+  path.resolve(__dirname, '../resources/worlds-lan/worlds-lan-agent.jar'),
+  path.join(compatibilityOutput, 'worlds-lan-agent.jar'),
+);

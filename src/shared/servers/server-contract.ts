@@ -11,6 +11,20 @@ export interface ServerDraft {
 
 export type ServerSoftwareKind = 'vanilla' | 'fabric' | 'paper' | 'forge' | 'neoforge' | 'spigot';
 
+export function isServerModloader(kind: string | null): kind is 'fabric' | 'forge' | 'neoforge' {
+  return kind === 'fabric' || kind === 'forge' || kind === 'neoforge';
+}
+
+export function normalizeServerLoaderBuild(value: unknown): string | undefined {
+  if (value === undefined || value === '') {
+    return undefined;
+  }
+  if (typeof value !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9.+_-]{0,127}$/.test(value)) {
+    throw new TypeError('La versión del modloader no es válida.');
+  }
+  return value;
+}
+
 export interface ServerSoftwareAvailability {
   readonly available: readonly ServerSoftwareKind[];
   readonly unavailable: Partial<Record<ServerSoftwareKind, string>>;

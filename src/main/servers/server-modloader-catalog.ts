@@ -185,17 +185,34 @@ export class ServerModloaderCatalog {
   async resolve(
     kindValue: ServerSoftwareKind,
     gameVersionValue: string,
+    build?: string,
   ): Promise<ModloaderInstallerArtifact> {
     const gameVersion = safeVersion(gameVersionValue, 'Minecraft');
     if (kindValue !== 'forge' && kindValue !== 'neoforge') {
       throw new TypeError('Software does not use a ModLoader installer');
     }
     return kindValue === 'forge'
-      ? this.#resolveForge(gameVersion)
-      : this.#resolveNeoForge(gameVersion);
+      ? this.#resolveForge(gameVersion, build)
+      : this.#resolveNeoForge(gameVersion, build);
   }
 
-  async #resolveForge(gameVersion: string): Promise<ModloaderInstallerArtifact> {
+  async #resolveForge(
+    gameVersion: string,
+    requested?: string,
+  ): Promise<ModloaderInstallerArtifact> {
+    if (requested !== undefined) {
+      const target = safeVersion(requested, 'Forge');
+      const prefix = gameVersion + '-';
+      const suffix = '-' + gameVersion;
+      const bare = target.startsWith(prefix) ? target.slice(prefix.length) : target;
+      const version = bare.endsWith(suffix) ? bare.slice(0, -suffix.length) : bare;
+      if (!/^\d+(?:\.\d+){1,4}(?:-[a-zA-Z][a-zA-Z0-9._-]*)?$/.test(version)) {
+        throw new TypeError(
+          'Esta versión de Forge no es compatible con la versión de Minecraft del servidor.',
+        );
+      }
+      return this.#forgeArtifact(gameVersion, version);
+    }
     const text = await boundedText(
       await this.#fetch(this.#forgePromotionsUrl, {
         redirect: 'error',
@@ -218,6 +235,10 @@ export class ServerModloaderCatalog {
       throw new Error(`Forge no publica un instalador para Minecraft ${gameVersion}`);
     }
     const version = safeVersion(selected, 'Forge');
+    return this.#forgeArtifact(gameVersion, version);
+  }
+
+  async #forgeArtifact(gameVersion: string, version: string): Promise<ModloaderInstallerArtifact> {
     const base = `${gameVersion}-${version}`;
     // Older Forge releases publish a Minecraft suffix in their Maven coordinate.
     for (const build of [base, `${base}-${gameVersion}`]) {
@@ -233,7 +254,26 @@ export class ServerModloaderCatalog {
     throw new Error(`Forge no publica un instalador para Minecraft ${gameVersion}`);
   }
 
-  async #resolveNeoForge(gameVersion: string): Promise<ModloaderInstallerArtifact> {
+  async #resolveNeoForge(
+    gameVersion: string,
+    requested?: string,
+  ): Promise<ModloaderInstallerArtifact> {
+    if (requested !== undefined) {
+      const build = safeVersion(requested, 'NeoForge');
+      if (!build.startsWith(neoForgePrefix(gameVersion))) {
+        throw new TypeError(
+          'Esta versión de NeoForge no es compatible con la versión de Minecraft del servidor.',
+        );
+      }
+      return this.#artifact(
+        'neoforge',
+        build,
+        new URL(
+          'net/neoforged/neoforge/' + build + '/neoforge-' + build + '-installer.jar',
+          this.#neoForgeMavenUrl,
+        ).href,
+      );
+    }
     const metadataUrl = new URL('net/neoforged/neoforge/maven-metadata.xml', this.#neoForgeMavenUrl)
       .href;
     const xml = await boundedText(

@@ -67,7 +67,11 @@ import type {
   ThemeReviewResult,
   ThemeShareResult,
 } from '../shared/themes/theme-contract';
-import type { InstanceCopyRequest, InstanceDraft, InstanceSummary } from '../shared/minecraft/instance';
+import type {
+  InstanceCopyRequest,
+  InstanceDraft,
+  InstanceSummary,
+} from '../shared/minecraft/instance';
 import type { BattlyCustomClient } from '../shared/minecraft/custom-client-contract';
 import type { LabyModVersion } from '../shared/minecraft/labymod-contract';
 import type { BattlyClientUpdateNotice } from '../shared/minecraft/battly-client-contract';
@@ -303,8 +307,7 @@ const desktopApi: BattlyDesktopApi = Object.freeze({
   cancelAuth: () => invokeDesktop(desktopChannels.cancelAuth) as Promise<boolean>,
   getInstances: async () => {
     const result = (await invokeDesktop(desktopChannels.getInstances)) as
-      | readonly InstanceSummary[]
-      | { code: 'BATTLY_PRIVATE_DATA_UNREADABLE' };
+      readonly InstanceSummary[] | { code: 'BATTLY_PRIVATE_DATA_UNREADABLE' };
     if ('code' in result) {
       throw new Error(result.code);
     }
@@ -605,13 +608,21 @@ const desktopApi: BattlyDesktopApi = Object.freeze({
     ipcRenderer.on(desktopChannels.serverRuntimeEvent, handler);
     return () => ipcRenderer.removeListener(desktopChannels.serverRuntimeEvent, handler);
   },
-  installServer: (id: string, software?: ServerSoftwareKind, acceptCompatiblePaper?: boolean) =>
+  installServer: (
+    id: string,
+    software?: ServerSoftwareKind,
+    acceptCompatiblePaper?: boolean,
+    build?: string,
+  ) =>
     invokeDesktop(
       desktopChannels.installServer,
       id,
       software,
       acceptCompatiblePaper,
+      build,
     ) as Promise<void>,
+  importServerModpack: (id: string) =>
+    invokeDesktop(desktopChannels.importServerModpack, id) as Promise<string | null>,
   onServerInstallProgress: (listener: (progress: ServerInstallProgress) => void) => {
     const handler = (_event: Electron.IpcRendererEvent, value: ServerInstallProgress): void =>
       listener(value);
@@ -1110,6 +1121,12 @@ const desktopApi: BattlyDesktopApi = Object.freeze({
   },
   saveGoogleDriveCredentials: (value: unknown) =>
     invokeDesktop(desktopChannels.saveGoogleDriveCredentials, value) as Promise<boolean>,
+  authorizeGoogleDrive: () =>
+    invokeDesktop(desktopChannels.authorizeGoogleDrive) as Promise<boolean>,
+  copyGoogleDriveAuthorization: () =>
+    invokeDesktop(desktopChannels.copyGoogleDriveAuthorization) as Promise<boolean>,
+  cancelGoogleDriveAuthorization: () =>
+    invokeDesktop(desktopChannels.cancelGoogleDriveAuthorization) as Promise<void>,
   writeClipboardText: (value: string) =>
     invokeDesktop(desktopChannels.writeClipboardText, value) as Promise<boolean>,
   updateSocialProfile: (customization: ProfileCustomization, accountUuid?: string) =>

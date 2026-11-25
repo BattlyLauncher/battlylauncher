@@ -613,6 +613,26 @@
   flex-direction: column;
   gap: 14px;
 }
+
+.bw-connection-dialog [data-instance-choice]:not([hidden]) {
+  display: grid;
+  gap: 8px;
+}
+
+.bw-connection-dialog [data-instance-choice] select {
+  min-width: 0;
+  min-height: 40px;
+  padding: 6px 12px;
+  border: 1px solid #37516a;
+  border-radius: 8px;
+  background: #0d1825;
+  color: inherit;
+  color-scheme: dark;
+}
+
+.bw-connection-dialog [data-launch-choice] {
+  justify-self: start;
+}
 /* The route follows room connectivity, independently of Minecraft installation. */
 .bw-connection-route {
   display: grid;

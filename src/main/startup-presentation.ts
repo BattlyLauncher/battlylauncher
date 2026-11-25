@@ -1,7 +1,15 @@
 import { clearTimeout, setTimeout } from 'node:timers';
+import type { RuntimeSettings } from '../shared/settings/settings-contract';
 
 export function canSkipStartupSplash(enabled: boolean, premium: boolean): boolean {
   return enabled && premium;
+}
+
+export function startupIntroVolume(
+  runtime: Pick<RuntimeSettings, 'launchBoostEnabled' | 'startupSoundEnabled'>,
+  volume: number,
+): number {
+  return runtime.startupSoundEnabled && !runtime.launchBoostEnabled ? volume : 0;
 }
 
 export interface StartupMainWindow {

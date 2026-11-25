@@ -205,6 +205,7 @@ export class ServerInstallerService {
     idValue: unknown,
     softwareValue: unknown = 'vanilla',
     acceptCompatiblePaper = false,
+    build?: string,
   ): Promise<void> {
     const id = normalizeServerId(idValue);
     const software = normalizeServerSoftwareKind(softwareValue);
@@ -212,7 +213,7 @@ export class ServerInstallerService {
     if (existing) {
       return existing;
     }
-    const operation = this.#install(id, software, acceptCompatiblePaper).finally(() =>
+    const operation = this.#install(id, software, acceptCompatiblePaper, build).finally(() =>
       this.#operations.delete(id),
     );
     this.#operations.set(id, operation);
@@ -223,6 +224,7 @@ export class ServerInstallerService {
     id: string,
     software: ServerSoftwareKind,
     acceptCompatiblePaper: boolean,
+    build?: string,
   ): Promise<void> {
     const [directory, server] = await Promise.all([
       this.#store.directoryPathInternal(id),
@@ -249,6 +251,7 @@ export class ServerInstallerService {
       gameVersion,
       serverDownload,
       reportResolution,
+      build,
     );
     const { files, links } = await this.#resolveRuntime(javaComponent, reportResolution);
     const runtimeBytes = files.reduce((total, file) => total + file.descriptor.size, 0);
@@ -357,6 +360,7 @@ export class ServerInstallerService {
     gameVersion: string,
     vanilla: DownloadDescriptor,
     report: (current: string) => void,
+    build?: string,
   ): Promise<ServerArtifact> {
     if (software === 'vanilla') {
       return { build: gameVersion, download: vanilla };
@@ -439,7 +443,20 @@ export class ServerInstallerService {
       const entry = record(value, 'Fabric loader');
       return own(record(own(entry, 'loader'), 'Fabric loader metadata'), 'stable') === true;
     });
-    const loaderEntry = record(stableLoader ?? loaderValues[0], 'Fabric loader');
+    const requestedLoader =
+      build === undefined
+        ? undefined
+        : loaderValues.find(
+            (entry) =>
+              own(
+                record(own(record(entry, 'Fabric loader'), 'loader'), 'Fabric loader metadata'),
+                'version',
+              ) === build,
+          );
+    if (build !== undefined && !requestedLoader) {
+      throw new Error('Fabric no publica esa versión del modloader para este servidor.');
+    }
+    const loaderEntry = record(requestedLoader ?? stableLoader ?? loaderValues[0], 'Fabric loader');
     const loader = record(own(loaderEntry, 'loader'), 'Fabric loader metadata');
     const stableInstaller = installerValues.find(
       (value) => own(record(value, 'Fabric installer'), 'stable') === true,

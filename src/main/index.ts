@@ -34,7 +34,12 @@ import { writeVerifiedClipboardText } from './clipboard/write-clipboard-text';
 import { remoteOperations, remoteOperation } from '../shared/social/remote-operations';
 import { RemoteFiles } from './social/remote-files';
 import { remoteOperationContext } from './social/remote-operation-context';
-import { withWorldsLanConnection, worldsLanAgentPath } from './minecraft/worlds-lan-launch';
+import {
+  supportsOpenWorldsRoom,
+  withWorldsLanConnection,
+  WorldsLanRoomLease,
+  worldsLanAgentPath,
+} from './minecraft/worlds-lan-launch';
 import { MinecraftClientReadyObserver } from './minecraft/client-ready-observer';
 import { DesktopUsageClient } from './mybattly/usage-history';
 let desktopUsageHistory: DesktopUsageClient | undefined;
@@ -65,12 +70,17 @@ async function sampleDesktopUsage(): Promise<void> {
 import {
   canSkipStartupSplash,
   revealStartupMainWindow,
+  startupIntroVolume,
   startupResultWithin,
   StartupSplashPresentation,
 } from './startup-presentation';
 import { DiscordPresence } from './discord/discord-presence';
 import { NativeDiscordRpc } from './discord/native-rpc';
 import { TaskbarProgress } from './taskbar-progress';
+import {
+  authorizeDriveInBrowser,
+  DriveBrowserUnavailableError,
+} from './settings/google-drive-browser-auth';
 import { bridgeGoogleDriveAuthorization } from './settings/google-drive-auth-bridge';
 import { overlayAvatar } from './social/overlay-avatars';
 import { discordLaunchScheme } from '../shared/discord-contract';
@@ -284,6 +294,7 @@ import {
   session,
   shell,
   Tray,
+  type WebContents,
 } from 'electron';
 import {
   configureConnectivity,
@@ -340,6 +351,7 @@ import {
 } from '../shared/minecraft/custom-client-contract';
 import {
   normalizeInstanceLaunchRequest,
+  type MinecraftDirectConnectServer,
   type MinecraftLaunchEvent,
 } from '../shared/minecraft/launch-contract';
 import { validateBattlyNews } from '../shared/home/home-contract';
@@ -502,10 +514,19 @@ import {
   normalizeServerPlayerListMutation,
   normalizeServerProperties,
   normalizeServerSoftwareKind,
+  normalizeServerLoaderBuild,
+  isServerModloader,
+  type ServerSoftwareKind,
 } from '../shared/servers/server-contract';
 import { ServerStore } from './servers/server-store';
 import { ServerRuntimeService } from './servers/server-runtime-service';
 import { ServerInstallerService } from './servers/server-installer-service';
+import {
+  acceptServerModpackPath,
+  installServerModpackContents,
+  serverModpackSoftware,
+} from './servers/server-modpack-service';
+import type { ServerModpackTarget } from './mods/server-modpack-target';
 import { ServerPlayerListService } from './servers/server-player-list-service';
 import { ServerFileService } from './servers/server-file-service';
 import { ServerWorldImportService } from './servers/server-world-import-service';
@@ -748,7 +769,12 @@ function runPendingLabyUpdates(): void {
   });
 }
 
-function trackMinecraftGame(id: symbol, event: MinecraftLaunchEvent, version: string, nativeHorizon = false): void {
+function trackMinecraftGame(
+  id: symbol,
+  event: MinecraftLaunchEvent,
+  version: string,
+  nativeHorizon = false,
+): void {
   discordPresence.launch(id, event, version);
   if (event.type === 'process' || (event.type === 'state' && event.state === 'preparing')) {
     if (!analyticsGames.has(id)) {
@@ -802,7 +828,13 @@ function trackMinecraftGame(id: symbol, event: MinecraftLaunchEvent, version: st
     void sampleDesktopUsage().catch(() => undefined);
   }
   if (event.type === 'process') {
-    runningMinecraftGames.set(id, { pid: event.pid, version, server: null, lan: false, nativeHorizon });
+    runningMinecraftGames.set(id, {
+      pid: event.pid,
+      version,
+      server: null,
+      lan: false,
+      nativeHorizon,
+    });
     // Opening another game must not move an existing Worlds room/voice overlay.
     if (!worldsLaunchId || !hasActiveWorldsRoom()) {
       bindWorldsGame(id);
@@ -825,7 +857,9 @@ function trackMinecraftGame(id: symbol, event: MinecraftLaunchEvent, version: st
         )
         .catch(() => undefined)
         .then(() => {
-          const remaining = [...runningMinecraftGames].reverse().find(([, game]) => !game.nativeHorizon)?.[0];
+          const remaining = [...runningMinecraftGames]
+            .reverse()
+            .find(([, game]) => !game.nativeHorizon)?.[0];
           if (!worldsLaunchId && remaining) {
             bindWorldsGame(remaining);
           }
@@ -923,6 +957,7 @@ const progressChannels = new Set<string>([
   desktopChannels.installModBasket,
   desktopChannels.installMod,
   desktopChannels.installServer,
+  desktopChannels.importServerModpack,
   desktopChannels.startPlayVersion,
   desktopChannels.startInstance,
   desktopChannels.installManagedJava,
@@ -1750,6 +1785,147 @@ function serverInstallerFixtureFetch(): typeof fetch {
   };
 }
 
+async function installServerSoftwareFiles(
+  sender: Electron.WebContents,
+  id: string,
+  kind: ServerSoftwareKind,
+  acceptCompatiblePaper = false,
+  build?: string,
+): Promise<void> {
+  if (kind === 'forge' || kind === 'neoforge' || kind === 'spigot') {
+    await resolveServerModloaderInstallerService().preflight(id, kind, build);
+    const directory = await resolveServerStore().directoryPathInternal(id);
+    const javaExists = await lstat(
+      join(directory, 'java', 'bin', process.platform === 'win32' ? 'java.exe' : 'java'),
+    )
+      .then((info) => info.isFile() && !info.isSymbolicLink())
+      .catch(() => false);
+    if (!javaExists) {
+      await resolveServerInstallerService().install(id, 'vanilla');
+    }
+    taskbarProgress.update(0, 0);
+    if (!sender.isDestroyed()) {
+      sender.send(desktopChannels.serverInstallProgress, {
+        id: id,
+        phase: 'loader',
+        completedBytes: 0,
+        totalBytes: 0,
+        current: `Instalando ${kind}. La primera instalación puede tardar varios minutos.`,
+      });
+    }
+    await resolveServerModloaderInstallerService().install(id, kind, build);
+    if (!sender.isDestroyed()) {
+      sender.send(desktopChannels.serverInstallProgress, {
+        id: id,
+        phase: 'complete',
+        completedBytes: 1,
+        totalBytes: 1,
+        current: `${kind} instalado`,
+      });
+    }
+  } else {
+    await resolveServerInstallerService().install(id, kind, acceptCompatiblePaper, build);
+  }
+}
+
+async function prepareModpackForServer(
+  sender: Electron.WebContents,
+  id: string,
+  prepare: (
+    root: string,
+    target: ServerModpackTarget,
+    progress: ModpackInstallProgressSink,
+  ) => Promise<InstanceSummary>,
+  progress: ModpackInstallProgressSink,
+): Promise<string> {
+  if (installingServerRuntimes.has(id)) {
+    throw new Error('Espera a que termine la operación del servidor');
+  }
+  installingServerRuntimes.add(id);
+  try {
+    const server = (await resolveServerStore().list()).find((entry) => entry.id === id);
+    if (!server) {
+      throw new Error('Servidor no encontrado');
+    }
+    if (!['stopped', 'error'].includes(resolveServerRuntimeService().snapshot(id).status)) {
+      throw new Error('Detén el servidor antes de instalar el modpack.');
+    }
+    const directory = await resolveServerStore().directoryPathInternal(id);
+    const staging = await mkdtemp(join(app.getPath('temp'), 'battly-server-modpack-'));
+    try {
+      const target: ServerModpackTarget = {
+        acceptPath: acceptServerModpackPath,
+        checkMetadata: async (pack) => {
+          const { kind, build } = serverModpackSoftware(pack, server.version);
+          if (kind === 'forge' || kind === 'neoforge') {
+            const executable = join(
+              directory,
+              'java',
+              'bin',
+              process.platform === 'win32' ? 'java.exe' : 'java',
+            );
+            if (
+              server.software.installedAt &&
+              !(await lstat(executable).catch(() => null))?.isFile()
+            ) {
+              throw new Error('Repara Java en el servidor antes de instalar el modpack.');
+            }
+            await resolveServerModloaderInstallerService().preflight(id, kind, build);
+          }
+        },
+      };
+      const pack = await prepare(staging, target, (event) => {
+        if (event.phase !== 'complete') {
+          progress(event);
+        }
+      });
+      const { kind, build } = serverModpackSoftware(pack, server.version);
+      progress({
+        phase: 'writing',
+        item: kind,
+        current: 0,
+        total: 1,
+        message: 'Preparando el software del servidor…',
+      });
+      const alreadyInstalled =
+        server.software.installedAt &&
+        server.software.kind === kind &&
+        (server.software.gameVersion ?? server.version) === server.version &&
+        (kind === 'vanilla' ||
+          server.software.build === build ||
+          (kind === 'forge' &&
+            [
+              server.version + '-' + build,
+              server.version + '-' + build + '-' + server.version,
+            ].includes(server.software.build ?? '')));
+      await installServerModpackContents(
+        join(staging, pack.id),
+        directory,
+        async () => {
+          if (!alreadyInstalled) {
+            await installServerSoftwareFiles(sender, id, kind, false, build);
+          }
+        },
+        remoteOperationContext.getStore(),
+      );
+      return pack.name;
+    } finally {
+      await rm(staging, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 }).catch(
+        () => undefined,
+      );
+    }
+  } finally {
+    installingServerRuntimes.delete(id);
+  }
+}
+
+function createCurseForgeModpackInstaller(root: string): CurseForgeModpackInstaller {
+  return new CurseForgeModpackInstaller(root, {
+    apiBaseUrl: new URL('curseforge/', battlyCatalogBase()).href,
+    fetchImplementation: catalogFetch,
+  });
+}
+
 function resolveServerInstallerService(): ServerInstallerService {
   if (serverInstallerService) {
     return serverInstallerService;
@@ -2057,10 +2233,7 @@ function resolveBypackService(): BypackService {
 }
 
 function resolveCurseForgeModpackInstaller(): CurseForgeModpackInstaller {
-  curseForgeModpackInstaller ??= new CurseForgeModpackInstaller(instancesPath(), {
-    apiBaseUrl: new URL('curseforge/', battlyCatalogBase()).href,
-    fetchImplementation: catalogFetch,
-  });
+  curseForgeModpackInstaller ??= createCurseForgeModpackInstaller(instancesPath());
   return curseForgeModpackInstaller;
 }
 
@@ -2598,6 +2771,37 @@ function resolveWorldsDesktop(): WorldsDesktop {
     .catch(() => undefined);
   return worldsDesktop;
 }
+let worldsLanRoomLease: WorldsLanRoomLease | undefined;
+
+function resolveWorldsLanAgent(): Promise<string> {
+  return worldsLanAgentPath(
+    process.resourcesPath,
+    __dirname,
+    join(app.getPath('userData'), 'battlyworlds', 'lan-agent'),
+  );
+}
+
+async function prepareWorldsLanConnection(
+  options: MinecraftLaunchOptions,
+  server?: MinecraftDirectConnectServer | null,
+): Promise<MinecraftLaunchOptions> {
+  const room = worldsService?.current();
+  const canJoinOpenRoom = supportsOpenWorldsRoom(options);
+  if (canJoinOpenRoom) {
+    worldsLanRoomLease ??= new WorldsLanRoomLease(
+      join(app.getPath('userData'), 'battlyworlds', 'lan'),
+    );
+    worldsLanRoomLease.update(room);
+  }
+  return withWorldsLanConnection(
+    withDirectConnectArguments(options, server ?? null),
+    server,
+    room,
+    canJoinOpenRoom || server ? await resolveWorldsLanAgent() : '',
+    worldsLanRoomLease?.path,
+  );
+}
+
 function resolveWorldsService(): BattlyWorldsService {
   if (worldsService) {
     return worldsService;
@@ -2615,7 +2819,11 @@ function resolveWorldsService(): BattlyWorldsService {
     .catch(() => undefined);
   worldsService.subscribe((event) => {
     if (event.type === 'snapshot') {
+      worldsLanRoomLease?.update(event.snapshot);
       void updateDiscordWorlds(event.snapshot).catch(() => undefined);
+    }
+    if (event.type === 'closed') {
+      worldsLanRoomLease?.update();
     }
     if (
       event.type === 'closed' ||
@@ -3144,9 +3352,14 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
             Array.isArray(result.installed)
               ? result.installed.filter((v) => typeof v === 'string').join(', ')
               : 'Battly';
-          notifications().action(noticeTitles[channel], names.slice(0, 4000) || 'Battly', 'action', {
-            silent: channel === desktopChannels.installMod,
-          });
+          notifications().action(
+            noticeTitles[channel],
+            names.slice(0, 4000) || 'Battly',
+            'action',
+            {
+              silent: channel === desktopChannels.installMod,
+            },
+          );
         }
         return result;
       } catch (error) {
@@ -3590,8 +3803,7 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
       progress,
     );
   });
-  ipcMain.handle(desktopChannels.saveGoogleDriveCredentials, async (event, value: unknown) => {
-    assertTrustedSender(event.senderFrame?.url);
+  async function saveDriveCredentials(value: unknown, signal: AbortSignal): Promise<void> {
     if (!value || typeof value !== 'object' || Array.isArray(value)) {
       throw new TypeError('Invalid Google Drive credentials');
     }
@@ -3613,7 +3825,7 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
       'https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)',
       {
         headers: { authorization: `Bearer ${accessToken}` },
-        signal: AbortSignal.timeout(15000),
+        signal: AbortSignal.any([signal, AbortSignal.timeout(15_000)]),
         redirect: 'error',
       },
     );
@@ -3639,6 +3851,7 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
     if (!durableRefresh) {
       throw new Error('Google no ha autorizado el acceso a Drive');
     }
+    signal.throwIfAborted();
     await resolveSettingsStore().replaceGoogleDriveCredentials({
       accessToken,
       refreshToken: durableRefresh,
@@ -3649,7 +3862,59 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
           : null,
     });
     void syncWorldsOnGameClose();
+  }
+  ipcMain.handle(desktopChannels.saveGoogleDriveCredentials, async (event, value: unknown) => {
+    assertTrustedSender(event.senderFrame?.url);
+    await saveDriveCredentials(value, AbortSignal.timeout(15_000));
     return true;
+  });
+  let driveAuthorization: {
+    sender: WebContents;
+    controller: AbortController;
+    url: string;
+  } | null = null;
+  ipcMain.handle(desktopChannels.authorizeGoogleDrive, async (event) => {
+    assertTrustedSender(event.senderFrame?.url);
+    if (driveAuthorization) {
+      throw new Error('Ya hay una autorización de Google en curso');
+    }
+    const sender = event.sender;
+    const controller = new AbortController();
+    const attempt = { sender, controller, url: '' };
+    const abort = () => controller.abort(new Error('Autorización de Google cancelada'));
+    driveAuthorization = attempt;
+    sender.once('destroyed', abort);
+    try {
+      const credentials = await authorizeDriveInBrowser((url) => {
+        attempt.url = url;
+        return shell.openExternal(url);
+      }, controller.signal);
+      await saveDriveCredentials(credentials, controller.signal);
+      return true;
+    } catch (error) {
+      if (error instanceof DriveBrowserUnavailableError) {
+        return false;
+      }
+      throw error;
+    } finally {
+      sender.removeListener('destroyed', abort);
+      driveAuthorization = null;
+    }
+  });
+  ipcMain.handle(desktopChannels.copyGoogleDriveAuthorization, async (event) => {
+    assertTrustedSender(event.senderFrame?.url);
+    const attempt = driveAuthorization;
+    if (attempt?.sender !== event.sender || !attempt.url || attempt.controller.signal.aborted) {
+      return false;
+    }
+    await writeVerifiedClipboardText(attempt.url);
+    return true;
+  });
+  ipcMain.handle(desktopChannels.cancelGoogleDriveAuthorization, (event) => {
+    assertTrustedSender(event.senderFrame?.url);
+    if (driveAuthorization?.sender === event.sender) {
+      driveAuthorization.controller.abort(new Error('Autorización de Google cancelada'));
+    }
   });
 
   ipcMain.handle(desktopChannels.saveDiagnosticReport, async (event) => {
@@ -4015,7 +4280,15 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
     const token = await selectedBattlyToken();
     const runtime = resolveServerRuntimeService();
     await resolveServerSharingService().assertProviderDomain(normalized);
-    await runtime.start(normalized);
+    if (installingServerRuntimes.has(normalized)) {
+      throw new Error('Espera a que termine la operación del servidor');
+    }
+    installingServerRuntimes.add(normalized);
+    try {
+      await runtime.start(normalized);
+    } finally {
+      installingServerRuntimes.delete(normalized);
+    }
     if (!['starting', 'running'].includes(runtime.snapshot(normalized).status)) {
       return runtime.snapshot(normalized);
     }
@@ -4039,9 +4312,17 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
     }
     const token = await selectedBattlyToken();
     await resolveServerSharingService().assertProviderDomain(normalized);
-    await resolveServerSharingService().stopTunnel(normalized);
+    if (installingServerRuntimes.has(normalized)) {
+      throw new Error('Espera a que termine la operación del servidor');
+    }
     const runtime = resolveServerRuntimeService();
-    await runtime.restart(normalized);
+    installingServerRuntimes.add(normalized);
+    try {
+      await resolveServerSharingService().stopTunnel(normalized);
+      await runtime.restart(normalized);
+    } finally {
+      installingServerRuntimes.delete(normalized);
+    }
     await resolveServerSharingService().startTunnel(normalized, token);
     void syncServerConfigurations(normalized);
     return runtime.snapshot(normalized);
@@ -4057,67 +4338,101 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
       id: unknown,
       software: unknown = 'vanilla',
       acceptCompatiblePaper: unknown = false,
+      buildValue?: unknown,
     ) => {
       assertTrustedSender(event.senderFrame?.url);
       const normalized = normalizeServerId(id);
       const runtime = resolveServerRuntimeService().snapshot(normalized);
       if (!['stopped', 'error'].includes(runtime.status)) {
-        throw new Error('Stop the server before installing its runtime');
+        throw new Error('Detén el servidor antes de instalar su software.');
       }
       const normalizedSoftware = normalizeServerSoftwareKind(software);
+      const build = normalizeServerLoaderBuild(buildValue);
+      if (build && !isServerModloader(normalizedSoftware)) {
+        throw new TypeError('Este software no permite elegir un modloader.');
+      }
       const server = (await resolveServerStore().list()).find((entry) => entry.id === normalized);
       if (!server) {
         throw new Error('Servidor no encontrado');
       }
-      await serverSoftwareCatalog.assertAvailable(server.version, normalizedSoftware);
+      if (!build) {
+        await serverSoftwareCatalog.assertAvailable(server.version, normalizedSoftware);
+      }
       if (installingServerRuntimes.has(normalized)) {
         throw new Error('Server installation is active');
       }
       installingServerRuntimes.add(normalized);
       try {
         if (
-          normalizedSoftware === 'forge' ||
-          normalizedSoftware === 'neoforge' ||
-          normalizedSoftware === 'spigot'
+          !['stopped', 'error'].includes(resolveServerRuntimeService().snapshot(normalized).status)
         ) {
-          await resolveServerModloaderInstallerService().preflight(normalized, normalizedSoftware);
-          const directory = await resolveServerStore().directoryPathInternal(normalized);
-          const javaExists = await lstat(
-            join(directory, 'java', 'bin', process.platform === 'win32' ? 'java.exe' : 'java'),
-          )
-            .then((info) => info.isFile() && !info.isSymbolicLink())
-            .catch(() => false);
-          if (!javaExists) {
-            await resolveServerInstallerService().install(normalized, 'vanilla');
-          }
-          taskbarProgress.update(0, 0);
-          event.sender.send(desktopChannels.serverInstallProgress, {
-            id: normalized,
-            phase: 'loader',
-            completedBytes: 0,
-            totalBytes: 0,
-            current: `Instalando ${normalizedSoftware}. La primera instalación puede tardar varios minutos.`,
-          });
-          await resolveServerModloaderInstallerService().install(normalized, normalizedSoftware);
-          event.sender.send(desktopChannels.serverInstallProgress, {
-            id: normalized,
-            phase: 'complete',
-            completedBytes: 1,
-            totalBytes: 1,
-            current: `${normalizedSoftware} instalado`,
-          });
-        } else {
-          await resolveServerInstallerService().install(
-            normalized,
-            normalizedSoftware,
-            acceptCompatiblePaper === true,
-          );
+          throw new Error('Detén el servidor antes de instalar su software.');
         }
+        await installServerSoftwareFiles(
+          event.sender,
+          normalized,
+          normalizedSoftware,
+          acceptCompatiblePaper === true,
+          build,
+        );
       } finally {
         installingServerRuntimes.delete(normalized);
       }
     },
   );
+  trackedHandle(desktopChannels.importServerModpack, async (event, value: unknown) => {
+    assertTrustedSender(event.senderFrame?.url);
+    const id = normalizeServerId(value);
+    const owner = BrowserWindow.fromWebContents(event.sender);
+    if (!owner) {
+      throw new Error('No se pudo abrir el selector de archivos.');
+    }
+    const result = await dialog.showOpenDialog(owner, {
+      title: 'Instalar modpack en el servidor',
+      properties: ['openFile'],
+      filters: [{ name: 'Modrinth o CurseForge', extensions: ['mrpack', 'zip'] }],
+    });
+    const path = result.filePaths[0];
+    if (result.canceled || !path) {
+      return null;
+    }
+    const extension = extname(path).toLowerCase();
+    if (extension !== '.mrpack' && extension !== '.zip') {
+      throw new Error('Selecciona un modpack .mrpack o .zip.');
+    }
+    const signal = remoteOperationContext.getStore();
+    return prepareModpackForServer(
+      event.sender,
+      id,
+      (root, target, progress) =>
+        extension === '.mrpack'
+          ? new MrpackInstaller(root, undefined, catalogFetch).install(
+              path,
+              signal,
+              progress,
+              {},
+              target,
+            )
+          : createCurseForgeModpackInstaller(root).install(
+              path,
+              signal,
+              progress,
+              undefined,
+              target,
+            ),
+      (progress) => {
+        if (!event.sender.isDestroyed()) {
+          event.sender.send(desktopChannels.serverInstallProgress, {
+            id,
+            phase: 'resolving',
+            completedBytes: progress.current,
+            totalBytes: progress.total,
+            current: progress.message,
+          });
+        }
+      },
+    );
+  });
   ipcMain.handle(desktopChannels.getServerPlayerLists, async (event, id: unknown) => {
     assertTrustedSender(event.senderFrame?.url);
     return resolveServerPlayerListService().snapshot(normalizeServerId(id));
@@ -4448,7 +4763,8 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
   let curseForgeCatalog: CurseForgeCatalog | undefined;
   const resolveCurseForgeCatalog = () =>
     (curseForgeCatalog ??= new CurseForgeCatalog(
-      new URL('curseforge/', battlyCatalogBase()).href, catalogFetch,
+      new URL('curseforge/', battlyCatalogBase()).href,
+      catalogFetch,
     ));
   ipcMain.handle(desktopChannels.searchMods, async (event, request: unknown) => {
     assertTrustedSender(event.senderFrame?.url);
@@ -4465,9 +4781,10 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
     const [result, recommendations] = await Promise.all([
       normalized.provider === 'all'
         ? searchCombinedCatalog(
-          normalized, (query) => resolveModrinthClient().search(query),
-          (query) => resolveCurseForgeCatalog().search(query),
-        )
+            normalized,
+            (query) => resolveModrinthClient().search(query),
+            (query) => resolveCurseForgeCatalog().search(query),
+          )
         : resolveModrinthClient().search(normalized),
       recommendedMods.load(),
     ]);
@@ -4672,10 +4989,57 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
       const packDirectory = await lstat(packs).catch(() => null);
       const safe = await Promise.all([saves, world].map((dir) => lstat(dir).catch(() => null)));
       const level = await lstat(join(world, 'level.dat')).catch(() => null);
-      if (safe.some((dir) => !dir?.isDirectory()) || !level?.isFile() ||
-          (packDirectory && !packDirectory.isDirectory()) || otherDirectoryLaunches(Symbol(), root).length) {
+      if (
+        safe.some((dir) => !dir?.isDirectory()) ||
+        !level?.isFile() ||
+        (packDirectory && !packDirectory.isDirectory()) ||
+        otherDirectoryLaunches(Symbol(), root).length
+      ) {
         throw new Error('El mundo seleccionado no está disponible.');
       }
+    }
+    if (normalized.projectType === 'modpack' && normalized.destinationServerId) {
+      const id = normalizeServerId(normalized.destinationServerId);
+      const signal = remoteOperationContext.getStore();
+      const name = await prepareModpackForServer(
+        event.sender,
+        id,
+        async (root, target, progress) => {
+          if (curseForgeProjectId(normalized.projectId)) {
+            const path = join(root, 'package.zip');
+            const filename = await resolveCurseForgeCatalog().downloadPack(
+              normalized,
+              path,
+              signal,
+              (current, total) => {
+                progress({
+                  phase: 'downloading-archive',
+                  current,
+                  total,
+                  item: 'CurseForge',
+                  message: 'Descargando ModPack…',
+                });
+              },
+              true,
+            );
+            return createCurseForgeModpackInstaller(root).install(
+              path,
+              signal,
+              progress,
+              undefined,
+              { ...target, name: filename.slice(0, -4).slice(0, 128) },
+            );
+          }
+          return new ModrinthModpackInstaller(
+            resolveModrinthClient(),
+            new MrpackInstaller(root, undefined, catalogFetch),
+            root,
+            catalogFetch,
+          ).install(normalized, signal, progress, target);
+        },
+        modpackProgressTo(event.sender),
+      );
+      return { installed: [name] };
     }
     if (curseForgeProjectId(normalized.projectId) && normalized.projectType === 'modpack') {
       const progress = modpackProgressTo(event.sender);
@@ -4683,9 +5047,20 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
       const staging = await mkdtemp(join(app.getPath('temp'), 'battly-curseforge-pack-'));
       const path = join(staging, 'package.zip');
       try {
-        await resolveCurseForgeCatalog().downloadPack(normalized, path, signal, (current, total) => {
-          progress({ phase: 'downloading-archive', current, total, item: 'CurseForge', message: 'Descargando ModPack…' });
-        });
+        await resolveCurseForgeCatalog().downloadPack(
+          normalized,
+          path,
+          signal,
+          (current, total) => {
+            progress({
+              phase: 'downloading-archive',
+              current,
+              total,
+              item: 'CurseForge',
+              message: 'Descargando ModPack…',
+            });
+          },
+        );
         const instance = await resolveCurseForgeModpackInstaller().install(path, signal, progress);
         return { installed: [instance.name], instance };
       } finally {
@@ -4696,7 +5071,9 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
       let root = contentRootPath();
       if (normalized.destinationInstanceId) {
         const store = resolveInstanceStore();
-        const metadata = normalizeInstanceDraft(await store.readInternal(normalized.destinationInstanceId));
+        const metadata = normalizeInstanceDraft(
+          await store.readInternal(normalized.destinationInstanceId),
+        );
         if (
           metadata.version !== normalized.gameVersion ||
           (normalized.projectType === 'mod' && metadata.loader?.toLowerCase() !== normalized.loader)
@@ -5592,7 +5969,9 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
     resolveWorldsService().configure((await resolveSettingsStore().snapshot()).runtime.worlds);
     if (action.type === 'host' || action.type === 'invite') {
       if (!worldsDesktop?.trusted(event) || !worldsDesktop.gameRunning()) {
-        throw new Error('Crea la sala e invita a tus amigos desde el panel de Battly Worlds en Minecraft.');
+        throw new Error(
+          'Crea la sala e invita a tus amigos desde el panel de Battly Worlds en Minecraft.',
+        );
       }
       if (action.type === 'host') {
         return resolveWorldsService().act(await selectedBattlyIdentity(), {
@@ -6054,12 +6433,14 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
   ipcMain.handle(desktopChannels.getInstances, async (event) => {
     assertTrustedSender(event.senderFrame?.url);
     const remote = remoteOperationContext.getStore();
-    const instances = await resolveInstanceStore().list().catch((error: unknown) => {
-      if (!remote && error instanceof PrivateDataDecryptionError) {
-        return null;
-      }
-      throw error;
-    });
+    const instances = await resolveInstanceStore()
+      .list()
+      .catch((error: unknown) => {
+        if (!remote && error instanceof PrivateDataDecryptionError) {
+          return null;
+        }
+        throw error;
+      });
     if (instances === null) {
       return { code: 'BATTLY_PRIVATE_DATA_UNREADABLE' };
     }
@@ -6512,7 +6893,9 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
         if (request.loader === 'horizon') {
           const controller = new AbortController();
           const cancel = () => {
-            if (controller.signal.aborted) {return false;}
+            if (controller.signal.aborted) {
+              return false;
+            }
             controller.abort();
             return true;
           };
@@ -6565,12 +6948,16 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
             await resolvePlayVersionService().recordLaunch(request);
             return { ok: true };
           } catch (error) {
-            if (!controller.signal.aborted) {throw error;}
+            if (!controller.signal.aborted) {
+              throw error;
+            }
             emit({ type: 'state', state: 'exited' });
             await finalizeLaunch({ code: null, signal: null });
             return { ok: false, code: 'cancelled', message: '' };
           } finally {
-            if (cancelSelectedLaunch === cancel) {cancelSelectedLaunch = () => false;}
+            if (cancelSelectedLaunch === cancel) {
+              cancelSelectedLaunch = () => false;
+            }
           }
         }
         const [profileValues, loadedConfig] = await Promise.all([
@@ -6650,17 +7037,12 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
           },
           emit,
         );
-        options = withWorldsLanConnection(
-          withDirectConnectArguments(options, request.directConnect ?? null),
-          request.directConnect,
-          worldsService?.current(),
-          worldsLanAgentPath(process.resourcesPath, __dirname),
-        );
+        options = await prepareWorldsLanConnection(options, request.directConnect);
         if (options.javaArguments.some((argument) => argument.includes('worlds-lan-agent.jar='))) {
           emit({
             type: 'log',
             stream: 'game',
-            message: '[BattlyWorlds/INFO] LAN adapter attached for the joined room',
+            message: '[BattlyWorlds/INFO] LAN adapter attached',
           });
         }
         const service = resolveLauncherService(descriptor);
@@ -6956,7 +7338,9 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
     const selected = await dialog.showSaveDialog(owner, {
       title: format === 'bypack' ? 'Exportar instancia a .bypack' : 'Exportar instancia a .mrpack',
       defaultPath: join(app.getPath('downloads'), `${name}.${format}`),
-      filters: [{ name: format === 'bypack' ? 'Battly Pack' : 'Modrinth Pack', extensions: [format] }],
+      filters: [
+        { name: format === 'bypack' ? 'Battly Pack' : 'Modrinth Pack', extensions: [format] },
+      ],
     });
     if (selected.canceled || !selected.filePath) {
       return null;
@@ -7332,17 +7716,14 @@ function registerDesktopIpc(initialSettings: Awaited<ReturnType<SettingsStore['s
           },
           emit,
         );
-        const options = withWorldsLanConnection(
-          withDirectConnectArguments(preparedOptions, request.directConnect),
-          request.directConnect,
-          worldsService?.current(),
-          worldsLanAgentPath(process.resourcesPath, __dirname),
-        );
+        const options = await prepareWorldsLanConnection(preparedOptions, request.directConnect);
         if (options.javaArguments.some((argument) => argument.includes('worlds-lan-agent.jar='))) {
           emit({
             type: 'log',
             stream: 'game',
-            message: '[BattlyWorlds/INFO] LAN adapter attached for the joined room',
+            message: request.directConnect
+              ? '[BattlyWorlds/INFO] LAN adapter attached for the joined room'
+              : '[BattlyWorlds/INFO] LAN adapter attached',
           });
         }
         if (request.directConnect) {
@@ -7929,13 +8310,10 @@ if (singleInstanceLock) {
           : Promise.resolve(false);
       const earlyPremium = await startupResultWithin(premiumCheck, 350);
       if (!canSkipStartupSplash(settings.runtime.launchBoostEnabled, earlyPremium === true)) {
-        splashPlayedSound =
-          earlyPremium === true && settings.runtime.startupSoundEnabled && startupAudio.volume > 0;
-        createSplashWindow(
-          settings.visual.language,
-          startupAudio.sound,
-          splashPlayedSound ? startupAudio.volume : 0,
-        );
+        const volume =
+          earlyPremium === true ? startupIntroVolume(settings.runtime, startupAudio.volume) : 0;
+        splashPlayedSound = volume > 0;
+        createSplashWindow(settings.visual.language, startupAudio.sound, volume);
       }
       await migrate301Servers(
         contentRootPath(),
@@ -8006,8 +8384,14 @@ if (singleInstanceLock) {
     protocol.handle('battly-catalog', async (request) => {
       const url = new URL(request.url);
       const source = url.searchParams.get('url');
-      if (url.hostname !== 'image' || url.pathname !== '/' || !source || source.length > 4096 ||
-          !source.startsWith('https://') || request.method !== 'GET') {
+      if (
+        url.hostname !== 'image' ||
+        url.pathname !== '/' ||
+        !source ||
+        source.length > 4096 ||
+        !source.startsWith('https://') ||
+        request.method !== 'GET'
+      ) {
         return new Response(null, { status: 400 });
       }
       try {
@@ -8094,7 +8478,7 @@ if (singleInstanceLock) {
       false,
       settings.visual,
       loadingColor,
-      settings.runtime.startupSoundEnabled && !splashPlayedSound ? startupAudio.volume : 0,
+      splashPlayedSound ? 0 : startupIntroVolume(settings.runtime, startupAudio.volume),
       startupAudio.sound,
     );
     startupProgress.complete('window', 'Cargando la interfaz…');
@@ -8155,6 +8539,7 @@ let privateStorageQuitReady = false;
 let noticesQuitReady = false;
 let usageQuitReady = false;
 let musicOverlayQuitReady = false;
+app.once('will-quit', () => worldsLanRoomLease?.update());
 app.on('before-quit', (event) => {
   if (rootMigrationActive || battlyDataRootService?.busy) {
     event.preventDefault();

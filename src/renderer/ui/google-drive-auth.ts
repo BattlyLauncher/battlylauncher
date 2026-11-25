@@ -1,4 +1,5 @@
 import driveArtwork from '../legacy/assets/images/rnd/1.png?url';
+import { setUiText } from '../i18n/dialog-text';
 import './google-drive-auth.css';
 let pending: Promise<void> | null = null;
 
@@ -52,7 +53,6 @@ function openGoogleAuthorization(): Promise<void> {
           }
           cleanup();
           popup.close();
-          window.dispatchEvent(new Event('battly:drive-changed'));
           resolve();
         })
         .catch((error) => {
@@ -115,38 +115,79 @@ export function authorizeGoogleDrive(): Promise<void> {
       .insertAdjacentHTML('afterbegin', '<i class="fa-solid fa-xmark" aria-hidden="true"></i> ');
     const start = modal.querySelector<HTMLButtonElement>('[data-drive-start]')!;
     const ignore = modal.querySelector<HTMLButtonElement>('[data-drive-ignore]')!;
+    const copy = document.createElement('button');
+    copy.type = 'button';
+    setUiText(copy, 'Copiar enlace');
+    const status = document.createElement('p');
+    status.setAttribute('role', 'status');
+    let cancelled = false;
     const finish = (): void => {
       modal.close();
       modal.remove();
     };
     const cancel = (): void => {
+      cancelled = true;
+      if (start.disabled) {
+        void window.battly.cancelGoogleDriveAuthorization().catch(() => undefined);
+      }
       finish();
       reject(new Error('Autorización de Google cancelada'));
     };
     ignore.addEventListener('click', cancel);
     modal.addEventListener('cancel', (event) => {
       event.preventDefault();
-      if (!start.disabled) {
-        cancel();
-      }
+      cancel();
+    });
+    copy.addEventListener('click', () => {
+      void window.battly
+        .copyGoogleDriveAuthorization()
+        .then((copied) => {
+          setUiText(status, copied ? 'Enlace copiado' : 'Espera un momento...');
+        })
+        .catch(() => {
+          setUiText(status, 'No se pudo copiar el enlace');
+        });
     });
     start.addEventListener('click', () => {
       start.disabled = true;
-      ignore.disabled = true;
-      start.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-label="Conectando"></i>';
-      modal.querySelector('h2')!.textContent = 'Espera un momento...';
-      modal.querySelector('p')!.textContent =
-        'Se abrirá una ventana para iniciar sesión en tu cuenta de Google. Acepta los permisos de acceso para guardar tus mundos en Google Drive. Las credenciales se guardan localmente en Battly.';
-      void openGoogleAuthorization().then(
-        () => {
-          finish();
-          resolve();
-        },
-        (error: unknown) => {
-          finish();
-          reject(error instanceof Error ? error : new Error('No se pudo autorizar Google Drive'));
-        },
+      start.hidden = true;
+      setUiText(ignore, 'Cancelar');
+      start.before(copy);
+      modal.querySelector('footer')!.before(status);
+      setUiText(modal.querySelector('h2')!, 'Espera un momento...');
+      setUiText(
+        modal.querySelector('p')!,
+        'Autoriza Google Drive en tu navegador y vuelve a Battly. Si el navegador no se abre, copia el enlace y ábrelo en el que prefieras.',
       );
+      void window.battly
+        .authorizeGoogleDrive()
+        .then(async (authorized) => {
+          if (!authorized && !cancelled) {
+            copy.hidden = true;
+            setUiText(
+              modal.querySelector('p')!,
+              'Se abrirá una ventana para iniciar sesión en tu cuenta de Google. Acepta los permisos de acceso para guardar tus mundos en Google Drive. Las credenciales se guardan localmente en Battly.',
+            );
+            await openGoogleAuthorization();
+          }
+        })
+        .then(
+          () => {
+            if (cancelled) {
+              return;
+            }
+            window.dispatchEvent(new Event('battly:drive-changed'));
+            finish();
+            resolve();
+          },
+          (error: unknown) => {
+            if (cancelled) {
+              return;
+            }
+            finish();
+            reject(error instanceof Error ? error : new Error('No se pudo autorizar Google Drive'));
+          },
+        );
     });
     document.body.append(modal);
     modal.showModal();

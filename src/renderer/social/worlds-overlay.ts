@@ -105,16 +105,22 @@ function render(value: WorldsSnapshot): void {
     scanning: 'Esperando el mundo LAN',
     connecting: 'Conectando…',
     hosting: 'Tu sala está abierta',
-    joined: 'Conectado al mundo',
+    joined: 'Conexión con la sala preparada',
     error: 'No se pudo conectar',
   }[value.state];
   showCompactRoom();
-  el('[data-version]').textContent =
-    parseWorldsVersion(value.version || version)?.label || value.version || version;
+  const roomVersion = parseWorldsVersion(value.version || version);
+  el('[data-version]').textContent = roomVersion?.label || value.version || version;
+  const manualAddress =
+    value.state === 'joined' && roomVersion?.loader === 'forge' && roomVersion.version === '1.18.2'
+      ? value.address
+      : '';
+  el('[data-address]').hidden = !manualAddress;
+  el('[data-address]').textContent = manualAddress;
   el('[data-public-help]').hidden = value.state === 'hosting';
   el('[data-help]').textContent =
     value.state === 'joined'
-      ? 'En Minecraft, entra en Multijugador → Conexión directa e introduce esta dirección.'
+      ? 'En Multijugador, selecciona «BattlyWorlds - pulsa para entrar» en la lista de mundos LAN.'
       : value.state === 'hosting'
         ? 'Comparte el código o invita a tus amigos. Mantén el mundo abierto.'
         : 'En Minecraft: Esc → Abrir en LAN → Iniciar mundo LAN. Battly detectará el mundo automáticamente.';
@@ -124,8 +130,6 @@ function render(value: WorldsSnapshot): void {
   el<HTMLButtonElement>('[data-copy]').disabled = !value.code;
   el<HTMLButtonElement>('[data-open-invite]').disabled =
     !['hosting', 'joined'].includes(value.state) || busy;
-  el('[data-address]').hidden = !value.address;
-  el('[data-address]').textContent = value.address ? `Conexión directa: ${value.address}` : '';
   hud.snapshot(value);
   el('.hud-members').textContent = value.members.length
     ? `En la sala: ${value.members.join(', ')}`

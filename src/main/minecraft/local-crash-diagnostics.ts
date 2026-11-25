@@ -91,7 +91,7 @@ const rules: readonly Rule[] = [
     id: 'native-library',
     title: 'No se pudo cargar una librería nativa',
     pattern:
-      /UnsatisfiedLinkError|Failed to load library:.*(?:lwjgl|glfw|OpenAL)|LWJGL native metadata does not match the selected platform and architecture/i,
+      /UnsatisfiedLinkError|\[LWJGL\]\s+Failed to load a library|Failed to load library:.*(?:lwjgl|glfw|OpenAL)|LWJGL native metadata does not match the selected platform and architecture/i,
     advice:
       'Revisa el archivo indicado, la arquitectura de Java y los archivos en cuarentena del antivirus. No desactives la protección global del equipo.',
   },
@@ -155,6 +155,13 @@ const rules: readonly Rule[] = [
     pattern: /A single server tick took|ServerHangWatchdog|Watching Server.*(?:crash|hang)/i,
     advice:
       'Revisa el hilo del servidor en el informe y los mods o entidades que estaba procesando. No desactives el watchdog como solución.',
+  },
+  {
+    id: 'opengl-gpu-fence',
+    title: 'Minecraft perdió la sincronización con la GPU',
+    pattern: /IllegalStateException:\s*Failed to complete GPU fence:\s*\d+/i,
+    advice:
+      'Actualiza el controlador gráfico y prueba la misma versión de Minecraft sin mods de renderizado. Si así funciona, reactiva esos mods de uno en uno para identificar el conflicto.',
   },
   {
     id: 'gpu-native-crash',

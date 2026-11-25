@@ -4,6 +4,7 @@ const fs = require('node:fs/promises');
 const os = require('node:os');
 const path = require('node:path');
 const { SettingsStore } = require('../dist/main/settings/settings-store');
+const { startupIntroVolume } = require('../dist/main/startup-presentation');
 const { normalizeRuntimeSettings } = require('../dist/shared/settings/settings-contract');
 
 test('startup sound defaults to enabled and preserves an explicit disabled preference', async () => {
@@ -24,4 +25,15 @@ test('startup sound defaults to enabled and preserves an explicit disabled prefe
   } finally {
     await fs.rm(directory, { recursive: true, force: true });
   }
+});
+
+test('Battly Boost mutes the intro without changing the saved sound preference', () => {
+  const runtime = normalizeRuntimeSettings({ launchBoostEnabled: true, startupSoundEnabled: true });
+  assert.equal(startupIntroVolume(runtime, 0.8), 0);
+  assert.equal(runtime.startupSoundEnabled, true);
+  assert.equal(startupIntroVolume({ ...runtime, launchBoostEnabled: false }, 0.8), 0.8);
+  assert.equal(
+    startupIntroVolume({ launchBoostEnabled: false, startupSoundEnabled: false }, 0.8),
+    0,
+  );
 });

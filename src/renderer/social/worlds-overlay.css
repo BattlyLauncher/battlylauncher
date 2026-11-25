@@ -805,10 +805,10 @@ body[data-expanded='true'] .hud-body {
 }
 
 .hud-status [data-address] {
-  font-size: 10px;
   overflow-wrap: anywhere;
   user-select: text;
 }
+
 .hud-visibility-hint {
   padding: 0 14px 9px;
   color: #829eb8;

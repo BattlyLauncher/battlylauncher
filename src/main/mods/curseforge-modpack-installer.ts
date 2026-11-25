@@ -4,6 +4,7 @@ import { lstat, mkdir, open, rename, rm, writeFile } from 'node:fs/promises';
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 import AdmZip from 'adm-zip';
+import type { ServerModpackTarget } from './server-modpack-target';
 
 import { normalizeInstanceDraft, type InstanceSummary } from '../../shared/minecraft/instance';
 import type { ModpackInstallProgressSink } from '../../shared/mods/modpack-install-contract';
@@ -91,7 +92,7 @@ function parseLoader(value: string): {
   return { loader: null, version: null };
 }
 
-function manifest(value: unknown): CurseForgeManifest {
+function manifest(value: unknown, server = false): CurseForgeManifest {
   const source = objectValue(value, 'manifest');
   if (own(source, 'manifestType') !== 'minecraftModpack') {
     throw new TypeError('Unsupported CurseForge manifest type');
@@ -107,6 +108,9 @@ function manifest(value: unknown): CurseForgeManifest {
   const parsedLoader = preferred
     ? parseLoader(text(own(objectValue(preferred, 'loader'), 'id'), 'loader id', 128))
     : { loader: null, version: null };
+  if (server && preferred && !parsedLoader.loader) {
+    throw new Error('Battly Servers no admite el modloader de este modpack.');
+  }
   const rawFiles = own(source, 'files');
   if (!Array.isArray(rawFiles) || rawFiles.length > maximumFiles) {
     throw new TypeError('Invalid CurseForge file list');
@@ -284,6 +288,7 @@ export class CurseForgeModpackInstaller {
     signal?: AbortSignal,
     onProgress?: ModpackInstallProgressSink,
     onMetadata?: (instance: InstanceSummary) => Promise<void>,
+    server?: ServerModpackTarget,
   ): Promise<InstanceSummary> {
     onProgress?.({
       phase: 'reading',
@@ -328,7 +333,22 @@ export class CurseForgeModpackInstaller {
     } catch {
       throw new TypeError('CurseForge manifest is not valid JSON');
     }
-    const pack = manifest(parsed);
+    const source = objectValue(parsed, 'manifest');
+    const isServerPack = Boolean(
+      server && typeof own(source, 'serverPackCreatorVersion') === 'string',
+    );
+    const pack: CurseForgeManifest = isServerPack
+      ? {
+          name: text(server?.name ?? basename(archivePath, '.zip'), 'name', 128),
+          author: '',
+          version: '',
+          minecraftVersion: text(own(source, 'minecraftVersion'), 'Minecraft version', 128),
+          loader: text(own(source, 'modloader'), 'modloader', 32).toLowerCase(),
+          loaderVersion: text(own(source, 'modloaderVersion'), 'loader version', 128),
+          overrides: '',
+          files: [],
+        }
+      : manifest(parsed, Boolean(server));
     onProgress?.({
       phase: 'reading',
       current: 1,
@@ -345,8 +365,10 @@ export class CurseForgeModpackInstaller {
     const target = join(this.#instancesRoot, id);
     await mkdir(staging);
     try {
-      const overridePrefix = `${manifestLocation.rootPrefix}${pack.overrides}/`;
-      const iconDataUrl = packIconDataUrl(entries, overridePrefix);
+      const overridePrefix = isServerPack
+        ? manifestLocation.rootPrefix
+        : manifestLocation.rootPrefix + pack.overrides + '/';
+      const iconDataUrl = server ? undefined : packIconDataUrl(entries, overridePrefix);
       const draft = normalizeInstanceDraft({
         name: pack.name,
         description: [pack.author && `Por ${pack.author}`, pack.version]
@@ -358,10 +380,13 @@ export class CurseForgeModpackInstaller {
         ...(iconDataUrl ? { iconDataUrl } : {}),
       });
       await onMetadata?.({ ...draft, id });
+      await server?.checkMetadata({ ...draft, id });
       const overrideEntries = entries.filter(
         (entry) =>
           !entry.isDirectory &&
-          entry.entryName.toLowerCase().startsWith(overridePrefix.toLowerCase()),
+          entry.entryName.toLowerCase().startsWith(overridePrefix.toLowerCase()) &&
+          (!server ||
+            server.acceptPath(safeRelativePath(entry.entryName.slice(overridePrefix.length)))),
       );
       let extracted = 0;
       let lastReported = 0;
@@ -398,7 +423,9 @@ export class CurseForgeModpackInstaller {
           throw error;
         }
       });
-      const result = (await Promise.allSettled(workers)).find((worker) => worker.status === 'rejected');
+      const result = (await Promise.allSettled(workers)).find(
+        (worker) => worker.status === 'rejected',
+      );
       if (result) {
         throw result.reason;
       }

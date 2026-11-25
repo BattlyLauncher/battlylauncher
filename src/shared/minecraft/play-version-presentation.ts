@@ -21,6 +21,21 @@ export function formatLoaderName(loader: string): string {
   return Object.hasOwn(loaderNames, key) ? loaderNames[key] : loader;
 }
 
+export function neoForgeMinecraftVersion(build: string): string | null {
+  const match = /^(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?(?:-[\w.-]+)?$/.exec(build);
+  if (!match) {
+    return null;
+  }
+  const [, major, minor, patch, revision] = match;
+  if (revision !== undefined && Number(major) >= 26) {
+    return Number(patch) ? `${major}.${minor}.${patch}` : `${major}.${minor}`;
+  }
+  if (revision === undefined && Number(major) >= 20 && Number(major) <= 21) {
+    return Number(minor) ? `1.${major}.${minor}` : `1.${major}`;
+  }
+  return null;
+}
+
 export function comparePlayOptions(
   left: PlayOption,
   right: PlayOption,
@@ -101,9 +116,12 @@ export function formatPlayVersion(version = ''): string {
   if (fabric) {
     return `Fabric ${fabric[2]} (${fabric[1]})`;
   }
-  const neoForge = version.match(/neoforge[_-]?(\d+)\.(\d+)\.(\d+)/i);
+  const neoForge = /^neoforge[-_](.+)$/i.exec(version);
   if (neoForge) {
-    return `NeoForge 1.${neoForge[1]}.${neoForge[2]} (${neoForge[3]})`;
+    const game = neoForgeMinecraftVersion(neoForge[1]);
+    if (game) {
+      return `NeoForge ${game} (${neoForge[1]})`;
+    }
   }
   if (lower.includes('forge') && !lower.includes('neoforge')) {
     const forge = version.match(/(\d+\.\d+(?:\.\d+)?)-forge[_-]?([0-9.]+)?/i);

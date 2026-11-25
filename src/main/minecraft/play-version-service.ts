@@ -13,6 +13,7 @@ import { writeFileAtomically } from '../files/atomic-file';
 import { readProfileValuesFile } from '../storage/profile-values-file';
 import { enqueueProfileWrite } from '../storage/profile-write-queue';
 import { horizonMinecraftVersion, horizonPlayVersionId } from '../../shared/minecraft/horizon';
+import { neoForgeMinecraftVersion } from '../../shared/minecraft/play-version-presentation';
 import { installedHorizon } from './horizon-service';
 
 const identifier = /^[a-zA-Z0-9][a-zA-Z0-9._+ -]{0,127}$/;
@@ -33,19 +34,6 @@ export function customClientProfileDirectory(root: string, customId: string): st
     throw new TypeError('Invalid custom version');
   }
   return resolve(root, 'client-profiles', customId);
-}
-
-function neoForgeMinecraftVersion(build: string): string | null {
-  const match = /^(\d+)\.(\d+)(?:\.(\d+))?/.exec(build);
-  if (!match) {
-    return null;
-  }
-  const major = Number(match[1]);
-  const minor = Number(match[2]);
-  if (major >= 26) {
-    return match[3] && Number(match[3]) > 0 ? `${major}.${minor}.${match[3]}` : `${major}.${minor}`;
-  }
-  return major >= 20 ? `1.${major}${minor ? `.${minor}` : ''}` : null;
 }
 
 function loaderInstallation(

@@ -8,6 +8,7 @@ import type { ModInstallRequest } from '../../shared/mods/mod-contract';
 import type { ModpackInstallProgressSink } from '../../shared/mods/modpack-install-contract';
 import type { ModrinthClient } from './modrinth-client';
 import type { MrpackInstaller } from './mrpack-installer';
+import type { ServerModpackTarget } from './server-modpack-target';
 import { VerifiedDownloader } from './verified-download';
 
 export class ModrinthModpackInstaller {
@@ -33,6 +34,7 @@ export class ModrinthModpackInstaller {
     request: ModInstallRequest,
     signal?: AbortSignal,
     onProgress?: ModpackInstallProgressSink,
+    server?: ServerModpackTarget,
   ): Promise<InstanceSummary> {
     const project = await this.#client.project(request.projectId, signal).catch(() => null);
     const versions = request.versionId
@@ -98,11 +100,17 @@ export class ModrinthModpackInstaller {
           // A missing remote project icon must not abort a valid ModPack installation.
         }
       }
-      return await this.#mrpack.install(temporary, signal, onProgress, {
-        ...(project?.title ? { name: project.title } : {}),
-        ...(project?.description ? { description: project.description } : {}),
-        ...(iconDataUrl ? { iconDataUrl } : {}),
-      });
+      return await this.#mrpack.install(
+        temporary,
+        signal,
+        onProgress,
+        {
+          ...(project?.title ? { name: project.title } : {}),
+          ...(project?.description ? { description: project.description } : {}),
+          ...(iconDataUrl ? { iconDataUrl } : {}),
+        },
+        server,
+      );
     } finally {
       await rm(temporary, { force: true });
     }

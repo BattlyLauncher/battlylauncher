@@ -25,7 +25,7 @@ import { mountNotifications } from './ui/notifications';
 import { prepareWorldsPlayRequest } from './social/worlds-launch';
 import { mountSupportConsent } from './social/support-consent';
 import { parseWorldsVersion } from '../shared/social/worlds-version';
-import { formatPresenceServer } from '../shared/social/presence-format';
+import { formatPresenceServer, parseMinecraftPresence } from '../shared/social/presence-format';
 import { showDataRootMigration } from './ui/data-root-migration';
 import { LocalModControls } from './ui/local-mod-controls';
 import {
@@ -5118,17 +5118,14 @@ function bindSettings(): void {
           await activatePanel('home');
         })
         .catch((error: unknown) => {
-          const message = error instanceof Error && error.message === worldsShortcutConflict
-            ? worldsShortcutConflict
-            : 'Revisa los valores e inténtalo de nuevo.';
+          const message =
+            error instanceof Error && error.message === worldsShortcutConflict
+              ? worldsShortcutConflict
+              : 'Revisa los valores e inténtalo de nuevo.';
           if (status) {
             status.textContent = 'No se pudieron guardar los ajustes';
           }
-          showToast(
-            'No se pudieron guardar los ajustes',
-            message,
-            'error',
-          );
+          showToast('No se pudieron guardar los ajustes', message, 'error');
         });
     });
   document
@@ -5880,34 +5877,19 @@ function renderHomeSnapshot(snapshot: HomeSnapshot): void {
 
 function renderFriendActivity(element: HTMLElement, raw: string): void {
   raw = formatPresenceServer(raw);
-  const loader = /legacyfabric/i.test(raw)
-    ? 'legacyfabric'
-    : /neoforge/i.test(raw)
-      ? 'neoforge'
-      : /optifine/i.test(raw)
-        ? 'optifine'
-        : /fabric/i.test(raw)
-          ? 'fabric'
-          : /quilt/i.test(raw)
-            ? 'quilt'
-            : /forge/i.test(raw)
-              ? 'forge'
-              : 'vanilla';
-  const versionPattern =
-    /(?:1\.\d+(?:\.\d+)?|(?:2[6-9]|[3-9]\d)\.\d+(?:\.\d+)?)(?:-(?:pre|rc|snapshot)-?\d+)?|\d{2}w\d{2}[a-z]/gi;
-  const withoutLoaderBuild = raw.replace(/(?:fabric|quilt)-loader-[\d.]+-/gi, '');
-  const version = withoutLoaderBuild.match(versionPattern)?.[0];
-  if (!version || !/minecraft|fabric|forge|optifine|quilt/i.test(raw)) {
+  const presence = parseMinecraftPresence(raw);
+  if (!presence) {
     element.textContent = raw;
     return;
   }
-  const title = playLoaderDefinitions.find(([id]) => id === loader)?.[2] ?? 'Minecraft';
+  const { loader, version } = presence;
+  const title = loader === 'vanilla' ? 'Minecraft' : formatLoaderName(loader);
   const icon = document.createElement('img');
   icon.className = 'friend-activity-icon';
   icon.alt = '';
   icon.src = playIcon(version, loader);
   const label = document.createElement('span');
-  label.textContent = `${title === 'Vanilla' ? 'Minecraft' : title} ${version}`;
+  label.textContent = `${title} ${version}`;
   element.replaceChildren(icon, label);
 }
 
@@ -6786,8 +6768,12 @@ function renderPlayLoaders(requestedVersion: string): void {
   const standaloneLoader = selectedOption?.dataset.standaloneLoader;
   const installedVersions =
     playVersionSnapshot?.installed.filter((entry) => {
-      if (isCustom) {return entry.custom && entry.id === version;}
-      if (standaloneLoader) {return entry.id === version && entry.loader === standaloneLoader;}
+      if (isCustom) {
+        return entry.custom && entry.id === version;
+      }
+      if (standaloneLoader) {
+        return entry.id === version && entry.loader === standaloneLoader;
+      }
       return !entry.custom && entry.loader !== 'horizon' && entry.version === version;
     }) ?? [];
   const installed =
@@ -6899,7 +6885,9 @@ function renderPlayLoaders(requestedVersion: string): void {
       }
     });
     container.append(button);
-    if (id === standaloneLoader) {choose();}
+    if (id === standaloneLoader) {
+      choose();
+    }
   }
   if (standaloneLoader) {
     return;
@@ -6933,21 +6921,26 @@ function renderPlaySelector(snapshot: PlayVersionSnapshot): void {
   const regularEntries = snapshot.installed.filter(
     (entry) => !entry.custom && entry.loader !== 'horizon',
   );
-  const minecraftVersions = [
-    ...new Set(regularEntries.map((entry) => entry.version)),
-  ].sort((left, right) => right.localeCompare(left, undefined, { numeric: true }));
-  const choices: { id: string; version: string; installedAt?: number; custom: boolean; loader?: string }[] =
-    minecraftVersions.map((id) => ({
-      id,
-      version: id,
-      custom: false,
-      installedAt: Math.max(
-        0,
-        ...regularEntries
-          .filter((entry) => entry.version === id)
-          .map((entry) => entry.installedAt ?? 0),
-      ),
-    }));
+  const minecraftVersions = [...new Set(regularEntries.map((entry) => entry.version))].sort(
+    (left, right) => right.localeCompare(left, undefined, { numeric: true }),
+  );
+  const choices: {
+    id: string;
+    version: string;
+    installedAt?: number;
+    custom: boolean;
+    loader?: string;
+  }[] = minecraftVersions.map((id) => ({
+    id,
+    version: id,
+    custom: false,
+    installedAt: Math.max(
+      0,
+      ...regularEntries
+        .filter((entry) => entry.version === id)
+        .map((entry) => entry.installedAt ?? 0),
+    ),
+  }));
   choices.push(...customEntries, ...horizonEntries);
   choices.sort((a, b) => comparePlayOptions(a, b, sort, direction));
   for (const entry of choices) {
@@ -7953,8 +7946,11 @@ function renderLaunchMeter(
 ): void {
   if (progress) {
     progress.max = 100;
-    if (value === null) {progress.removeAttribute('value');}
-    else {progress.value = value;}
+    if (value === null) {
+      progress.removeAttribute('value');
+    } else {
+      progress.value = value;
+    }
   }
   if (percent) {
     percent.textContent = value === null ? '' : `${value}%`;
@@ -8013,22 +8009,32 @@ function renderInstanceLaunchEvent(event: MinecraftLaunchEvent): void {
     }
     renderLaunchMeter(progress, percent, event.phase.toLowerCase() === 'ready' ? 100 : null);
     instanceLaunchTelemetry.sample = null;
-    if (speed) {speed.hidden = true;}
-    if (eta) {eta.hidden = true;}
+    if (speed) {
+      speed.hidden = true;
+    }
+    if (eta) {
+      eta.hidden = true;
+    }
   }
   if (event.type === 'progress' || event.type === 'check') {
     const overall = launchProgressPercent(event.current, event.total);
     const readable = readableLaunchPhase(launchCounterPhase(event.type));
     renderLaunchMeter(progress, percent, overall);
-    if (message) {setUiText(message, readable);}
-    if (phase) {setUiText(phase, readable);}
+    if (message) {
+      setUiText(message, readable);
+    }
+    if (phase) {
+      setUiText(phase, readable);
+    }
     if (file) {
       file.textContent = `Archivo: ${event.item.split(/[\\/]/).at(-1) ?? event.item}`;
     }
     const looksLikeBytes =
       event.type === 'progress' &&
       (event.unit === 'bytes' ||
-        (event.unit === undefined && !isInstallOnlyPhase(currentLaunchPhase) && event.total >= 1024));
+        (event.unit === undefined &&
+          !isInstallOnlyPhase(currentLaunchPhase) &&
+          event.total >= 1024));
     if (files) {
       files.textContent = looksLikeBytes
         ? `Archivos: ${instanceLaunchTelemetry.filesCompleted}/${Math.max(instanceLaunchTelemetry.filesStarted, instanceLaunchTelemetry.filesCompleted) || '—'}`
@@ -8276,7 +8282,9 @@ function renderLaunchEvent(event: MinecraftLaunchEvent): void {
     const progressPercent = launchProgressPercent(event.current, event.total);
     renderLaunchMeter(progress, percent, progressPercent);
     const readable =
-      currentLaunchPhase === 'labymod' ? event.item : readableLaunchPhase(launchCounterPhase(event.type));
+      currentLaunchPhase === 'labymod'
+        ? event.item
+        : readableLaunchPhase(launchCounterPhase(event.type));
     if (phase) {
       phase.textContent = readable;
       phase.title = event.item;
@@ -9315,7 +9323,9 @@ function bindLegacyDownloadPanel(): void {
       markIncompatible(input, label, value);
       if (selectedLoader === 'horizon') {
         const { platform, architecture } = await downloadAppInfo;
-        if (!current()) {return;}
+        if (!current()) {
+          return;
+        }
         if (!horizonArchive(platform, architecture ?? '')) {
           input.disabled = true;
           label.classList.add('download-incompatible');
@@ -9415,9 +9425,7 @@ function bindLegacyDownloadPanel(): void {
               buildText.className = 'texto';
               setUiText(
                 buildText,
-                selectedLoader === 'optifine'
-                  ? `HD ${build.replaceAll('_', ' ')}`
-                  : build,
+                selectedLoader === 'optifine' ? `HD ${build.replaceAll('_', ' ')}` : build,
               );
               buildLabel.hidden = !matchesSearch(build, loaderVersionSearch);
               buildInput.addEventListener('change', () => {
@@ -9541,8 +9549,10 @@ function bindLegacyDownloadPanel(): void {
     }
     create.disabled = true;
     create.textContent = 'Preparando…';
-    const selectedClientName = versions?.querySelector<HTMLInputElement>('input:checked')
-      ?.closest('label')?.querySelector('.texto')?.textContent;
+    const selectedClientName = versions
+      ?.querySelector<HTMLInputElement>('input:checked')
+      ?.closest('label')
+      ?.querySelector('.texto')?.textContent;
     const label =
       selectedLoader === 'horizon'
         ? `Horizon ${selectedVersion}`
@@ -9596,24 +9606,9 @@ function bindLegacyDownloadPanel(): void {
       launchFiles.textContent = 'Comprobando archivos...';
     }
     renderLaunchMeter(launchProgress, launchPercent, null);
-    const operation = selectedLoader === 'battly-client'
-      ? window.battly.installBattlyClient(selectedVersion).then((installed) => {
-          startPlayVersion(
-            {
-              version: installed.minecraftVersion,
-              custom: true,
-              customVersion: installed.customVersion,
-              loader: 'vanilla',
-              loaderVersion: '',
-              requiredJavaVersion: installed.requiredJavaVersion,
-              safeMode: false,
-            },
-            `Battly Client ${installed.minecraftVersion}`,
-            true,
-          );
-        })
-      : selectedLabyMod
-        ? window.battly.installLabyMod(selectedVersion).then((installed) => {
+    const operation =
+      selectedLoader === 'battly-client'
+        ? window.battly.installBattlyClient(selectedVersion).then((installed) => {
             startPlayVersion(
               {
                 version: installed.minecraftVersion,
@@ -9621,52 +9616,68 @@ function bindLegacyDownloadPanel(): void {
                 customVersion: installed.customVersion,
                 loader: 'vanilla',
                 loaderVersion: '',
-                requiredJavaVersion: '21',
+                requiredJavaVersion: installed.requiredJavaVersion,
                 safeMode: false,
               },
-              `LabyMod ${installed.minecraftVersion}`,
+              `Battly Client ${installed.minecraftVersion}`,
               true,
             );
           })
-        : selectedLoader === 'clients'
-          ? window.battly.getCustomClients().then(async (clients) => {
-              const client = clients.find((candidate) => candidate.id === selectedVersion);
-              if (!client) {
-                throw new Error('Cliente no disponible');
-              }
-              await window.battly.installPlayClient(client.id);
+        : selectedLabyMod
+          ? window.battly.installLabyMod(selectedVersion).then((installed) => {
               startPlayVersion(
                 {
-                  version: client.folderName,
+                  version: installed.minecraftVersion,
                   custom: true,
-                  customVersion: client.folderName,
+                  customVersion: installed.customVersion,
                   loader: 'vanilla',
                   loaderVersion: '',
-                  requiredJavaVersion: client.requiredJavaVersion ?? '',
+                  requiredJavaVersion: '21',
                   safeMode: false,
                 },
-                client.name,
+                `LabyMod ${installed.minecraftVersion}`,
                 true,
               );
             })
-          : Promise.resolve().then(() => {
-              startPlayVersion(
-                {
-                  version: selectedVersion,
-                  custom: false,
-                  customVersion: '',
-                  loader: selectedLoader || 'vanilla',
-                  loaderVersion:
-                    selectedLoaderVersion ??
-                    (selectedLoader && selectedLoader !== 'horizon' ? 'latest' : ''),
-                  installOptiForge: selectedLoader === 'forge' && optiForge?.checked === true,
-                  requiredJavaVersion: selectedRequiredJava,
-                  safeMode: false,
-                },
-                label,
-                true,
-              );
-            });
+          : selectedLoader === 'clients'
+            ? window.battly.getCustomClients().then(async (clients) => {
+                const client = clients.find((candidate) => candidate.id === selectedVersion);
+                if (!client) {
+                  throw new Error('Cliente no disponible');
+                }
+                await window.battly.installPlayClient(client.id);
+                startPlayVersion(
+                  {
+                    version: client.folderName,
+                    custom: true,
+                    customVersion: client.folderName,
+                    loader: 'vanilla',
+                    loaderVersion: '',
+                    requiredJavaVersion: client.requiredJavaVersion ?? '',
+                    safeMode: false,
+                  },
+                  client.name,
+                  true,
+                );
+              })
+            : Promise.resolve().then(() => {
+                startPlayVersion(
+                  {
+                    version: selectedVersion,
+                    custom: false,
+                    customVersion: '',
+                    loader: selectedLoader || 'vanilla',
+                    loaderVersion:
+                      selectedLoaderVersion ??
+                      (selectedLoader && selectedLoader !== 'horizon' ? 'latest' : ''),
+                    installOptiForge: selectedLoader === 'forge' && optiForge?.checked === true,
+                    requiredJavaVersion: selectedRequiredJava,
+                    safeMode: false,
+                  },
+                  label,
+                  true,
+                );
+              });
     hideLegacyModal(dialog);
     void operation
       .then(() => showTypes())
@@ -10489,17 +10500,20 @@ function syncModCatalogFilters(): void {
   const credit = document.querySelector<HTMLElement>('[data-mod-provider-credit]');
   if (credit) {
     const provider = document.querySelector<HTMLSelectElement>('[data-mod-provider]')?.value;
-    const names = provider === 'all' ? ['Modrinth', 'CurseForge'] : [curseForge ? 'CurseForge' : 'Modrinth'];
+    const names =
+      provider === 'all' ? ['Modrinth', 'CurseForge'] : [curseForge ? 'CurseForge' : 'Modrinth'];
     const parts = new Intl.ListFormat(document.documentElement.lang || 'es').formatToParts(names);
-    credit.replaceChildren(...parts.map(({ type, value }) => {
-      if (type === 'literal') {
-        return document.createTextNode(value);
-      }
-      const name = document.createElement('strong');
-      name.dataset.catalogCredit = value.toLowerCase();
-      name.textContent = value;
-      return name;
-    }));
+    credit.replaceChildren(
+      ...parts.map(({ type, value }) => {
+        if (type === 'literal') {
+          return document.createTextNode(value);
+        }
+        const name = document.createElement('strong');
+        name.dataset.catalogCredit = value.toLowerCase();
+        name.textContent = value;
+        return name;
+      }),
+    );
   }
 }
 
@@ -10644,7 +10658,7 @@ function modInstallRequest(project: ModProjectSummary): ModInstallRequest | null
     ? {
         projectId: project.id,
         gameVersion,
-        loader: project.projectType === 'datapack' ? 'datapack' : loader ?? 'minecraft',
+        loader: project.projectType === 'datapack' ? 'datapack' : (loader ?? 'minecraft'),
         projectType: project.projectType,
       }
     : null;
@@ -10660,7 +10674,19 @@ function renderModMarkdown(target: HTMLElement, markdown: string): void {
   const rendered = modMarkdown.parse(markdown);
   const sanitized = DOMPurify.sanitize(typeof rendered === 'string' ? rendered : '', {
     USE_PROFILES: { html: true },
-    FORBID_TAGS: ['form', 'iframe', 'object', 'embed', 'style', 'video', 'audio', 'source', 'track', 'input', 'link'],
+    FORBID_TAGS: [
+      'form',
+      'iframe',
+      'object',
+      'embed',
+      'style',
+      'video',
+      'audio',
+      'source',
+      'track',
+      'input',
+      'link',
+    ],
     FORBID_ATTR: ['style', 'srcset', 'poster', 'background', 'ping'],
     RETURN_DOM_FRAGMENT: true,
   });
@@ -10851,7 +10877,10 @@ function renderModDetail(detail: ModProjectDetail): void {
       if (!activeModProject) {
         return;
       }
-      if (activeModProject.projectType === 'modpack' || activeModProject.projectType === 'datapack') {
+      if (
+        activeModProject.projectType === 'modpack' ||
+        activeModProject.projectType === 'datapack'
+      ) {
         void openModDownloadDialog(activeModProject);
         return;
       }
@@ -11042,17 +11071,21 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
   if (status) {
     status.textContent = '';
   }
-  const showsDestination = project.projectType !== 'modpack';
   const needsWorld = project.projectType === 'datapack';
   if (worldsSection) {
     worldsSection.hidden = !needsWorld;
   }
   world?.replaceChildren();
   if (destinationSection) {
-    destinationSection.hidden = !showsDestination;
+    destinationSection.hidden = false;
   }
   if (destination) {
-    destination.replaceChildren(new Option('Predeterminado', ''));
+    destination.replaceChildren(
+      new Option(
+        project.projectType === 'modpack' ? translateUiText('Nueva instancia') : 'Predeterminado',
+        '',
+      ),
+    );
     destination.disabled = true;
     destination.onchange = null;
   }
@@ -11074,7 +11107,9 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
   try {
     [catalog, instances, worlds] = await Promise.all([
       window.battly.getModVersionCatalog(project.id),
-      destination && showsDestination ? window.battly.getInstances().catch(() => []) : [],
+      destination && project.projectType !== 'modpack'
+        ? window.battly.getInstances().catch(() => [])
+        : [],
       needsWorld ? window.battly.getBackupWorlds().catch(() => []) : [],
     ]);
   } catch {
@@ -11094,7 +11129,9 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
     return;
   }
   const serverDestinations =
-    project.projectType === 'mod' && !curseForge ? await window.battly.getServers().catch(() => []) : [];
+    (project.projectType === 'mod' && !curseForge) || project.projectType === 'modpack'
+      ? await window.battly.getServers().catch(() => [])
+      : [];
   if (revision !== modDownloadRevision || !dialog.open) {
     return;
   }
@@ -11105,14 +11142,25 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
     serverDestinations
       .filter(
         (server) =>
-          server.software.installedAt &&
-          ['fabric', 'forge', 'neoforge'].includes(server.software.kind),
+          project.projectType === 'modpack' ||
+          Boolean(
+            server.software.installedAt &&
+            ['fabric', 'forge', 'neoforge'].includes(server.software.kind),
+          ),
       )
       .forEach((server) => {
-        const version = server.software.gameVersion ?? server.version;
+        const version =
+          project.projectType === 'modpack'
+            ? server.version
+            : (server.software.gameVersion ?? server.version);
         const compatible = catalog.some(
           (entry) =>
-            entry.gameVersions.includes(version) && entry.loaders.includes(server.software.kind),
+            entry.gameVersions.includes(version) &&
+            (project.projectType === 'modpack'
+              ? entry.loaders.some((loader) =>
+                  ['forge', 'fabric', 'neoforge', 'minecraft'].includes(loader),
+                )
+              : entry.loaders.includes(server.software.kind)),
         );
         const option = new Option(
           compatible
@@ -11129,9 +11177,12 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
     destination.disabled = false;
   }
   if (project.projectType === 'datapack') {
-    catalog = catalog.filter((entry) => entry.loaders.includes('datapack')).map((entry) => ({
-      ...entry, loaders: ['datapack'],
-    }));
+    catalog = catalog
+      .filter((entry) => entry.loaders.includes('datapack'))
+      .map((entry) => ({
+        ...entry,
+        loaders: ['datapack'],
+      }));
   }
   const supportedLoaders = [...new Set(catalog.flatMap((version) => [...version.loaders]))];
   if (!supportedLoaders.length) {
@@ -11228,10 +11279,14 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
         return;
       }
       const available = worlds.filter((entry) => (entry.instanceId ?? '') === destination.value);
-      world.replaceChildren(new Option(
-        translateUiText(available.length ? 'Elige un mundo' : 'No hay mundos en esta instalación.'),
-        '',
-      ));
+      world.replaceChildren(
+        new Option(
+          translateUiText(
+            available.length ? 'Elige un mundo' : 'No hay mundos en esta instalación.',
+          ),
+          '',
+        ),
+      );
       available.forEach((entry) => world.add(new Option(entry.name, entry.name)));
       if (available.length === 1) {
         world.value = available[0].name;
@@ -11241,28 +11296,50 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
     updateWorlds();
     destination.onchange = () => {
       const server = serverDestinations.find((entry) => `server:${entry.id}` === destination.value);
-      const instance = curseForge || needsWorld
-        ? instances.find((entry) => entry.id === destination.value)
-        : undefined;
-      const targetLoader = server?.software.kind ??
+      const instance =
+        curseForge || needsWorld
+          ? instances.find((entry) => entry.id === destination.value)
+          : undefined;
+      const packServer = server && project.projectType === 'modpack';
+      const targetLoader =
+        (packServer ? undefined : server?.software.kind) ??
         (project.projectType === 'mod' ? instance?.loader?.toLowerCase() : selectedLoader());
       game.disabled = Boolean(server || instance);
-      loaders.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
-        input.disabled = Boolean(server || instance);
-        if (server || instance) {
+      const loaderInputs = Array.from(loaders.querySelectorAll<HTMLInputElement>('input'));
+      loaderInputs.forEach((input) => {
+        input.disabled = packServer
+          ? !['forge', 'fabric', 'neoforge', 'minecraft'].includes(input.value) ||
+            !catalog.some(
+              (entry) =>
+                entry.gameVersions.includes(server.version) && entry.loaders.includes(input.value),
+            )
+          : Boolean(server || instance);
+        if ((server && !packServer) || instance) {
           input.checked = input.value === targetLoader;
         }
       });
+      if (packServer && !loaderInputs.some((input) => input.checked && !input.disabled)) {
+        const firstCompatible = loaderInputs.find((input) => !input.disabled);
+        if (firstCompatible) {
+          firstCompatible.checked = true;
+        }
+      }
       if (destinationWarning) {
         destinationWarning.style.display = destination.value ? 'block' : 'none';
         destinationWarning.textContent = server
-          ? 'Se instalará en los mods de este servidor. Debe estar detenido.'
+          ? project.projectType === 'modpack'
+            ? 'Detén el servidor. Se instalará la versión que pide el modpack.'
+            : 'Se instalará en los mods de este servidor. Debe estar detenido.'
           : 'Comprueba que la versión y el loader coinciden con la instancia.';
       }
       buildGameOptions();
       updateWorlds();
       if (server || instance) {
-        game.value = server ? server.software.gameVersion ?? server.version : instance?.version ?? '';
+        game.value = server
+          ? packServer
+            ? server.version
+            : (server.software.gameVersion ?? server.version)
+          : (instance?.version ?? '');
         loadVersions();
       }
     };
@@ -11270,9 +11347,23 @@ async function openModDownloadDialog(project: ModProjectSummary): Promise<void> 
   game.disabled = false;
   game.onchange = loadVersions;
   loaders.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
-    input.onchange = buildGameOptions;
+    input.onchange = () => {
+      const server = serverDestinations.find(
+        (entry) => destination?.value === 'server:' + entry.id,
+      );
+      buildGameOptions();
+      if (server) {
+        game.value =
+          project.projectType === 'modpack'
+            ? server.version
+            : (server.software.gameVersion ?? server.version);
+        loadVersions();
+      }
+    };
   });
-  const updateConfirm = () => { confirm.disabled = !versions.value || (needsWorld && !world?.value); };
+  const updateConfirm = () => {
+    confirm.disabled = !versions.value || (needsWorld && !world?.value);
+  };
   versions.onchange = updateConfirm;
   if (world) {
     world.onchange = updateConfirm;
@@ -11429,7 +11520,11 @@ function searchMods(): void {
   const status = document.querySelector<HTMLElement>('[data-mod-status]');
   if (status) {
     status.textContent = translateUiText(
-      request.provider === 'all' ? 'Buscando contenido…' : curseForge ? 'Buscando en CurseForge…' : 'Buscando en Modrinth…',
+      request.provider === 'all'
+        ? 'Buscando contenido…'
+        : curseForge
+          ? 'Buscando en CurseForge…'
+          : 'Buscando en Modrinth…',
     );
   }
   void window.battly
@@ -12230,7 +12325,8 @@ function openModpackInstallModal(name: string, project?: ModProjectSummary): voi
   setInstallArtwork(
     dialog,
     name,
-    catalogImageUrl(project?.featuredGallery || project?.gallery?.[0] || '') || instanceLoaderBanner(null),
+    catalogImageUrl(project?.featuredGallery || project?.gallery?.[0] || '') ||
+      instanceLoaderBanner(null),
     catalogImageUrl(project?.iconUrl ?? ''),
   );
   dialog?.removeAttribute('data-failed');
@@ -12827,11 +12923,16 @@ function bindMods(): void {
       const destinationInstanceId = document.querySelector<HTMLSelectElement>(
         '[data-mod-download-destination]',
       )?.value;
-      const destinationWorld = activeModProject.projectType === 'datapack'
-        ? document.querySelector<HTMLSelectElement>('[data-mod-download-world]')?.value
-        : undefined;
-      if (!gameVersion || !loader || !versionId ||
-          (activeModProject.projectType === 'datapack' && !destinationWorld)) {
+      const destinationWorld =
+        activeModProject.projectType === 'datapack'
+          ? document.querySelector<HTMLSelectElement>('[data-mod-download-world]')?.value
+          : undefined;
+      if (
+        !gameVersion ||
+        !loader ||
+        !versionId ||
+        (activeModProject.projectType === 'datapack' && !destinationWorld)
+      ) {
         return;
       }
       const button = event.currentTarget as HTMLButtonElement;
@@ -18123,7 +18224,10 @@ function mountLauncher(): void {
   bindMods();
   bindSocial();
   bindWorldsVoice();
-  bindBattlyWorlds((request, label, progress) => startPlayVersion(request, label, false, progress));
+  bindBattlyWorlds(
+    (request, label, progress) => startPlayVersion(request, label, false, progress),
+    (instance, address) => startInstance(instance, false, address),
+  );
   bindMusic();
   bindClickSounds();
   bindThemes();
@@ -18193,11 +18297,14 @@ async function initializeLauncher(): Promise<void> {
     loader.setAttribute('aria-busy', 'false');
   }
   const showStartupPatchNotes = () => {
-    void window.battly.getUpdates()
+    void window.battly
+      .getUpdates()
       .then((snapshot) => showPatchNotes(snapshot.installedPatchNotes))
       .catch(() => undefined);
   };
-  const releaseWelcome = needsReleaseWelcome() ? new ReleaseWelcome(showStartupPatchNotes) : undefined;
+  const releaseWelcome = needsReleaseWelcome()
+    ? new ReleaseWelcome(showStartupPatchNotes)
+    : undefined;
   if (!releaseWelcome && rendererHasAccount && currentSettingsSnapshot?.runtime.ogIntroEnabled) {
     ogIntro = new OgIntro(ogIntroUrl, ogLoopUrl, showStartupPatchNotes);
   } else {

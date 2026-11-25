@@ -2,7 +2,7 @@ import { formatPlayVersion } from '../../shared/minecraft/play-version-presentat
 import { worldsPreferences } from './worlds-preferences';
 import { prepareWorldsPlayRequest } from './worlds-launch';
 import { mountWorldsConnectionDialog } from './worlds-connection-dialog';
-import { parseWorldsVersion } from '../../shared/social/worlds-version';
+import { matchesWorldsVersion, parseWorldsVersion } from '../../shared/social/worlds-version';
 import { mountWorldsCatalog } from './worlds-catalog';
 import type {
   InstalledPlayVersion,
@@ -16,6 +16,7 @@ import './battly-worlds.css';
 import './battly-worlds-panel.css';
 import { worldsIcon } from './worlds-icons';
 import type { MinecraftLaunchEvent } from '../../shared/minecraft/launch-contract';
+import type { InstanceSummary } from '../../shared/minecraft/instance';
 
 export function bindBattlyWorlds(
   launch: (
@@ -23,6 +24,7 @@ export function bindBattlyWorlds(
     label: string,
     progress: (event: MinecraftLaunchEvent) => void,
   ) => void,
+  launchInstance: (instance: InstanceSummary, address: { host: string; port: number }) => void,
 ): void {
   const dialog = document.createElement('dialog');
   dialog.className = 'bw-dialog';
@@ -232,7 +234,7 @@ export function bindBattlyWorlds(
                 data-code-box
                 hidden
               >
-                <div><small data-code-label>CÓDIGO DE SALA</small><strong data-code></strong></div>
+                <div><small>CÓDIGO DE SALA</small><strong data-code></strong></div>
                 <button
                   class="bw-secondary"
                   data-copy
@@ -317,8 +319,8 @@ export function bindBattlyWorlds(
     invitation.hidden = true;
   };
   const connection = mountWorldsConnectionDialog(
-    (raw) => {
-      void launchVersion(raw);
+    (raw, instanceId) => {
+      void launchVersion(raw, instanceId);
     },
     () => {
       void cancelConnection();
@@ -407,17 +409,15 @@ export function bindBattlyWorlds(
         'Comparte el código o invita a un amigo. Mantén el mundo abierto en LAN y Battly en ejecución.',
       ],
       joined: [
-        'Ya estás conectado',
-        'Abre Multijugador → Conexión directa en Minecraft e introduce esta dirección, o inicia Minecraft desde aquí.',
+        'Conexión con la sala preparada',
+        'En Multijugador, selecciona «BattlyWorlds - pulsa para entrar» en la lista de mundos LAN.',
       ],
     };
     const status = labels[snapshot.state];
     el('[data-status]').textContent = status?.[0] || '';
     el('[data-instructions]').textContent = status?.[1] || '';
     el('[data-code-box]').hidden = !snapshot.code;
-    el('[data-code-label]').textContent =
-      snapshot.state === 'joined' ? 'DIRECCIÓN EN MINECRAFT' : 'CÓDIGO DE SALA';
-    el('[data-code]').textContent = snapshot.address || snapshot.code;
+    el('[data-code]').textContent = snapshot.code;
     el('[data-room-version]').textContent = snapshot.version
       ? `Versión del mundo: ${target?.label || snapshot.version}`
       : '';
@@ -624,32 +624,57 @@ export function bindBattlyWorlds(
       el(`[data-tab="${tab}"]`).focus();
     };
   }
-  const launchVersion = async (raw: string): Promise<void> => {
+  const launchVersion = async (raw: string, instanceId?: string): Promise<void> => {
     if (busy) {
       return;
     }
     if (['preparing', 'running'].includes(document.body.dataset.launchState || '')) {
-      notice('Minecraft ya está abierto. Usa Conexión directa con la dirección de la sala.');
-      connection.fail(
-        'Minecraft ya está abierto. Copia la dirección y úsala en Multijugador → Conexión directa.',
+      connection.close();
+      notice(
+        'En Multijugador, selecciona «BattlyWorlds - pulsa para entrar» en la lista de mundos LAN.',
       );
       return;
     }
     const room = snapshot?.code,
       address = snapshot?.address || '';
     const attempt = ++launchAttempt;
+    const current = () =>
+      attempt === launchAttempt &&
+      snapshot?.code === room &&
+      snapshot?.address === address &&
+      snapshot?.state === 'joined';
     busy = true;
     render();
     try {
+      const target = parseWorldsVersion(raw);
+      if (target && instanceId !== '') {
+        const compatible = (await window.battly.getInstances()).filter((instance) =>
+          matchesWorldsVersion(instance, target),
+        );
+        if (!current()) {
+          throw new Error('La sala cambió. Vuelve a entrar antes de iniciar Minecraft.');
+        }
+        if (instanceId === undefined && (compatible.length || target.loader !== 'vanilla')) {
+          connection.chooseInstance(compatible);
+          return;
+        }
+        if (instanceId !== undefined) {
+          const instance = compatible.find((entry) => entry.id === instanceId);
+          const port = Number(/^127\.0\.0\.1:(\d{1,5})$/.exec(address)?.[1]);
+          if (!instance || !Number.isInteger(port) || port < 1 || port > 65535) {
+            throw new Error('La instancia seleccionada ya no está disponible para esta sala.');
+          }
+          connection.close();
+          dialog.close();
+          launchInstance(instance, { host: '127.0.0.1', port });
+          return;
+        }
+      }
       const request = await prepareWorldsPlayRequest(
         window.battly,
         raw,
         address,
-        () =>
-          attempt === launchAttempt &&
-          snapshot?.code === room &&
-          snapshot?.address === address &&
-          snapshot?.state === 'joined',
+        current,
         (message) => connection.preparing(message),
       );
       if (attempt !== launchAttempt) {

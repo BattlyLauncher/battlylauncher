@@ -3,6 +3,7 @@ import { lstat, mkdir, rename, rm, statfs, writeFile } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 import AdmZip from 'adm-zip';
+import type { ServerModpackTarget } from './server-modpack-target';
 
 import { normalizeInstanceDraft, type InstanceSummary } from '../../shared/minecraft/instance';
 import type { ModpackInstallProgressSink } from '../../shared/mods/modpack-install-contract';
@@ -88,7 +89,7 @@ function downloadUrl(value: unknown): string {
   return url.toString();
 }
 
-function manifest(value: unknown): MrpackManifest {
+function manifest(value: unknown, server?: ServerModpackTarget): MrpackManifest {
   const source = objectValue(value, 'manifest');
   if (own(source, 'formatVersion') !== 1 || own(source, 'game') !== 'minecraft') {
     throw new TypeError('Unsupported mrpack format');
@@ -109,7 +110,14 @@ function manifest(value: unknown): MrpackManifest {
   const files = rawFiles.flatMap((entry): ManifestFile[] => {
     const file = objectValue(entry, 'file');
     const environment = own(file, 'env');
-    if (environment && own(objectValue(environment, 'environment'), 'client') === 'unsupported') {
+    if (
+      environment &&
+      own(objectValue(environment, 'environment'), server ? 'server' : 'client') === 'unsupported'
+    ) {
+      return [];
+    }
+    const path = safeRelativePath(own(file, 'path'));
+    if (server && !server.acceptPath(path)) {
       return [];
     }
     const hashes = objectValue(own(file, 'hashes'), 'hashes');
@@ -124,7 +132,7 @@ function manifest(value: unknown): MrpackManifest {
     return [
       {
         downloads: downloads.map(downloadUrl),
-        path: safeRelativePath(own(file, 'path')),
+        path,
         sha512: sha512(own(hashes, 'sha512')),
         size: Number(size),
       },
@@ -192,6 +200,7 @@ export class MrpackInstaller {
     signal?: AbortSignal,
     onProgress?: ModpackInstallProgressSink,
     metadata: MrpackInstallMetadata = {},
+    server?: ServerModpackTarget,
   ): Promise<InstanceSummary> {
     onProgress?.({
       phase: 'reading',
@@ -236,7 +245,7 @@ export class MrpackInstaller {
     } catch {
       throw new TypeError('Mrpack manifest is not valid JSON');
     }
-    const pack = manifest(parsed);
+    const pack = manifest(parsed, server);
     onProgress?.({
       phase: 'reading',
       current: 1,
@@ -245,15 +254,20 @@ export class MrpackInstaller {
       message: `Manifiesto leído: ${pack.name}`,
     });
     const id = this.#createId();
+    await server?.checkMetadata({ ...normalizeInstanceDraft(pack), id });
     if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/.test(id)) {
       throw new TypeError('Mrpack instance id is invalid');
     }
     await mkdir(this.#instancesRoot, { recursive: true });
+    const sideOverrides = server ? 'server-overrides/' : 'client-overrides/';
     const overrideEntries = entries.filter(
       (entry) =>
         !entry.isDirectory &&
-        (entry.entryName.startsWith('overrides/') ||
-          entry.entryName.startsWith('client-overrides/')),
+        (entry.entryName.startsWith('overrides/') || entry.entryName.startsWith(sideOverrides)) &&
+        (!server ||
+          server.acceptPath(
+            safeRelativePath(entry.entryName.slice(entry.entryName.indexOf('/') + 1)),
+          )),
     );
     const downloadBytes = pack.files.reduce((total, file) => total + file.size, 0);
     const overrideBytes = overrideEntries.reduce((total, entry) => total + entry.header.size, 0);
@@ -268,25 +282,31 @@ export class MrpackInstaller {
     const target = join(this.#instancesRoot, id);
     await mkdir(staging);
     try {
-      let extracted = 0;
-      for (const prefix of ['overrides/', 'client-overrides/']) {
-        for (const entry of overrideEntries) {
-          if (!entry.entryName.startsWith(prefix)) {
-            continue;
+      const extractOverrides = async (): Promise<void> => {
+        let extracted = 0;
+        for (const prefix of ['overrides/', sideOverrides]) {
+          for (const entry of overrideEntries) {
+            if (!entry.entryName.startsWith(prefix)) {
+              continue;
+            }
+            signal?.throwIfAborted();
+            const relativePath = safeRelativePath(entry.entryName.slice(prefix.length));
+            const destination = safeDestination(staging, relativePath);
+            await mkdir(resolve(destination, '..'), { recursive: true });
+            await writeFile(destination, entry.getData());
+            extracted += 1;
+            onProgress?.({
+              phase: 'extracting',
+              current: extracted,
+              total: Math.max(1, overrideEntries.length),
+              item: relativePath,
+              message: `Extrayendo ${relativePath}`,
+            });
           }
-          const relativePath = safeRelativePath(entry.entryName.slice(prefix.length));
-          const destination = safeDestination(staging, relativePath);
-          await mkdir(resolve(destination, '..'), { recursive: true });
-          await writeFile(destination, entry.getData());
-          extracted += 1;
-          onProgress?.({
-            phase: 'extracting',
-            current: extracted,
-            total: Math.max(1, overrideEntries.length),
-            item: relativePath,
-            message: `Extrayendo ${relativePath}`,
-          });
         }
+      };
+      if (!server) {
+        await extractOverrides();
       }
       const totalDownloadBytes = Math.max(1, downloadBytes);
       let completedDownloadBytes = 0;
@@ -339,6 +359,9 @@ export class MrpackInstaller {
           });
         }
         completedDownloadBytes += file.size;
+      }
+      if (server) {
+        await extractOverrides();
       }
       const draft = normalizeInstanceDraft({
         ...pack,

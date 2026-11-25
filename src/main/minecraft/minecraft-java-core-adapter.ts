@@ -9,6 +9,8 @@ import {
   javaApplicationArgumentIndex,
 } from './launch-memory';
 import { launchErrorDetail } from './launch-error-detail';
+import { inspectJavaRuntime } from './java-executable';
+import { prepareLwjglNatives } from './lwjgl-native-compatibility';
 import { release as osRelease } from 'node:os';
 import { mkdir, readFile, rename, stat, unlink, writeFile } from 'node:fs/promises';
 import { delimiter, join } from 'node:path';
@@ -150,7 +152,7 @@ export function publicCoreError(value: unknown, options: MinecraftLaunchOptions)
     .join('')
     .trim()
     .slice(0, 2_000);
-  return /(?:ENOENT|EACCES|EPERM|HTTP\s*\d|no such file|not found|unable|invalid|loader|forge|optifine|fabric|quilt|java|version|archivo|file|directory|spawn|download|install|permission|could not reserve|heap|initialization of VM)/i.test(
+  return /(?:ENOENT|EACCES|EPERM|HTTP\s*\d|no such file|not found|unable|invalid|loader|forge|optifine|fabric|quilt|java|version|lwjgl|archivo|file|directory|spawn|download|install|permission|could not reserve|heap|initialization of VM)/i.test(
     detail,
   )
     ? detail
@@ -445,6 +447,42 @@ export class MinecraftJavaCoreAdapter implements MinecraftLauncherAdapter {
       }
     }
 
+    let lwjglDirectory: string | undefined;
+    const loader = options.core?.loader;
+    if (
+      process.platform === 'darwin' &&
+      loader?.enabled &&
+      loader.type === 'neoforge' &&
+      /^26\./.test(options.version.id) &&
+      typeof launcher.DownloadGame === 'function'
+    ) {
+      const downloadGame = launcher.DownloadGame.bind(launcher);
+      launcher.DownloadGame = async () => {
+        const result = (await downloadGame()) as
+          | {
+              error?: unknown;
+              minecraftJson?: unknown;
+              minecraftJava?: { path?: string };
+            }
+          | undefined;
+        if (result && !result.error && result.minecraftJson) {
+          const javaPath = options.javaPath || result.minecraftJava?.path;
+          const java = javaPath ? await inspectJavaRuntime(javaPath) : undefined;
+          const prepared = await prepareLwjglNatives(options.root, result.minecraftJson, {
+            platform: 'darwin',
+            arch: java?.architecture ?? process.arch,
+          });
+          if (prepared) {
+            lwjglDirectory = prepared.directory;
+            evidence(
+              `[LWJGL] ${java?.architecture ?? process.arch}, ${prepared.repaired} native libraries restored`,
+            );
+          }
+        }
+        return result;
+      };
+    }
+
     // Legacy Launch() invokes start() without returning its promise.
     let starting: Promise<unknown> | undefined;
     if (typeof launcher.start === 'function') {
@@ -509,6 +547,21 @@ export class MinecraftJavaCoreAdapter implements MinecraftLauncherAdapter {
           evidence(
             `[launch-memory] ${JSON.stringify({ minimumMiB: options.memory.minimumMiB, maximumMiB: options.memory.maximumMiB, heapArguments: javaArguments.slice(0, Math.max(0, boundary)).filter(isHeapArgument) })}`,
           );
+          if (lwjglDirectory && boundary >= 0) {
+            return [
+              resolved[0],
+              '-XstartOnFirstThread',
+              `-Dorg.lwjgl.librarypath=${lwjglDirectory}`,
+              ...javaArguments
+                .slice(0, boundary)
+                .filter(
+                  (value) =>
+                    value !== '-XstartOnFirstThread' &&
+                    !value.startsWith('-Dorg.lwjgl.librarypath='),
+                ),
+              ...javaArguments.slice(boundary),
+            ];
+          }
           return resolved;
         },
       );

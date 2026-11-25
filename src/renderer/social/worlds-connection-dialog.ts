@@ -4,8 +4,14 @@ import { parseWorldsVersion } from '../../shared/social/worlds-version';
 import type { MinecraftLaunchEvent } from '../../shared/minecraft/launch-contract';
 import { worldsIcon } from './worlds-icons';
 import logo from '../assets/icon.png?url';
+import type { InstanceSummary } from '../../shared/minecraft/instance';
+import { translateUiText } from '../i18n/dialog-text';
+import { setUserText } from '../i18n/ui-translator';
 
-export function mountWorldsConnectionDialog(launch: (version: string) => void, leave: () => void) {
+export function mountWorldsConnectionDialog(
+  launch: (version: string, instanceId?: string) => void,
+  leave: () => void,
+) {
   const dialog = document.createElement('dialog');
   dialog.className = 'bw-connection-dialog';
   dialog.setAttribute('aria-labelledby', 'bw-connection-title');
@@ -111,13 +117,20 @@ export function mountWorldsConnectionDialog(launch: (version: string) => void, l
         role="alert"
         hidden
       ></p>
-      <button
-        class="bw-secondary"
-        data-copy
+      <div
+        data-instance-choice
         hidden
       >
-        Copiar dirección para Minecraft abierto
-      </button>
+        <label for="bw-join-instance">Instancia para jugar</label>
+        <select id="bw-join-instance"></select>
+        <button
+          type="button"
+          class="bw-secondary"
+          data-launch-choice
+        >
+          Iniciar Minecraft y entrar
+        </button>
+      </div>
     </div>
     <footer>
       <small>Usa la misma versión y mods que el anfitrión.</small
@@ -138,6 +151,7 @@ export function mountWorldsConnectionDialog(launch: (version: string) => void, l
   let hostReady = false;
   let networkFailed = false;
   let minecraftReady = false;
+  let choosingInstance = false;
   let completionTimer: ReturnType<typeof setTimeout> | undefined;
   const updateRoute = () => {
     const states = {
@@ -185,6 +199,13 @@ export function mountWorldsConnectionDialog(launch: (version: string) => void, l
     clearTimeout(completionTimer);
     dialog.close();
   };
+  el('[data-launch-choice]').onclick = () => {
+    if (choosingInstance && snapshot?.state === 'joined' && snapshot.address) {
+      choosingInstance = false;
+      el('[data-instance-choice]').hidden = true;
+      launch(snapshot.version, el<HTMLSelectElement>('#bw-join-instance').value);
+    }
+  };
   el('[data-close]').onclick = close;
   dialog.addEventListener('cancel', () => clearTimeout(completionTimer));
   dialog.addEventListener('close', () => {
@@ -199,20 +220,6 @@ export function mountWorldsConnectionDialog(launch: (version: string) => void, l
       leave();
     }
   };
-  el('[data-copy]').onclick = () => {
-    if (snapshot?.address) {
-      void navigator.clipboard
-        .writeText(snapshot.address)
-        .then(() => {
-          el('[data-detail]').textContent =
-            'Dirección copiada. En Minecraft: Multijugador → Conexión directa.';
-        })
-        .catch(() => {
-          el('[data-error]').hidden = false;
-          el('[data-error]').textContent = 'No se pudo copiar: ' + snapshot?.address;
-        });
-    }
-  };
   function open(room: string) {
     if (code !== room || !dialog.open) {
       code = room;
@@ -224,10 +231,11 @@ export function mountWorldsConnectionDialog(launch: (version: string) => void, l
       hostReady = false;
       networkFailed = false;
       minecraftReady = false;
+      choosingInstance = false;
+      el('[data-instance-choice]').hidden = true;
       clearTimeout(completionTimer);
       el('[data-game-progress]').hidden = true;
       el('[data-error]').hidden = true;
-      el('[data-copy]').hidden = true;
       dialog.dataset.state = 'connecting';
       updateRoute();
     }
@@ -239,6 +247,27 @@ export function mountWorldsConnectionDialog(launch: (version: string) => void, l
   return {
     open,
     close,
+    chooseInstance(instances: readonly InstanceSummary[]) {
+      choosingInstance = true;
+      receivingProgress = false;
+      updateRoute();
+      const select = el<HTMLSelectElement>('#bw-join-instance');
+      select.replaceChildren(
+        ...instances.map((instance) => {
+          const option = new Option('', instance.id);
+          setUserText(option, instance.name);
+          return option;
+        }),
+        new Option(translateUiText('Perfil general de Minecraft'), ''),
+      );
+      el('[data-game-progress]').hidden = true;
+      el('[data-title]').textContent = 'Elige dónde iniciar Minecraft';
+      el('[data-detail]').textContent =
+        'Si el mundo usa mods, elige la instancia con el mismo modpack que el anfitrión.';
+      el('[data-instance-choice]').hidden = false;
+      el<HTMLButtonElement>('[data-leave]').disabled = false;
+      select.focus();
+    },
     fail(message: string) {
       clearTimeout(completionTimer);
       launched = false;
@@ -251,7 +280,6 @@ export function mountWorldsConnectionDialog(launch: (version: string) => void, l
       el('[data-title]').textContent = 'No se pudo completar la conexión';
       el('[data-error]').textContent = message;
       el('[data-error]').hidden = false;
-      el('[data-copy]').hidden = !snapshot?.address;
     },
     preparing(message = 'Preparando Minecraft…') {
       receivingProgress = true;
@@ -311,6 +339,7 @@ export function mountWorldsConnectionDialog(launch: (version: string) => void, l
       }
     },
     update(next: WorldsSnapshot, _installed: readonly InstalledPlayVersion[], busy: boolean) {
+      const sameConnection = next.code === snapshot?.code && next.address === snapshot?.address;
       snapshot = next;
       if (!dialog.open || failedLocally) {
         return;
@@ -327,11 +356,18 @@ export function mountWorldsConnectionDialog(launch: (version: string) => void, l
       hostReady = ready;
       networkFailed = failed;
       updateRoute();
+      if (choosingInstance && ready && sameConnection) {
+        return;
+      }
+      if (choosingInstance) {
+        choosingInstance = false;
+        launched = false;
+        el('[data-instance-choice]').hidden = true;
+      }
       el('[data-version]').textContent =
         parseWorldsVersion(next.version)?.label ||
         next.version ||
         'Identificando la versión de Minecraft…';
-      el('[data-copy]').hidden = true;
       el<HTMLButtonElement>('[data-leave]').disabled = busy && !receivingProgress;
       el('[data-leave]').textContent = failed ? 'Cerrar' : 'Cancelar conexión';
       if (next.state === 'idle' && !busy) {

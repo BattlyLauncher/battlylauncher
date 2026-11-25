@@ -1,6 +1,10 @@
 import { setUiText, translateUiText } from '../i18n/dialog-text';
 import { renderLogLines } from '../ui/log-lines';
-import { normalizeServerDraft, paperMinecraftVersion } from '../../shared/servers/server-contract';
+import {
+  isServerModloader,
+  normalizeServerDraft,
+  paperMinecraftVersion,
+} from '../../shared/servers/server-contract';
 import { openBypackFlow } from './bypack-panel';
 import { mountServerInvitations } from './server-invitations';
 import { renderServerCharts, renderOnlineServerPlayers } from './server-live-panels';
@@ -36,15 +40,6 @@ import type {
 
 let servers: readonly ServerSummary[] = [];
 let selectedId = '';
-
-function refreshServerEntitlement(): Promise<void> {
-  return Promise.resolve().then(() => {
-    const action = document.querySelector<HTMLOptionElement>('[data-server-new]');
-    if (action) {
-      action.textContent = serverSlotText('add');
-    }
-  });
-}
 
 let installationDialog: ReturnType<typeof mountServerInstallationProgress> | undefined;
 let serversTutorial: ReturnType<typeof mountServersTutorial> | undefined;
@@ -149,6 +144,119 @@ let creationCatalogRevision = 0;
 let panelCatalogRevision = 0;
 const softwareAvailability = new Map<string, ServerSoftwareAvailability>();
 
+async function populateServerLoaderBuilds(
+  select: HTMLSelectElement,
+  kind: 'fabric' | 'forge' | 'neoforge',
+  version: string,
+  selected?: string,
+): Promise<void> {
+  const revision = crypto.randomUUID();
+  select.dataset.buildRevision = revision;
+  select.replaceChildren(new Option(translateUiText('Cargando versiones…'), ''));
+  select.disabled = true;
+  const automatic = new Option(translateUiText('Automática'), '');
+  try {
+    const result = await window.battly.getLoaderBuilds(kind, version);
+    if (select.dataset.buildRevision !== revision) {
+      return;
+    }
+    select.replaceChildren(
+      automatic,
+      ...result.builds
+        .filter(
+          ({ version: build }) =>
+            kind !== 'neoforge' || (/^\d+\.\d+\./.test(build) && !build.startsWith('1.')),
+        )
+        .map(
+          ({ version: build }) =>
+            new Option(
+              kind === 'forge' && build.startsWith(version + '-')
+                ? build.slice(version.length + 1)
+                : build,
+              build,
+            ),
+        ),
+    );
+    if (selected) {
+      select.value = selected;
+    }
+    if (select.selectedIndex < 0) {
+      select.selectedIndex = 0;
+    }
+    select.disabled = false;
+  } catch {
+    if (select.dataset.buildRevision !== revision) {
+      return;
+    }
+    select.replaceChildren(automatic);
+  }
+}
+
+function refreshCreationLoaderBuilds(): void {
+  const select = document.querySelector<HTMLSelectElement>('[name="loaderBuild"]');
+  if (!select) {
+    return;
+  }
+  const kind = document.querySelector<HTMLSelectElement>('[name="software"]')?.value ?? '';
+  const version = document.querySelector<HTMLSelectElement>('#versionSelectServers')?.value;
+  if (version && isServerModloader(kind)) {
+    select.parentElement!.hidden = false;
+    void populateServerLoaderBuilds(select, kind, version);
+  } else {
+    delete select.dataset.buildRevision;
+    select.disabled = true;
+    select.replaceChildren();
+    select.parentElement!.hidden = true;
+  }
+}
+
+async function chooseServerLoaderBuild(
+  server: ServerSummary,
+  kind: 'fabric' | 'forge' | 'neoforge',
+): Promise<string | null> {
+  const dialog = document.createElement('dialog');
+  dialog.className = 'server-loader-build-dialog';
+  const form = document.createElement('form');
+  form.method = 'dialog';
+  const label = document.createElement('label');
+  setUiText(label, 'Versión del modloader');
+  const select = document.createElement('select');
+  label.append(select);
+  const actions = document.createElement('div');
+  const cancel = document.createElement('button');
+  cancel.type = 'button';
+  setUiText(cancel, 'Cancelar');
+  cancel.addEventListener('click', () => dialog.close());
+  const confirm = document.createElement('button');
+  confirm.value = 'install';
+  setUiText(confirm, 'Instalar');
+  actions.append(cancel, confirm);
+  form.append(label, actions);
+  dialog.append(form);
+  document.body.append(dialog);
+  dialog.showModal();
+  const selection = new Promise<string | null>((resolve) => {
+    dialog.addEventListener(
+      'close',
+      () => {
+        resolve(dialog.returnValue === 'install' ? select.value : null);
+        dialog.remove();
+      },
+      { once: true },
+    );
+  });
+  confirm.disabled = true;
+  void populateServerLoaderBuilds(
+    select,
+    kind,
+    server.version,
+    server.software.kind === kind ? (server.software.build ?? undefined) : undefined,
+  ).finally(() => {
+    confirm.disabled = false;
+  });
+  return selection;
+}
+
 async function refreshCreationSoftware(): Promise<void> {
   const revision = ++creationCatalogRevision;
   const version = document.querySelector<HTMLSelectElement>('#versionSelectServers')?.value;
@@ -162,6 +270,7 @@ async function refreshCreationSoftware(): Promise<void> {
   const previous = select.value;
   select.replaceChildren(new Option('Comprobando compatibilidad…', ''));
   select.disabled = true;
+  refreshCreationLoaderBuilds();
   if (submit) {
     submit.disabled = true;
   }
@@ -187,6 +296,7 @@ async function refreshCreationSoftware(): Promise<void> {
       select.value = previous;
     }
     select.disabled = !result.available.length;
+    refreshCreationLoaderBuilds();
     if (submit) {
       submit.disabled = !select.value || submit.form?.dataset.busy === 'true';
     }
@@ -490,6 +600,14 @@ function annotateLegacyServers(mount: HTMLElement): void {
     software.replaceChildren(new Option('Comprobando compatibilidad…', ''));
     software.disabled = true;
     softwareField.append(software);
+    software.addEventListener('change', refreshCreationLoaderBuilds);
+    const loaderBuildField = document.createElement('label');
+    loaderBuildField.className = 'server-create-software';
+    loaderBuildField.hidden = true;
+    setUiText(loaderBuildField, 'Versión del modloader');
+    const loaderBuild = document.createElement('select');
+    loaderBuild.name = 'loaderBuild';
+    loaderBuildField.append(loaderBuild);
     const creationActions = form.querySelector('#create-server')?.parentElement;
     const terms = document.createElement('label');
     terms.className = 'server-create-eula';
@@ -497,9 +615,9 @@ function annotateLegacyServers(mount: HTMLElement): void {
       '<input type="checkbox" name="eulaAccepted" required><span></span><a href="https://www.minecraft.net/eula" target="_blank" rel="noopener noreferrer">EULA</a>';
     setUiText(terms.querySelector('span')!, 'Acepto el EULA de Minecraft.');
     if (creationActions && creationActions !== form) {
-      creationActions.before(softwareField);
+      creationActions.before(softwareField, loaderBuildField);
     } else {
-      form.append(softwareField);
+      form.append(softwareField, loaderBuildField);
     }
     creationActions?.before(terms);
     const submit = form.querySelector<HTMLButtonElement>('#create-server');
@@ -938,6 +1056,13 @@ function annotateLegacyServers(mount: HTMLElement): void {
           hidden
         ></span>
         <span data-server-software-detail></span>
+        <button
+          type="button"
+          class="button is-small"
+          data-server-modpack-import
+        >
+          Instalar modpack
+        </button>
         <span
           data-server-software-state
           hidden
@@ -1629,7 +1754,7 @@ function renderRuntime(snapshot: ServerRuntimeSnapshot): void {
   }
   document
     .querySelectorAll<HTMLButtonElement>(
-      '[data-server-content-import], [data-server-content-action], [data-server-software]',
+      '[data-server-content-import], [data-server-content-action], [data-server-software], [data-server-modpack-import]',
     )
     .forEach((button) => {
       button.disabled = active || busy || installingServers.has(snapshot.id);
@@ -2463,6 +2588,7 @@ function formText(data: FormData, name: string): string {
 async function installServerSoftware(
   software: ServerSoftwareKind,
   acceptCompatiblePaper = false,
+  build?: string,
 ): Promise<void> {
   const server = selectedServer();
   if (!server || installingServers.has(server.id)) {
@@ -2518,7 +2644,7 @@ async function installServerSoftware(
     softwareStatus.textContent = `Instalando ${software}…`;
   }
   await window.battly
-    .installServer(server.id, software, acceptCompatiblePaper)
+    .installServer(server.id, software, acceptCompatiblePaper, build)
     .then(() => window.battly.getServers())
     .then((next) => {
       renderServers(next);
@@ -2802,7 +2928,7 @@ export function mountServersPanel(
       const picker = event.currentTarget as HTMLSelectElement;
       if (picker.value === '__create-server__') {
         picker.value = selectedId;
-        void openServerCreation();
+        openServerCreation();
         return;
       }
       if (propertiesSaveTimer) {
@@ -2819,24 +2945,26 @@ export function mountServersPanel(
         loadServerContent();
       }
     });
-  async function openServerCreation(): Promise<void> {
-    await (async () => {
-      await refreshServerEntitlement();
-      if (servers.length >= 1) {
-        await askBattly({ text: serverSlotText('full') });
-        return;
-      }
-      const create = document.querySelector<HTMLElement>('[data-server-create-view]');
-      const dashboard = document.querySelector<HTMLElement>('[data-server-dashboard]');
-      if (create) {
-        create.hidden = false;
-        create.style.display = 'flex';
-      }
-      if (dashboard) {
-        dashboard.hidden = true;
-        dashboard.style.display = 'none';
-      }
-    })().catch(() => void askBattly({ text: serverSlotText('unavailable') }));
+  function openServerCreation(): void {
+    if (servers.length >= 1) {
+      void askBattly({
+        title: 'Battly Servers',
+        text: serverSlotText('full'),
+        confirmText: 'Cerrar',
+        hideCancel: true,
+      });
+      return;
+    }
+    const create = document.querySelector<HTMLElement>('[data-server-create-view]');
+    const dashboard = document.querySelector<HTMLElement>('[data-server-dashboard]');
+    if (create) {
+      create.hidden = false;
+      create.style.display = 'flex';
+    }
+    if (dashboard) {
+      dashboard.hidden = true;
+      dashboard.style.display = 'none';
+    }
   }
   document
     .querySelector<HTMLFormElement>('[data-server-create-form]')
@@ -2860,7 +2988,6 @@ export function mountServersPanel(
       const software = formText(data, 'software') as ServerSoftwareKind;
       let creationProgressId = '';
       void (async () => {
-        await refreshServerEntitlement();
         if (servers.length >= 1) {
           throw new Error(serverSlotText('full'));
         }
@@ -2912,7 +3039,7 @@ export function mountServersPanel(
         selectedId = created.id;
         mount.classList.add('is-installing-server');
         renderServers(next);
-        await installServerSoftware(software, true);
+        await installServerSoftware(software, true, formText(data, 'loaderBuild'));
         installationDialog?.finish(creationProgressId);
         form.reset();
         if (status) {
@@ -3131,16 +3258,27 @@ export function mountServersPanel(
     button.addEventListener('click', () => {
       const kind = button.dataset.serverSoftware as ServerSoftwareKind;
       const server = selectedServer();
-      if (server?.software.installedAt && server.software.kind !== kind) {
+      if (!server) {
+        return;
+      }
+      const install = async () => {
+        const build = isServerModloader(kind)
+          ? await chooseServerLoaderBuild(server, kind)
+          : undefined;
+        if (build !== null && selectedServer()?.id === server.id) {
+          await installServerSoftware(kind, false, build);
+        }
+      };
+      if (server.software.installedAt && server.software.kind !== kind) {
         void askBattly({
           text: `¿Cambiar de ${server.software.kind} a ${kind}? Los mods y plugins deben ser compatibles con el software elegido. Haz una copia del mundo antes de abrirlo con otro loader.`,
         }).then((accepted) => {
           if (accepted) {
-            void installServerSoftware(kind);
+            void install();
           }
         });
       } else {
-        void installServerSoftware(kind);
+        void install();
       }
     });
   });
@@ -3268,6 +3406,50 @@ export function mountServersPanel(
             }
           });
       });
+    });
+  document
+    .querySelector<HTMLButtonElement>('[data-server-modpack-import]')
+    ?.addEventListener('click', () => {
+      const server = selectedServer();
+      if (!server || installingServers.has(server.id)) {
+        return;
+      }
+      installationDialog?.open(server.id, server.name, Boolean(server.software.installedAt));
+      const status = document.querySelector<HTMLElement>('[data-server-content-status]');
+      const button = document.querySelector<HTMLButtonElement>('[data-server-modpack-import]');
+      installingServers.add(server.id);
+      if (button) {
+        button.disabled = true;
+      }
+      void window.battly
+        .importServerModpack(server.id)
+        .then(async (name) => {
+          installationDialog?.finish(server.id);
+          if (!name) {
+            return;
+          }
+          renderServers(await window.battly.getServers());
+          loadServerContent();
+          if (status) {
+            setUiText(status, `Se ha instalado ${name} en el servidor.`);
+          }
+        })
+        .catch((error: unknown) => {
+          const message = serverErrorMessage(error, 'No se pudo instalar el modpack.');
+          installationDialog?.fail(server.id, message);
+          if (status) {
+            setUiText(status, message);
+          }
+        })
+        .finally(() => {
+          installingServers.delete(server.id);
+          const current = runtimeSnapshots.get(server.id);
+          if (current) {
+            renderRuntime(current);
+          } else if (button) {
+            button.disabled = false;
+          }
+        });
     });
   document.querySelectorAll<HTMLButtonElement>('[data-server-content-import]').forEach((button) => {
     button.addEventListener('click', () => {
@@ -3619,7 +3801,6 @@ export function loadServersPanel(): void {
   if (status) {
     status.textContent = 'Cargando Battly Servers…';
   }
-  void refreshServerEntitlement();
   void window.battly
     .getServers()
     .then((next) => {

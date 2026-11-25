@@ -65,9 +65,13 @@ function visibleTarget(
   let right = Math.min(viewport.width, rect.right);
   let bottom = Math.min(viewport.height, rect.bottom);
   for (let parent = target.parentElement; parent; parent = parent.parentElement) {
-    if (parent === document.body || parent === document.documentElement) {break;}
+    if (parent === document.body || parent === document.documentElement) {
+      break;
+    }
     const style = getComputedStyle(parent);
-    if (style.overflowX === 'visible' && style.overflowY === 'visible') {continue;}
+    if (style.overflowX === 'visible' && style.overflowY === 'visible') {
+      continue;
+    }
     const bounds = parent.getBoundingClientRect();
     const scaleX = parent.offsetWidth ? bounds.width / parent.offsetWidth : 1;
     const scaleY = parent.offsetHeight ? bounds.height / parent.offsetHeight : 1;
@@ -81,7 +85,9 @@ function visibleTarget(
       top = Math.max(top, clipTop);
       bottom = Math.min(bottom, clipTop + parent.clientHeight * scaleY);
     }
-    if (parent.matches('dialog:modal')) {break;}
+    if (parent.matches('dialog:modal')) {
+      break;
+    }
   }
   return right - left >= 1 && bottom - top >= 1
     ? { left, top, right, bottom, width: right - left, height: bottom - top }
@@ -276,9 +282,18 @@ export function mountGuidedTutorial(options: GuidedTutorialOptions): GuidedTutor
     const bottom = Math.min(viewport.height - 2, rect.bottom + 6);
     const card = { width: dialog.offsetWidth, height: dialog.offsetHeight };
     const signature = [
-      left, top, right, bottom, card.width, card.height, viewport.width, viewport.height,
+      left,
+      top,
+      right,
+      bottom,
+      card.width,
+      card.height,
+      viewport.width,
+      viewport.height,
     ].join('/');
-    if (signature === lastPosition) {return;}
+    if (signature === lastPosition) {
+      return;
+    }
     lastPosition = signature;
     if (focus) {
       focus.hidden = false;
@@ -300,7 +315,9 @@ export function mountGuidedTutorial(options: GuidedTutorialOptions): GuidedTutor
     });
   };
   const followHighlight = (): void => {
-    if (!active || !highlighted) {return;}
+    if (!active || !highlighted) {
+      return;
+    }
     positionHighlight();
     highlightFrame = requestAnimationFrame(followHighlight);
   };
@@ -418,7 +435,9 @@ export function mountGuidedTutorial(options: GuidedTutorialOptions): GuidedTutor
         await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
         if (active && current === revision) {
           positionHighlight();
-          if (highlighted) {highlightFrame = requestAnimationFrame(followHighlight);}
+          if (highlighted) {
+            highlightFrame = requestAnimationFrame(followHighlight);
+          }
           next?.focus({ preventScroll: true });
           busy = false;
         }

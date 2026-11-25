@@ -236,6 +236,7 @@ export const desktopChannels = {
   sendServerCommand: 'servers:runtime-command',
   serverRuntimeEvent: 'servers:runtime-event',
   installServer: 'servers:install',
+  importServerModpack: 'servers:modpack-import',
   serverInstallProgress: 'servers:install-progress',
   getServerPlayerLists: 'servers:player-lists',
   mutateServerPlayerList: 'servers:player-list-mutate',
@@ -375,6 +376,9 @@ export const desktopChannels = {
   syncGoogleDrive: 'settings:sync-google-drive',
   saveGoogleDriveCredentials: 'settings:save-google-drive-credentials',
   googleDriveAuthorization: 'drive:authorization',
+  authorizeGoogleDrive: 'drive:authorize',
+  copyGoogleDriveAuthorization: 'drive:copy-authorization',
+  cancelGoogleDriveAuthorization: 'drive:cancel-authorization',
   updateSocialProfile: 'settings:update-social-profile',
   selectSocialProfileBackground: 'settings:select-social-profile-background',
   removeSocialProfileBackground: 'settings:remove-social-profile-background',
@@ -580,7 +584,9 @@ export interface BattlyDesktopApi {
     id: string,
     software?: ServerSoftwareKind,
     acceptCompatiblePaper?: boolean,
+    build?: string,
   ): Promise<void>;
+  importServerModpack(id: string): Promise<string | null>;
   onServerInstallProgress(listener: (progress: ServerInstallProgress) => void): () => void;
   getServerPlayerLists(id: string): Promise<ServerPlayerListsSnapshot>;
   mutateServerPlayerList(
@@ -760,6 +766,9 @@ export interface BattlyDesktopApi {
   }>;
   saveGoogleDriveCredentials(value: unknown): Promise<boolean>;
   onGoogleDriveAuthorization(listener: (credentials: unknown) => void): () => void;
+  authorizeGoogleDrive(): Promise<boolean>;
+  copyGoogleDriveAuthorization(): Promise<boolean>;
+  cancelGoogleDriveAuthorization(): Promise<void>;
   writeClipboardText(value: string): Promise<boolean>;
   updateSocialProfile(customization: ProfileCustomization, accountUuid?: string): Promise<void>;
   selectSocialProfileBackground(accountUuid?: string): Promise<ProfileBackgroundSelection | null>;

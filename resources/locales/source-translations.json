@@ -23229,7 +23229,712 @@
         "zh": "所选世界不可用。"
       },
       "sourceLanguage": "en"
-    },
+    },
+    {
+      "source": "Ya hay una autorización de Google en curso",
+      "translations": {
+        "es": "Ya hay una autorización de Google en curso",
+        "en": "Google authorization is already in progress",
+        "pt": "Já existe uma autorização do Google em andamento",
+        "fr": "Une autorisation Google est déjà en cours",
+        "de": "Eine Google-Autorisierung läuft bereits",
+        "it": "È già in corso un’autorizzazione Google",
+        "ru": "Авторизация Google уже выполняется",
+        "ja": "Google の認証はすでに進行中です",
+        "ar": "هناك عملية تفويض Google قيد التنفيذ بالفعل",
+        "zh": "Google 授权正在进行中"
+      }
+    },
+    {
+      "source": "Autorización cancelada. Puedes volver a Battly.",
+      "translations": {
+        "es": "Autorización cancelada. Puedes volver a Battly.",
+        "en": "Authorization cancelled. You can return to Battly.",
+        "pt": "Autorização cancelada. Você pode voltar ao Battly.",
+        "fr": "Autorisation annulée. Vous pouvez revenir à Battly.",
+        "de": "Autorisierung abgebrochen. Du kannst zu Battly zurückkehren.",
+        "it": "Autorizzazione annullata. Puoi tornare a Battly.",
+        "ru": "Авторизация отменена. Можно вернуться в Battly.",
+        "ja": "認証をキャンセルしました。Battly に戻ってください。",
+        "ar": "تم إلغاء التفويض. يمكنك العودة إلى Battly.",
+        "zh": "授权已取消。你可以返回 Battly。"
+      }
+    },
+    {
+      "source": "Vuelve a Battly para terminar de conectar Google Drive.",
+      "translations": {
+        "es": "Vuelve a Battly para terminar de conectar Google Drive.",
+        "en": "Return to Battly to finish connecting Google Drive.",
+        "pt": "Volte ao Battly para concluir a conexão com o Google Drive.",
+        "fr": "Revenez à Battly pour terminer la connexion à Google Drive.",
+        "de": "Kehre zu Battly zurück, um Google Drive zu verbinden.",
+        "it": "Torna a Battly per completare il collegamento a Google Drive.",
+        "ru": "Вернитесь в Battly, чтобы завершить подключение Google Диска.",
+        "ja": "Battly に戻って Google ドライブの接続を完了してください。",
+        "ar": "عُد إلى Battly لإكمال ربط Google Drive.",
+        "zh": "返回 Battly 以完成 Google 云端硬盘连接。"
+      }
+    },
+    {
+      "source": "La autorización de Google ha caducado",
+      "translations": {
+        "es": "La autorización de Google ha caducado",
+        "en": "Google authorization expired",
+        "pt": "A autorização do Google expirou",
+        "fr": "L’autorisation Google a expiré",
+        "de": "Die Google-Autorisierung ist abgelaufen",
+        "it": "L’autorizzazione Google è scaduta",
+        "ru": "Срок действия авторизации Google истёк",
+        "ja": "Google の認証期限が切れました",
+        "ar": "انتهت صلاحية تفويض Google",
+        "zh": "Google 授权已过期"
+      }
+    },
+    {
+      "source": "No se pudo preparar la autorización de Google",
+      "translations": {
+        "es": "No se pudo preparar la autorización de Google",
+        "en": "Could not prepare Google authorization",
+        "pt": "Não foi possível preparar a autorização do Google",
+        "fr": "Impossible de préparer l’autorisation Google",
+        "de": "Die Google-Autorisierung konnte nicht vorbereitet werden",
+        "it": "Impossibile preparare l’autorizzazione Google",
+        "ru": "Не удалось подготовить авторизацию Google",
+        "ja": "Google の認証を準備できませんでした",
+        "ar": "تعذر إعداد تفويض Google",
+        "zh": "无法准备 Google 授权"
+      }
+    },
+    {
+      "source": "Copiar enlace",
+      "translations": {
+        "es": "Copiar enlace",
+        "en": "Copy link",
+        "pt": "Copiar link",
+        "fr": "Copier le lien",
+        "de": "Link kopieren",
+        "it": "Copia link",
+        "ru": "Копировать ссылку",
+        "ja": "リンクをコピー",
+        "ar": "نسخ الرابط",
+        "zh": "复制链接"
+      }
+    },
+    {
+      "source": "Enlace copiado",
+      "translations": {
+        "es": "Enlace copiado",
+        "en": "Link copied",
+        "pt": "Link copiado",
+        "fr": "Lien copié",
+        "de": "Link kopiert",
+        "it": "Link copiato",
+        "ru": "Ссылка скопирована",
+        "ja": "リンクをコピーしました",
+        "ar": "تم نسخ الرابط",
+        "zh": "链接已复制"
+      }
+    },
+    {
+      "source": "No se pudo copiar el enlace",
+      "translations": {
+        "es": "No se pudo copiar el enlace",
+        "en": "Could not copy the link",
+        "pt": "Não foi possível copiar o link",
+        "fr": "Impossible de copier le lien",
+        "de": "Der Link konnte nicht kopiert werden",
+        "it": "Impossibile copiare il link",
+        "ru": "Не удалось скопировать ссылку",
+        "ja": "リンクをコピーできませんでした",
+        "ar": "تعذر نسخ الرابط",
+        "zh": "无法复制链接"
+      }
+    },
+    {
+      "source": "Autoriza Google Drive en tu navegador y vuelve a Battly. Si el navegador no se abre, copia el enlace y ábrelo en el que prefieras.",
+      "translations": {
+        "es": "Autoriza Google Drive en tu navegador y vuelve a Battly. Si el navegador no se abre, copia el enlace y ábrelo en el que prefieras.",
+        "en": "Authorize Google Drive in your browser, then return to Battly. If the browser does not open, copy the link and open it in a browser of your choice.",
+        "pt": "Autorize o Google Drive no navegador e volte ao Battly. Se o navegador não abrir, copie o link e abra-o no navegador de sua preferência.",
+        "fr": "Autorisez Google Drive dans votre navigateur, puis revenez à Battly. Si le navigateur ne s’ouvre pas, copiez le lien et ouvrez-le dans le navigateur de votre choix.",
+        "de": "Autorisiere Google Drive im Browser und kehre zu Battly zurück. Falls sich der Browser nicht öffnet, kopiere den Link und öffne ihn in einem Browser deiner Wahl.",
+        "it": "Autorizza Google Drive nel browser e torna a Battly. Se il browser non si apre, copia il link e aprilo nel browser che preferisci.",
+        "ru": "Разрешите доступ к Google Диску в браузере и вернитесь в Battly. Если браузер не открылся, скопируйте ссылку и откройте её в любом браузере.",
+        "ja": "ブラウザーで Google ドライブを認証して Battly に戻ってください。ブラウザーが開かない場合は、リンクをコピーして好きなブラウザーで開いてください。",
+        "ar": "فوّض Google Drive في متصفحك، ثم عُد إلى Battly. إذا لم يفتح المتصفح، فانسخ الرابط وافتحه في المتصفح الذي تفضله.",
+        "zh": "在浏览器中授权 Google 云端硬盘，然后返回 Battly。如果浏览器未打开，请复制链接并在你喜欢的浏览器中打开。"
+      }
+    },
+    {
+      "source": "Detén el servidor antes de instalar el modpack.",
+      "translations": {
+        "es": "Detén el servidor antes de instalar el modpack.",
+        "en": "Stop the server before installing the modpack.",
+        "pt": "Pare o servidor antes de instalar o modpack.",
+        "fr": "Arrêtez le serveur avant d’installer le modpack.",
+        "de": "Stoppe den Server, bevor du das Modpack installierst.",
+        "it": "Arresta il server prima di installare il modpack.",
+        "ru": "Остановите сервер перед установкой сборки.",
+        "ja": "Modパックをインストールする前にサーバーを停止してください。",
+        "ar": "أوقف الخادم قبل تثبيت حزمة التعديلات.",
+        "zh": "请先停止服务器，再安装整合包。"
+      }
+    },
+    {
+      "source": "Preparando el software del servidor…",
+      "translations": {
+        "es": "Preparando el software del servidor…",
+        "en": "Preparing server software…",
+        "pt": "Preparando o software do servidor…",
+        "fr": "Préparation du logiciel du serveur…",
+        "de": "Server-Software wird vorbereitet…",
+        "it": "Preparazione del software del server…",
+        "ru": "Подготовка серверного ПО…",
+        "ja": "サーバーソフトウェアを準備中…",
+        "ar": "جارٍ تجهيز برنامج الخادم…",
+        "zh": "正在准备服务器软件…"
+      }
+    },
+    {
+      "source": "Detén el servidor antes de instalar su software.",
+      "translations": {
+        "es": "Detén el servidor antes de instalar su software.",
+        "en": "Stop the server before installing its software.",
+        "pt": "Pare o servidor antes de instalar o software.",
+        "fr": "Arrêtez le serveur avant d’installer son logiciel.",
+        "de": "Stoppe den Server, bevor du seine Software installierst.",
+        "it": "Arresta il server prima di installarne il software.",
+        "ru": "Остановите сервер перед установкой его ПО.",
+        "ja": "ソフトウェアをインストールする前にサーバーを停止してください。",
+        "ar": "أوقف الخادم قبل تثبيت برنامجه.",
+        "zh": "请先停止服务器，再安装服务器软件。"
+      }
+    },
+    {
+      "source": "Fabric no publica esa versión del modloader para este servidor.",
+      "translations": {
+        "es": "Fabric no publica esa versión del modloader para este servidor.",
+        "en": "Fabric does not offer that loader version for this server.",
+        "pt": "O Fabric não disponibiliza essa versão do carregador para este servidor.",
+        "fr": "Fabric ne propose pas cette version du chargeur pour ce serveur.",
+        "de": "Fabric bietet diese Loader-Version für diesen Server nicht an.",
+        "it": "Fabric non offre questa versione del loader per il server.",
+        "ru": "Fabric не предлагает эту версию загрузчика для данного сервера.",
+        "ja": "このサーバーに対応する Fabric Loader のバージョンは公開されていません。",
+        "ar": "لا يوفّر Fabric إصدار المحمّل هذا لهذا الخادم.",
+        "zh": "Fabric 未为此服务器提供该加载器版本。"
+      }
+    },
+    {
+      "source": "El modpack no indica la versión de su modloader.",
+      "translations": {
+        "es": "El modpack no indica la versión de su modloader.",
+        "en": "The modpack does not specify a loader version.",
+        "pt": "O modpack não indica a versão do carregador.",
+        "fr": "Le modpack n’indique pas la version de son chargeur.",
+        "de": "Das Modpack gibt keine Loader-Version an.",
+        "it": "Il modpack non indica la versione del loader.",
+        "ru": "В сборке не указана версия загрузчика.",
+        "ja": "Modパックにローダーのバージョンが指定されていません。",
+        "ar": "حزمة التعديلات لا تحدد إصدار المحمّل.",
+        "zh": "整合包未指定加载器版本。"
+      }
+    },
+    {
+      "source": "El servidor ya tiene otra versión de «{0}». Archívala antes de instalar este modpack.",
+      "translations": {
+        "es": "El servidor ya tiene otra versión de «{0}». Archívala antes de instalar este modpack.",
+        "en": "The server already has another version of “{0}”. Archive it before installing this modpack.",
+        "pt": "O servidor já tem outra versão de «{0}». Arquive-a antes de instalar este modpack.",
+        "fr": "Le serveur possède déjà une autre version de « {0} ». Archivez-la avant d’installer ce modpack.",
+        "de": "Auf dem Server ist bereits eine andere Version von „{0}“ vorhanden. Archiviere sie vor der Installation dieses Modpacks.",
+        "it": "Il server contiene già un’altra versione di «{0}». Archiviala prima di installare questo modpack.",
+        "ru": "На сервере уже есть другая версия «{0}». Переместите её в архив перед установкой сборки.",
+        "ja": "サーバーには別バージョンの「{0}」があります。このModパックをインストールする前にアーカイブしてください。",
+        "ar": "يحتوي الخادم بالفعل على إصدار آخر من «{0}». انقله إلى الأرشيف قبل تثبيت هذه الحزمة.",
+        "zh": "服务器已存在“{0}”的另一个版本。请先将其归档，再安装此整合包。"
+      }
+    },
+    {
+      "source": "No se pudieron retirar todos los archivos del modpack.",
+      "translations": {
+        "es": "No se pudieron retirar todos los archivos del modpack.",
+        "en": "Some modpack files could not be removed.",
+        "pt": "Não foi possível remover todos os arquivos do modpack.",
+        "fr": "Impossible de retirer tous les fichiers du modpack.",
+        "de": "Einige Modpack-Dateien konnten nicht entfernt werden.",
+        "it": "Impossibile rimuovere tutti i file del modpack.",
+        "ru": "Не удалось удалить все файлы сборки.",
+        "ja": "Modパックの一部のファイルを削除できませんでした。",
+        "ar": "تعذرت إزالة بعض ملفات الحزمة.",
+        "zh": "部分整合包文件无法移除。"
+      }
+    },
+    {
+      "source": "Detén el servidor. Se instalará la versión que pide el modpack.",
+      "translations": {
+        "es": "Detén el servidor. Se instalará la versión que pide el modpack.",
+        "en": "Stop the server. Battly will install the version required by the modpack.",
+        "pt": "Pare o servidor. O Battly instalará a versão exigida pelo modpack.",
+        "fr": "Arrêtez le serveur. Battly installera la version exigée par le modpack.",
+        "de": "Stoppe den Server. Battly installiert die vom Modpack benötigte Version.",
+        "it": "Arresta il server. Battly installerà la versione richiesta dal modpack.",
+        "ru": "Остановите сервер. Battly установит версию, необходимую для сборки.",
+        "ja": "サーバーを停止してください。Modパックが指定するバージョンを Battly がインストールします。",
+        "ar": "أوقف الخادم. سيثبّت Battly الإصدار الذي تتطلبه حزمة التعديلات.",
+        "zh": "请停止服务器。Battly 将安装整合包要求的版本。"
+      }
+    },
+    {
+      "source": "Versión del modloader",
+      "translations": {
+        "es": "Versión del modloader",
+        "en": "Mod loader version",
+        "pt": "Versão do carregador",
+        "fr": "Version du chargeur de mods",
+        "de": "Modloader-Version",
+        "it": "Versione del loader",
+        "ru": "Версия загрузчика модов",
+        "ja": "Modローダーのバージョン",
+        "ar": "إصدار محمّل التعديلات",
+        "zh": "模组加载器版本"
+      }
+    },
+    {
+      "source": "No se pudo instalar el modpack.",
+      "translations": {
+        "es": "No se pudo instalar el modpack.",
+        "en": "Could not install the modpack.",
+        "pt": "Não foi possível instalar o modpack.",
+        "fr": "Impossible d’installer le modpack.",
+        "de": "Das Modpack konnte nicht installiert werden.",
+        "it": "Impossibile installare il modpack.",
+        "ru": "Не удалось установить сборку.",
+        "ja": "Modパックをインストールできませんでした。",
+        "ar": "تعذّر تثبيت حزمة التعديلات.",
+        "zh": "无法安装整合包。"
+      }
+    },
+    {
+      "source": "Instalar modpack",
+      "translations": {
+        "es": "Instalar modpack",
+        "en": "Install modpack",
+        "pt": "Instalar modpack",
+        "fr": "Installer un modpack",
+        "de": "Modpack installieren",
+        "it": "Installa modpack",
+        "ru": "Установить сборку",
+        "ja": "Modパックをインストール",
+        "ar": "تثبيت حزمة تعديلات",
+        "zh": "安装整合包"
+      }
+    },
+    {
+      "source": "Instalar modpack en el servidor",
+      "translations": {
+        "es": "Instalar modpack en el servidor",
+        "en": "Install modpack on the server",
+        "pt": "Instalar modpack no servidor",
+        "fr": "Installer un modpack sur le serveur",
+        "de": "Modpack auf dem Server installieren",
+        "it": "Installa modpack sul server",
+        "ru": "Установить сборку на сервер",
+        "ja": "サーバーにModパックをインストール",
+        "ar": "تثبيت حزمة تعديلات على الخادم",
+        "zh": "在服务器上安装整合包"
+      }
+    },
+    {
+      "source": "Battly Servers no admite el modloader de este modpack.",
+      "translations": {
+        "es": "Battly Servers no admite el modloader de este modpack.",
+        "en": "Battly Servers does not support this modpack’s loader.",
+        "pt": "O Battly Servers não é compatível com o carregador deste modpack.",
+        "fr": "Battly Servers ne prend pas en charge le chargeur de ce modpack.",
+        "de": "Battly Servers unterstützt den Loader dieses Modpacks nicht.",
+        "it": "Battly Servers non supporta il loader di questo modpack.",
+        "ru": "Battly Servers не поддерживает загрузчик этой сборки.",
+        "ja": "このModパックのローダーは Battly Servers に対応していません。",
+        "ar": "لا يدعم Battly Servers محمّل حزمة التعديلات هذه.",
+        "zh": "Battly Servers 不支持此整合包的加载器。"
+      }
+    },
+    {
+      "source": "Repara Java en el servidor antes de instalar el modpack.",
+      "translations": {
+        "es": "Repara Java en el servidor antes de instalar el modpack.",
+        "en": "Repair Java on the server before installing the modpack.",
+        "pt": "Repare o Java no servidor antes de instalar o modpack.",
+        "fr": "Réparez Java sur le serveur avant d’installer le modpack.",
+        "de": "Repariere Java auf dem Server, bevor du das Modpack installierst.",
+        "it": "Ripara Java sul server prima di installare il modpack.",
+        "ru": "Восстановите Java на сервере перед установкой сборки.",
+        "ja": "Modパックをインストールする前にサーバーの Java を修復してください。",
+        "ar": "أصلح Java على الخادم قبل تثبيت حزمة التعديلات.",
+        "zh": "请先修复服务器上的 Java，再安装整合包。"
+      }
+    },
+    {
+      "source": "Selecciona un modpack .mrpack o .zip.",
+      "translations": {
+        "es": "Selecciona un modpack .mrpack o .zip.",
+        "en": "Select a .mrpack or .zip modpack.",
+        "pt": "Selecione um modpack .mrpack ou .zip.",
+        "fr": "Sélectionnez un modpack .mrpack ou .zip.",
+        "de": "Wähle ein Modpack im Format .mrpack oder .zip.",
+        "it": "Seleziona un modpack .mrpack o .zip.",
+        "ru": "Выберите сборку в формате .mrpack или .zip.",
+        "ja": "Modパックの .mrpack または .zip ファイルを選択してください。",
+        "ar": "اختر حزمة تعديلات بتنسيق ‎.mrpack أو ‎.zip.",
+        "zh": "请选择 .mrpack 或 .zip 格式的整合包。"
+      }
+    },
+    {
+      "source": "Este software no permite elegir un modloader.",
+      "translations": {
+        "es": "Este software no permite elegir un modloader.",
+        "en": "This server software does not use a mod loader.",
+        "pt": "Este software não usa um carregador de mods.",
+        "fr": "Ce logiciel serveur n’utilise pas de chargeur de mods.",
+        "de": "Diese Server-Software verwendet keinen Modloader.",
+        "it": "Questo software non usa un loader.",
+        "ru": "Это серверное ПО не использует загрузчик модов.",
+        "ja": "このサーバーソフトウェアはModローダーを使いません。",
+        "ar": "لا يستخدم برنامج الخادم هذا محمّل تعديلات.",
+        "zh": "此服务器软件不使用模组加载器。"
+      }
+    },
+    {
+      "source": "No se pudo abrir el selector de archivos.",
+      "translations": {
+        "es": "No se pudo abrir el selector de archivos.",
+        "en": "Could not open the file picker.",
+        "pt": "Não foi possível abrir o seletor de arquivos.",
+        "fr": "Impossible d’ouvrir le sélecteur de fichiers.",
+        "de": "Die Dateiauswahl konnte nicht geöffnet werden.",
+        "it": "Impossibile aprire il selettore dei file.",
+        "ru": "Не удалось открыть окно выбора файла.",
+        "ja": "ファイル選択画面を開けませんでした。",
+        "ar": "تعذّر فتح نافذة اختيار الملفات.",
+        "zh": "无法打开文件选择器。"
+      }
+    },
+    {
+      "source": "Esta versión de Forge no es compatible con la versión de Minecraft del servidor.",
+      "translations": {
+        "es": "Esta versión de Forge no es compatible con la versión de Minecraft del servidor.",
+        "en": "This Forge version is incompatible with the server’s Minecraft version.",
+        "pt": "Esta versão do Forge é incompatível com a versão do Minecraft do servidor.",
+        "fr": "Cette version de Forge est incompatible avec la version de Minecraft du serveur.",
+        "de": "Diese Forge-Version ist mit der Minecraft-Version des Servers nicht kompatibel.",
+        "it": "Questa versione di Forge non è compatibile con la versione di Minecraft del server.",
+        "ru": "Эта версия Forge несовместима с версией Minecraft на сервере.",
+        "ja": "このForgeのバージョンはサーバーのMinecraftバージョンに対応していません。",
+        "ar": "إصدار Forge هذا غير متوافق مع إصدار Minecraft على الخادم.",
+        "zh": "此 Forge 版本与服务器的 Minecraft 版本不兼容。"
+      }
+    },
+    {
+      "source": "Esta versión de NeoForge no es compatible con la versión de Minecraft del servidor.",
+      "translations": {
+        "es": "Esta versión de NeoForge no es compatible con la versión de Minecraft del servidor.",
+        "en": "This NeoForge version is incompatible with the server’s Minecraft version.",
+        "pt": "Esta versão do NeoForge é incompatível com a versão do Minecraft do servidor.",
+        "fr": "Cette version de NeoForge est incompatible avec la version de Minecraft du serveur.",
+        "de": "Diese NeoForge-Version ist mit der Minecraft-Version des Servers nicht kompatibel.",
+        "it": "Questa versione di NeoForge non è compatibile con la versione di Minecraft del server.",
+        "ru": "Эта версия NeoForge несовместима с версией Minecraft на сервере.",
+        "ja": "このNeoForgeのバージョンはサーバーのMinecraftバージョンに対応していません。",
+        "ar": "إصدار NeoForge هذا غير متوافق مع إصدار Minecraft على الخادم.",
+        "zh": "此 NeoForge 版本与服务器的 Minecraft 版本不兼容。"
+      }
+    },
+    {
+      "source": "El modpack contiene un nombre de archivo incompatible.",
+      "translations": {
+        "es": "El modpack contiene un nombre de archivo incompatible.",
+        "en": "The modpack contains an unsupported file name.",
+        "pt": "O modpack contém um nome de arquivo incompatível.",
+        "fr": "Le modpack contient un nom de fichier incompatible.",
+        "de": "Das Modpack enthält einen ungültigen Dateinamen.",
+        "it": "Il modpack contiene un nome file non supportato.",
+        "ru": "В сборке есть недопустимое имя файла.",
+        "ja": "Modパックに対応していないファイル名があります。",
+        "ar": "تحتوي الحزمة على اسم ملف غير مدعوم.",
+        "zh": "整合包包含不受支持的文件名。"
+      }
+    },
+    {
+      "source": "El modpack requiere Minecraft {0}. Este servidor usa {1}.",
+      "translations": {
+        "es": "El modpack requiere Minecraft {0}. Este servidor usa {1}.",
+        "en": "The modpack requires Minecraft {0}. This server uses {1}.",
+        "pt": "O modpack requer o Minecraft {0}. Este servidor usa a versão {1}.",
+        "fr": "Le modpack nécessite Minecraft {0}. Ce serveur utilise la version {1}.",
+        "de": "Das Modpack benötigt Minecraft {0}. Dieser Server verwendet {1}.",
+        "it": "Il modpack richiede Minecraft {0}. Questo server usa la versione {1}.",
+        "ru": "Сборке требуется Minecraft {0}. На этом сервере используется {1}.",
+        "ja": "ModパックにはMinecraft {0}が必要です。このサーバーは{1}を使用しています。",
+        "ar": "تتطلب الحزمة Minecraft {0}. يستخدم هذا الخادم الإصدار {1}.",
+        "zh": "整合包需要 Minecraft {0}。此服务器使用 {1}。"
+      }
+    },
+    {
+      "source": "El modpack necesita la carpeta «{0}», pero ya existe un archivo con ese nombre.",
+      "translations": {
+        "es": "El modpack necesita la carpeta «{0}», pero ya existe un archivo con ese nombre.",
+        "en": "The modpack needs the “{0}” folder, but a file with that name already exists.",
+        "pt": "O modpack precisa da pasta «{0}», mas já existe um arquivo com esse nome.",
+        "fr": "Le modpack a besoin du dossier « {0} », mais un fichier porte déjà ce nom.",
+        "de": "Das Modpack benötigt den Ordner „{0}“. Eine Datei mit diesem Namen ist bereits vorhanden.",
+        "it": "Il modpack richiede la cartella «{0}», ma esiste già un file con quel nome.",
+        "ru": "Сборке нужна папка «{0}», но файл с таким именем уже существует.",
+        "ja": "Modパックには「{0}」フォルダーが必要ですが、同名のファイルが存在します。",
+        "ar": "تحتاج الحزمة إلى المجلد «{0}»، لكن يوجد ملف بهذا الاسم بالفعل.",
+        "zh": "整合包需要“{0}”文件夹，但已存在同名文件。"
+      }
+    },
+    {
+      "source": "El modpack contiene un archivo incompatible con el servidor: {0}",
+      "translations": {
+        "es": "El modpack contiene un archivo incompatible con el servidor: {0}",
+        "en": "The modpack contains a file that is incompatible with the server: {0}",
+        "pt": "O modpack contém um arquivo incompatível com o servidor: {0}",
+        "fr": "Le modpack contient un fichier incompatible avec le serveur : {0}",
+        "de": "Das Modpack enthält eine mit dem Server inkompatible Datei: {0}",
+        "it": "Il modpack contiene un file non compatibile con il server: {0}",
+        "ru": "В сборке есть файл, несовместимый с сервером: {0}",
+        "ja": "Modパックにサーバーと互換性のないファイルがあります：{0}",
+        "ar": "تحتوي الحزمة على ملف غير متوافق مع الخادم: {0}",
+        "zh": "整合包包含与服务器不兼容的文件：{0}"
+      }
+    },
+    {
+      "source": "Nueva instancia",
+      "translations": {
+        "es": "Nueva instancia",
+        "en": "New instance",
+        "pt": "Nova instância",
+        "fr": "Nouvelle instance",
+        "de": "Neue Instanz",
+        "it": "Nuova istanza",
+        "ru": "Новый экземпляр",
+        "ja": "新しいインスタンス",
+        "ar": "نسخة جديدة",
+        "zh": "新建实例"
+      }
+    },
+    {
+      "source": "Se ha instalado {0} en el servidor.",
+      "translations": {
+        "es": "Se ha instalado {0} en el servidor.",
+        "en": "{0} was installed on the server.",
+        "pt": "{0} foi instalado no servidor.",
+        "fr": "{0} a été installé sur le serveur.",
+        "de": "{0} wurde auf dem Server installiert.",
+        "it": "{0} è stato installato sul server.",
+        "ru": "Сборка {0} установлена на сервере.",
+        "ja": "サーバーに「{0}」をインストールしました。",
+        "ar": "تم تثبيت {0} على الخادم.",
+        "zh": "已在服务器上安装 {0}。"
+      }
+    },
+    {
+      "source": "La versión del modloader no es válida.",
+      "translations": {
+        "es": "La versión del modloader no es válida.",
+        "en": "The mod loader version is invalid.",
+        "pt": "A versão do carregador de mods é inválida.",
+        "fr": "La version du chargeur de mods est invalide.",
+        "de": "Die Modloader-Version ist ungültig.",
+        "it": "La versione del loader non è valida.",
+        "ru": "Недопустимая версия загрузчика модов.",
+        "ja": "Modローダーのバージョンが無効です。",
+        "ar": "إصدار محمّل التعديلات غير صالح.",
+        "zh": "模组加载器版本无效。"
+      }
+    },
+    {
+      "source": "Minecraft perdió la sincronización con la GPU",
+      "translations": {
+        "es": "Minecraft perdió la sincronización con la GPU",
+        "en": "Minecraft lost synchronization with the GPU",
+        "pt": "O Minecraft perdeu a sincronização com a GPU",
+        "fr": "Minecraft a perdu la synchronisation avec le GPU",
+        "de": "Minecraft hat die Synchronisation mit der GPU verloren",
+        "it": "Minecraft ha perso la sincronizzazione con la GPU",
+        "ru": "Minecraft потерял синхронизацию с видеокартой",
+        "ja": "Minecraft と GPU の同期が失われました",
+        "ar": "فقدت Minecraft التزامن مع وحدة معالجة الرسوميات",
+        "zh": "Minecraft 与 GPU 失去同步"
+      }
+    },
+    {
+      "source": "Actualiza el controlador gráfico y prueba la misma versión de Minecraft sin mods de renderizado. Si así funciona, reactiva esos mods de uno en uno para identificar el conflicto.",
+      "translations": {
+        "es": "Actualiza el controlador gráfico y prueba la misma versión de Minecraft sin mods de renderizado. Si así funciona, reactiva esos mods de uno en uno para identificar el conflicto.",
+        "en": "Update the graphics driver and try the same Minecraft version without rendering mods. If it works, re-enable those mods one at a time to identify the conflict.",
+        "pt": "Atualize o driver de vídeo e teste a mesma versão do Minecraft sem mods de renderização. Se funcionar, reative esses mods um de cada vez para encontrar o conflito.",
+        "fr": "Mettez à jour le pilote graphique et essayez la même version de Minecraft sans mods de rendu. Si cela fonctionne, réactivez ces mods un par un pour identifier le conflit.",
+        "de": "Aktualisiere den Grafiktreiber und teste dieselbe Minecraft-Version ohne Rendering-Mods. Wenn das funktioniert, aktiviere die Mods einzeln, um den Konflikt zu finden.",
+        "it": "Aggiorna il driver grafico e prova la stessa versione di Minecraft senza mod di rendering. Se funziona, riattiva queste mod una alla volta per individuare il conflitto.",
+        "ru": "Обновите драйвер видеокарты и запустите ту же версию Minecraft без модов рендеринга. Если игра работает, включайте эти моды по одному, чтобы найти конфликт.",
+        "ja": "グラフィックスドライバーを更新し、描画系のModを無効にして同じバージョンのMinecraftを試してください。動作する場合は、Modを一つずつ有効にして原因を特定してください。",
+        "ar": "حدّث تعريف الرسوميات وجرّب إصدار Minecraft نفسه دون تعديلات التصيير. إذا نجح التشغيل، فأعد تفعيل تلك التعديلات واحدًا تلو الآخر لتحديد التعارض.",
+        "zh": "更新显卡驱动，然后在不加载渲染模组的情况下试运行同一版本的 Minecraft。如果可以正常运行，请逐个重新启用这些模组以找出冲突。"
+      }
+    },
+    {
+      "source": "Conexión con la sala preparada",
+      "translations": {
+        "es": "Conexión con la sala preparada",
+        "en": "Room connection ready",
+        "pt": "Conexão com a sala pronta",
+        "fr": "Connexion à la salle prête",
+        "de": "Verbindung zum Raum bereit",
+        "it": "Connessione alla stanza pronta",
+        "ru": "Подключение к комнате готово",
+        "ja": "ルームへの接続準備ができました",
+        "ar": "الاتصال بالغرفة جاهز",
+        "zh": "已准备好连接房间"
+      }
+    },
+    {
+      "source": "Usa «Abrir conexión e iniciar Minecraft» para entrar en el mundo.",
+      "translations": {
+        "es": "Usa «Abrir conexión e iniciar Minecraft» para entrar en el mundo.",
+        "en": "Use “Open connection and start Minecraft” to enter the world.",
+        "pt": "Use «Abrir conexão e iniciar o Minecraft» para entrar no mundo.",
+        "fr": "Utilisez « Ouvrir la connexion et lancer Minecraft » pour rejoindre le monde.",
+        "de": "Wähle „Verbindung öffnen und Minecraft starten“, um der Welt beizutreten.",
+        "it": "Usa «Apri connessione e avvia Minecraft» per entrare nel mondo.",
+        "ru": "Чтобы войти в мир, выберите «Открыть подключение и запустить Minecraft».",
+        "ja": "「接続を開いて Minecraft を起動」を選ぶとワールドに参加できます。",
+        "ar": "اختر «فتح الاتصال وتشغيل Minecraft» للدخول إلى العالم.",
+        "zh": "选择“打开连接并启动 Minecraft”即可进入世界。"
+      }
+    },
+    {
+      "source": "Cierra Minecraft y vuelve a iniciarlo desde esta sala.",
+      "translations": {
+        "es": "Cierra Minecraft y vuelve a iniciarlo desde esta sala.",
+        "en": "Close Minecraft and launch it again from this room.",
+        "pt": "Feche o Minecraft e inicie-o novamente por esta sala.",
+        "fr": "Fermez Minecraft et relancez-le depuis cette salle.",
+        "de": "Schließe Minecraft und starte es erneut aus diesem Raum.",
+        "it": "Chiudi Minecraft e riavvialo da questa stanza.",
+        "ru": "Закройте Minecraft и запустите его снова из этой комнаты.",
+        "ja": "Minecraft を閉じて、このルームから起動し直してください。",
+        "ar": "أغلق Minecraft ثم شغّلها مجددًا من هذه الغرفة.",
+        "zh": "关闭 Minecraft，然后从此房间重新启动。"
+      }
+    },
+    {
+      "source": "Si Minecraft muestra «Sesión no válida», ciérralo e inícialo desde la sala en Battly Worlds.",
+      "translations": {
+        "es": "Si Minecraft muestra «Sesión no válida», ciérralo e inícialo desde la sala en Battly Worlds.",
+        "en": "If Minecraft shows “Invalid session”, close it and start it from the room in Battly Worlds.",
+        "pt": "Se o Minecraft mostrar «Sessão inválida», feche-o e inicie-o pela sala no Battly Worlds.",
+        "fr": "Si Minecraft affiche « Session invalide », fermez-le et lancez-le depuis la salle dans Battly Worlds.",
+        "de": "Zeigt Minecraft „Ungültige Sitzung“, schließe das Spiel und starte es aus dem Raum in Battly Worlds.",
+        "it": "Se Minecraft mostra «Sessione non valida», chiudilo e avvialo dalla stanza in Battly Worlds.",
+        "ru": "Если Minecraft сообщает о недействительной сессии, закройте игру и запустите её из комнаты в Battly Worlds.",
+        "ja": "Minecraft に「無効なセッション」と表示されたら、ゲームを閉じて Battly Worlds のルームから起動してください。",
+        "ar": "إذا عرضت Minecraft رسالة «جلسة غير صالحة»، فأغلقها وشغّلها من الغرفة في Battly Worlds.",
+        "zh": "如果 Minecraft 显示“无效会话”，请关闭游戏，再从 Battly Worlds 房间启动。"
+      }
+    },
+    {
+      "source": "Instancia para jugar",
+      "translations": {
+        "es": "Instancia para jugar",
+        "en": "Instance to play",
+        "pt": "Instância para jogar",
+        "fr": "Instance à utiliser",
+        "de": "Instanz zum Spielen",
+        "it": "Istanza da usare",
+        "ru": "Экземпляр для игры",
+        "ja": "使用するインスタンス",
+        "ar": "نسخة اللعب",
+        "zh": "要使用的实例"
+      }
+    },
+    {
+      "source": "Perfil general de Minecraft",
+      "translations": {
+        "es": "Perfil general de Minecraft",
+        "en": "General Minecraft profile",
+        "pt": "Perfil geral do Minecraft",
+        "fr": "Profil général de Minecraft",
+        "de": "Allgemeines Minecraft-Profil",
+        "it": "Profilo generale di Minecraft",
+        "ru": "Основной профиль Minecraft",
+        "ja": "Minecraft の通常プロファイル",
+        "ar": "ملف Minecraft العام",
+        "zh": "Minecraft 通用配置"
+      }
+    },
+    {
+      "source": "La instancia seleccionada ya no está disponible para esta sala.",
+      "translations": {
+        "es": "La instancia seleccionada ya no está disponible para esta sala.",
+        "en": "The selected instance is no longer available for this room.",
+        "pt": "A instância selecionada não está mais disponível para esta sala.",
+        "fr": "L’instance sélectionnée n’est plus disponible pour cette salle.",
+        "de": "Die gewählte Instanz ist für diesen Raum nicht mehr verfügbar.",
+        "it": "L’istanza selezionata non è più disponibile per questa stanza.",
+        "ru": "Выбранный экземпляр больше недоступен для этой комнаты.",
+        "ja": "選択したインスタンスはこのルームで使えなくなりました。",
+        "ar": "النسخة المحددة لم تعد متاحة لهذه الغرفة.",
+        "zh": "所选实例已无法用于此房间。"
+      }
+    },
+    {
+      "source": "Elige dónde iniciar Minecraft",
+      "translations": {
+        "es": "Elige dónde iniciar Minecraft",
+        "en": "Choose where to launch Minecraft",
+        "pt": "Escolha onde iniciar o Minecraft",
+        "fr": "Choisissez où lancer Minecraft",
+        "de": "Wähle, wo Minecraft gestartet wird",
+        "it": "Scegli dove avviare Minecraft",
+        "ru": "Выберите, где запустить Minecraft",
+        "ja": "Minecraft を起動する場所を選択",
+        "ar": "اختر مكان تشغيل Minecraft",
+        "zh": "选择从哪里启动 Minecraft"
+      }
+    },
+    {
+      "source": "Si el mundo usa mods, elige la instancia con el mismo modpack que el anfitrión.",
+      "translations": {
+        "es": "Si el mundo usa mods, elige la instancia con el mismo modpack que el anfitrión.",
+        "en": "If the world uses mods, choose the instance with the same modpack as the host.",
+        "pt": "Se o mundo usar mods, escolha a instância com o mesmo modpack do anfitrião.",
+        "fr": "Si le monde utilise des mods, choisissez l’instance qui possède le même modpack que l’hôte.",
+        "de": "Wenn die Welt Mods verwendet, wähle die Instanz mit demselben Modpack wie der Host.",
+        "it": "Se il mondo usa mod, scegli l’istanza con lo stesso modpack dell’host.",
+        "ru": "Если мир использует моды, выберите экземпляр с той же сборкой, что у хозяина мира.",
+        "ja": "ワールドで Mod を使用している場合は、ホストと同じ Mod パックのインスタンスを選んでください。",
+        "ar": "إذا كان العالم يستخدم تعديلات، فاختر النسخة التي تحتوي على حزمة التعديلات نفسها لدى المضيف.",
+        "zh": "如果世界使用模组，请选择安装了与房主相同整合包的实例。"
+      }
+    },
+    {
+      "source": "En Multijugador, selecciona «BattlyWorlds - pulsa para entrar» en la lista de mundos LAN.",
+      "translations": {
+        "es": "En Multijugador, selecciona «BattlyWorlds - pulsa para entrar» en la lista de mundos LAN.",
+        "en": "In Multiplayer, select the BattlyWorlds entry from the list of LAN worlds.",
+        "pt": "Em Multijogador, selecione «BattlyWorlds - pulsa para entrar» na lista de mundos LAN.",
+        "fr": "Dans Multijoueur, sélectionnez « BattlyWorlds - pulsa para entrar » dans la liste des mondes LAN.",
+        "de": "Wähle im Mehrspieler-Menü „BattlyWorlds - pulsa para entrar“ aus der Liste der LAN-Welten.",
+        "it": "In Multigiocatore, seleziona «BattlyWorlds - pulsa para entrar» nell’elenco dei mondi LAN.",
+        "ru": "В меню многопользовательской игры выберите «BattlyWorlds - pulsa para entrar» в списке миров LAN.",
+        "ja": "マルチプレイで、LAN ワールド一覧から「BattlyWorlds - pulsa para entrar」を選択してください。",
+        "ar": "في اللعب الجماعي، اختر «BattlyWorlds - pulsa para entrar» من قائمة عوالم الشبكة المحلية.",
+        "zh": "在多人游戏中，从局域网世界列表选择“BattlyWorlds - pulsa para entrar”。"
+      }
+    },
     {
       "source": "Gracias por seguir jugando con Battly.",
       "translations": {

@@ -1746,3 +1746,42 @@
     animation: none;
   }
 }
+
+.servers-panel[data-server-mount] [name='loaderBuild']:disabled {
+  opacity: 0.65;
+}
+.servers-panel[data-server-mount] .server-create-software[hidden] {
+  display: none;
+}
+.server-loader-build-dialog {
+  width: min(440px, calc(100vw - 32px));
+  padding: 22px;
+  border: 1px solid #314358;
+  border-radius: 14px;
+  background: #121a27;
+  color: #edf3fc;
+}
+.server-loader-build-dialog::backdrop {
+  background: #060a12bb;
+}
+.server-loader-build-dialog form,
+.server-loader-build-dialog label {
+  display: grid;
+  gap: 12px;
+}
+.server-loader-build-dialog form > div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.server-loader-build-dialog select,
+.server-loader-build-dialog button {
+  padding: 9px 14px;
+  border: 1px solid #3b5470;
+  border-radius: 8px;
+  background: #1a293c;
+  color: inherit;
+}
+.server-loader-build-dialog button[value='install']:enabled {
+  background: #2870ad;
+}

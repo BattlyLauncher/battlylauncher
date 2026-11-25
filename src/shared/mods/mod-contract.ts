@@ -367,7 +367,10 @@ export function normalizeModInstallRequest(value: unknown): ModInstallRequest {
   ) {
     throw new TypeError('Invalid Minecraft world');
   }
-  if (destinationServerId && (destinationInstanceId || projectType !== 'mod')) {
+  if (
+    destinationServerId &&
+    (destinationInstanceId || (projectType !== 'mod' && projectType !== 'modpack'))
+  ) {
     throw new TypeError('Invalid server mod destination');
   }
   if (!projectTypes.has(projectType as ModProjectType)) {
